@@ -34,6 +34,8 @@
           default = nixops-lib.go.devShell {
             buildInputs = with pkgs; [
               openapi-generator-cli
+              nodejs_22
+              pnpm
             ];
           };
         };
