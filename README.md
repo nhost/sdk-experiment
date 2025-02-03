@@ -58,11 +58,11 @@ As we generate some sample SDKs with the proposed tools we will create issues on
 
 GitHub labels to follow:
 
-- `lang:js/ts` - Issues related to Javascript/Typescript SDKs
-- `lang:go` - Issues related to Go SDKs
-- `lang:dart` - Issues related to Dart SDKs
-- `tool:codegen` - Issues related to code generation tools
-- `example` - Issues related to examples
+- [`lang:js/ts`](https://github.com/nhost/sdk-experiment/labels/lang%3Ajs%2Fts) - Issues related to Javascript/Typescript SDKs
+- [`lang:go`](https://github.com/nhost/sdk-experiment/labels/lang%3Ago) - Issues related to Go SDKs
+- [`lang:dart`](https://github.com/nhost/sdk-experiment/labels/lang%3Adart) - Issues related to Dart SDKs
+- [`tool:codegen`](https://github.com/nhost/sdk-experiment/labels/tool%3Acodegen) - Issues related to code generation tools
+- [`examples`](https://github.com/nhost/sdk-experiment/issues?q=is%3Aopen%20label%3Aexamples) - Issues related to examples
 
 Feel free to keep an eye for these labels and help us out with the project.
 
@@ -70,4 +70,4 @@ If you have any other ideas or suggestions, please open an issue and let us know
 
 ## Discord
 
-You can also join our Discord server to discuss the project and get involved in the development of the SDKs. You can join the server [here](https://discord.gg/ZUg87u5a).
+You can also join our Discord server to discuss the project and get involved in the development of the SDKs. You can join the server [here](https://discord.gg/ZUg87u5a). We have a sdk-experiment channel where we discuss the project and share updates.
