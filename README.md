@@ -8,13 +8,13 @@ This repository is a playground for experimenting with a new SDK for [Nhost](htt
 
 Currently, our SDKs are manually written and maintained. This is a tedious process and leads to inconsistencies and a mismatch between the SDKs and the API.
 
-In addition, our Auth SDK is extemely complex and hard to maintain and extend due to the complexity in the state machine.
+In addition, our Auth SDK is extremely complex and hard to maintain and extend due to the complexity in the state machine.
 
 ### Goal
 
 The goal of this project is to automatically generate SDKs for Nhost based on the API schema. This will ensure that the SDKs are always up-to-date and consistent with the API.
 
-In addition, we want to make sure that our SDKs are easy to use and understand and that can be extended easily to accomodate different environments. This is specially important in the Javascript/Typescript SDKs as those need to run across a variety of environments (Node.js, React Native, Browser).
+In addition, we want to make sure that our SDKs are easy to use and understand and that can be extended easily to accommodate different environments. This is specially important in the Javascript/Typescript SDKs as those need to run across a variety of environments (Node.js, React Native, Browser).
 
 ## Objectives
 
