@@ -1,0 +1,21 @@
+table:
+  name: attachments
+  schema: public
+configuration:
+  column_config:
+    task_id:
+      custom_name: taskID
+  custom_column_names:
+    task_id: taskID
+  custom_root_fields:
+    delete: deleteAttachments
+    delete_by_pk: deleteAttachment
+    insert: insertAttachments
+    insert_one: insertAttachment
+    select: attachments
+    select_aggregate: attachmentsAggregate
+    select_by_pk: attachment
+    select_stream: attachmentsStream
+    update: updateAttachments
+    update_by_pk: updateAttachment
+    update_many: updateAttachmentsMany
