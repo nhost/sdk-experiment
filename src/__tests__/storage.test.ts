@@ -1,6 +1,8 @@
-import { createApiClient as createAuthClient } from '../auth/auth';
-import { createApiClient as createStorageClient } from '../storage/storage';
+import { createApiClient as createAuthClient } from '../auth/client';
+import { createApiClient as createStorageClient } from '../storage/client';
 import { createTokenRefreshInterceptor } from '../auth/token-interceptor';
+import { createSessionResponseInterceptor } from '../auth/response-interceptor';
+import { MemoryStorage } from '../auth/storage';
 
 // Configure axios for testing
 
@@ -8,14 +10,28 @@ describe('Nhost - Sign Up with Email and Password and upload file', () => {
   const nhostAuth = createAuthClient({baseURL: "https://local.auth.local.nhost.run/v1"});
   const nhostStorage = createStorageClient({baseURL: "https://local.storage.local.nhost.run/v1"});
 
-  // Create a unique email for each test run to avoid conflicts
-  const uniqueEmail = `test-${Date.now()}@example.com`;
-  const password = 'password123';
+  const memoryStorage = new MemoryStorage();
+  const tokenRefreshInterceptor = createTokenRefreshInterceptor(
+    nhostAuth,
+    {
+      storage: memoryStorage,
+      storageKey: 'test-session-key',
+    }
+  );
+  tokenRefreshInterceptor(nhostStorage.axios);
+
+  const responseInterceptor = createSessionResponseInterceptor({
+    storage: memoryStorage,
+    storageKey: 'test-session-key'
+  });
+  responseInterceptor(nhostAuth.axios);
+
 
   it('should sign up a user with email and password and upload file', async () => {
-    const response = await nhostAuth.signupEmailPassword({
-        email: uniqueEmail,
-        password: password,
+    // magic
+    await nhostAuth.signupEmailPassword({
+        email: `test-${Date.now()}@example.com`,
+        password: "password123",
         options: {
             displayName: 'Test User',
             locale: 'en',
@@ -27,26 +43,8 @@ describe('Nhost - Sign Up with Email and Password and upload file', () => {
         }
     });
 
-    // Check if we have a valid session
-    if (!response.data.session) {
-      throw new Error('Failed to sign up: No session returned');
-    }
 
-    // Create token refresh interceptor with the session from the signup response
-    const tokenRefreshInterceptor = createTokenRefreshInterceptor(
-      nhostAuth,
-      response.data.session,
-    );
-
-    // Apply the interceptor to the storage client
-    tokenRefreshInterceptor(nhostStorage.axios);
-
-    // create a blob with random data
-    const blob = new Blob([new Uint8Array(1024)], { type: 'application/octet-stream' });
-
-    // generate random uuid
     const uuid = crypto.randomUUID();
-
     const fileUploadResponse = await nhostStorage.postFiles({
         "bucket-id": "default",
         "metadata[]": [
@@ -57,7 +55,7 @@ describe('Nhost - Sign Up with Email and Password and upload file', () => {
             },
         ],
         "file[]": [
-            blob,
+            new Blob([new Uint8Array(1024)], { type: 'application/octet-stream' }),
         ]
     })
 

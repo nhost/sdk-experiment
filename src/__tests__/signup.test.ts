@@ -1,4 +1,4 @@
-import { createApiClient, SignUpEmailPasswordRequest } from '../auth/auth';
+import { createApiClient, SignUpEmailPasswordRequest } from '../auth/client';
 
 // Configure axios for testing
 

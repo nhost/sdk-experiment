@@ -44,7 +44,7 @@ module.exports = {
             target: '../api/auth.yaml',
         },
         output: {
-            target: '../src/auth/auth.ts',
+            target: '../src/auth/client.ts',
             client: createAxiosClient,
         },
     },
@@ -53,7 +53,7 @@ module.exports = {
             target: '../api/storage.yaml',
         },
         output: {
-            target: '../src/storage/storage.ts',
+            target: '../src/storage/client.ts',
             client: createAxiosClient,
         },
     },
