@@ -1,6 +1,53 @@
 import { AxiosInstance } from 'axios';
 import { createApiClient, Session } from './client';
 import { StorageInterface, detectStorage, DEFAULT_SESSION_KEY } from './storage';
+import axios from 'axios';
+
+/**
+ * Extracts the expiration time from a JWT token
+ * @param token - JWT token string
+ * @returns Expiration timestamp in milliseconds, or 0 if unable to extract
+ */
+export const extractTokenExpiration = (token: string): number => {
+  try {
+    // JWT tokens are in the format header.payload.signature
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      console.warn('Token does not have three parts');
+      return 0;
+    }
+
+    // Decode the payload (middle part)
+    // Base64Url decode to JSON
+    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    
+    try {
+      const jsonPayload = decodeURIComponent(
+        window.atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      
+      const payload = JSON.parse(jsonPayload);
+
+      if (payload.exp) {
+        // exp claim is in seconds, convert to milliseconds
+        const expTime = payload.exp * 1000;        
+        return expTime;
+      } else {
+        console.warn('No exp claim found in token');
+        return 0;
+      }
+    } catch (e) {
+      console.warn('Error decoding token payload:', e);
+      return 0;
+    }
+  } catch (error) {
+    console.warn('Failed to extract token expiration:', error);
+    return 0;
+  }
+};
 
 /**
  * Options for token refresh interceptor
@@ -32,6 +79,10 @@ export const createTokenRefreshInterceptor = (
 
   // Try to load session from storage
   let currentSession: Session | null = null;
+  
+  // Get the base URL for token refresh requests
+  // Assuming authClient.axios is the axios instance used by the client
+  const authBaseUrl = authClient.axios.defaults.baseURL;
 
   // Helper to persist session to storage
   const saveSessionToStorage = (session: Session): void => {
@@ -47,6 +98,9 @@ export const createTokenRefreshInterceptor = (
   let tokenExpiresAt = 0;
 
   return (axiosInstance: AxiosInstance): void => {
+    // Create a clean axios instance without interceptors for token refresh
+    const cleanAxios = axios.create();
+    
     axiosInstance.interceptors.request.use(
       async (config) => {
         config.headers = config.headers || {};
@@ -64,7 +118,7 @@ export const createTokenRefreshInterceptor = (
               // Always use stored session if it has valid tokens
               if (parsedSession.accessToken && parsedSession.refreshToken) {
                 currentSession = parsedSession;
-                tokenExpiresAt = Date.now() + (currentSession.accessTokenExpiresIn * 1000);
+                tokenExpiresAt = extractTokenExpiration(currentSession.accessToken);
               }
             }
           } catch (error) {
@@ -77,22 +131,35 @@ export const createTokenRefreshInterceptor = (
           }
 
           const currentTime = Date.now();
-
+          
           // Check if token is expired or about to expire (within marginSeconds)
           if (tokenExpiresAt - currentTime < marginSeconds * 1000) {
             // Token is about to expire, refresh it
-            if (currentSession.refreshToken) {
-              const refreshResponse = await authClient.postToken({
-                refreshToken: currentSession.refreshToken
-              });
+            if (currentSession && currentSession.refreshToken) {              
+              try {
+                // we use a clean axios instance to avoid infinite loops
+                // due to the interceptor itself
+                const refreshResponse = await cleanAxios.request({
+                  method: 'post',
+                  url: authBaseUrl + '/token',
+                  data: {
+                    refreshToken: currentSession.refreshToken
+                  },
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                });
 
-              if (refreshResponse.data) {
-                // Update the current session with new tokens
-                currentSession = refreshResponse.data;
-                // Update the expiration time based on accessTokenExpiresIn
-                tokenExpiresAt = Date.now() + (currentSession.accessTokenExpiresIn * 1000);
-                // Persist the updated session
-                saveSessionToStorage(currentSession);
+                if (refreshResponse.data) {
+                  // Make sure response data has the right shape before updating
+                  const sessionData = refreshResponse.data as Session;
+                  currentSession = sessionData;
+                  // Update expiration time for the new token
+                  tokenExpiresAt = extractTokenExpiration(sessionData.accessToken);
+                  saveSessionToStorage(sessionData);
+                }
+              } catch (error) {
+                console.error('Error refreshing token:', error);
               }
             }
           }
