@@ -1,54 +1,58 @@
 import { createApiClient as createAuthClient } from './auth/client';
 import { createApiClient as createStorageClient } from './storage/client';
-import { 
-  StorageInterface, 
-  detectStorage, 
+import {
+  StorageInterface,
+  detectStorage,
   DEFAULT_SESSION_KEY,
   BrowserStorage,
   MemoryStorage
 } from './auth/storage';
-import { 
-  createTokenRefreshInterceptor 
+import {
+  createTokenRefreshInterceptor
 } from './auth/token-interceptor';
-import { 
-  createSessionResponseInterceptor 
+import {
+  createSessionResponseInterceptor
 } from './auth/response-interceptor';
+import { Session } from './auth/client';
 
 // Re-export storage utilities
-export { 
-  StorageInterface, 
-  BrowserStorage, 
-  MemoryStorage, 
-  detectStorage, 
-  DEFAULT_SESSION_KEY 
+export {
+  StorageInterface,
+  BrowserStorage,
+  MemoryStorage,
+  detectStorage,
+  DEFAULT_SESSION_KEY
 };
+
+// Re-export Session type
+export { Session };
 
 export interface NhostClientOptions {
   /**
    * Nhost project subdomain (e.g., 'abcdefgh')
    */
   subdomain?: string;
-  
+
   /**
    * Nhost region (e.g., 'eu-central-1')
    */
   region?: string;
-  
+
   /**
    * Complete base URL for the auth service (overrides subdomain/region)
    */
   authUrl?: string;
-  
+
   /**
    * Complete base URL for the storage service (overrides subdomain/region)
    */
   storageUrl?: string;
-  
+
   /**
    * Storage implementation to use for session persistence
    */
   storage?: StorageInterface;
-  
+
   /**
    * Key to use for storing session data
    */
@@ -58,7 +62,9 @@ export interface NhostClientOptions {
 export class NhostClient {
   auth: ReturnType<typeof createAuthClient>;
   storage: ReturnType<typeof createStorageClient>;
-  
+  private _storage: StorageInterface;
+  private _storageKey: string;
+
   /**
    * Create a new Nhost client
    * @param options - Configuration options for the client
@@ -72,6 +78,10 @@ export class NhostClient {
       storage = detectStorage(),
       storageKey = DEFAULT_SESSION_KEY,
     } = options;
+
+    // Store storage references for future use
+    this._storage = storage;
+    this._storageKey = storageKey;
 
     // Determine base URLs
     let authBaseUrl: string;
@@ -114,7 +124,7 @@ export class NhostClient {
         storageKey
       }
     );
-    
+
     const sessionResponseInterceptor = createSessionResponseInterceptor({
       storage,
       storageKey
@@ -125,6 +135,22 @@ export class NhostClient {
     tokenRefreshInterceptor(this.storage.axios);
     sessionResponseInterceptor(this.auth.axios);
   }
+
+  /**
+   * Get the current session from storage
+   * @returns The current session or null if no session exists
+   */
+  getUserSession(): Session | null {
+    try {
+      const storedSession = this._storage.getItem(this._storageKey);
+      if (storedSession) {
+        return JSON.parse(storedSession) as Session;
+      }
+    } catch (error) {
+      console.warn('Failed to get session from storage:', error);
+    }
+    return null;
+  }
 }
 
 /**
@@ -134,4 +160,4 @@ export class NhostClient {
  */
 export function createClient(options: NhostClientOptions = {}): NhostClient {
   return new NhostClient(options);
-} 
+}

@@ -1,5 +1,4 @@
 import { createClient } from '../index';
-import { MemoryStorage } from '../auth/storage';
 
 // Configure axios for testing
 
@@ -24,7 +23,6 @@ describe('Nhost - Sign Up with Email and Password and upload file', () => {
             }
         }
     });
-
 
     const uuid = crypto.randomUUID();
     const fileUploadResponse = await nhost.storage.postFiles({
@@ -72,5 +70,14 @@ describe('Nhost - Sign Up with Email and Password and upload file', () => {
     expect(fileUploadResponse.data.processedFiles?.[0]?.size).toBe(1024);
     expect(fileUploadResponse.data.processedFiles?.[0]?.updatedAt).toBeDefined();
     expect(fileUploadResponse.data.processedFiles?.[0]?.uploadedByUserId).toBeDefined();
+
+    const session = nhost.getUserSession()
+    expect(session).toBeDefined();
+    expect(session?.user?.id).toBeDefined();
+    expect(session?.user?.email).toBeDefined();
+    expect(session?.user?.displayName).toBeDefined();
+    expect(session?.user?.avatarUrl).toBeDefined();
+    expect(session?.user?.defaultRole).toBeDefined();
+    expect(session?.user?.roles).toBeDefined();
   });
 });

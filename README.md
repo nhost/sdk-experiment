@@ -121,6 +121,14 @@ async function uploadFile(file: Blob) {
   
   console.log('Uploaded file:', response.data.processedFiles?.[0]);
 }
+
+// Get the current session
+const session = nhost.getSession();
+if (session) {
+  console.log('User is signed in:', session.user);
+} else {
+  console.log('No active session, user is not signed in');
+}
 ```
 
 ### Configuration Options
@@ -173,6 +181,12 @@ Creates a new Nhost client instance.
 |----------|-------------|
 | `auth` | Authentication client instance |
 | `storage` | Storage client instance |
+
+### Client Methods
+
+| Method | Description |
+|--------|-------------|
+| `getSession()` | Returns the current session from storage or null if no session exists |
 
 ## License
 
