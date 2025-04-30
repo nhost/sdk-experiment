@@ -13,7 +13,7 @@ interface StorageFile {
 }
 
 export function UploadFiles() {
-  const { nhost, session } = useNhost();
+  const { nhost } = useNhost();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -24,6 +24,7 @@ export function UploadFiles() {
   const [error, setError] = useState<string | null>(null);
   const [files, setFiles] = useState<StorageFile[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [viewingFile, setViewingFile] = useState<string | null>(null);
   
   // GraphQL query to fetch files
   const fetchFiles = async () => {
@@ -64,6 +65,94 @@ export function UploadFiles() {
   useEffect(() => {
     fetchFiles();
   }, []);
+
+  // Function to handle viewing a file with proper authorization
+  const handleViewFile = async (fileId: string, fileName: string, mimeType: string) => {
+    setViewingFile(fileId);
+    
+    try {
+      // Properly use the SDK with responseType: 'blob'
+      const response = await nhost.storage.getFilesId(fileId, {}, {
+        responseType: 'blob'
+      });
+      
+      // The response.data is already a Blob, but need to cast for TypeScript
+      const blob = response.data as Blob;
+      
+      // Create a URL for the blob
+      const url = URL.createObjectURL(blob);
+      
+      // Open the file in a new tab with appropriate handling based on file type
+      const newWindow = window.open('', '_blank');
+      
+      if (!newWindow) {
+        throw new Error('Failed to open new window. Please check your popup blocker settings.');
+      }
+      
+      // Show loading message
+      newWindow.document.write('<html><body><h2>Processing file...</h2></body></html>');
+      
+      // Handle different file types appropriately
+      if (mimeType.startsWith('image/')) {
+        // For images, display in the window
+        newWindow.document.write(`
+          <html>
+          <head>
+            <title>${fileName}</title>
+          </head>
+          <body style="margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+            <img src="${url}" alt="${fileName}" style="max-width: 100%; max-height: 100vh;">
+          </body>
+          </html>
+        `);
+      } else if (mimeType === 'application/pdf') {
+        // For PDFs, redirect to the blob URL
+        newWindow.location.href = url;
+      } else if (mimeType.startsWith('text/')) {
+        // For text files, read and display the content
+        const text = await (blob as Blob).text();
+        newWindow.document.write(`
+          <html>
+          <head>
+            <title>${fileName}</title>
+            <style>
+              pre { white-space: pre-wrap; word-wrap: break-word; padding: 20px; }
+            </style>
+          </head>
+          <body>
+            <pre>${text}</pre>
+          </body>
+          </html>
+        `);
+      } else {
+        // For other file types, trigger download
+        newWindow.document.write(`
+          <html>
+          <head>
+            <title>File Download</title>
+          </head>
+          <body>
+            <h2>Downloading file: ${fileName}</h2>
+            <p>Your download should begin automatically. If it doesn't, <a href="${url}" download="${fileName}">click here</a>.</p>
+          </body>
+          </html>
+        `);
+        
+        // Create a download link
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (err: any) {
+      setError(`Failed to view file: ${err.message}`);
+      console.error('Error viewing file:', err);
+    } finally {
+      setViewingFile(null);
+    }
+  };
   
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -202,14 +291,13 @@ export function UploadFiles() {
                     <td>{formatFileSize(file.size)}</td>
                     <td>{file.mimeType}</td>
                     <td>
-                      <a
-                        href={`${nhost.storage.axios.defaults.baseURL}/files/${file.id}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => handleViewFile(file.id, file.name, file.mimeType)}
+                        disabled={viewingFile === file.id}
                         className="view-button"
                       >
-                        View
-                      </a>
+                        {viewingFile === file.id ? 'Loading...' : 'View'}
+                      </button>
                     </td>
                   </tr>
                 ))}

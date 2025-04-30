@@ -114,8 +114,15 @@ a:hover {
   border-radius: 4px;
   text-decoration: none;
   font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
 }
 
 .view-button:hover {
   background-color: #3a78e0;
+}
+
+.view-button:disabled {
+  background-color: #a4c0f4;
+  cursor: not-allowed;
 }
