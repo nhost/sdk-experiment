@@ -64,6 +64,7 @@ insert_permissions:
         - mime_type
         - name
         - size
+        - uploaded_by_user_id
     comment: ""
 select_permissions:
   - role: user

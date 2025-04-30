@@ -1,0 +1,23 @@
+{
+  "name": "nhost-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.9.0",
+  "dependencies": {
+    "axios": "^1.9.0"
+  },
+  "devDependencies": {
+	"@orval/axios": "^7.9.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.15.3",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.2"
+  }
+}

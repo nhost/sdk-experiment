@@ -44,6 +44,8 @@
           default = nixops-lib.go.devShell {
             buildInputs = with pkgs; [
               nhost-cli
+              nodejs
+              pnpm
             ] ++ checkDeps ++ buildInputs ++ nativeBuildInputs;
           };
         };
