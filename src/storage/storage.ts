@@ -30,7 +30,7 @@ export interface FileMetadata {
   name?: string;
   size?: number;
   bucketId?: string;
-  eTag?: string;
+  etag?: string;
   createdAt?: string;
   updatedAt?: string;
   isUploaded?: boolean;
@@ -79,7 +79,7 @@ export type PostFilesBody = {
 };
 
 export type PostFiles201 = {
-  ProcessedFiles?: FileMetadata[];
+  processedFiles?: FileMetadata[];
 };
 
 export type HeadFilesIdParams = {
@@ -411,7 +411,7 @@ const postOpsListNotUploaded = <TData = AxiosResponse<PostOpsListNotUploaded200>
     );
   }
 
-return {getOpenapiYaml,getVersion,postFiles,headFilesId,getFilesId,putFilesId,deleteFilesId,getFilesIdPresignedurl,getFilesIdPresignedurlContents,postOpsListOrphans,postOpsDeleteOrphans,postOpsListBrokenMetadata,postOpsDeleteBrokenMetadata,postOpsListNotUploaded}};
+return {getOpenapiYaml,getVersion,postFiles,headFilesId,getFilesId,putFilesId,deleteFilesId,getFilesIdPresignedurl,getFilesIdPresignedurlContents,postOpsListOrphans,postOpsDeleteOrphans,postOpsListBrokenMetadata,postOpsDeleteBrokenMetadata,postOpsListNotUploaded, axios}};
 export type GetOpenapiYamlResult = AxiosResponse<GetOpenapiYaml200>
 export type GetVersionResult = AxiosResponse<VersionInformation>
 export type PostFilesResult = AxiosResponse<PostFiles201>

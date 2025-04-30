@@ -57,7 +57,7 @@ components:
           type: number
         bucketId:
           type: string
-        eTag:
+        etag:
           type: string
         createdAt:
           type: string
@@ -173,7 +173,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  ProcessedFiles:
+                  processedFiles:
                     type: array
                     items:
                       $ref: '#/components/schemas/FileMetadata'

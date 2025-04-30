@@ -34,6 +34,21 @@ describe('Nhost Auth - Sign Up with Email and Password', () => {
     // generate random uuid
     const uuid = crypto.randomUUID();
 
+    const axiosInstance = nhostStorage.axios;
+    axiosInstance.interceptors.request.use(
+      config => {
+        config.headers = config.headers || {};
+
+        if (!config.headers['Authorization']) {
+          config.headers['Authorization'] = `Bearer ${response.data.session?.accessToken}`;
+        }
+
+        return config;
+      },
+      error => {
+        return Promise.reject(error);
+      }
+    );
 
     const fileUploadResponse = await nhostStorage.postFiles({
         "bucket-id": "default",
@@ -47,12 +62,38 @@ describe('Nhost Auth - Sign Up with Email and Password', () => {
         "file[]": [
             blob,
         ]
-    }, {
-        headers: {
-            "Authorization": `Bearer ${response.data.session?.accessToken}`,
-        }
     })
 
-    expect(fileUploadResponse.data).toStrictEqual({});
+    // test the object is like {
+    // +   "processedFiles": Array [
+    // +     Object {
+    // +       "bucketId": "default",
+    // +       "createdAt": "2025-04-30T07:22:31.793621+00:00",
+    // +       "etag": "\"0f343b0931126a20f133d67c2b018a3b\"",
+    // +       "id": "b7cbc4e2-ecf1-465a-83a6-615df794c83c",
+    // +       "isUploaded": true,
+    // +       "metadata": Object {
+    // +         "key": "value",
+    // +       },
+    // +       "mimeType": "application/octet-stream",
+    // +       "name": "test",
+    // +       "size": 1024,
+    // +       "updatedAt": "2025-04-30T07:22:31.800545+00:00",
+    // +       "uploadedByUserId": "",
+    // +     },
+    // +   ],
+    // + }
+    expect(fileUploadResponse.data.processedFiles).toBeDefined();
+    expect(fileUploadResponse.data.processedFiles?.[0]?.bucketId).toBe('default');
+    expect(fileUploadResponse.data.processedFiles?.[0]?.createdAt).toBeDefined();
+    expect(fileUploadResponse.data.processedFiles?.[0]?.etag).toBeDefined();
+    expect(fileUploadResponse.data.processedFiles?.[0]?.id).toBe(uuid);
+    expect(fileUploadResponse.data.processedFiles?.[0]?.isUploaded).toBe(true);
+    expect(fileUploadResponse.data.processedFiles?.[0]?.metadata).toEqual({"key": "value"});
+    expect(fileUploadResponse.data.processedFiles?.[0]?.mimeType).toBe('application/octet-stream');
+    expect(fileUploadResponse.data.processedFiles?.[0]?.name).toBe('test');
+    expect(fileUploadResponse.data.processedFiles?.[0]?.size).toBe(1024);
+    expect(fileUploadResponse.data.processedFiles?.[0]?.updatedAt).toBeDefined();
+    expect(fileUploadResponse.data.processedFiles?.[0]?.uploadedByUserId).toBeDefined();
   });
 });

@@ -798,7 +798,7 @@ const getMfaTotpGenerate = <TData = AxiosResponse<TotpGenerateResponse>>(
     );
   }
 
-return {headHealthz,getHealthz,getWellKnownJwksJson,postPat,postToken,postSigninAnonymous,signinEmailPassword,postSigninMfaTotp,postSigninPasswordlessEmail,postSigninOtpEmail,postSigninOtpEmailVerify,postSigninPat,postSigninIdtoken,signupEmailPassword,postSigninWebauthn,postSigninWebauthnVerify,postSignupWebauthn,postSignupWebauthnVerify,postLinkIdtoken,postUserDeanonymize,postUserEmailChange,postUserEmailSendVerificationEmail,postUserPassword,postUserPasswordReset,getVerify,getVersion,postUserMfa,getMfaTotpGenerate}};
+return {headHealthz,getHealthz,getWellKnownJwksJson,postPat,postToken,postSigninAnonymous,signinEmailPassword,postSigninMfaTotp,postSigninPasswordlessEmail,postSigninOtpEmail,postSigninOtpEmailVerify,postSigninPat,postSigninIdtoken,signupEmailPassword,postSigninWebauthn,postSigninWebauthnVerify,postSignupWebauthn,postSignupWebauthnVerify,postLinkIdtoken,postUserDeanonymize,postUserEmailChange,postUserEmailSendVerificationEmail,postUserPassword,postUserPasswordReset,getVerify,getVersion,postUserMfa,getMfaTotpGenerate, axios}};
 export type HeadHealthzResult = AxiosResponse<void>
 export type GetHealthzResult = AxiosResponse<OKResponse>
 export type GetWellKnownJwksJsonResult = AxiosResponse<JWKSet>

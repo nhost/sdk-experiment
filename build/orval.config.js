@@ -1,4 +1,4 @@
-const { builder } = require('@orval/axios');
+const { builder, generateAxiosFooter } = require('@orval/axios');
 
 const createAxiosClient = () => {
     const axiosBuilder = builder({ type: 'axios' })();
@@ -28,13 +28,13 @@ const createAxiosClient = () => {
   const axios = Axios.create(config);
 `;
         },
-        // footer: (params) => {
-        //     const result = generateAxiosFooter(params);
-        //     return result.replace(
-        //         /return {(.+?)}/,
-        //         (_, captured) => `return {${captured}, axios}`
-        //     ) + '\n};';
-        // },
+        footer: (params) => {
+            const result = generateAxiosFooter(params);
+            return result.replace(
+                /return {(.+?)}/,
+                (_, captured) => `return {${captured}, axios}`
+            );
+        },
     };
 };
 
