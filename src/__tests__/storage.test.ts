@@ -1,6 +1,7 @@
 import { exit } from 'process';
 import { createApiClient as createAuthClient } from '../auth/auth';
 import { createApiClient as createStorageClient } from '../storage/storage';
+import { createTokenRefreshInterceptor } from '../auth/token-interceptor';
 
 // Configure axios for testing
 
@@ -28,27 +29,26 @@ describe('Nhost Auth - Sign Up with Email and Password', () => {
         }
     });
 
+    // Check if we have a valid session
+    if (!response.data.session) {
+      throw new Error('Failed to sign up: No session returned');
+    }
+
+    // Create token refresh interceptor with the session from the signup response
+    const tokenRefreshInterceptor = createTokenRefreshInterceptor(
+      nhostAuth,
+      response.data.session,
+      60 // 60 seconds margin before expiration
+    );
+
+    // Apply the interceptor to the storage client
+    tokenRefreshInterceptor(nhostStorage.axios);
+
     // create a blob with random data
     const blob = new Blob([new Uint8Array(1024)], { type: 'application/octet-stream' });
 
     // generate random uuid
     const uuid = crypto.randomUUID();
-
-    const axiosInstance = nhostStorage.axios;
-    axiosInstance.interceptors.request.use(
-      config => {
-        config.headers = config.headers || {};
-
-        if (!config.headers['Authorization']) {
-          config.headers['Authorization'] = `Bearer ${response.data.session?.accessToken}`;
-        }
-
-        return config;
-      },
-      error => {
-        return Promise.reject(error);
-      }
-    );
 
     const fileUploadResponse = await nhostStorage.postFiles({
         "bucket-id": "default",
