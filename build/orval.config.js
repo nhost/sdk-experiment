@@ -1,4 +1,42 @@
-const { builder, generateAxiosFooter } = require('@orval/axios');
+const { builder } = require('@orval/axios');
+
+const createAxiosClient = () => {
+    const axiosBuilder = builder({ type: 'axios' })();
+    return {
+        ...axiosBuilder,
+        dependencies: () => {
+            // https://github.com/orval-labs/orval/blob/a154264719ccc49b3ab95dadbb3d62513110d8c3/packages/axios/src/index.ts#L22
+            return [
+                {
+                    exports: [
+                        {
+                            name: 'Axios',
+                            default: true,
+                            values: true,
+                            syntheticDefaultImport: true,
+                        },
+                        { name: 'AxiosRequestConfig' },
+                        { name: 'AxiosResponse' },
+                        { name: 'CreateAxiosDefaults' },
+                    ],
+                    dependency: 'axios',
+                },
+            ];
+        },
+        header: () => {
+            return `export const createApiClient = (config?: CreateAxiosDefaults) => {
+  const axios = Axios.create(config);
+`;
+        },
+        // footer: (params) => {
+        //     const result = generateAxiosFooter(params);
+        //     return result.replace(
+        //         /return {(.+?)}/,
+        //         (_, captured) => `return {${captured}, axios}`
+        //     ) + '\n};';
+        // },
+    };
+};
 
 module.exports = {
     'auth': {
@@ -7,43 +45,7 @@ module.exports = {
         },
         output: {
             target: '../src/auth/auth.ts',
-            client: () => {
-                const axiosBuilder = builder({ type: 'axios' })();
-                return {
-                    ...axiosBuilder,
-                    dependencies: () => {
-                        // https://github.com/orval-labs/orval/blob/a154264719ccc49b3ab95dadbb3d62513110d8c3/packages/axios/src/index.ts#L22
-                        return [
-                            {
-                                exports: [
-                                    {
-                                        name: 'Axios',
-                                        default: true,
-                                        values: true,
-                                        syntheticDefaultImport: true,
-                                    },
-                                    { name: 'AxiosRequestConfig' },
-                                    { name: 'AxiosResponse' },
-                                    { name: 'CreateAxiosDefaults' },
-                                ],
-                                dependency: 'axios',
-                            },
-                        ];
-                    },
-                    header: () => {
-                        return `export const createApiClient = (config?: CreateAxiosDefaults) => {
-  const axios = Axios.create(config);
-`;
-                    },
-                    // footer: (params) => {
-                    //     const result = generateAxiosFooter(params);
-                    //     return result.replace(
-                    //         /return {(.+?)}/,
-                    //         (_, captured) => `return {${captured}, axios}`
-                    //     ) + '\n};';
-                    // },
-                };
-            },
+            client: createAxiosClient,
         },
     },
     'storage': {
@@ -52,43 +54,7 @@ module.exports = {
         },
         output: {
             target: '../src/storage/storage.ts',
-            client: () => {
-                const axiosBuilder = builder({ type: 'axios' })();
-                return {
-                    ...axiosBuilder,
-                    dependencies: () => {
-                        // https://github.com/orval-labs/orval/blob/a154264719ccc49b3ab95dadbb3d62513110d8c3/packages/axios/src/index.ts#L22
-                        return [
-                            {
-                                exports: [
-                                    {
-                                        name: 'Axios',
-                                        default: true,
-                                        values: true,
-                                        syntheticDefaultImport: true,
-                                    },
-                                    { name: 'AxiosRequestConfig' },
-                                    { name: 'AxiosResponse' },
-                                    { name: 'CreateAxiosDefaults' },
-                                ],
-                                dependency: 'axios',
-                            },
-                        ];
-                    },
-                    header: () => {
-                        return `export const createApiClient = (config?: CreateAxiosDefaults) => {
-  const axios = Axios.create(config);
-`;
-                    },
-                    // footer: (params) => {
-                    //     const result = generateAxiosFooter(params);
-                    //     return result.replace(
-                    //         /return {(.+?)}/,
-                    //         (_, captured) => `return {${captured}, axios}`
-                    //     ) + '\n};';
-                    // },
-                };
-            },
+            client: createAxiosClient,
         },
     },
 };
