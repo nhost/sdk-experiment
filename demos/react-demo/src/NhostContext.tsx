@@ -1,18 +1,12 @@
 import { createClient, NhostClient, Session } from 'nhost-js';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
-// Extend NhostClient to add a signout method to the auth property
-interface ExtendedNhostClient extends NhostClient {
-  auth: ReturnType<typeof createClient>['auth'] & {
-    signout: () => Promise<void>;
-  };
-}
-
 interface NhostContextType {
-  nhost: ExtendedNhostClient;
+  nhost: NhostClient;
   session: Session | null;
   loading: boolean;
   refreshSession: () => void;
+  signout: () => void;
 }
 
 const NhostContext = createContext<NhostContextType | undefined>(undefined);
@@ -26,29 +20,20 @@ export function NhostProvider({ children }: NhostProviderProps) {
   const [loading, setLoading] = useState(true);
 
   // Create Nhost client with region and subdomain set to local
-  const nhostClient = createClient({
+  const nhost = createClient({
     region: 'local',
     subdomain: 'local'
   });
-  
-  // Add a signout method to the auth client
-  const nhost = {
-    ...nhostClient,
-    auth: {
-      ...nhostClient.auth,
-      // Implement signout by directly removing the session from localStorage
-      signout: async () => {
-        // Remove the session from localStorage
-        localStorage.removeItem('nhostSession');
-        // Update state to reflect the user is logged out
-        setSession(null);
-      }
-    }
-  } as ExtendedNhostClient;
 
   const refreshSession = () => {
-    const currentSession = nhostClient.getUserSession();
+    const currentSession = nhost.getUserSession();
     setSession(currentSession);
+  };
+
+  // Simple signout function that clears localStorage and updates state
+  const signout = () => {
+    localStorage.removeItem('nhostSession');
+    setSession(null);
   };
 
   useEffect(() => {
@@ -61,7 +46,8 @@ export function NhostProvider({ children }: NhostProviderProps) {
     nhost,
     session,
     loading,
-    refreshSession
+    refreshSession,
+    signout
   };
 
   return <NhostContext.Provider value={value}>{children}</NhostContext.Provider>;

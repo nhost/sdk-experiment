@@ -1,5 +1,6 @@
 import { createApiClient as createAuthClient } from './auth/client';
 import { createApiClient as createStorageClient } from './storage/client';
+import { createApiClient as createGraphQLClient } from './graphql/client';
 import {
   StorageInterface,
   detectStorage,
@@ -14,6 +15,12 @@ import {
   createSessionResponseInterceptor
 } from './auth/response-interceptor';
 import type { Session } from './auth/client';
+import type {
+  GraphQLRequest,
+  GraphQLResponse,
+  GraphQLVariables,
+  GraphQLError
+} from './graphql/client';
 
 // Re-export storage utilities
 export {
@@ -26,6 +33,34 @@ export { BrowserStorage, MemoryStorage };
 
 // Re-export types
 export type { StorageInterface, Session };
+
+// Re-export GraphQL types
+export type { GraphQLRequest, GraphQLResponse, GraphQLVariables, GraphQLError };
+
+/**
+ * Generates a base URL for a Nhost service based on configuration
+ * @param serviceType - Type of service (auth, storage, graphql)
+ * @param customUrl - Custom URL override if provided
+ * @param subdomain - Nhost project subdomain
+ * @param region - Nhost region
+ * @returns The base URL for the service
+ */
+export const generateServiceUrl = (
+  serviceType: 'auth' | 'storage' | 'graphql',
+  customUrl?: string,
+  subdomain?: string,
+  region?: string
+): string => {
+  if (customUrl) {
+    return customUrl;
+  } else if (subdomain && region) {
+    return `https://${subdomain}.${serviceType}.${region}.nhost.run/v1`;
+  } else if (subdomain) {
+    return `https://${subdomain}.${serviceType}.nhost.run/v1`;
+  } else {
+    return `https://local.${serviceType}.local.nhost.run/v1`;
+  }
+};
 
 export interface NhostClientOptions {
   /**
@@ -49,6 +84,11 @@ export interface NhostClientOptions {
   storageUrl?: string;
 
   /**
+   * Complete base URL for the GraphQL service (overrides subdomain/region)
+   */
+  graphqlUrl?: string;
+
+  /**
    * Storage implementation to use for session persistence
    */
   storage?: StorageInterface;
@@ -62,6 +102,7 @@ export interface NhostClientOptions {
 export class NhostClient {
   auth: ReturnType<typeof createAuthClient>;
   storage: ReturnType<typeof createStorageClient>;
+  graphql: ReturnType<typeof createGraphQLClient>;
   private _storage: StorageInterface;
   private _storageKey: string;
 
@@ -75,6 +116,7 @@ export class NhostClient {
       region,
       authUrl,
       storageUrl,
+      graphqlUrl,
       storage = detectStorage(),
       storageKey = DEFAULT_SESSION_KEY,
     } = options;
@@ -83,29 +125,10 @@ export class NhostClient {
     this._storage = storage;
     this._storageKey = storageKey;
 
-    // Determine base URLs
-    let authBaseUrl: string;
-    let storageBaseUrl: string;
-
-    if (authUrl) {
-      authBaseUrl = authUrl;
-    } else if (subdomain && region) {
-      authBaseUrl = `https://${subdomain}.auth.${region}.nhost.run/v1`;
-    } else if (subdomain) {
-      authBaseUrl = `https://${subdomain}.auth.nhost.run/v1`;
-    } else {
-      authBaseUrl = 'https://local.auth.local.nhost.run/v1';
-    }
-
-    if (storageUrl) {
-      storageBaseUrl = storageUrl;
-    } else if (subdomain && region) {
-      storageBaseUrl = `https://${subdomain}.storage.${region}.nhost.run/v1`;
-    } else if (subdomain) {
-      storageBaseUrl = `https://${subdomain}.storage.nhost.run/v1`;
-    } else {
-      storageBaseUrl = 'https://local.storage.local.nhost.run/v1';
-    }
+    // Determine base URLs for each service
+    const authBaseUrl = generateServiceUrl('auth', authUrl, subdomain, region);
+    const storageBaseUrl = generateServiceUrl('storage', storageUrl, subdomain, region);
+    const graphqlBaseUrl = generateServiceUrl('graphql', graphqlUrl, subdomain, region);
 
     // Create client instances
     this.auth = createAuthClient({
@@ -114,6 +137,10 @@ export class NhostClient {
 
     this.storage = createStorageClient({
       baseURL: storageBaseUrl
+    });
+
+    this.graphql = createGraphQLClient({
+      baseURL: graphqlBaseUrl
     });
 
     // Set up interceptors for authentication
@@ -130,9 +157,10 @@ export class NhostClient {
       storageKey
     });
 
-    // Apply interceptors to both clients
+    // Apply interceptors to all clients
     tokenRefreshInterceptor(this.auth.axios);
     tokenRefreshInterceptor(this.storage.axios);
+    tokenRefreshInterceptor(this.graphql.axios);
     sessionResponseInterceptor(this.auth.axios);
   }
 

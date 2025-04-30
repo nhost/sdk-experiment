@@ -1,21 +1,15 @@
-import { Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useNhost } from '../NhostContext';
 import { useState } from 'react';
 
 export function Profile() {
-  const { nhost, session, refreshSession } = useNhost();
+  const { session, signout } = useNhost();
   const [loading, setLoading] = useState(false);
-
-  // If not logged in, redirect to homepage
-  if (!session) {
-    return <Navigate to="/" />;
-  }
 
   const handleSignOut = async () => {
     setLoading(true);
     try {
-      await nhost.auth.signout();
-      refreshSession();
+      signout();
     } catch (err) {
       console.error('Error signing out:', err);
     } finally {
@@ -30,27 +24,27 @@ export function Profile() {
       <div className="profile-info">
         <div className="profile-detail">
           <strong>Display Name:</strong>
-          <span>{session.user?.displayName || 'Not set'}</span>
+          <span>{session?.user?.displayName || 'Not set'}</span>
         </div>
         
         <div className="profile-detail">
           <strong>Email:</strong>
-          <span>{session.user?.email || 'Not available'}</span>
+          <span>{session?.user?.email || 'Not available'}</span>
         </div>
         
         <div className="profile-detail">
           <strong>User ID:</strong>
-          <span>{session.user?.id || 'Not available'}</span>
+          <span>{session?.user?.id || 'Not available'}</span>
         </div>
         
         <div className="profile-detail">
           <strong>Roles:</strong>
-          <span>{session.user?.roles?.join(', ') || 'None'}</span>
+          <span>{session?.user?.roles?.join(', ') || 'None'}</span>
         </div>
         
         <div className="profile-detail">
           <strong>Email Verified:</strong>
-          <span>{session.user?.emailVerified ? 'Yes' : 'No'}</span>
+          <span>{session?.user?.emailVerified ? 'Yes' : 'No'}</span>
         </div>
       </div>
       
@@ -58,6 +52,9 @@ export function Profile() {
         <button onClick={handleSignOut} disabled={loading}>
           {loading ? 'Signing Out...' : 'Sign Out'}
         </button>
+        <Link to="/upload" className="button button-secondary">
+          Upload Files
+        </Link>
       </div>
       
       <div className="session-info">
@@ -65,8 +62,8 @@ export function Profile() {
         <pre>
           {JSON.stringify(
             {
-              refreshTokenId: session.refreshTokenId,
-              accessTokenExpiresIn: session.accessTokenExpiresIn
+              refreshTokenId: session?.refreshTokenId,
+              accessTokenExpiresIn: session?.accessTokenExpiresIn
             },
             null,
             2

@@ -79,5 +79,36 @@ describe('Nhost - Sign Up with Email and Password and upload file', () => {
     expect(session?.user?.avatarUrl).toBeDefined();
     expect(session?.user?.defaultRole).toBeDefined();
     expect(session?.user?.roles).toBeDefined();
+
+    const files = await nhost.graphql.query(
+      {
+        query: `
+          query GetFiles {
+            files {
+              id
+              name
+              size
+              mimeType
+              bucketId
+              uploadedByUserId
+            }
+          }
+        `
+      }
+    );
+    expect(files.data).toStrictEqual({
+           "data": {
+             "files":  [
+               {
+                 "bucketId": "default",
+                 "id": "d977cb9b-ae11-47c8-9c88-826b809bddc1",
+                 "mimeType": "application/octet-stream",
+                 "name": "test",
+                 "size": 1024,
+                 "uploadedByUserId": "60ff31f4-78d7-405d-b700-98315732c30a",
+               },
+             ],
+          }
+    })
   });
 });

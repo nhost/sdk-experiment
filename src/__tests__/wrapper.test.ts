@@ -27,7 +27,7 @@ describe('NhostClient', () => {
   it('should create client with default options', () => {
     const client = createClient();
     expect(client).toBeInstanceOf(NhostClient);
-    expect(axios.create).toHaveBeenCalledTimes(2);
+    expect(axios.create).toHaveBeenCalledTimes(3);
 
     // Check default URLs
     expect(axios.create).toHaveBeenCalledWith({

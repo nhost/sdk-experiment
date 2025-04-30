@@ -196,6 +196,7 @@ body {
   margin-top: 2rem;
   display: flex;
   justify-content: center;
+  gap: 1rem;
 }
 
 .profile-actions button {
@@ -234,4 +235,75 @@ body {
   color: var(--text-dark);
   background-color: var(--bg-card);
   padding: 0.5rem;
+}
+
+.button-secondary {
+  background-color: #4b5563;
+  color: var(--text-light);
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.button-secondary:hover {
+  background-color: #374151;
+}
+
+.content-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-light);
+  box-shadow: 0 4px 6px var(--shadow-color);
+}
+
+.selected-file {
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.button-disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.error-message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 4px;
+  color: var(--danger-color);
+}
+
+.success-message {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #dcfce7;
+  border: 1px solid #bbf7d0;
+  border-radius: 4px;
+  color: #166534;
+}
+
+.file-details {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }

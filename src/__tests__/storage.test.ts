@@ -1,5 +1,6 @@
 import { createApiClient as createAuthClient } from '../auth/client';
 import { createApiClient as createStorageClient } from '../storage/client';
+import { createApiClient as createGraphqlClient } from '../graphql/client';
 import { createTokenRefreshInterceptor } from '../auth/token-interceptor';
 import { createSessionResponseInterceptor } from '../auth/response-interceptor';
 import { MemoryStorage } from '../auth/storage';
@@ -9,6 +10,7 @@ import { MemoryStorage } from '../auth/storage';
 describe('Nhost - Sign Up with Email and Password and upload file', () => {
   const nhostAuth = createAuthClient({baseURL: "https://local.auth.local.nhost.run/v1"});
   const nhostStorage = createStorageClient({baseURL: "https://local.storage.local.nhost.run/v1"});
+  const nhostGraphql  = createGraphqlClient({baseURL: "https://local.graphql.local.nhost.run/v1"});
 
   const memoryStorage = new MemoryStorage();
   const tokenRefreshInterceptor = createTokenRefreshInterceptor(
@@ -19,6 +21,7 @@ describe('Nhost - Sign Up with Email and Password and upload file', () => {
     }
   );
   tokenRefreshInterceptor(nhostStorage.axios);
+  tokenRefreshInterceptor(nhostGraphql.axios);
 
   const responseInterceptor = createSessionResponseInterceptor({
     storage: memoryStorage,
@@ -90,5 +93,37 @@ describe('Nhost - Sign Up with Email and Password and upload file', () => {
     expect(fileUploadResponse.data.processedFiles?.[0]?.size).toBe(1024);
     expect(fileUploadResponse.data.processedFiles?.[0]?.updatedAt).toBeDefined();
     expect(fileUploadResponse.data.processedFiles?.[0]?.uploadedByUserId).toBeDefined();
+
+    const files = await nhostGraphql.query(
+      {
+        query: `
+          query GetFiles {
+            files {
+              id
+              name
+              size
+              mimeType
+              bucketId
+              uploadedByUserId
+            }
+          }
+        `
+      }
+    );
+    expect(files.data).toStrictEqual({
+           "data": {
+             "files":  [
+               {
+                 "bucketId": "default",
+                 "id": "d977cb9b-ae11-47c8-9c88-826b809bddc1",
+                 "mimeType": "application/octet-stream",
+                 "name": "test",
+                 "size": 1024,
+                 "uploadedByUserId": "60ff31f4-78d7-405d-b700-98315732c30a",
+               },
+             ],
+          }
+    })
+
   });
 });
