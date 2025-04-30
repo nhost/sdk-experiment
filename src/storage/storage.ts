@@ -140,7 +140,7 @@ b?: number;
 export type PutFilesIdBody = {
   metadata?: UpdateFileMetadata;
   /** New contents of the file to upload. */
-  file?: unknown;
+  file?: Blob;
 };
 
 export type GetFilesIdPresignedurlContentsParams = {

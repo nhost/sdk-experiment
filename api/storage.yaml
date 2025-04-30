@@ -1,6 +1,4 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.0/schema.yaml
----
-openapi: 3.0.3
+openapi: "3.0.0"
 info:
   description: Hasura Storage is amazing
   version: 1.0.0
@@ -503,6 +501,8 @@ paths:
                   $ref: '#/components/schemas/UpdateFileMetadata'
                 file:
                   description: New contents of the file to upload.
+                  type: string
+                  format: binary
             encoding:
               file:
                 contentType: application/octet-stream
