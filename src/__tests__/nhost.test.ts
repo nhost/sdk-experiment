@@ -1,35 +1,17 @@
-import { createApiClient as createAuthClient } from '../auth/client';
-import { createApiClient as createStorageClient } from '../storage/client';
-import { createTokenRefreshInterceptor } from '../auth/token-interceptor';
-import { createSessionResponseInterceptor } from '../auth/response-interceptor';
+import { createClient } from '../index';
 import { MemoryStorage } from '../auth/storage';
 
 // Configure axios for testing
 
 describe('Nhost - Sign Up with Email and Password and upload file', () => {
-  const nhostAuth = createAuthClient({baseURL: "https://local.auth.local.nhost.run/v1"});
-  const nhostStorage = createStorageClient({baseURL: "https://local.storage.local.nhost.run/v1"});
-
-  const memoryStorage = new MemoryStorage();
-  const tokenRefreshInterceptor = createTokenRefreshInterceptor(
-    nhostAuth,
-    {
-      storage: memoryStorage,
-      storageKey: 'test-session-key',
-    }
-  );
-  tokenRefreshInterceptor(nhostStorage.axios);
-
-  const responseInterceptor = createSessionResponseInterceptor({
-    storage: memoryStorage,
-    storageKey: 'test-session-key'
+  const nhost = createClient({
+    subdomain: 'local',
+    region: 'local'
   });
-  responseInterceptor(nhostAuth.axios);
-
 
   it('should sign up a user with email and password and upload file', async () => {
     // magic
-    await nhostAuth.signupEmailPassword({
+    await nhost.auth.signupEmailPassword({
         email: `test-${Date.now()}@example.com`,
         password: "password123",
         options: {
@@ -45,7 +27,7 @@ describe('Nhost - Sign Up with Email and Password and upload file', () => {
 
 
     const uuid = crypto.randomUUID();
-    const fileUploadResponse = await nhostStorage.postFiles({
+    const fileUploadResponse = await nhost.storage.postFiles({
         "bucket-id": "default",
         "metadata[]": [
             {

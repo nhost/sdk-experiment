@@ -71,3 +71,109 @@ If you have any other ideas or suggestions, please open an issue and let us know
 ## Discord
 
 You can also join our Discord server to discuss the project and get involved in the development of the SDKs. You can join the server [here](https://discord.gg/ZUg87u5a). We have a sdk-experiment channel where we discuss the project and share updates.
+
+# Nhost Client Wrapper
+
+A simple wrapper around the Nhost authentication and storage clients. This library provides a unified interface to interact with Nhost services.
+
+## Features
+
+- Unified client for authentication and storage services
+- Automatic token refresh across all clients
+- Session persistence
+- Configurable storage backend
+- Support for custom URLs, subdomains, and regions
+
+## Installation
+
+```bash
+npm install @nhost/client
+```
+
+## Usage
+
+### Basic Usage
+
+```typescript
+import { createClient } from '@nhost/client';
+
+// Create a client instance with your Nhost subdomain
+const nhost = createClient({
+  subdomain: 'your-subdomain'
+});
+
+// Use the auth client
+async function signIn() {
+  const response = await nhost.auth.signinEmailPassword({
+    email: 'user@example.com',
+    password: 'password123'
+  });
+  
+  console.log('Signed in:', response.data.session?.user);
+}
+
+// Use the storage client
+async function uploadFile(file: Blob) {
+  const response = await nhost.storage.postFiles({
+    'bucket-id': 'default',
+    'file[]': [file]
+  });
+  
+  console.log('Uploaded file:', response.data.processedFiles?.[0]);
+}
+```
+
+### Configuration Options
+
+The client accepts the following configuration options:
+
+```typescript
+// Using subdomain and region
+const nhost = createClient({
+  subdomain: 'your-subdomain',
+  region: 'eu-central-1'
+});
+
+// Using custom URLs
+const nhost = createClient({
+  authUrl: 'https://custom.auth.example.com/v1',
+  storageUrl: 'https://custom.storage.example.com/v1'
+});
+
+// Using custom storage
+import { MemoryStorage } from '@nhost/client';
+
+const nhost = createClient({
+  subdomain: 'your-subdomain',
+  storage: new MemoryStorage(),
+  storageKey: 'custom-session-key'
+});
+```
+
+## API Reference
+
+### `createClient(options)`
+
+Creates a new Nhost client instance.
+
+#### Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `subdomain` | string | Nhost project subdomain |
+| `region` | string | Nhost region (e.g., 'eu-central-1') |
+| `authUrl` | string | Custom auth service URL (overrides subdomain/region) |
+| `storageUrl` | string | Custom storage service URL (overrides subdomain/region) |
+| `storage` | StorageInterface | Custom storage implementation |
+| `storageKey` | string | Custom key for storing session data |
+
+### Client Properties
+
+| Property | Description |
+|----------|-------------|
+| `auth` | Authentication client instance |
+| `storage` | Storage client instance |
+
+## License
+
+MIT
