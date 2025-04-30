@@ -2,9 +2,26 @@
   "name": "nhost-js",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/nhost-js.cjs.js",
+  "module": "./dist/nhost-js.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/nhost-js.es.js",
+      "require": "./dist/nhost-js.cjs.js",
+      "default": "./dist/nhost-js.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "generate": "pnpx orval@7.9.0 --config build/orval.config.js",
+    "prepublishOnly": "pnpm build"
   },
   "keywords": [],
   "author": "",
@@ -16,10 +33,15 @@
   },
   "devDependencies": {
     "@orval/axios": "^7.9.0",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.3",
     "@types/uuid": "^10.0.0",
     "jest": "^29.7.0",
-    "ts-jest": "^29.3.2"
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "terser": "^5.39.0",
+    "ts-jest": "^29.3.2",
+    "vite": "^6.3.4",
+    "vite-plugin-dts": "^4.5.3"
   }
 }

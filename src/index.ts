@@ -13,19 +13,19 @@ import {
 import {
   createSessionResponseInterceptor
 } from './auth/response-interceptor';
-import { Session } from './auth/client';
+import type { Session } from './auth/client';
 
 // Re-export storage utilities
 export {
-  StorageInterface,
-  BrowserStorage,
-  MemoryStorage,
   detectStorage,
   DEFAULT_SESSION_KEY
 };
 
-// Re-export Session type
-export { Session };
+// Re-export storage classes
+export { BrowserStorage, MemoryStorage };
+
+// Re-export types
+export type { StorageInterface, Session };
 
 export interface NhostClientOptions {
   /**
