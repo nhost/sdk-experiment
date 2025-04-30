@@ -22,8 +22,7 @@ export const createTokenRefreshInterceptor = (
         config.headers = config.headers || {};
 
         try {
-          // Check if token exists
-          if (!currentSession.accessToken) {
+          if (config.headers['Authorization']) {
             return config;
           }
 
@@ -46,7 +45,6 @@ export const createTokenRefreshInterceptor = (
             }
           }
 
-          // Always use the latest token
           config.headers['Authorization'] = `Bearer ${currentSession.accessToken}`;
         } catch (error) {
           console.error('Error in token refresh interceptor:', error);

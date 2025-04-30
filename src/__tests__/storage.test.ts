@@ -1,18 +1,16 @@
-import { exit } from 'process';
 import { createApiClient as createAuthClient } from '../auth/auth';
 import { createApiClient as createStorageClient } from '../storage/storage';
 import { createTokenRefreshInterceptor } from '../auth/token-interceptor';
 
 // Configure axios for testing
 
-describe('Nhost Auth - Sign Up with Email and Password', () => {
+describe('Nhost - Sign Up with Email and Password and upload file', () => {
   const nhostAuth = createAuthClient({baseURL: "https://local.auth.local.nhost.run/v1"});
   const nhostStorage = createStorageClient({baseURL: "https://local.storage.local.nhost.run/v1"});
 
   // Create a unique email for each test run to avoid conflicts
   const uniqueEmail = `test-${Date.now()}@example.com`;
   const password = 'password123';
-
 
   it('should sign up a user with email and password and upload file', async () => {
     const response = await nhostAuth.signupEmailPassword({
@@ -38,7 +36,6 @@ describe('Nhost Auth - Sign Up with Email and Password', () => {
     const tokenRefreshInterceptor = createTokenRefreshInterceptor(
       nhostAuth,
       response.data.session,
-      60 // 60 seconds margin before expiration
     );
 
     // Apply the interceptor to the storage client
