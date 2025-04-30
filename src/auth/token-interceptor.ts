@@ -1,39 +1,9 @@
 import { AxiosInstance } from 'axios';
-import { createApiClient, Session, RefreshTokenRequest } from './auth';
-
-interface JwtPayload {
-  exp: number;
-  [key: string]: any;
-}
-
-/**
- * Decodes a JWT token to extract its payload
- * @param token - JWT token string
- * @returns Decoded token payload
- */
-function decodeJwt(token: string): JwtPayload {
-  // JWT has 3 parts: header.payload.signature
-  const parts = token.split('.');
-  if (parts.length !== 3) {
-    throw new Error('Invalid JWT token format');
-  }
-
-  // Base64 decode the payload (middle part)
-  const payload = parts[1];
-  const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split('')
-      .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-      .join('')
-  );
-
-  return JSON.parse(jsonPayload);
-}
+import { createApiClient, Session } from './auth';
 
 /**
  * Creates an axios interceptor that automatically refreshes tokens when they're about to expire
- * @param baseURL - Auth API base URL (e.g., "https://local.auth.local.nhost.run/v1")
+ * @param authClient - Nhost Auth API client for authentication
  * @param session - Initial user session with accessToken and refreshToken
  * @param marginSeconds - Seconds before expiration to trigger refresh (default: 60)
  * @returns A function to attach the interceptor to an axios instance
@@ -44,6 +14,7 @@ export const createTokenRefreshInterceptor = (
   marginSeconds = 60
 ) => {
   let currentSession = { ...session };
+  let tokenExpiresAt = Date.now() + (currentSession.accessTokenExpiresIn * 1000);
 
   return (axiosInstance: AxiosInstance): void => {
     axiosInstance.interceptors.request.use(
@@ -56,12 +27,10 @@ export const createTokenRefreshInterceptor = (
             return config;
           }
 
-          // Decode token to check expiration
-          const decoded = decodeJwt(currentSession.accessToken);
-          const currentTime = Math.floor(Date.now() / 1000);
+          const currentTime = Date.now();
 
           // Check if token is expired or about to expire (within marginSeconds)
-          if (decoded.exp - currentTime < marginSeconds) {
+          if (tokenExpiresAt - currentTime < marginSeconds * 1000) {
             // Token is about to expire, refresh it
             if (currentSession.refreshToken) {
               const refreshResponse = await authClient.postToken({
@@ -71,6 +40,8 @@ export const createTokenRefreshInterceptor = (
               if (refreshResponse.data) {
                 // Update the current session with new tokens
                 currentSession = refreshResponse.data;
+                // Update the expiration time based on accessTokenExpiresIn
+                tokenExpiresAt = Date.now() + (currentSession.accessTokenExpiresIn * 1000);
               }
             }
           }
