@@ -63,7 +63,7 @@ rating = 'g'
 
 [auth.session]
 [auth.session.accessToken]
-expiresIn = 900
+expiresIn = 120
 
 [auth.session.refreshToken]
 expiresIn = 2592000
@@ -152,24 +152,25 @@ limit = 10
 interval = '1h'
 
 [auth.rateLimit.sms]
-limit = 100
+limit = 10
 interval = '1h'
 
 [auth.rateLimit.bruteForce]
-limit = 100
+limit = 10
 interval = '5m'
 
 [auth.rateLimit.signups]
-limit = 100
+limit = 10
 interval = '5m'
 
 [auth.rateLimit.global]
-limit = 1000
+limit = 100
 interval = '1m'
 
 [postgres]
 version = '14.15-20250311-1'
 
+[postgres.resources]
 [postgres.resources.storage]
 capacity = 1
 
