@@ -14,23 +14,37 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Nhost Integration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This project demonstrates how to use Nhost with Next.js in a server-side rendering (SSR) setup:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Session Management
 
-## Learn More
+- **Profile Page**: The profile page (`src/app/profile/page.tsx`) retrieves the user session on the server using `createServerNhostClient()`, which extracts session data from cookies and initializes an authenticated Nhost client.
 
-To learn more about Next.js, take a look at the following resources:
+### File Storage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Server-Side Usage**: The upload page (`src/app/upload/page.tsx`) fetches files on the server using the Nhost GraphQL API, demonstrating how to make authenticated GraphQL queries from server components.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Client-Side Usage**: The client component (`src/app/upload/client.tsx`) handles file uploads, viewing, and deletion using the Nhost Storage API through the `useNhost` hook.
 
-## Deploy on Vercel
+### Authentication Flow
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- The `NhostProvider` component manages authentication state, session syncing across tabs, and provides sign-out functionality.
+- Cookie-based storage ensures a seamless authentication experience with server-side support.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Middleware
+
+- The application uses Next.js middleware (`src/middleware.ts`) to protect routes and handle authentication.
+- The middleware:
+  - Creates an Nhost client with a specialized middleware cookie storage
+  - Checks if the current route requires authentication
+  - Redirects unauthenticated users to the sign-in page
+  - Refreshes tokens automatically when they're about to expire
+
+### Layout and Navigation
+
+- **Root Layout**: The app uses a root layout (`src/app/layout.tsx`) that wraps all pages with the `NhostProvider`, making authentication state available throughout the application.
+- **Navigation Component**: The `Navigation` component (`src/app/components/Navigation.tsx`) shows different navigation links based on authentication state and provides sign-out functionality.
+
+This architecture demonstrates an effective hybrid approach, with initial data loading on the server and subsequent user interactions handled on the client.
