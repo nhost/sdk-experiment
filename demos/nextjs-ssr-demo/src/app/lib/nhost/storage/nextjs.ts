@@ -36,10 +36,16 @@ export class ServerMiddlewareCookieStorage implements StorageInterface {
         throw new Error('ServerCookieStorage is not initialized with middleware context');
       }
 
-      this.res.cookies.set(key, value, {
+      // Set cookie with appropriate options to ensure it persists
+      this.res.cookies.set({
+        name: key,
+        value: value,
         path: '/',
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production'
+        httpOnly: false, //if set to true we can't access it in the client
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        // Use a long max-age to ensure the cookie persists
+        maxAge: 60 * 60 * 24 * 30, // 30 days in seconds
       });
     }
 

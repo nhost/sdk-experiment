@@ -10,7 +10,7 @@ import {
   MemoryStorage
 } from './auth/storage';
 import {
-  createTokenRefreshInterceptor
+  createTokenRefreshInterceptor, extractTokenExpiration
 } from './auth/token-interceptor';
 import {
   createSessionResponseInterceptor
@@ -37,6 +37,9 @@ export type { StorageInterface, Session };
 
 // Re-export GraphQL types
 export type { GraphQLRequest, GraphQLResponse, GraphQLVariables, GraphQLError };
+
+// Re-export extractTokenExpiration
+export { extractTokenExpiration } from './auth/token-interceptor';
 
 /**
  * Generates a base URL for a Nhost service based on configuration

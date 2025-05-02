@@ -9,6 +9,7 @@ import {
   useEffect,
   ReactNode
 } from 'react';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 interface NhostContextType {
   nhost: NhostClient;
@@ -27,6 +28,8 @@ interface NhostProviderProps {
 export function NhostProvider({ children }: NhostProviderProps) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   // Create Nhost client with region and subdomain set to local
   const nhost = createClient({
@@ -51,6 +54,11 @@ export function NhostProvider({ children }: NhostProviderProps) {
     // Update state
     setSession(null);
   };
+
+  // Refresh session on route changes
+  useEffect(() => {
+    refreshSession();
+  }, [pathname, searchParams]);
 
   useEffect(() => {
     // Initial session check

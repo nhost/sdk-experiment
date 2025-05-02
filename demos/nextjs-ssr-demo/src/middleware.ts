@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from 'nhost-js';
+import { createClient, extractTokenExpiration } from 'nhost-js';
 import { createServerMiddlewareCookieStorage } from './app/lib/nhost/storage/nextjs';
 
 // Define public routes that don't require authentication
@@ -34,6 +34,13 @@ export async function middleware(request: NextRequest) {
 
   // Get the session from the storage
   const session = nhost.getUserSession();
+
+  // Check if the session is valid
+  const tokenExpiresAt = extractTokenExpiration(session?.accessToken || '');
+  const currentTime = Date.now();
+  if (tokenExpiresAt - currentTime < 60 * 1000) {
+      const _ = await nhost.storage.getVersion();
+  }
 
   // If no session and not a public route, redirect to signin
   if (!session) {

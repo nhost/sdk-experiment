@@ -18,22 +18,31 @@ export const extractTokenExpiration = (token: string): number => {
     }
 
     // Decode the payload (middle part)
-    // Base64Url decode to JSON
     const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-    
+
     try {
-      const jsonPayload = decodeURIComponent(
-        window.atob(base64)
-          .split('')
-          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-          .join('')
-      );
-      
+      // Cross-platform base64 decoding
+      let jsonPayload: string;
+
+      if (typeof window !== 'undefined') {
+        // Browser environment
+        jsonPayload = decodeURIComponent(
+          window.atob(base64)
+            .split('')
+            .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+      } else {
+        // Node.js environment
+        const buffer = Buffer.from(base64, 'base64');
+        jsonPayload = buffer.toString('utf8');
+      }
+
       const payload = JSON.parse(jsonPayload);
 
       if (payload.exp) {
         // exp claim is in seconds, convert to milliseconds
-        const expTime = payload.exp * 1000;        
+        const expTime = payload.exp * 1000;
         return expTime;
       } else {
         console.warn('No exp claim found in token');
@@ -79,7 +88,7 @@ export const createTokenRefreshInterceptor = (
 
   // Try to load session from storage
   let currentSession: Session | null = null;
-  
+
   // Get the base URL for token refresh requests
   // Assuming authClient.axios is the axios instance used by the client
   const authBaseUrl = authClient.axios.defaults.baseURL;
@@ -100,7 +109,7 @@ export const createTokenRefreshInterceptor = (
   return (axiosInstance: AxiosInstance): void => {
     // Create a clean axios instance without interceptors for token refresh
     const cleanAxios = axios.create();
-    
+
     axiosInstance.interceptors.request.use(
       async (config) => {
         config.headers = config.headers || {};
@@ -131,14 +140,15 @@ export const createTokenRefreshInterceptor = (
           }
 
           const currentTime = Date.now();
-          
+
           // Check if token is expired or about to expire (within marginSeconds)
           if (tokenExpiresAt - currentTime < marginSeconds * 1000) {
             // Token is about to expire, refresh it
-            if (currentSession && currentSession.refreshToken) {              
+            if (currentSession && currentSession.refreshToken) {
               try {
                 // we use a clean axios instance to avoid infinite loops
                 // due to the interceptor itself
+                console.log(`Refreshing token... ${currentSession.refreshToken}`);
                 const refreshResponse = await cleanAxios.request({
                   method: 'post',
                   url: authBaseUrl + '/token',
