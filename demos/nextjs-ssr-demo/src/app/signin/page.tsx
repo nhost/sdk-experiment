@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useNhost } from '../lib/nhost-provider';
+import { useNhost } from '../lib/nhost/client';
+import { revalidateAfterAuthChange } from '../lib/actions';
 
 export default function SignIn() {
   const { nhost, session, refreshSession, loading } = useNhost();
@@ -12,10 +13,10 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  
+
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // Get the intended destination from URL params
   const redirectTo = searchParams.get('redirectTo') || '/profile';
 
@@ -67,7 +68,13 @@ export default function SignIn() {
       });
 
       if (response.data.session) {
+        // Refresh local session state
         refreshSession();
+        
+        // Trigger revalidation to update server components
+        await revalidateAfterAuthChange();
+        
+        // Redirect to destination
         setShouldRedirect(true);
       }
     } catch (err) {
@@ -81,10 +88,10 @@ export default function SignIn() {
   return (
     <div className="flex flex-col items-center justify-center">
       <h1 className="text-3xl mb-6 gradient-text">Nhost SDK Demo</h1>
-      
+
       <div className="glass-card w-full p-8 mb-6">
         <h2 className="text-2xl mb-6">Sign In</h2>
-        
+
         <form onSubmit={handleSignIn} className="space-y-5">
           <div>
             <label htmlFor="email">
@@ -98,7 +105,7 @@ export default function SignIn() {
               required
             />
           </div>
-          
+
           <div>
             <label htmlFor="password">
               Password
@@ -111,13 +118,13 @@ export default function SignIn() {
               required
             />
           </div>
-          
+
           {error && (
             <div className="alert alert-error">
               {error}
             </div>
           )}
-          
+
           <button
             type="submit"
             disabled={isLoading}
@@ -127,7 +134,7 @@ export default function SignIn() {
           </button>
         </form>
       </div>
-      
+
       <div className="mt-4">
         <p>
           Don&apos;t have an account?{' '}
@@ -138,4 +145,4 @@ export default function SignIn() {
       </div>
     </div>
   );
-} 
+}

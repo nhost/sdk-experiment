@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useNhost } from './lib/nhost-provider';
+import { useNhost } from './lib/nhost/client';
+import { revalidateAfterAuthChange } from './lib/actions';
 
 export default function Home() {
   const { nhost, session, refreshSession, loading } = useNhost();
@@ -21,7 +22,7 @@ export default function Home() {
       setShouldRedirect(true);
     }
   }, [session, loading]);
-  
+
   // Handle redirection after auth check - always call this hook
   useEffect(() => {
     if (shouldRedirect) {
@@ -66,7 +67,13 @@ export default function Home() {
       });
 
       if (response.data.session) {
+        // Refresh local session state
         refreshSession();
+        
+        // Trigger revalidation to update server components
+        await revalidateAfterAuthChange();
+        
+        // Redirect to profile
         setShouldRedirect(true);
       }
     } catch (err) {
@@ -80,10 +87,10 @@ export default function Home() {
   return (
     <div className="flex flex-col items-center justify-center">
       <h1 className="text-3xl mb-6 gradient-text">Nhost SDK Demo</h1>
-      
+
       <div className="glass-card w-full p-8 mb-6">
         <h2 className="text-2xl mb-6">Sign Up</h2>
-        
+
         <form onSubmit={handleSignUp} className="space-y-5">
           <div>
             <label htmlFor="displayName">
@@ -97,7 +104,7 @@ export default function Home() {
               required
             />
           </div>
-          
+
           <div>
             <label htmlFor="email">
               Email
@@ -110,7 +117,7 @@ export default function Home() {
               required
             />
           </div>
-          
+
           <div>
             <label htmlFor="password">
               Password
@@ -123,13 +130,13 @@ export default function Home() {
               required
             />
           </div>
-          
+
           {error && (
             <div className="alert alert-error">
               {error}
             </div>
           )}
-          
+
           <button
             type="submit"
             disabled={isLoading}
@@ -139,7 +146,7 @@ export default function Home() {
           </button>
         </form>
       </div>
-      
+
       <div className="mt-4">
         <p>
           Already have an account?{' '}

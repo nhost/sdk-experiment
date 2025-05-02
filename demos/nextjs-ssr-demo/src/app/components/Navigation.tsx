@@ -1,31 +1,10 @@
-'use client';
+import { createServerNhostClient } from '../lib/nhost/ssr';
+import NavigationClient from './NavigationClient';
+import ActiveLink from './ActiveLink';
 
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useNhost } from '../lib/nhost/client';
-import { useState } from 'react';
-
-export default function Navigation() {
-  const { session, signout } = useNhost();
-  const pathname = usePathname();
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const isActive = (path: string) => {
-    return pathname === path;
-  };
-
-  const handleSignOut = async () => {
-    setIsLoading(true);
-    try {
-      signout();
-      router.push('/signin');
-    } catch (err) {
-      console.error('Error signing out:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+export default async function Navigation() {
+  const nhost = await createServerNhostClient();
+  const session = nhost.getUserSession();
 
   return (
     <nav className="navbar">
@@ -35,60 +14,40 @@ export default function Navigation() {
           <div className="navbar-links">
             {session ? (
               <>
-                <Link 
+                <ActiveLink 
                   href="/profile" 
-                  className={`nav-link ${isActive('/profile') ? 'active' : ''}`}
+                  className="nav-link"
                 >
                   Profile
-                </Link>
-                <Link 
+                </ActiveLink>
+                <ActiveLink 
                   href="/upload" 
-                  className={`nav-link ${isActive('/upload') ? 'active' : ''}`}
+                  className="nav-link"
                 >
                   Upload
-                </Link>
+                </ActiveLink>
               </>
             ) : (
               <>
-                <Link 
+                <ActiveLink 
                   href="/" 
-                  className={`nav-link ${isActive('/') ? 'active' : ''}`}
+                  className="nav-link"
                 >
                   Sign Up
-                </Link>
-                <Link 
+                </ActiveLink>
+                <ActiveLink 
                   href="/signin" 
-                  className={`nav-link ${isActive('/signin') ? 'active' : ''}`}
+                  className="nav-link"
                 >
                   Sign In
-                </Link>
+                </ActiveLink>
               </>
             )}
           </div>
         </div>
 
         {session && (
-          <div>
-            <button
-              onClick={handleSignOut}
-              disabled={isLoading}
-              className="icon-button"
-              title="Sign Out"
-            >
-              {isLoading ? (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M12 6v6"></path>
-                </svg>
-              ) : (
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                  <polyline points="16 17 21 12 16 7"></polyline>
-                  <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-              )}
-            </button>
-          </div>
+          <NavigationClient />
         )}
       </div>
     </nav>
