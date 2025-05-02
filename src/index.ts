@@ -5,7 +5,8 @@ import {
   StorageInterface,
   detectStorage,
   DEFAULT_SESSION_KEY,
-  BrowserStorage,
+  CookieStorage,
+  LocalStorage,
   MemoryStorage
 } from './auth/storage';
 import {
@@ -29,7 +30,7 @@ export {
 };
 
 // Re-export storage classes
-export { BrowserStorage, MemoryStorage };
+export { CookieStorage, LocalStorage, MemoryStorage };
 
 // Re-export types
 export type { StorageInterface, Session };
