@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useNhost } from '../lib/nhost-provider';
+import { useNhost } from '../lib/nhost/client';
 import { useState } from 'react';
 
 export default function Navigation() {

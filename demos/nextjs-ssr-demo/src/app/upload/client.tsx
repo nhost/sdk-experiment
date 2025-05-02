@@ -2,7 +2,7 @@
 
 import { useState, useRef, ChangeEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useNhost } from '../lib/nhost-provider';
+import { useNhost } from '../lib/nhost/client';
 import { formatFileSize } from '../lib/utils';
 import { StorageFile } from './page';
 

@@ -1,5 +1,4 @@
-import { redirect } from 'next/navigation';
-import { createServerNhostClient } from '../lib/nhost-server';
+import { createServerNhostClient } from '../lib/nhost/ssr';
 import UploadClient from './client';
 
 // Define the File type based on the GraphQL schema

@@ -89,10 +89,6 @@ export const createTokenRefreshInterceptor = (
   // Try to load session from storage
   let currentSession: Session | null = null;
 
-  // Get the base URL for token refresh requests
-  // Assuming authClient.axios is the axios instance used by the client
-  const authBaseUrl = authClient.axios.defaults.baseURL;
-
   // Helper to persist session to storage
   const saveSessionToStorage = (session: Session): void => {
     try {
@@ -107,15 +103,18 @@ export const createTokenRefreshInterceptor = (
   let tokenExpiresAt = 0;
 
   return (axiosInstance: AxiosInstance): void => {
-    // Create a clean axios instance without interceptors for token refresh
-    const cleanAxios = axios.create();
-
     axiosInstance.interceptors.request.use(
       async (config) => {
         config.headers = config.headers || {};
 
         try {
-          if (config.headers['Authorization']) {
+          if ('Authorization' in config.headers) {
+            delete config.headers['Authorization'];
+            return config;
+          }
+
+          // If calling /token, don't refresh token to avoid infinite loops
+          if (config.url?.endsWith('/token')) {
             return config;
           }
 
@@ -146,18 +145,9 @@ export const createTokenRefreshInterceptor = (
             // Token is about to expire, refresh it
             if (currentSession && currentSession.refreshToken) {
               try {
-                // we use a clean axios instance to avoid infinite loops
-                // due to the interceptor itself
                 console.log(`Refreshing token... ${currentSession.refreshToken}`);
-                const refreshResponse = await cleanAxios.request({
-                  method: 'post',
-                  url: authBaseUrl + '/token',
-                  data: {
-                    refreshToken: currentSession.refreshToken
-                  },
-                  headers: {
-                    'Content-Type': 'application/json'
-                  }
+                const refreshResponse = await authClient.axios.post('/token', {
+                  refreshToken: currentSession.refreshToken
                 });
 
                 if (refreshResponse.data) {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, extractTokenExpiration } from 'nhost-js';
-import { createServerMiddlewareCookieStorage } from './app/lib/nhost/storage/nextjs';
+import { createServerMiddlewareCookieStorage } from './app/lib/nhost/ssr';
 
 // Define public routes that don't require authentication
 const publicRoutes = ['/signin', '/signup'];

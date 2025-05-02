@@ -25,6 +25,24 @@ interface NhostProviderProps {
   children: ReactNode;
 }
 
+/**
+ * NhostProvider creates a context that manages authentication state using Nhost.
+ * 
+ * This provider is intended for client-side use only, as indicated by the 'use client' directive.
+ * 
+ * This provider handles:
+ * - Creating and configuring the Nhost client
+ * - Managing authentication session state
+ * - Syncing sessions across browser tabs
+ * - Refreshing the session on route changes
+ * - Providing sign-out functionality
+ * 
+ * Wrap your application with this provider to make Nhost authentication
+ * available throughout the component tree via the useNhost hook.
+ * 
+ * @param {NhostProviderProps} props - The component props
+ * @param {ReactNode} props.children - Child components that will have access to the Nhost context
+ */
 export function NhostProvider({ children }: NhostProviderProps) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
@@ -89,6 +107,21 @@ export function NhostProvider({ children }: NhostProviderProps) {
   return <NhostContext.Provider value={value}>{children}</NhostContext.Provider>;
 }
 
+/**
+ * Hook to access the Nhost authentication context.
+ * 
+ * This hook is intended for client-side use only, as it depends on the NhostProvider.
+ * 
+ * Provides access to:
+ * - The Nhost client instance
+ * - Current session information
+ * - Loading state
+ * - Session refresh function
+ * - Sign-out function
+ * 
+ * @returns {NhostContextType} The Nhost context containing client, session, and authentication utilities
+ * @throws {Error} When used outside of an NhostProvider
+ */
 export function useNhost() {
   const context = useContext(NhostContext);
   if (context === undefined) {

@@ -1,4 +1,4 @@
-import { createServerNhostClient } from '../lib/nhost-server';
+import { createServerNhostClient } from '../lib/nhost/ssr';
 
 export default async function Profile() {
   // Create the client with async cookie access
