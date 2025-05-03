@@ -73,7 +73,7 @@ expiresIn = 2592000
 enabled = false
 
 [auth.method.emailPasswordless]
-enabled = false
+enabled = true
 
 [auth.method.otp]
 [auth.method.otp.email]
@@ -141,7 +141,8 @@ enabled = false
 timeout = 60000
 
 [auth.totp]
-enabled = false
+enabled = true
+issuer = 'new-sdk'
 
 [auth.misc]
 concealErrors = false
@@ -152,15 +153,15 @@ limit = 10
 interval = '1h'
 
 [auth.rateLimit.sms]
-limit = 100
+limit = 10
 interval = '1h'
 
 [auth.rateLimit.bruteForce]
-limit = 100
+limit = 10
 interval = '5m'
 
 [auth.rateLimit.signups]
-limit = 100
+limit = 10
 interval = '5m'
 
 [auth.rateLimit.global]
