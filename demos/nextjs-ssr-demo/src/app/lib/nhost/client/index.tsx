@@ -10,13 +10,14 @@ import {
   ReactNode
 } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { revalidateAfterAuthChange } from '../../actions';
 
 interface NhostContextType {
   nhost: NhostClient;
   session: Session | null;
   loading: boolean;
-  refreshSession: () => void;
-  signout: () => void;
+  refreshSession: () => Promise<void>;
+  signout: () => Promise<void>;
 }
 
 const NhostContext = createContext<NhostContextType | undefined>(undefined);
@@ -56,37 +57,86 @@ export function NhostProvider({ children }: NhostProviderProps) {
     storage: new CookieStorage()
   });
 
-  const refreshSession = () => {
+  const refreshSession = async () => {
     const currentSession = nhost.getUserSession();
-    setSession(currentSession);
+    
+    setSession(currentSession);    
+    await revalidateAfterAuthChange();
   };
 
   // Improved signout function
-  const signout = () => {
+  const signout = async () => {
     try {
       document.cookie = 'nhostSession=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax;';
     } catch (error) {
       console.error("Error signing out:", error);
     }
 
-    // Update state
+    // Update state and trigger revalidation
     setSession(null);
+    await revalidateAfterAuthChange();
   };
 
-  // Refresh session on route changes
+  // Handle refresh token authentication in URL
   useEffect(() => {
-    refreshSession();
-  }, [pathname, searchParams]);
+    const handleRefreshTokenInQueryArgs = async () => {
+      const refreshToken = searchParams?.get('refreshToken');
+      
+      // Only process if we have a refresh token and don't already have a valid session
+      const currentSession = nhost.getUserSession();
+      
+      if (refreshToken && !currentSession) {
+        try {
+          setLoading(true);
+          
+          // Call the refreshToken method to authenticate with the token in URL
+          const response = await nhost.auth.refreshToken({
+            refreshToken
+          });
+          
+          // If we got a successful response, refresh the session
+          if (response.data) {
+            await refreshSession();
+            
+            // Remove the token from the URL to prevent issues on refresh
+            const url = new URL(window.location.href);
+            url.searchParams.delete('refreshToken');
+            window.history.replaceState({}, '', url.toString());
+          }
+        } catch (error) {
+          console.error("Error processing magic link:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
 
+    handleRefreshTokenInQueryArgs();
+  }, [searchParams, nhost.auth]);
+
+  // Refresh session only on pathname changes, not on every searchParams change
+  useEffect(() => {
+    const refreshOnPathChange = async () => {
+      await refreshSession();
+    };
+    
+    refreshOnPathChange();
+  }, [pathname]);
+
+  // Initial session setup
   useEffect(() => {
     // Initial session check
-    refreshSession();
-    setLoading(false);
+    const initialSetup = async () => {
+      await refreshSession();
+      setLoading(false);
+    };
+    
+    initialSetup();
 
     // Setup a listener for storage events to keep session in sync across tabs
-    const handleStorageChange = (event: StorageEvent) => {
+    const handleStorageChange = async (event: StorageEvent) => {
       if (event.key === 'nhostSession') {
-        refreshSession();
+        await refreshSession();
       }
     };
 

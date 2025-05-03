@@ -1,56 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useNhost } from './lib/nhost/client';
-import { revalidateAfterAuthChange } from './lib/actions';
+import { useState, useEffect } from 'react';
+import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Home() {
   const { nhost, session, refreshSession, loading } = useNhost();
+  const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [shouldRedirect, setShouldRedirect] = useState(false);
-  const router = useRouter();
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
-  // Check authentication status - always call this hook
+  // If user is already authenticated, redirect to profile
+  // Or if the sign up was successful
   useEffect(() => {
-    if (!loading && session) {
-      setShouldRedirect(true);
+    if (session || shouldRedirect) {
+      redirect('/profile');
     }
-  }, [session, loading]);
-
-  // Handle redirection after auth check - always call this hook
-  useEffect(() => {
-    if (shouldRedirect) {
-      router.push('/profile');
-    }
-  }, [shouldRedirect, router]);
-
-  // If still checking authentication, show loading
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="text-center">
-          <p>Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // If already authenticated, show loading until redirect
-  if (shouldRedirect) {
-    return (
-      <div className="loading-container">
-        <div className="text-center">
-          <p>Redirecting to profile...</p>
-        </div>
-      </div>
-    );
-  }
+  }, [session, shouldRedirect]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,17 +39,46 @@ export default function Home() {
 
       if (response.data.session) {
         // Refresh local session state
-        refreshSession();
-        
-        // Trigger revalidation to update server components
-        await revalidateAfterAuthChange();
-        
+        await refreshSession();
+
         // Redirect to profile
         setShouldRedirect(true);
       }
     } catch (err) {
       console.error('Error signing up:', err);
       setError('Failed to sign up. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleMagicLinkSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !displayName) {
+      setError('Please enter your email and display name');
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Use signinPasswordlessEmail to send a magic link
+      // This also creates a new account if the email doesn't exist
+      const response = await nhost.auth.signinPasswordlessEmail({
+        email,
+        options: {
+          displayName,
+          redirectTo: `${window.location.origin}`
+        }
+      });
+      
+      if (response.data) {
+        setMagicLinkSent(true);
+      }
+    } catch (err) {
+      console.error('Error sending magic link:', err);
+      setError('Failed to send magic link. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -91,60 +91,90 @@ export default function Home() {
       <div className="glass-card w-full p-8 mb-6">
         <h2 className="text-2xl mb-6">Sign Up</h2>
 
-        <form onSubmit={handleSignUp} className="space-y-5">
-          <div>
-            <label htmlFor="displayName">
-              Display Name
-            </label>
-            <input
-              id="displayName"
-              type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              required
-            />
+        {magicLinkSent ? (
+          <div className="text-center">
+            <p className="mb-4">Magic link sent! Check your email to sign in.</p>
+            <button
+              onClick={() => setMagicLinkSent(false)}
+              className="btn btn-secondary"
+            >
+              Back to sign up
+            </button>
           </div>
+        ) : (
+          <>
+            <form onSubmit={handleSignUp} className="space-y-5">
+              <div>
+                <label htmlFor="displayName">
+                  Display Name
+                </label>
+                <input
+                  id="displayName"
+                  type="text"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  required
+                />
+              </div>
 
-          <div>
-            <label htmlFor="email">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+              <div>
+                <label htmlFor="email">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
 
-          <div>
-            <label htmlFor="password">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+              <div>
+                <label htmlFor="password">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-          {error && (
-            <div className="alert alert-error">
-              {error}
+              {error && (
+                <div className="alert alert-error">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="btn btn-primary w-full"
+              >
+                {isLoading ? 'Signing up...' : 'Sign Up'}
+              </button>
+            </form>
+            
+            <div className="mt-6 flex flex-col items-center">
+              <div className="w-full text-center my-4">
+                <span className="px-2 text-gray-500">or</span>
+              </div>
+              
+              <form onSubmit={handleMagicLinkSignUp} className="w-full">
+                <button
+                  type="submit"
+                  disabled={isLoading || !email || !displayName}
+                  className="btn btn-secondary w-full"
+                >
+                  {isLoading ? 'Sending...' : 'Sign up with Magic Link'}
+                </button>
+              </form>
             </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="btn btn-primary w-full"
-          >
-            {isLoading ? 'Signing up...' : 'Sign Up'}
-          </button>
-        </form>
+          </>
+        )}
       </div>
 
       <div className="mt-4">

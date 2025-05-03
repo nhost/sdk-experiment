@@ -1,27 +1,19 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useNhost } from '../lib/nhost/client';
-import { revalidateAfterAuthChange } from '../lib/actions';
 
 export default function NavigationClient() {
   const { signout } = useNhost();
   const router = useRouter();
-  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      // Sign out the user
-      signout();
-      
-      // Revalidate all paths to refresh server components with new auth state
-      await revalidateAfterAuthChange();
-      
-      // Navigate to sign in page
-      router.push('/signin');
+      await signout();      
+      router.push('/');
     } catch (err) {
       console.error('Error signing out:', err);
     } finally {
