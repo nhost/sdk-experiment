@@ -152,15 +152,15 @@ limit = 10
 interval = '1h'
 
 [auth.rateLimit.sms]
-limit = 10
+limit = 100
 interval = '1h'
 
 [auth.rateLimit.bruteForce]
-limit = 10
+limit = 100
 interval = '5m'
 
 [auth.rateLimit.signups]
-limit = 10
+limit = 100
 interval = '5m'
 
 [auth.rateLimit.global]

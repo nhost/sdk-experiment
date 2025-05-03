@@ -25,7 +25,7 @@ describe('Nhost - Sign Up with Email and Password and upload file', () => {
     });
 
     const uuid = crypto.randomUUID();
-    const fileUploadResponse = await nhost.storage.postFiles({
+    const fileUploadResponse = await nhost.storage.uploadFiles({
         "bucket-id": "default",
         "metadata[]": [
             {
@@ -96,19 +96,11 @@ describe('Nhost - Sign Up with Email and Password and upload file', () => {
         `
       }
     );
-    expect(files.data).toStrictEqual({
-           "data": {
-             "files":  [
-               {
-                 "bucketId": "default",
-                 "id": "d977cb9b-ae11-47c8-9c88-826b809bddc1",
-                 "mimeType": "application/octet-stream",
-                 "name": "test",
-                 "size": 1024,
-                 "uploadedByUserId": "60ff31f4-78d7-405d-b700-98315732c30a",
-               },
-             ],
-          }
-    })
+    expect(files.data.data.files[0].id).toBe(uuid);
+    expect(files.data.data.files[0].name).toBe('test');
+    expect(files.data.data.files[0].size).toBe(1024);
+    expect(files.data.data.files[0].mimeType).toBe('application/octet-stream');
+    expect(files.data.data.files[0].bucketId).toBe('default');
+    expect(files.data.data.files[0].uploadedByUserId).toBeDefined();
   });
 });

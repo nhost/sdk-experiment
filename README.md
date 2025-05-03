@@ -35,7 +35,7 @@ As the project progresses, we can add support for more languages but to keep thi
 - The SDKs should be consistent with the API
 - The SDKs should be easy to extend, specially when it relates to managing the session and authentication
 - The SDKs should be idiomatic to the language they are written for
-The SDKs should feel similar across different languages e.g., the function to signup with email/password should be named the same across SDKs. 
+The SDKs should feel similar across different languages e.g., the function to signup with email/password should be named the same across SDKs.
 ## Approach
 
 ### Code Generation
@@ -108,17 +108,17 @@ async function signIn() {
     email: 'user@example.com',
     password: 'password123'
   });
-  
+
   console.log('Signed in:', response.data.session?.user);
 }
 
 // Use the storage client
 async function uploadFile(file: Blob) {
-  const response = await nhost.storage.postFiles({
+  const response = await nhost.storage.uploadFiles({
     'bucket-id': 'default',
     'file[]': [file]
   });
-  
+
   console.log('Uploaded file:', response.data.processedFiles?.[0]);
 }
 

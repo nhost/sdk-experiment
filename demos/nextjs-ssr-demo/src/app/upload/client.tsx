@@ -25,14 +25,14 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
   const [viewingFile, setViewingFile] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [deleteStatus, setDeleteStatus] = useState<{message: string, isError: boolean} | null>(null);
-  
+
   // Function to handle viewing a file with proper authorization
   const handleViewFile = async (fileId: string, fileName: string, mimeType: string) => {
     setViewingFile(fileId);
 
     try {
       // Fetch the file with authentication using the SDK
-      const response = await nhost.storage.getFilesId(fileId, {}, {
+      const response = await nhost.storage.getFile(fileId, {}, {
         responseType: 'blob'
       });
 
@@ -52,7 +52,7 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         // Optional: Open a small window to inform the user about the download
         const newWindow = window.open('', '_blank', 'width=400,height=200');
         if (newWindow) {
@@ -102,7 +102,7 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
 
     try {
       // Upload file using Nhost storage
-      const response = await nhost.storage.postFiles({
+      const response = await nhost.storage.uploadFiles({
         'bucket-id': 'default',
         'file[]': [selectedFile]
       });
@@ -110,7 +110,7 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
       // Get the processed file data
       const uploadedFile = response.data.processedFiles?.[0];
       setUploadResult(uploadedFile);
-      
+
       // Reset form
       setSelectedFile(null);
       setFileName('');
@@ -128,13 +128,13 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
           bucketId: 'default',
           uploadedByUserId: ''  // This will be refreshed from server
         };
-        
+
         setFiles(prevFiles => [newFile, ...prevFiles]);
       }
 
       // Refresh page to get updated file list from server
       router.refresh();
-      
+
       // Clear success message after 3 seconds
       setTimeout(() => {
         setUploadResult(null);
@@ -149,31 +149,31 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
   // Function to handle deleting a file
   const handleDeleteFile = async (fileId: string) => {
     if (!fileId || deleting) return;
-    
+
     setDeleting(fileId);
     setError(null);
     setDeleteStatus(null);
-    
+
     // Get the file name for the status message
     const fileToDelete = files.find(file => file.id === fileId);
     const fileName = fileToDelete?.name || 'File';
-    
+
     try {
       // Delete the file using the Nhost storage SDK with the correct method name
-      const response = await nhost.storage.deleteFilesId(fileId);
-      
+      const response = await nhost.storage.deleteFile(fileId);
+
       // Show success message
       setDeleteStatus({
         message: `${fileName} deleted successfully`,
         isError: false
       });
-      
+
       // Update the local files list by removing the deleted file
       setFiles(files.filter(file => file.id !== fileId));
-      
+
       // Refresh the page to get updated file list from server
       router.refresh();
-      
+
       // Clear the success message after 3 seconds
       setTimeout(() => {
         setDeleteStatus(null);
@@ -200,15 +200,15 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
-            style={{ 
-              position: 'absolute', 
-              width: '1px', 
-              height: '1px', 
-              padding: 0, 
-              margin: '-1px', 
-              overflow: 'hidden', 
-              clip: 'rect(0,0,0,0)', 
-              border: 0 
+            style={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              padding: 0,
+              margin: '-1px',
+              overflow: 'hidden',
+              clip: 'rect(0,0,0,0)',
+              border: 0
             }}
             aria-hidden="true"
             tabIndex={-1}
@@ -252,13 +252,13 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
 
       <div className="glass-card p-8">
         <h2 className="text-2xl mb-6">Your Files</h2>
-        
+
         {deleteStatus && (
           <div className={`alert ${deleteStatus.isError ? 'alert-error' : 'alert-success'} mb-4`}>
             {deleteStatus.message}
           </div>
         )}
-        
+
         {files.length === 0 ? (
           <p className="text-center">No files uploaded yet.</p>
         ) : (
@@ -328,4 +328,4 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
       </div>
     </>
   );
-} 
+}

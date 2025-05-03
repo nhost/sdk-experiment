@@ -16,7 +16,7 @@ export function UploadFiles() {
   const { nhost } = useNhost();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   const [fileName, setFileName] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
@@ -25,12 +25,12 @@ export function UploadFiles() {
   const [files, setFiles] = useState<StorageFile[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [viewingFile, setViewingFile] = useState<string | null>(null);
-  
+
   // GraphQL query to fetch files
   const fetchFiles = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       // @ts-ignore - GraphQL client exists but TypeScript might not know about it
       const response = await nhost.graphql.query({
@@ -47,11 +47,11 @@ export function UploadFiles() {
           }
         `
       });
-      
+
       if (response.data.errors) {
         throw new Error(response.data.errors[0].message);
       }
-      
+
       setFiles(response.data.data.files);
     } catch (err: any) {
       setError(`Failed to load files: ${err.message}`);
@@ -60,7 +60,7 @@ export function UploadFiles() {
       setLoading(false);
     }
   };
-  
+
   // Fetch files on component mount and after upload
   useEffect(() => {
     fetchFiles();
@@ -69,29 +69,29 @@ export function UploadFiles() {
   // Function to handle viewing a file with proper authorization
   const handleViewFile = async (fileId: string, fileName: string, mimeType: string) => {
     setViewingFile(fileId);
-    
+
     try {
       // Properly use the SDK with responseType: 'blob'
-      const response = await nhost.storage.getFilesId(fileId, {}, {
+      const response = await nhost.storage.getFile(fileId, {}, {
         responseType: 'blob'
       });
-      
+
       // The response.data is already a Blob, but need to cast for TypeScript
       const blob = response.data as Blob;
-      
+
       // Create a URL for the blob
       const url = URL.createObjectURL(blob);
-      
+
       // Open the file in a new tab with appropriate handling based on file type
       const newWindow = window.open('', '_blank');
-      
+
       if (!newWindow) {
         throw new Error('Failed to open new window. Please check your popup blocker settings.');
       }
-      
+
       // Show loading message
       newWindow.document.write('<html><body><h2>Processing file...</h2></body></html>');
-      
+
       // Handle different file types appropriately
       if (mimeType.startsWith('image/')) {
         // For images, display in the window
@@ -137,7 +137,7 @@ export function UploadFiles() {
           </body>
           </html>
         `);
-        
+
         // Create a download link
         const link = document.createElement('a');
         link.href = url;
@@ -153,7 +153,7 @@ export function UploadFiles() {
       setViewingFile(null);
     }
   };
-  
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -163,30 +163,30 @@ export function UploadFiles() {
       setUploadResult(null);
     }
   };
-  
+
   const handleUpload = async () => {
     if (!selectedFile) {
       setError('Please select a file to upload');
       return;
     }
-    
+
     setUploading(true);
     setError(null);
-    
+
     try {
       // Upload file using Nhost storage
-      const response = await nhost.storage.postFiles({
+      const response = await nhost.storage.uploadFiles({
         'bucket-id': 'default',
         'file[]': [selectedFile]
       });
-      
+
       setUploadResult(response.data.processedFiles?.[0]);
       setSelectedFile(null);
       setFileName('');
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
-      
+
       // Refresh file list after upload
       fetchFiles();
     } catch (err: any) {
@@ -195,26 +195,26 @@ export function UploadFiles() {
       setUploading(false);
     }
   };
-  
+
   const handleNavigateToHome = () => {
     navigate('/');
   };
-  
+
   // Function to format file size in a readable way
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes';
-    
+
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    
+
     return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
   };
-  
+
   return (
     <div className="content-container">
       <h1>Upload Files</h1>
       <p>Upload files to your Nhost storage bucket</p>
-      
+
       <div className="form-group">
         <label htmlFor="file-upload" className="form-label">Select a file:</label>
         <input
@@ -225,13 +225,13 @@ export function UploadFiles() {
           className="form-input"
         />
       </div>
-      
+
       {fileName && (
         <div className="selected-file">
           <p>Selected file: {fileName}</p>
         </div>
       )}
-      
+
       <div className="action-buttons">
         <button
           onClick={handleUpload}
@@ -247,13 +247,13 @@ export function UploadFiles() {
           {loading ? 'Refreshing...' : 'Refresh Files'}
         </button>
       </div>
-      
+
       {error && (
         <div className="error-message">
           <p>{error}</p>
         </div>
       )}
-      
+
       {uploadResult && (
         <div className="success-message">
           <h2>File Uploaded Successfully!</h2>
@@ -265,7 +265,7 @@ export function UploadFiles() {
           </div>
         </div>
       )}
-      
+
       {/* File List Section */}
       <div className="files-section">
         <h2>Uploaded Files</h2>
@@ -308,4 +308,4 @@ export function UploadFiles() {
       </div>
     </div>
   );
-} 
+}
