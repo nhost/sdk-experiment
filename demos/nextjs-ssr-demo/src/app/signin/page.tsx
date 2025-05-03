@@ -13,6 +13,11 @@ export default function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+  
+  // MFA states
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaTicket, setMfaTicket] = useState('');
+  const [mfaCode, setMfaCode] = useState('');
 
   // If user is already authenticated, redirect to profile
   // Or if the sign in was successful
@@ -33,6 +38,15 @@ export default function SignIn() {
         password
       });
 
+      // Check if MFA is required
+      if (response.data.mfa) {
+        // MFA is required, store the ticket and show MFA form
+        setMfaRequired(true);
+        setMfaTicket(response.data.mfa.ticket);
+        setIsLoading(false);
+        return;
+      }
+
       if (response.data.session) {
         // Refresh local session state
         await refreshSession();
@@ -44,6 +58,39 @@ export default function SignIn() {
     } catch (err) {
       console.error('Error signing in:', err);
       setError('Failed to sign in. Please check your credentials and try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  // Handle MFA verification
+  const handleMfaVerification = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!mfaCode) {
+      setError('Please enter your verification code');
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Verify MFA using the code and ticket
+      const response = await nhost.auth.signinVerifyMfaTotp({
+        ticket: mfaTicket,
+        otp: mfaCode
+      });
+      
+      if (response.data.session) {
+        // MFA verification successful, refresh session
+        await refreshSession();
+        
+        // Redirect to destination
+        setShouldRedirect(true);
+      }
+    } catch (err) {
+      console.error('Error verifying MFA:', err);
+      setError('Failed to verify code. Please check your code and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -79,6 +126,13 @@ export default function SignIn() {
     }
   };
 
+  // Go back to password login from MFA screen
+  const handleBackFromMfa = () => {
+    setMfaRequired(false);
+    setMfaTicket('');
+    setMfaCode('');
+  };
+
   return (
     <div className="flex flex-col items-center justify-center">
       <h1 className="text-3xl mb-6 gradient-text">Nhost SDK Demo</h1>
@@ -86,7 +140,56 @@ export default function SignIn() {
       <div className="glass-card w-full p-8 mb-6">
         <h2 className="text-2xl mb-6">Sign In</h2>
 
-        {magicLinkSent ? (
+        {mfaRequired ? (
+          // MFA verification form
+          <div>
+            <p className="mb-4">
+              A verification code is required to complete sign in. Please enter the code from your authenticator app.
+            </p>
+            
+            <form onSubmit={handleMfaVerification} className="space-y-5">
+              <div>
+                <label htmlFor="mfa-code">
+                  Verification Code
+                </label>
+                <input
+                  id="mfa-code"
+                  type="text"
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value)}
+                  placeholder="Enter 6-digit code"
+                  maxLength={6}
+                  required
+                />
+              </div>
+              
+              {error && (
+                <div className="alert alert-error">
+                  {error}
+                </div>
+              )}
+              
+              <div className="flex space-x-3">
+                <button
+                  type="submit"
+                  disabled={isLoading || !mfaCode}
+                  className="btn btn-primary"
+                >
+                  {isLoading ? 'Verifying...' : 'Verify'}
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={handleBackFromMfa}
+                  disabled={isLoading}
+                  className="btn btn-secondary"
+                >
+                  Back
+                </button>
+              </div>
+            </form>
+          </div>
+        ) : magicLinkSent ? (
           <div className="text-center">
             <p className="mb-4">Magic link sent! Check your email to sign in.</p>
             <button
