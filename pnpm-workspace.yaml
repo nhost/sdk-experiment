@@ -1,2 +1,7 @@
 packages:
-  - "demos/*" 
+  - packages/*
+  - demos/*
+
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
