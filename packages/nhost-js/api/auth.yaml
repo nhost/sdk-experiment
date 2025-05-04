@@ -81,6 +81,28 @@ paths:
                 $ref: '#/components/schemas/Session'
           description: "Access token successfully refreshed"
 
+  /signout:
+    post:
+      summary: "Sign out"
+      operationId: signOut
+      tags:
+        - session
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignOutSchema'
+      responses:
+        '200':
+          description: "Successfully signed out"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OKResponse'
+
   /signin/email-password:
     post:
       summary: "Sign in with email and password"
@@ -693,6 +715,19 @@ components:
           type: string
       required:
         - refreshToken
+
+    SignOutSchema:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Refresh token for the current session
+        all:
+          type: boolean
+          default: false
+          description: Sign out from all connected devices
 
     CreatePATRequest:
       type: object

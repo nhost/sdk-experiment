@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNhost } from '../lib/nhost/client';
 import Image from 'next/image';
 
@@ -9,18 +9,18 @@ interface MFASettingsProps {
 }
 
 export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
-  const { nhost, refreshSession } = useNhost();
+  const { nhost } = useNhost();
   const [isMfaEnabled, setIsMfaEnabled] = useState(initialMfaEnabled);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  
+
   // MFA setup states
   const [isSettingUpMfa, setIsSettingUpMfa] = useState(false);
   const [totpSecret, setTotpSecret] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
-  
+
   // Disabling MFA states
   const [isDisablingMfa, setIsDisablingMfa] = useState(false);
   const [disableVerificationCode, setDisableVerificationCode] = useState('');
@@ -30,11 +30,11 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
     setIsLoading(true);
     setError(null);
     setSuccess(null);
-    
+
     try {
       // Generate TOTP secret
       const response = await nhost.auth.changeUserMfa();
-      
+
       if (response.data) {
         setTotpSecret(response.data.totpSecret);
         setQrCodeUrl(response.data.imageUrl);
@@ -54,24 +54,22 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
       setError('Please enter the verification code');
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
     setSuccess(null);
-    
+
     try {
       // Verify and activate MFA
       const response = await nhost.auth.changeUserMfaVerify({
         activeMfaType: 'totp',
         code: verificationCode
       });
-      
+
       if (response.data) {
         setIsMfaEnabled(true);
         setIsSettingUpMfa(false);
         setSuccess('MFA has been successfully enabled.');
-        // Refresh session to get updated MFA status
-        await refreshSession();
       }
     } catch (err) {
       console.error('Error verifying TOTP:', err);
@@ -94,11 +92,11 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
       setError('Please enter your verification code to confirm');
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
     setSuccess(null);
-    
+
     try {
       // Disable MFA by setting activeMfaType to empty string
       // We need to provide the current TOTP code to verify identity
@@ -106,14 +104,12 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
         activeMfaType: '',
         code: disableVerificationCode
       });
-      
+
       if (response.data) {
         setIsMfaEnabled(false);
         setIsDisablingMfa(false);
         setDisableVerificationCode('');
         setSuccess('MFA has been successfully disabled.');
-        // Refresh session to get updated MFA status
-        await refreshSession();
       }
     } catch (err) {
       console.error('Error disabling MFA:', err);
@@ -141,13 +137,13 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
   return (
     <div className="glass-card p-8">
       <h3 className="text-xl mb-4">Multi-Factor Authentication</h3>
-      
+
       {error && (
         <div className="alert alert-error mb-4">
           {error}
         </div>
       )}
-      
+
       {success && (
         <div className="alert alert-success mb-4">
           {success}
@@ -157,25 +153,25 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
       {isSettingUpMfa ? (
         <div className="space-y-5">
           <p>Scan this QR code with your authenticator app (e.g., Google Authenticator, Authy):</p>
-          
+
           {qrCodeUrl && (
             <div className="flex justify-center my-4">
               <div className="p-2 bg-white rounded-md">
-                <Image 
-                  src={qrCodeUrl} 
-                  alt="TOTP QR Code" 
-                  width={200} 
+                <Image
+                  src={qrCodeUrl}
+                  alt="TOTP QR Code"
+                  width={200}
                   height={200}
                 />
               </div>
             </div>
           )}
-          
+
           <p>Or manually enter this secret key:</p>
           <div className="p-2 bg-gray-100 rounded font-mono text-center">
             {totpSecret}
           </div>
-          
+
           <div>
             <label htmlFor="verification-code">
               Verification Code
@@ -190,7 +186,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
               required
             />
           </div>
-          
+
           <div className="flex space-x-3">
             <button
               onClick={handleVerifyTotp}
@@ -199,7 +195,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
             >
               {isLoading ? 'Verifying...' : 'Verify and Enable'}
             </button>
-            
+
             <button
               onClick={handleCancelMfaSetup}
               disabled={isLoading}
@@ -214,7 +210,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
           <p>
             To disable Multi-Factor Authentication, please enter the current verification code from your authenticator app.
           </p>
-          
+
           <div>
             <label htmlFor="disable-verification-code">
               Current Verification Code
@@ -229,7 +225,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
               required
             />
           </div>
-          
+
           <div className="flex space-x-3">
             <button
               onClick={handleDisableMfa}
@@ -238,7 +234,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
             >
               {isLoading ? 'Disabling...' : 'Confirm Disable'}
             </button>
-            
+
             <button
               onClick={handleCancelMfaDisable}
               disabled={isLoading}
@@ -253,14 +249,14 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
           <p>
             Multi-Factor Authentication adds an extra layer of security to your account by requiring a verification code from your authenticator app when signing in.
           </p>
-          
+
           <div className="flex items-center">
             <span className="mr-3">Status:</span>
             <span className={`font-semibold ${isMfaEnabled ? 'text-green-500' : 'text-yellow-500'}`}>
               {isMfaEnabled ? 'Enabled' : 'Disabled'}
             </span>
           </div>
-          
+
           {isMfaEnabled ? (
             <button
               onClick={handleShowDisableMfa}
@@ -282,4 +278,4 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
       )}
     </div>
   );
-} 
+}

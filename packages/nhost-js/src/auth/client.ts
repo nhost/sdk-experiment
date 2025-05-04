@@ -49,6 +49,13 @@ export interface RefreshTokenRequest {
   refreshToken: string;
 }
 
+export interface SignOutSchema {
+  /** Refresh token for the current session */
+  refreshToken: string;
+  /** Sign out from all connected devices */
+  all?: boolean;
+}
+
 export type CreatePATRequestMetadata = { [key: string]: unknown };
 
 export interface CreatePATRequest {
@@ -568,6 +575,18 @@ const refreshToken = <TData = AxiosResponse<Session>>(
   }
 
 /**
+ * @summary Sign out
+ */
+const signOut = <TData = AxiosResponse<OKResponse>>(
+    signOutSchema: SignOutSchema, options?: AxiosRequestConfig
+ ): Promise<TData> => {
+    return axios.post(
+      `/signout`,
+      signOutSchema,options
+    );
+  }
+
+/**
  * Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
  * @summary Sign in with email and password
  */
@@ -644,11 +663,12 @@ const changeUserMfa = <TData = AxiosResponse<TotpGenerateResponse>>(
     );
   }
 
-return {healthCheckHead,healthCheckGet,getVersion,refreshToken,signinEmailPassword,signinVerifyMfaTotp,signinPasswordlessEmail,signupEmailPassword,changeUserMfaVerify,changeUserMfa, axios}};
+return {healthCheckHead,healthCheckGet,getVersion,refreshToken,signOut,signinEmailPassword,signinVerifyMfaTotp,signinPasswordlessEmail,signupEmailPassword,changeUserMfaVerify,changeUserMfa, axios}};
 export type HealthCheckHeadResult = AxiosResponse<void>
 export type HealthCheckGetResult = AxiosResponse<OKResponse>
 export type GetVersionResult = AxiosResponse<GetVersion200>
 export type RefreshTokenResult = AxiosResponse<Session>
+export type SignOutResult = AxiosResponse<OKResponse>
 export type SigninEmailPasswordResult = AxiosResponse<SignInEmailPasswordResponse>
 export type SigninVerifyMfaTotpResult = AxiosResponse<SessionPayload>
 export type SigninPasswordlessEmailResult = AxiosResponse<OKResponse>

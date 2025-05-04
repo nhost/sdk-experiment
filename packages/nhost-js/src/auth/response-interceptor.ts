@@ -31,46 +31,43 @@ export const createSessionResponseInterceptor = (
   // Default function to extract session from response data
   function defaultSessionExtractor(response: AxiosResponse): Session | null {
     // Look for session in common response patterns
-    const session = 
+    const session =
       // Pattern: { data: { session: {...} } }
-      (response.data?.session as Session) || 
+      (response.data?.session as Session) ||
       // Pattern: { data: { data: { session: {...} } } }
       (response.data?.data?.session as Session) ||
       // Pattern: { data: {...} } where data is the session
       (
-        response.data?.accessToken && 
-        response.data?.refreshToken && 
+        response.data?.accessToken &&
+        response.data?.refreshToken &&
         response.data as Session
-      ) || 
+      ) ||
       null;
-      
+
     return session;
   }
-
-  // Helper to persist session to storage
-  const saveSessionToStorage = (session: Session): void => {
-    try {
-      storage.setItem(storageKey, JSON.stringify(session));
-    } catch (error) {
-      console.warn('Failed to save session to storage:', error);
-    }
-  };
 
   return (axiosInstance: AxiosInstance): void => {
     axiosInstance.interceptors.response.use(
       (response) => {
         try {
+          if (response.config.url === '/signout') {
+            // If logout is successful, delete session from storage
+            storage.removeItem(storageKey);
+            return response;
+          }
+
           // Extract session data from response using provided extractor
           const session = sessionExtractor(response);
-          
+
           // If session data is found, store it
           if (session && session.accessToken && session.refreshToken) {
-            saveSessionToStorage(session);
+            storage.setItem(storageKey, JSON.stringify(session));
           }
         } catch (error) {
           console.warn('Error in session response interceptor:', error);
         }
-        
+
         return response;
       },
       (error) => Promise.reject(error)

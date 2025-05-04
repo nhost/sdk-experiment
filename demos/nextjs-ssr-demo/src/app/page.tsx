@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 export default function Home() {
-  const { nhost, session, refreshSession, loading } = useNhost();
+  const { nhost, session, refreshSession } = useNhost();
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -58,7 +58,7 @@ export default function Home() {
       setError('Please enter your email and display name');
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
 
@@ -72,7 +72,7 @@ export default function Home() {
           redirectTo: `${window.location.origin}`
         }
       });
-      
+
       if (response.data) {
         setMagicLinkSent(true);
       }
@@ -157,12 +157,12 @@ export default function Home() {
                 {isLoading ? 'Signing up...' : 'Sign Up'}
               </button>
             </form>
-            
+
             <div className="mt-6 flex flex-col items-center">
               <div className="w-full text-center my-4">
                 <span className="px-2 text-gray-500">or</span>
               </div>
-              
+
               <form onSubmit={handleMagicLinkSignUp} className="w-full">
                 <button
                   type="submit"

@@ -6,14 +6,14 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
 export default function SignIn() {
-  const { nhost, session, refreshSession, loading } = useNhost();
+  const { nhost, session, refreshSession } = useNhost();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [shouldRedirect, setShouldRedirect] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
-  
+
   // MFA states
   const [mfaRequired, setMfaRequired] = useState(false);
   const [mfaTicket, setMfaTicket] = useState('');
@@ -51,7 +51,7 @@ export default function SignIn() {
         // Refresh local session state
         await refreshSession();
         // Session refresh now handles revalidation automatically
-        
+
         // Redirect to destination
         setShouldRedirect(true);
       }
@@ -62,7 +62,7 @@ export default function SignIn() {
       setIsLoading(false);
     }
   };
-  
+
   // Handle MFA verification
   const handleMfaVerification = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,21 +70,21 @@ export default function SignIn() {
       setError('Please enter your verification code');
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Verify MFA using the code and ticket
       const response = await nhost.auth.signinVerifyMfaTotp({
         ticket: mfaTicket,
         otp: mfaCode
       });
-      
+
       if (response.data.session) {
         // MFA verification successful, refresh session
         await refreshSession();
-        
+
         // Redirect to destination
         setShouldRedirect(true);
       }
@@ -102,7 +102,7 @@ export default function SignIn() {
       setError('Please enter your email address');
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
 
@@ -114,7 +114,7 @@ export default function SignIn() {
           redirectTo: `${window.location.origin}`
         }
       });
-      
+
       if (response.data) {
         setMagicLinkSent(true);
       }
@@ -146,7 +146,7 @@ export default function SignIn() {
             <p className="mb-4">
               A verification code is required to complete sign in. Please enter the code from your authenticator app.
             </p>
-            
+
             <form onSubmit={handleMfaVerification} className="space-y-5">
               <div>
                 <label htmlFor="mfa-code">
@@ -162,13 +162,13 @@ export default function SignIn() {
                   required
                 />
               </div>
-              
+
               {error && (
                 <div className="alert alert-error">
                   {error}
                 </div>
               )}
-              
+
               <div className="flex space-x-3">
                 <button
                   type="submit"
@@ -177,7 +177,7 @@ export default function SignIn() {
                 >
                   {isLoading ? 'Verifying...' : 'Verify'}
                 </button>
-                
+
                 <button
                   type="button"
                   onClick={handleBackFromMfa}
@@ -242,12 +242,12 @@ export default function SignIn() {
                 {isLoading ? 'Signing in...' : 'Sign In'}
               </button>
             </form>
-            
+
             <div className="mt-6 flex flex-col items-center">
               <div className="w-full text-center my-4">
                 <span className="px-2 text-gray-500">or</span>
               </div>
-              
+
               <form onSubmit={handleMagicLinkSignIn} className="w-full">
                 <button
                   type="submit"

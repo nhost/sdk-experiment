@@ -5,14 +5,16 @@ import { useState } from 'react';
 import { useNhost } from '../lib/nhost/client';
 
 export default function NavigationClient() {
-  const { signout } = useNhost();
+  const { nhost } = useNhost();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignOut = async () => {
     setIsLoading(true);
     try {
-      await signout();      
+      await nhost.auth.signOut({
+          refreshToken: nhost.getUserSession()?.refreshToken || '',
+      });
       router.push('/');
     } catch (err) {
       console.error('Error signing out:', err);
@@ -44,4 +46,4 @@ export default function NavigationClient() {
       </button>
     </div>
   );
-} 
+}

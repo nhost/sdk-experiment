@@ -1,7 +1,6 @@
 import { AxiosInstance } from 'axios';
 import { createApiClient, Session } from './client';
 import { StorageInterface, detectStorage, DEFAULT_SESSION_KEY } from './storage';
-import axios from 'axios';
 
 /**
  * Extracts the expiration time from a JWT token
@@ -114,7 +113,7 @@ export const createTokenRefreshInterceptor = (
           }
 
           // If calling /token, don't refresh token to avoid infinite loops
-          if (config.url?.endsWith('/token')) {
+          if (config.url === '/token') {
             return config;
           }
 
@@ -145,7 +144,6 @@ export const createTokenRefreshInterceptor = (
             // Token is about to expire, refresh it
             if (currentSession && currentSession.refreshToken) {
               try {
-                console.log(`Refreshing token... ${currentSession.refreshToken}`);
                 const refreshResponse = await authClient.axios.post('/token', {
                   refreshToken: currentSession.refreshToken
                 });
