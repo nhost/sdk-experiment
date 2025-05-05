@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createServerNhostClient } from '../lib/nhost/ssr';
 import { redirect } from 'next/navigation';
 import TabForm from '../components/TabForm';
-import SignInForm from './SignInForm';
+import SignUpForm from './SignUpForm';
 import MagicLinkForm from '../components/MagicLinkForm';
 import { sendMagicLink } from './actions';
 
@@ -12,7 +12,7 @@ interface SearchParams {
   magic?: string;
 }
 
-export default async function SignIn({
+export default async function SignUp({
   searchParams,
 }: {
   searchParams: SearchParams;
@@ -36,23 +36,24 @@ export default async function SignIn({
       <h1 className="text-3xl mb-6 gradient-text">Nhost SDK Demo</h1>
 
       <div className="glass-card w-full p-8 mb-6">
-        <h2 className="text-2xl mb-6">Sign In</h2>
+        <h2 className="text-2xl mb-6">Sign Up</h2>
         
         {magicLinkSent ? (
           <div className="text-center">
             <p className="mb-4">Magic link sent! Check your email to sign in.</p>
-            <Link href="/signin" className="btn btn-secondary">
-              Back to sign in
+            <Link href="/signup" className="btn btn-secondary">
+              Back to sign up
             </Link>
           </div>
         ) : (
           <TabForm 
-            passwordTabContent={<SignInForm initialError={error} />}
+            passwordTabContent={<SignUpForm initialError={error} />}
             magicTabContent={
               <div>
                 <MagicLinkForm 
                   sendMagicLinkAction={sendMagicLink}
-                  buttonLabel="Sign in with Magic Link" 
+                  showDisplayName={true}
+                  buttonLabel="Sign up with Magic Link" 
                 />
               </div>
             }
@@ -62,12 +63,12 @@ export default async function SignIn({
 
       <div className="mt-4">
         <p>
-          Don&apos;t have an account?{' '}
-          <Link href="/signup">
-            Sign Up
+          Already have an account?{' '}
+          <Link href="/signin">
+            Sign In
           </Link>
         </p>
       </div>
     </div>
   );
-}
+} 

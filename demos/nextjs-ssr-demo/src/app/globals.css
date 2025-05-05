@@ -498,3 +498,46 @@ pre {
   background-color: rgba(239, 68, 68, 0.1);
   color: #f05252;
 }
+
+/* Tab styles */
+.tabs-container {
+  display: flex;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  background-color: rgba(31, 41, 55, 0.5);
+  color: var(--text-secondary);
+}
+
+.tab-button:hover:not(.tab-active) {
+  background-color: rgba(31, 41, 55, 0.8);
+  color: var(--text-primary);
+}
+
+.tab-button.tab-active {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3);
+}
+
+.tab-button:first-child {
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+}
+
+.tab-button:last-child {
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
+
+.tab-content {
+  margin-top: 1.5rem;
+}

@@ -1,5 +1,4 @@
 import { createClient } from 'nhost-js';
-import { MemoryStorage } from 'nhost-js';
 import { cookies } from 'next/headers';
 
 /**

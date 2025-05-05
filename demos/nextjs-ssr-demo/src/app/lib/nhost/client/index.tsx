@@ -9,7 +9,7 @@ import {
   ReactNode
 } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { revalidateAfterAuthChange } from '../../actions';
+import { revalidateAfterAuthChange } from '../../auth/actions';
 
 interface NhostContextType {
   nhost: NhostClient;

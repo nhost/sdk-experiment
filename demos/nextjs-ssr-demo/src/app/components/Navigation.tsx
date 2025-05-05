@@ -30,16 +30,16 @@ export default async function Navigation() {
             ) : (
               <>
                 <ActiveLink 
-                  href="/" 
-                  className="nav-link"
-                >
-                  Sign Up
-                </ActiveLink>
-                <ActiveLink 
                   href="/signin" 
                   className="nav-link"
                 >
                   Sign In
+                </ActiveLink>
+                <ActiveLink 
+                  href="/signup" 
+                  className="nav-link"
+                >
+                  Sign Up
                 </ActiveLink>
               </>
             )}

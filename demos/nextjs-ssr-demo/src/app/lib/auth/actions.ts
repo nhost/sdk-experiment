@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { createServerNhostClient } from './nhost/ssr';
+import { createServerNhostClient } from '../nhost/ssr';
 
 /**
  * Revalidates the specified path after authentication state changes
@@ -35,4 +35,4 @@ export async function signOut() {
   
   // Redirect to the homepage
   redirect('/');
-}
+} 
