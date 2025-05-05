@@ -20,18 +20,22 @@ import { cookies } from 'next/headers';
 export async function createServerNhostClient(): Promise<ReturnType<typeof createClient>> {
   // Get the cookie value using the async cookies() API
   const cookieStore = await cookies();
-  const nhostCookie = cookieStore.get('nhostSession');
-  const cookieValue = nhostCookie?.value || '';
-
-  // Create storage with the cookie value
-  const storage = new MemoryStorage();
-  storage.setItem('nhostSession', cookieValue);
 
   // Initialize the client with the storage
   const nhost = createClient({
     region: 'local',
     subdomain: 'local',
-    storage
+    storage: {
+      getItem: (key: string) => {
+        return cookieStore.get(key)?.value || null;
+      },
+      setItem: (key: string, value: string) => {
+        cookieStore.set(key, value);
+      },
+      removeItem: (key: string) => {
+        cookieStore.delete(key);
+      },
+    },
   });
 
   return nhost;

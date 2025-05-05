@@ -1,5 +1,5 @@
 import { createServerNhostClient } from '../lib/nhost/ssr';
-import NavigationClient from './NavigationClient';
+import SignOutButton from './SignOutButton';
 import ActiveLink from './ActiveLink';
 
 export default async function Navigation() {
@@ -47,7 +47,7 @@ export default async function Navigation() {
         </div>
 
         {session && (
-          <NavigationClient />
+          <SignOutButton />
         )}
       </div>
     </nav>
