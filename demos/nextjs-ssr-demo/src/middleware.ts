@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, extractTokenExpiration } from 'nhost-js';
-import { createServerMiddlewareCookieStorage } from './app/lib/nhost/ssr';
+import { handleNhostMiddleware } from './app/lib/nhost/ssr';
 
 // Define public routes that don't require authentication
 const publicRoutes = ['/signin', '/signup'];
@@ -9,27 +8,7 @@ export async function middleware(request: NextRequest) {
   // Create a response that we'll modify as needed
   const response = NextResponse.next();
 
-  // Create the Nhost client with server storage
-  const nhost = createClient({
-    region: 'local',
-    subdomain: 'local',
-    storage: createServerMiddlewareCookieStorage(request, response),
-  });
-
-  // Get the session from the storage
-  const session = nhost.getUserSession();
-
-  // Check if the request has a refreshToken in the URL
-  const refreshToken = request.nextUrl.searchParams.get('refreshToken');
-  if (refreshToken && !session) {
-    try {
-      await nhost.auth.refreshToken({ refreshToken });
-      return NextResponse.redirect(request.url);
-    } catch (error) {
-      console.error('Error refreshing token:', error);
-      return NextResponse.redirect(new URL('/signin?error=' + error, request.url));
-    }
-  }
+  const session = await handleNhostMiddleware(request, response);
 
   // Get the current path
   const path = request.nextUrl.pathname;
@@ -45,14 +24,6 @@ export async function middleware(request: NextRequest) {
   // Check for public assets and API routes that shouldn't be protected
   if (path.startsWith('/_next') || path.startsWith('/api/') || path === '/') {
     return response;
-  }
-
-  // Check if the session is valid
-  const tokenExpiresAt = extractTokenExpiration(session?.accessToken || '');
-  const currentTime = Date.now();
-  if (tokenExpiresAt - currentTime < 60 * 1000) {
-      await nhost.storage.getVersion();
-      return response
   }
 
   // If no session and not a public route, redirect to signin

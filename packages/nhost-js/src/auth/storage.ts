@@ -96,7 +96,7 @@ export const detectStorage = (): StorageInterface => {
       // Test if localStorage is actually available (could be disabled)
       localStorage.setItem('__test', '__test');
       localStorage.removeItem('__test');
-      return new CookieStorage();
+      return new LocalStorage();
     } catch (e) {
       console.warn('localStorage is not available, using in-memory storage instead');
     }

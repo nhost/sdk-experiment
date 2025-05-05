@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useRef, ChangeEvent, useEffect } from 'react';
+import { useState, useRef, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { useNhost } from '../lib/nhost/client';
+import { createClientNhostClient } from '../lib/nhost/client';
 import { formatFileSize } from '../lib/utils';
 import { StorageFile } from './page';
 
@@ -12,11 +12,10 @@ interface UploadClientProps {
 }
 
 export default function UploadClient({ initialFiles, serverError }: UploadClientProps) {
-  const { nhost } = useNhost();
+  const nhost = createClientNhostClient();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [fileName, setFileName] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
   const [uploadResult, setUploadResult] = useState<any | null>(null);
@@ -85,7 +84,6 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setSelectedFile(file);
-      setFileName(file.name);
       setError(null);
       setUploadResult(null);
     }
@@ -113,7 +111,6 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
 
       // Reset form
       setSelectedFile(null);
-      setFileName('');
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -160,7 +157,7 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
 
     try {
       // Delete the file using the Nhost storage SDK with the correct method name
-      const response = await nhost.storage.deleteFile(fileId);
+      await nhost.storage.deleteFile(fileId);
 
       // Show success message
       setDeleteStatus({
