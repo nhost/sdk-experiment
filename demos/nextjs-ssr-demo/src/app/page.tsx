@@ -9,10 +9,7 @@ export default async function Home() {
   // Redirect based on authentication status
   if (session) {
     redirect('/profile');
-  } else {
-    redirect('/signin');
   }
-  
-  // We won't reach this point due to redirects
-  return null;
+
+  redirect('/signin');
 }

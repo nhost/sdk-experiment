@@ -16,6 +16,22 @@ export async function middleware(request: NextRequest) {
     storage: createServerMiddlewareCookieStorage(request, response),
   });
 
+  // Get the session from the storage
+  const session = nhost.getUserSession();
+
+  // Check if the request has a refreshToken in the URL
+  const refreshToken = request.nextUrl.searchParams.get('refreshToken');
+  if (refreshToken && !session) {
+    try {
+      const session = await nhost.auth.refreshToken({ refreshToken });
+      console.log('Session refreshed:', session);
+      return response;
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+      return response;
+    }
+  }
+
   // Get the current path
   const path = request.nextUrl.pathname;
 
@@ -31,9 +47,6 @@ export async function middleware(request: NextRequest) {
   if (path.startsWith('/_next') || path.startsWith('/api/') || path === '/') {
     return response;
   }
-
-  // Get the session from the storage
-  const session = nhost.getUserSession();
 
   // Check if the session is valid
   const tokenExpiresAt = extractTokenExpiration(session?.accessToken || '');
