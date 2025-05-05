@@ -1,4 +1,4 @@
-import { createClient, extractTokenExpiration } from 'nhost-js';
+import { createClient, extractTokenExpiration, Session } from 'nhost-js';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -10,21 +10,14 @@ import { NextRequest, NextResponse } from 'next/server';
  * with those credentials, allowing server-side code to make authenticated requests
  * on behalf of the user.
  *
- * The function:
- * 1. Extracts the 'nhostSession' cookie containing user authentication data
- * 2. Initializes a MemoryStorage instance with this session data
- * 3. Creates and returns an Nhost client configured with this storage
- *
  * @returns {Promise<ReturnType<typeof createClient>>} An authenticated Nhost client instance
  */
 export async function createServerNhostClient(): Promise<ReturnType<typeof createClient>> {
-  // Get the cookie value using the async cookies() API
   const cookieStore = await cookies();
 
-  // Initialize the client with the storage
   const nhost = createClient({
-    region: 'local',
-    subdomain: 'local',
+    region: process.env.NHOST_REGION || 'local',
+    subdomain: process.env.NHOST_SUBDOMAIN || 'local',
     storage: {
       getItem: (key: string) => {
         return cookieStore.get(key)?.value || null;
@@ -41,12 +34,23 @@ export async function createServerNhostClient(): Promise<ReturnType<typeof creat
   return nhost;
 }
 
-
-export async function handleNhostMiddleware(request: NextRequest, response: NextResponse<unknown>) {
-  // Create the Nhost client with server storage
+/**
+* Middleware function to handle Nhost authentication and session management.
+*
+* This function is designed to be used in Next.js middleware to manage user sessions
+* and refresh tokens. It checks for the presence of a refresh token in the request URL,
+* exchanges it for a new session if necessary, and manages the session expiration.
+*
+* @param {NextRequest} request - The incoming Next.js request object
+* @param {NextResponse} response - The outgoing Next.js response object
+* @returns {Promise<unknown>} The user session or undefined
+*/
+export async function handleNhostMiddleware(
+    request: NextRequest, response: NextResponse<unknown>,
+): Promise<Session | null> {
   const nhost = createClient({
-    region: 'local',
-    subdomain: 'local',
+    region: process.env.NHOST_REGION || 'local',
+    subdomain: process.env.NHOST_SUBDOMAIN || 'local',
     storage: {
       getItem: (key: string) => {
         return request.cookies.get(key)?.value || null;
@@ -71,19 +75,13 @@ export async function handleNhostMiddleware(request: NextRequest, response: Next
   // Get the session from the storage
   const session = nhost.getUserSession();
 
-  // Check if the request has a refreshToken in the URL and exchange it for a new session
-  const refreshToken = request.nextUrl.searchParams.get('refreshToken');
-  if (refreshToken && !session) {
-    await nhost.auth.refreshToken({ refreshToken });
-    return nhost.getUserSession();
-  }
-
-  // Check if the session needs to be refreshed
-  const tokenExpiresAt = extractTokenExpiration(session?.accessToken || '');
-  const currentTime = Date.now();
-  if (tokenExpiresAt - currentTime < 60 * 1000) {
+  if (session?.accessToken) {
+    const tokenExpiresAt = extractTokenExpiration(session?.accessToken || '');
+    const currentTime = Date.now();
+    if (tokenExpiresAt - currentTime < 60 * 1000) {
       await nhost.storage.getVersion();
       return nhost.getUserSession();
+    }
   }
 
   return session;

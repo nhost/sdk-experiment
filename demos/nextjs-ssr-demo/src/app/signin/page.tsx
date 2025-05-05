@@ -1,6 +1,4 @@
 import Link from 'next/link';
-import { createServerNhostClient } from '../lib/nhost/ssr';
-import { redirect } from 'next/navigation';
 import TabForm from '../components/TabForm';
 import SignInForm from './SignInForm';
 import MagicLinkForm from '../components/MagicLinkForm';
@@ -21,15 +19,6 @@ export default async function SignIn({
   const params = await Promise.resolve(searchParams);
   const error = params.error;
   const magicLinkSent = params.magic === 'success';
-  
-  // Check if user is already authenticated
-  const nhost = await createServerNhostClient();
-  const session = nhost.getUserSession();
-  
-  // If user is already authenticated, redirect to profile
-  if (session) {
-    redirect('/profile');
-  }
   
   return (
     <div className="flex flex-col items-center justify-center">

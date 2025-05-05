@@ -590,7 +590,7 @@ const signOut = <TData = AxiosResponse<OKResponse>>(
  * Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
  * @summary Sign in with email and password
  */
-const signinEmailPassword = <TData = AxiosResponse<SignInEmailPasswordResponse>>(
+const signInEmailPassword = <TData = AxiosResponse<SignInEmailPasswordResponse>>(
     signInEmailPasswordRequest: SignInEmailPasswordRequest, options?: AxiosRequestConfig
  ): Promise<TData> => {
     return axios.post(
@@ -603,7 +603,7 @@ const signinEmailPassword = <TData = AxiosResponse<SignInEmailPasswordResponse>>
  * Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
  * @summary Verify TOTP for MFA
  */
-const signinVerifyMfaTotp = <TData = AxiosResponse<SessionPayload>>(
+const signInVerifyMfaTotp = <TData = AxiosResponse<SessionPayload>>(
     signInMfaTotpRequest: SignInMfaTotpRequest, options?: AxiosRequestConfig
  ): Promise<TData> => {
     return axios.post(
@@ -616,7 +616,7 @@ const signinVerifyMfaTotp = <TData = AxiosResponse<SessionPayload>>(
  * Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options.
  * @summary Sign in with magic link email
  */
-const signinPasswordlessEmail = <TData = AxiosResponse<OKResponse>>(
+const signInPasswordlessEmail = <TData = AxiosResponse<OKResponse>>(
     signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest, options?: AxiosRequestConfig
  ): Promise<TData> => {
     return axios.post(
@@ -629,7 +629,7 @@ const signinPasswordlessEmail = <TData = AxiosResponse<OKResponse>>(
  * Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session.
  * @summary Sign up with email and password
  */
-const signupEmailPassword = <TData = AxiosResponse<SessionPayload>>(
+const signUpEmailPassword = <TData = AxiosResponse<SessionPayload>>(
     signUpEmailPasswordRequest: SignUpEmailPasswordRequest, options?: AxiosRequestConfig
  ): Promise<TData> => {
     return axios.post(
@@ -663,15 +663,15 @@ const changeUserMfa = <TData = AxiosResponse<TotpGenerateResponse>>(
     );
   }
 
-return {healthCheckHead,healthCheckGet,getVersion,refreshToken,signOut,signinEmailPassword,signinVerifyMfaTotp,signinPasswordlessEmail,signupEmailPassword,changeUserMfaVerify,changeUserMfa, axios}};
+return {healthCheckHead,healthCheckGet,getVersion,refreshToken,signOut,signInEmailPassword,signInVerifyMfaTotp,signInPasswordlessEmail,signUpEmailPassword,changeUserMfaVerify,changeUserMfa, axios}};
 export type HealthCheckHeadResult = AxiosResponse<void>
 export type HealthCheckGetResult = AxiosResponse<OKResponse>
 export type GetVersionResult = AxiosResponse<GetVersion200>
 export type RefreshTokenResult = AxiosResponse<Session>
 export type SignOutResult = AxiosResponse<OKResponse>
-export type SigninEmailPasswordResult = AxiosResponse<SignInEmailPasswordResponse>
-export type SigninVerifyMfaTotpResult = AxiosResponse<SessionPayload>
-export type SigninPasswordlessEmailResult = AxiosResponse<OKResponse>
-export type SignupEmailPasswordResult = AxiosResponse<SessionPayload>
+export type SignInEmailPasswordResult = AxiosResponse<SignInEmailPasswordResponse>
+export type SignInVerifyMfaTotpResult = AxiosResponse<SessionPayload>
+export type SignInPasswordlessEmailResult = AxiosResponse<OKResponse>
+export type SignUpEmailPasswordResult = AxiosResponse<SessionPayload>
 export type ChangeUserMfaVerifyResult = AxiosResponse<OKResponse>
 export type ChangeUserMfaResult = AxiosResponse<TotpGenerateResponse>

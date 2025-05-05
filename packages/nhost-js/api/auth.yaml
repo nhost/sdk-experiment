@@ -107,7 +107,7 @@ paths:
     post:
       summary: "Sign in with email and password"
       description: "Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled."
-      operationId: signinEmailPassword
+      operationId: signInEmailPassword
       tags:
         - authentication
         - email-and-password
@@ -129,7 +129,7 @@ paths:
     post:
       summary: "Verify TOTP for MFA"
       description: "Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful."
-      operationId: signinVerifyMfaTotp
+      operationId: signInVerifyMfaTotp
       tags:
         - authentication
         - mfa
@@ -151,7 +151,7 @@ paths:
     post:
       summary: "Sign in with magic link email"
       description: "Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options."
-      operationId: signinPasswordlessEmail
+      operationId: signInPasswordlessEmail
       tags:
         - authentication
         - passwordless
@@ -173,7 +173,7 @@ paths:
     post:
       summary: "Sign up with email and password"
       description: "Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session."
-      operationId: signupEmailPassword
+      operationId: signUpEmailPassword
       tags:
         - authentication
         - email-and-password

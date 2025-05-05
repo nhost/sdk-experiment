@@ -22,7 +22,7 @@ export async function signUp(formData: FormData) {
     const nhost = await createServerNhostClient();
     
     // Sign up with email and password
-    const response = await nhost.auth.signupEmailPassword({
+    const response = await nhost.auth.signUpEmailPassword({
       email,
       password,
       options: {
@@ -67,11 +67,11 @@ export async function sendMagicLink(formData: FormData) {
     const nhost = await createServerNhostClient();
     
     // Send magic link
-    const response = await nhost.auth.signinPasswordlessEmail({
+    const response = await nhost.auth.signInPasswordlessEmail({
       email,
       options: {
         displayName,
-        redirectTo: origin
+        redirectTo: origin + "/verify"
       }
     });
     

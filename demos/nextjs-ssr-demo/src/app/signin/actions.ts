@@ -1,7 +1,6 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { createServerNhostClient } from '../lib/nhost/ssr';
 
 /**
@@ -21,7 +20,7 @@ export async function signIn(formData: FormData) {
     const nhost = await createServerNhostClient();
     
     // Sign in with email and password
-    const response = await nhost.auth.signinEmailPassword({
+    const response = await nhost.auth.signInEmailPassword({
       email,
       password
     });
@@ -66,7 +65,7 @@ export async function verifyMfa(formData: FormData) {
     const nhost = await createServerNhostClient();
     
     // Verify MFA code
-    const response = await nhost.auth.signinVerifyMfaTotp({
+    const response = await nhost.auth.signInVerifyMfaTotp({
       ticket,
       otp
     });
@@ -108,11 +107,11 @@ export async function sendMagicLink(formData: FormData) {
     const nhost = await createServerNhostClient();
     
     // Send magic link
-    const response = await nhost.auth.signinPasswordlessEmail({
+    const response = await nhost.auth.signInPasswordlessEmail({
       email,
       options: {
         displayName,
-        redirectTo: origin
+        redirectTo: origin + '/verify'
       }
     });
     

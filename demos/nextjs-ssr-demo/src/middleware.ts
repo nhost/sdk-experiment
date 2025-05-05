@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { handleNhostMiddleware } from './app/lib/nhost/ssr';
 
 // Define public routes that don't require authentication
-const publicRoutes = ['/signin', '/signup'];
+const publicRoutes = ['/signin', '/signup', '/verify'];
 
 export async function middleware(request: NextRequest) {
   // Create a response that we'll modify as needed
