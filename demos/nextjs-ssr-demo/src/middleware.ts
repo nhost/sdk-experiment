@@ -23,12 +23,11 @@ export async function middleware(request: NextRequest) {
   const refreshToken = request.nextUrl.searchParams.get('refreshToken');
   if (refreshToken && !session) {
     try {
-      const session = await nhost.auth.refreshToken({ refreshToken });
-      console.log('Session refreshed:', session);
-      return response;
+      await nhost.auth.refreshToken({ refreshToken });
+      return NextResponse.redirect(request.url);
     } catch (error) {
       console.error('Error refreshing token:', error);
-      return response;
+      return NextResponse.redirect(new URL('/signin?error=' + error, request.url));
     }
   }
 
@@ -52,7 +51,8 @@ export async function middleware(request: NextRequest) {
   const tokenExpiresAt = extractTokenExpiration(session?.accessToken || '');
   const currentTime = Date.now();
   if (tokenExpiresAt - currentTime < 60 * 1000) {
-      const _ = await nhost.storage.getVersion();
+      await nhost.storage.getVersion();
+      return response
   }
 
   // If no session and not a public route, redirect to signin
