@@ -9,9 +9,7 @@ import {
   LocalStorage,
   MemoryStorage
 } from './auth/storage';
-import {
-  createTokenRefreshInterceptor, extractTokenExpiration
-} from './auth/token-interceptor';
+import {createTokenRefreshInterceptor} from './auth/token-interceptor';
 import {
   createSessionResponseInterceptor
 } from './auth/response-interceptor';
