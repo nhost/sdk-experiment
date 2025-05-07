@@ -1,6 +1,10 @@
-import { AxiosInstance } from 'axios';
-import { createApiClient, Session } from './client';
-import { StorageInterface, detectStorage, DEFAULT_SESSION_KEY } from './storage';
+import { AxiosInstance } from "axios";
+import { createApiClient, Session } from "./client";
+import {
+  StorageInterface,
+  detectStorage,
+  DEFAULT_SESSION_KEY,
+} from "./storage";
 
 /**
  * Extracts the expiration time from a JWT token
@@ -10,31 +14,32 @@ import { StorageInterface, detectStorage, DEFAULT_SESSION_KEY } from './storage'
 export const extractTokenExpiration = (token: string): number => {
   try {
     // JWT tokens are in the format header.payload.signature
-    const parts = token.split('.');
+    const parts = token.split(".");
     if (parts.length !== 3) {
-      console.warn('Token does not have three parts');
+      console.warn("Token does not have three parts");
       return 0;
     }
 
     // Decode the payload (middle part)
-    const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
 
     try {
       // Cross-platform base64 decoding
       let jsonPayload: string;
 
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         // Browser environment
         jsonPayload = decodeURIComponent(
-          window.atob(base64)
-            .split('')
-            .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-            .join('')
+          window
+            .atob(base64)
+            .split("")
+            .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+            .join(""),
         );
       } else {
         // Node.js environment
-        const buffer = Buffer.from(base64, 'base64');
-        jsonPayload = buffer.toString('utf8');
+        const buffer = Buffer.from(base64, "base64");
+        jsonPayload = buffer.toString("utf8");
       }
 
       const payload = JSON.parse(jsonPayload);
@@ -44,15 +49,15 @@ export const extractTokenExpiration = (token: string): number => {
         const expTime = payload.exp * 1000;
         return expTime;
       } else {
-        console.warn('No exp claim found in token');
+        console.warn("No exp claim found in token");
         return 0;
       }
     } catch (e) {
-      console.warn('Error decoding token payload:', e);
+      console.warn("Error decoding token payload:", e);
       return 0;
     }
   } catch (error) {
-    console.warn('Failed to extract token expiration:', error);
+    console.warn("Failed to extract token expiration:", error);
     return 0;
   }
 };
@@ -77,7 +82,7 @@ export interface TokenInterceptorOptions {
  */
 export const createTokenRefreshInterceptor = (
   authClient: ReturnType<typeof createApiClient>,
-  options?: TokenInterceptorOptions
+  options?: TokenInterceptorOptions,
 ) => {
   const {
     storage = detectStorage(),
@@ -94,7 +99,7 @@ export const createTokenRefreshInterceptor = (
       storage.setItem(storageKey, JSON.stringify(session));
       currentSession = session;
     } catch (error) {
-      console.warn('Failed to save session to storage:', error);
+      console.warn("Failed to save session to storage:", error);
     }
   };
 
@@ -107,13 +112,13 @@ export const createTokenRefreshInterceptor = (
         config.headers = config.headers || {};
 
         try {
-          if ('Authorization' in config.headers) {
-            delete config.headers['Authorization'];
+          if ("Authorization" in config.headers) {
+            delete config.headers["Authorization"];
             return config;
           }
 
           // If calling /token, don't refresh token to avoid infinite loops
-          if (config.url === '/token') {
+          if (config.url === "/token") {
             return config;
           }
 
@@ -125,11 +130,13 @@ export const createTokenRefreshInterceptor = (
               // Always use stored session if it has valid tokens
               if (parsedSession.accessToken && parsedSession.refreshToken) {
                 currentSession = parsedSession;
-                tokenExpiresAt = extractTokenExpiration(currentSession.accessToken);
+                tokenExpiresAt = extractTokenExpiration(
+                  currentSession.accessToken,
+                );
               }
             }
           } catch (error) {
-            console.warn('Failed to load session from storage:', error);
+            console.warn("Failed to load session from storage:", error);
           }
 
           // If we don't have a session, cannot add authorization header
@@ -144,8 +151,8 @@ export const createTokenRefreshInterceptor = (
             // Token is about to expire, refresh it
             if (currentSession && currentSession.refreshToken) {
               try {
-                const refreshResponse = await authClient.axios.post('/token', {
-                  refreshToken: currentSession.refreshToken
+                const refreshResponse = await authClient.axios.post("/token", {
+                  refreshToken: currentSession.refreshToken,
                 });
 
                 if (refreshResponse.data) {
@@ -153,26 +160,29 @@ export const createTokenRefreshInterceptor = (
                   const sessionData = refreshResponse.data as Session;
                   currentSession = sessionData;
                   // Update expiration time for the new token
-                  tokenExpiresAt = extractTokenExpiration(sessionData.accessToken);
+                  tokenExpiresAt = extractTokenExpiration(
+                    sessionData.accessToken,
+                  );
                   saveSessionToStorage(sessionData);
                 }
               } catch (error) {
-                console.error('Error refreshing token:', error);
+                console.error("Error refreshing token:", error);
               }
             }
           }
 
           // Add authorization header if we have a session
           if (currentSession?.accessToken) {
-            config.headers['Authorization'] = `Bearer ${currentSession.accessToken}`;
+            config.headers["Authorization"] =
+              `Bearer ${currentSession.accessToken}`;
           }
         } catch (error) {
-          console.error('Error in token refresh interceptor:', error);
+          console.error("Error in token refresh interceptor:", error);
         }
 
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
   };
 };

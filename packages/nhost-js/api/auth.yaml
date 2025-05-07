@@ -20,7 +20,7 @@ paths:
       tags:
         - system
       responses:
-        '200':
+        "200":
           description: "Service is healthy and operational"
 
     get:
@@ -30,12 +30,12 @@ paths:
       tags:
         - system
       responses:
-        '200':
+        "200":
           description: "Service is healthy and operational"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OKResponse'
+                $ref: "#/components/schemas/OKResponse"
 
   /version:
     get:
@@ -45,7 +45,7 @@ paths:
       tags:
         - system
       responses:
-        '200':
+        "200":
           description: "Version information successfully retrieved"
           content:
             application/json:
@@ -71,14 +71,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RefreshTokenRequest'
+              $ref: "#/components/schemas/RefreshTokenRequest"
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Session'
+                $ref: "#/components/schemas/Session"
           description: "Access token successfully refreshed"
 
   /signout:
@@ -94,14 +94,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignOutSchema'
+              $ref: "#/components/schemas/SignOutSchema"
       responses:
-        '200':
+        "200":
           description: "Successfully signed out"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OKResponse'
+                $ref: "#/components/schemas/OKResponse"
 
   /signin/email-password:
     post:
@@ -115,14 +115,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignInEmailPasswordRequest'
+              $ref: "#/components/schemas/SignInEmailPasswordRequest"
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignInEmailPasswordResponse'
+                $ref: "#/components/schemas/SignInEmailPasswordResponse"
           description: "Authentication successful. If MFA is enabled, a challenge will be returned instead of a session."
 
   /signin/mfa/totp:
@@ -137,14 +137,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignInMfaTotpRequest'
+              $ref: "#/components/schemas/SignInMfaTotpRequest"
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SessionPayload'
+                $ref: "#/components/schemas/SessionPayload"
           description: "MFA verification successful, session created"
 
   /signin/passwordless/email:
@@ -159,15 +159,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignInPasswordlessEmailRequest'
+              $ref: "#/components/schemas/SignInPasswordlessEmailRequest"
         required: true
       responses:
-        '200':
+        "200":
           description: "Magic link email sent successfully"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OKResponse'
+                $ref: "#/components/schemas/OKResponse"
 
   /signup/email-password:
     post:
@@ -181,26 +181,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignUpEmailPasswordRequest'
+              $ref: "#/components/schemas/SignUpEmailPasswordRequest"
         required: true
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SessionPayload'
+                $ref: "#/components/schemas/SessionPayload"
           description: "Registration successful. If email verification is required, session will be null."
-        '403':
+        "403":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
           description: "Signup mechanism is disabled"
-        '409':
+        "409":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
           description: "User with given email already exists"
 
   /user/mfa:
@@ -217,15 +217,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserMfaRequest'
+              $ref: "#/components/schemas/UserMfaRequest"
         required: true
       responses:
-        '200':
+        "200":
           description: "MFA status successfully updated"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OKResponse'
+                $ref: "#/components/schemas/OKResponse"
 
   /mfa/totp/generate:
     get:
@@ -238,12 +238,12 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '200':
+        "200":
           description: "TOTP secret successfully generated"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TotpGenerateResponse'
+                $ref: "#/components/schemas/TotpGenerateResponse"
 
   # /.well-known/jwks.json:
   #   get:
@@ -871,7 +871,7 @@ components:
           pattern: \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
           type: string
         user:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
           description: "Information about the authenticated user"
       required:
         - accessToken

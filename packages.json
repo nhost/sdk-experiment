@@ -1,0 +1,8 @@
+{
+  "name": "nhost",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "demos/*"
+  ]
+}

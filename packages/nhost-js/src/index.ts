@@ -1,31 +1,26 @@
-import { createApiClient as createAuthClient } from './auth/client';
-import { createApiClient as createStorageClient } from './storage/client';
-import { createApiClient as createGraphQLClient } from './graphql/client';
+import { createApiClient as createAuthClient } from "./auth/client";
+import { createApiClient as createStorageClient } from "./storage/client";
+import { createApiClient as createGraphQLClient } from "./graphql/client";
 import {
   StorageInterface,
   detectStorage,
   DEFAULT_SESSION_KEY,
   CookieStorage,
   LocalStorage,
-  MemoryStorage
-} from './auth/storage';
-import {createTokenRefreshInterceptor} from './auth/token-interceptor';
-import {
-  createSessionResponseInterceptor
-} from './auth/response-interceptor';
-import type { Session } from './auth/client';
+  MemoryStorage,
+} from "./auth/storage";
+import { createTokenRefreshInterceptor } from "./auth/token-interceptor";
+import { createSessionResponseInterceptor } from "./auth/response-interceptor";
+import type { Session } from "./auth/client";
 import type {
   GraphQLRequest,
   GraphQLResponse,
   GraphQLVariables,
-  GraphQLError
-} from './graphql/client';
+  GraphQLError,
+} from "./graphql/client";
 
 // Re-export storage utilities
-export {
-  detectStorage,
-  DEFAULT_SESSION_KEY
-};
+export { detectStorage, DEFAULT_SESSION_KEY };
 
 // Re-export storage classes
 export { CookieStorage, LocalStorage, MemoryStorage };
@@ -37,7 +32,7 @@ export type { StorageInterface, Session };
 export type { GraphQLRequest, GraphQLResponse, GraphQLVariables, GraphQLError };
 
 // Re-export extractTokenExpiration
-export { extractTokenExpiration } from './auth/token-interceptor';
+export { extractTokenExpiration } from "./auth/token-interceptor";
 
 /**
  * Generates a base URL for a Nhost service based on configuration
@@ -48,10 +43,10 @@ export { extractTokenExpiration } from './auth/token-interceptor';
  * @returns The base URL for the service
  */
 export const generateServiceUrl = (
-  serviceType: 'auth' | 'storage' | 'graphql',
+  serviceType: "auth" | "storage" | "graphql",
   customUrl?: string,
   subdomain?: string,
-  region?: string
+  region?: string,
 ): string => {
   if (customUrl) {
     return customUrl;
@@ -128,35 +123,42 @@ export class NhostClient {
     this._storageKey = storageKey;
 
     // Determine base URLs for each service
-    const authBaseUrl = generateServiceUrl('auth', authUrl, subdomain, region);
-    const storageBaseUrl = generateServiceUrl('storage', storageUrl, subdomain, region);
-    const graphqlBaseUrl = generateServiceUrl('graphql', graphqlUrl, subdomain, region);
+    const authBaseUrl = generateServiceUrl("auth", authUrl, subdomain, region);
+    const storageBaseUrl = generateServiceUrl(
+      "storage",
+      storageUrl,
+      subdomain,
+      region,
+    );
+    const graphqlBaseUrl = generateServiceUrl(
+      "graphql",
+      graphqlUrl,
+      subdomain,
+      region,
+    );
 
     // Create client instances
     this.auth = createAuthClient({
-      baseURL: authBaseUrl
+      baseURL: authBaseUrl,
     });
 
     this.storage = createStorageClient({
-      baseURL: storageBaseUrl
+      baseURL: storageBaseUrl,
     });
 
     this.graphql = createGraphQLClient({
-      baseURL: graphqlBaseUrl
+      baseURL: graphqlBaseUrl,
     });
 
     // Set up interceptors for authentication
-    const tokenRefreshInterceptor = createTokenRefreshInterceptor(
-      this.auth,
-      {
-        storage,
-        storageKey
-      }
-    );
+    const tokenRefreshInterceptor = createTokenRefreshInterceptor(this.auth, {
+      storage,
+      storageKey,
+    });
 
     const sessionResponseInterceptor = createSessionResponseInterceptor({
       storage,
-      storageKey
+      storageKey,
     });
 
     // Apply interceptors to all clients
@@ -177,7 +179,7 @@ export class NhostClient {
         return JSON.parse(storedSession) as Session;
       }
     } catch (error) {
-      console.warn('Failed to get session from storage:', error);
+      console.warn("Failed to get session from storage:", error);
     }
     return null;
   }

@@ -24,7 +24,7 @@ export interface StorageInterface {
 }
 
 // Default storage key for session data
-export const DEFAULT_SESSION_KEY = 'nhostSession';
+export const DEFAULT_SESSION_KEY = "nhostSession";
 
 /**
  * Browser localStorage implementation of StorageInterface
@@ -63,42 +63,44 @@ export class MemoryStorage implements StorageInterface {
 }
 
 export class CookieStorage implements StorageInterface {
-    /**
-     * Get an item from the cookie storage
-     */
-    getItem(key: string): string | null {
-      const match = document.cookie.match(new RegExp('(^| )' + key + '=([^;]+)'));
-      return match ? decodeURIComponent(match[2]) : null;
-    }
-
-    /**
-     * Set an item in cookie storage
-     */
-    setItem(key: string, value: string): void {
-      document.cookie = `${key}=${encodeURIComponent(value)}; path=/; SameSite=Lax;`;
-    }
-
-    /**
-     * Remove an item from cookie storage
-     */
-    removeItem(key: string): void {
-      document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax;`;
-    }
+  /**
+   * Get an item from the cookie storage
+   */
+  getItem(key: string): string | null {
+    const match = document.cookie.match(new RegExp("(^| )" + key + "=([^;]+)"));
+    return match ? decodeURIComponent(match[2]) : null;
   }
+
+  /**
+   * Set an item in cookie storage
+   */
+  setItem(key: string, value: string): void {
+    document.cookie = `${key}=${encodeURIComponent(value)}; path=/; SameSite=Lax;`;
+  }
+
+  /**
+   * Remove an item from cookie storage
+   */
+  removeItem(key: string): void {
+    document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax;`;
+  }
+}
 
 /**
  * Detects the best available storage implementation for the current environment
  * @returns A storage implementation
  */
 export const detectStorage = (): StorageInterface => {
-  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+  if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
     try {
       // Test if localStorage is actually available (could be disabled)
-      localStorage.setItem('__test', '__test');
-      localStorage.removeItem('__test');
+      localStorage.setItem("__test", "__test");
+      localStorage.removeItem("__test");
       return new LocalStorage();
     } catch (e) {
-      console.warn('localStorage is not available, using in-memory storage instead');
+      console.warn(
+        "localStorage is not available, using in-memory storage instead",
+      );
     }
   }
   return new MemoryStorage();

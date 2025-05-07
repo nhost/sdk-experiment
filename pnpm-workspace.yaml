@@ -1,7 +1,0 @@
-packages:
-  - packages/*
-  - demos/*
-
-onlyBuiltDependencies:
-  - esbuild
-  - sharp

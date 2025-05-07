@@ -1,9 +1,9 @@
-import Axios from 'axios';
+import Axios from "axios";
 import type {
   AxiosRequestConfig,
   AxiosResponse,
-  CreateAxiosDefaults
-} from 'axios';
+  CreateAxiosDefaults,
+} from "axios";
 
 export interface GraphQLVariables {
   [key: string]: any;
@@ -34,7 +34,7 @@ export interface GraphQLResponse<T = any> {
  */
 export const createApiClient = (config?: CreateAxiosDefaults) => {
   const axiosInstance = Axios.create({
-    ...config
+    ...config,
   });
 
   /**
@@ -45,13 +45,9 @@ export const createApiClient = (config?: CreateAxiosDefaults) => {
    */
   const executeOperation = <TData = any, TVariables = GraphQLVariables>(
     request: GraphQLRequest<TVariables>,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ): Promise<AxiosResponse<GraphQLResponse<TData>>> => {
-    return axiosInstance.post<GraphQLResponse<TData>>(
-      '',
-      request,
-      options
-    );
+    return axiosInstance.post<GraphQLResponse<TData>>("", request, options);
   };
 
   /**
@@ -62,7 +58,7 @@ export const createApiClient = (config?: CreateAxiosDefaults) => {
    */
   const query = <TData = any, TVariables = GraphQLVariables>(
     request: GraphQLRequest<TVariables>,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ): Promise<AxiosResponse<GraphQLResponse<TData>>> => {
     return executeOperation<TData, TVariables>(request, options);
   };
@@ -75,7 +71,7 @@ export const createApiClient = (config?: CreateAxiosDefaults) => {
    */
   const mutation = <TData = any, TVariables = GraphQLVariables>(
     request: GraphQLRequest<TVariables>,
-    options?: AxiosRequestConfig
+    options?: AxiosRequestConfig,
   ): Promise<AxiosResponse<GraphQLResponse<TData>>> => {
     return executeOperation<TData, TVariables>(request, options);
   };
@@ -86,19 +82,23 @@ export const createApiClient = (config?: CreateAxiosDefaults) => {
    */
   const subscription = <TData = any, TVariables = GraphQLVariables>(
     _request: GraphQLRequest<TVariables>,
-    _options?: AxiosRequestConfig
+    _options?: AxiosRequestConfig,
   ): Promise<AxiosResponse<GraphQLResponse<TData>>> => {
-    throw new Error('Subscriptions are not supported in the REST GraphQL client. Use a WebSocket client instead.');
+    throw new Error(
+      "Subscriptions are not supported in the REST GraphQL client. Use a WebSocket client instead.",
+    );
   };
 
   return {
     query,
     mutation,
     subscription,
-    axios: axiosInstance
+    axios: axiosInstance,
   };
 };
 
 export type QueryResult<TData = any> = AxiosResponse<GraphQLResponse<TData>>;
 export type MutationResult<TData = any> = AxiosResponse<GraphQLResponse<TData>>;
-export type SubscriptionResult<TData = any> = AxiosResponse<GraphQLResponse<TData>>; 
+export type SubscriptionResult<TData = any> = AxiosResponse<
+  GraphQLResponse<TData>
+>;

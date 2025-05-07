@@ -5,13 +5,6 @@
  * Comprehensive authentication service for managing user identities, sessions, and authentication methods
  * OpenAPI spec version: 1.0.0
  */
-import Axios from 'axios';
-import type {
-  AxiosRequestConfig,
-  AxiosResponse,
-  CreateAxiosDefaults
-} from 'axios';
-
 /**
  * JSON Web Key Set for verifying JWT signatures
  */
@@ -80,36 +73,37 @@ export interface CreatePATResponse {
 /**
  * Error code identifying the specific application error
  */
-export type ErrorResponseError = typeof ErrorResponseError[keyof typeof ErrorResponseError];
-
+export type ErrorResponseError =
+  (typeof ErrorResponseError)[keyof typeof ErrorResponseError];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const ErrorResponseError = {
-  'default-role-must-be-in-allowed-roles': 'default-role-must-be-in-allowed-roles',
-  'disabled-endpoint': 'disabled-endpoint',
-  'disabled-user': 'disabled-user',
-  'email-already-in-use': 'email-already-in-use',
-  'email-already-verified': 'email-already-verified',
-  'forbidden-anonymous': 'forbidden-anonymous',
-  'internal-server-error': 'internal-server-error',
-  'invalid-email-password': 'invalid-email-password',
-  'invalid-request': 'invalid-request',
-  'locale-not-allowed': 'locale-not-allowed',
-  'password-too-short': 'password-too-short',
-  'password-in-hibp-database': 'password-in-hibp-database',
-  'redirectTo-not-allowed': 'redirectTo-not-allowed',
-  'role-not-allowed': 'role-not-allowed',
-  'signup-disabled': 'signup-disabled',
-  'unverified-user': 'unverified-user',
-  'user-not-anonymous': 'user-not-anonymous',
-  'invalid-pat': 'invalid-pat',
-  'invalid-refresh-token': 'invalid-refresh-token',
-  'invalid-ticket': 'invalid-ticket',
-  'disabled-mfa-totp': 'disabled-mfa-totp',
-  'no-totp-secret': 'no-totp-secret',
-  'invalid-totp': 'invalid-totp',
-  'mfa-type-not-found': 'mfa-type-not-found',
-  'totp-already-active': 'totp-already-active',
+  "default-role-must-be-in-allowed-roles":
+    "default-role-must-be-in-allowed-roles",
+  "disabled-endpoint": "disabled-endpoint",
+  "disabled-user": "disabled-user",
+  "email-already-in-use": "email-already-in-use",
+  "email-already-verified": "email-already-verified",
+  "forbidden-anonymous": "forbidden-anonymous",
+  "internal-server-error": "internal-server-error",
+  "invalid-email-password": "invalid-email-password",
+  "invalid-request": "invalid-request",
+  "locale-not-allowed": "locale-not-allowed",
+  "password-too-short": "password-too-short",
+  "password-in-hibp-database": "password-in-hibp-database",
+  "redirectTo-not-allowed": "redirectTo-not-allowed",
+  "role-not-allowed": "role-not-allowed",
+  "signup-disabled": "signup-disabled",
+  "unverified-user": "unverified-user",
+  "user-not-anonymous": "user-not-anonymous",
+  "invalid-pat": "invalid-pat",
+  "invalid-refresh-token": "invalid-refresh-token",
+  "invalid-ticket": "invalid-ticket",
+  "disabled-mfa-totp": "disabled-mfa-totp",
+  "no-totp-secret": "no-totp-secret",
+  "invalid-totp": "invalid-totp",
+  "mfa-type-not-found": "mfa-type-not-found",
+  "totp-already-active": "totp-already-active",
 } as const;
 
 /**
@@ -227,13 +221,13 @@ export interface User {
 /**
  * Which sign-in method to use
  */
-export type UserDeanonymizeRequestSignInMethod = typeof UserDeanonymizeRequestSignInMethod[keyof typeof UserDeanonymizeRequestSignInMethod];
-
+export type UserDeanonymizeRequestSignInMethod =
+  (typeof UserDeanonymizeRequestSignInMethod)[keyof typeof UserDeanonymizeRequestSignInMethod];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const UserDeanonymizeRequestSignInMethod = {
-  'email-password': 'email-password',
-  passwordless: 'passwordless',
+  "email-password": "email-password",
+  passwordless: "passwordless",
 } as const;
 
 export interface UserDeanonymizeRequest {
@@ -287,12 +281,11 @@ export interface UserPasswordRequest {
   ticket?: string;
 }
 
-export type OKResponse = typeof OKResponse[keyof typeof OKResponse];
-
+export type OKResponse = (typeof OKResponse)[keyof typeof OKResponse];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const OKResponse = {
-  OK: 'OK',
+  OK: "OK",
 } as const;
 
 export interface OptionsRedirectTo {
@@ -396,9 +389,13 @@ export interface SignUpWebauthnRequest {
   options?: SignUpOptions;
 }
 
-export interface SignInWebauthnResponse { [key: string]: unknown }
+export interface SignInWebauthnResponse {
+  [key: string]: unknown;
+}
 
-export interface SignUpWebauthnResponse { [key: string]: unknown }
+export interface SignUpWebauthnResponse {
+  [key: string]: unknown;
+}
 
 export type SignInWebauthnVerifyRequestCredential = { [key: string]: unknown };
 
@@ -410,7 +407,7 @@ export interface SignInWebauthnVerifyRequest {
   email?: string;
   credential: SignInWebauthnVerifyRequestCredential;
   [key: string]: unknown;
- }
+}
 
 export type SignUpWebauthnVerifyRequestCredential = { [key: string]: unknown };
 
@@ -418,13 +415,14 @@ export type SignUpWebauthnVerifyRequestOptionsAllOf = {
   nickname?: string;
 };
 
-export type SignUpWebauthnVerifyRequestOptions = SignUpOptions & SignUpWebauthnVerifyRequestOptionsAllOf;
+export type SignUpWebauthnVerifyRequestOptions = SignUpOptions &
+  SignUpWebauthnVerifyRequestOptionsAllOf;
 
 export interface SignUpWebauthnVerifyRequest {
   credential?: SignUpWebauthnVerifyRequestCredential;
   options?: SignUpWebauthnVerifyRequestOptions;
   [key: string]: unknown;
- }
+}
 
 export interface SignInIdTokenRequest {
   provider: Provider;
@@ -445,13 +443,12 @@ export interface SignInMfaTotpRequest {
   otp: string;
 }
 
-export type Provider = typeof Provider[keyof typeof Provider];
-
+export type Provider = (typeof Provider)[keyof typeof Provider];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const Provider = {
-  apple: 'apple',
-  google: 'google',
+  apple: "apple",
+  google: "google",
 } as const;
 
 export interface LinkIdTokenRequest {
@@ -465,13 +462,13 @@ export interface LinkIdTokenRequest {
 /**
  * Type of MFA to activate. Use empty string to disable MFA.
  */
-export type UserMfaRequestActiveMfaType = typeof UserMfaRequestActiveMfaType[keyof typeof UserMfaRequestActiveMfaType];
-
+export type UserMfaRequestActiveMfaType =
+  (typeof UserMfaRequestActiveMfaType)[keyof typeof UserMfaRequestActiveMfaType];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const UserMfaRequestActiveMfaType = {
-  totp: 'totp',
-  '': '',
+  totp: "totp",
+  "": "",
 } as const;
 
 /**
@@ -502,15 +499,15 @@ export type TicketQueryParameter = string;
 /**
  * Type of the ticket
  */
-export type TicketTypeQueryParameter = typeof TicketTypeQueryParameter[keyof typeof TicketTypeQueryParameter];
-
+export type TicketTypeQueryParameter =
+  (typeof TicketTypeQueryParameter)[keyof typeof TicketTypeQueryParameter];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const TicketTypeQueryParameter = {
-  emailVerify: 'emailVerify',
-  emailConfirmChange: 'emailConfirmChange',
-  signinPasswordless: 'signinPasswordless',
-  passwordReset: 'passwordReset',
+  emailVerify: "emailVerify",
+  emailConfirmChange: "emailConfirmChange",
+  signinPasswordless: "signinPasswordless",
+  passwordReset: "passwordReset",
 } as const;
 
 /**
@@ -523,155 +520,311 @@ export type GetVersion200 = {
   version: string;
 };
 
-export const createApiClient = (config?: CreateAxiosDefaults) => {
-  const axios = Axios.create(config);
-/**
- * Verify if the authentication service is operational using HEAD method
- * @summary Health check (HEAD)
- */
-const healthCheckHead = <TData = AxiosResponse<void>>(
-     options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.head(
-      `/healthz`,options
-    );
-  }
+export type Response<T> = {
+  data: T;
+  status: number;
+  headers: Headers;
+};
+export const createApiClient = (baseURL: string) => {
+  /**
+   * Verify if the authentication service is operational using HEAD method
+   * @summary Health check (HEAD)
+   */
+  const getHealthCheckHeadUrl = () => {
+    return baseURL + `/healthz`;
+  };
 
-/**
- * Verify if the authentication service is operational using GET method
- * @summary Health check (GET)
- */
-const healthCheckGet = <TData = AxiosResponse<OKResponse>>(
-     options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.get(
-      `/healthz`,options
-    );
-  }
+  const healthCheckHead = async (
+    options?: RequestInit,
+  ): Promise<Response<void>> => {
+    const res = await fetch(getHealthCheckHeadUrl(), {
+      ...options,
+      method: "HEAD",
+    });
 
-/**
- * Retrieve version information about the authentication service
- * @summary Get service version
- */
-const getVersion = <TData = AxiosResponse<GetVersion200>>(
-     options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.get(
-      `/version`,options
-    );
-  }
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: void = body ? JSON.parse(body) : {};
 
-/**
- * Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued.
- * @summary Refresh access token
- */
-const refreshToken = <TData = AxiosResponse<Session>>(
-    refreshTokenRequest: RefreshTokenRequest, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.post(
-      `/token`,
-      refreshTokenRequest,options
-    );
-  }
+    return { data, status: res.status, headers: res.headers } as Response<void>;
+  };
 
-/**
- * @summary Sign out
- */
-const signOut = <TData = AxiosResponse<OKResponse>>(
-    signOutSchema: SignOutSchema, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.post(
-      `/signout`,
-      signOutSchema,options
-    );
-  }
+  /**
+   * Verify if the authentication service is operational using GET method
+   * @summary Health check (GET)
+   */
+  const getHealthCheckGetUrl = () => {
+    return baseURL + `/healthz`;
+  };
 
-/**
- * Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
- * @summary Sign in with email and password
- */
-const signInEmailPassword = <TData = AxiosResponse<SignInEmailPasswordResponse>>(
-    signInEmailPasswordRequest: SignInEmailPasswordRequest, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.post(
-      `/signin/email-password`,
-      signInEmailPasswordRequest,options
-    );
-  }
+  const healthCheckGet = async (
+    options?: RequestInit,
+  ): Promise<Response<OKResponse>> => {
+    const res = await fetch(getHealthCheckGetUrl(), {
+      ...options,
+      method: "GET",
+    });
 
-/**
- * Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
- * @summary Verify TOTP for MFA
- */
-const signInVerifyMfaTotp = <TData = AxiosResponse<SessionPayload>>(
-    signInMfaTotpRequest: SignInMfaTotpRequest, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.post(
-      `/signin/mfa/totp`,
-      signInMfaTotpRequest,options
-    );
-  }
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: OKResponse = body ? JSON.parse(body) : {};
 
-/**
- * Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options.
- * @summary Sign in with magic link email
- */
-const signInPasswordlessEmail = <TData = AxiosResponse<OKResponse>>(
-    signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.post(
-      `/signin/passwordless/email`,
-      signInPasswordlessEmailRequest,options
-    );
-  }
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as Response<OKResponse>;
+  };
 
-/**
- * Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session.
- * @summary Sign up with email and password
- */
-const signUpEmailPassword = <TData = AxiosResponse<SessionPayload>>(
-    signUpEmailPasswordRequest: SignUpEmailPasswordRequest, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.post(
-      `/signup/email-password`,
-      signUpEmailPasswordRequest,options
-    );
-  }
+  /**
+   * Retrieve version information about the authentication service
+   * @summary Get service version
+   */
+  const getGetVersionUrl = () => {
+    return baseURL + `/version`;
+  };
 
-/**
- * Activate or deactivate multi-factor authentication for the authenticated user
- * @summary Manage multi-factor authentication
- */
-const changeUserMfaVerify = <TData = AxiosResponse<OKResponse>>(
-    userMfaRequest: UserMfaRequest, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.post(
-      `/user/mfa`,
-      userMfaRequest,options
-    );
-  }
+  const getVersion = async (
+    options?: RequestInit,
+  ): Promise<Response<GetVersion200>> => {
+    const res = await fetch(getGetVersionUrl(), {
+      ...options,
+      method: "GET",
+    });
 
-/**
- * Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication
- * @summary Generate TOTP secret
- */
-const changeUserMfa = <TData = AxiosResponse<TotpGenerateResponse>>(
-     options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.get(
-      `/mfa/totp/generate`,options
-    );
-  }
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: GetVersion200 = body ? JSON.parse(body) : {};
 
-return {healthCheckHead,healthCheckGet,getVersion,refreshToken,signOut,signInEmailPassword,signInVerifyMfaTotp,signInPasswordlessEmail,signUpEmailPassword,changeUserMfaVerify,changeUserMfa, axios}};
-export type HealthCheckHeadResult = AxiosResponse<void>
-export type HealthCheckGetResult = AxiosResponse<OKResponse>
-export type GetVersionResult = AxiosResponse<GetVersion200>
-export type RefreshTokenResult = AxiosResponse<Session>
-export type SignOutResult = AxiosResponse<OKResponse>
-export type SignInEmailPasswordResult = AxiosResponse<SignInEmailPasswordResponse>
-export type SignInVerifyMfaTotpResult = AxiosResponse<SessionPayload>
-export type SignInPasswordlessEmailResult = AxiosResponse<OKResponse>
-export type SignUpEmailPasswordResult = AxiosResponse<SessionPayload>
-export type ChangeUserMfaVerifyResult = AxiosResponse<OKResponse>
-export type ChangeUserMfaResult = AxiosResponse<TotpGenerateResponse>
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as Response<GetVersion200>;
+  };
+
+  /**
+   * Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued.
+   * @summary Refresh access token
+   */
+  const getRefreshTokenUrl = () => {
+    return baseURL + `/token`;
+  };
+
+  const refreshToken = async (
+    refreshTokenRequest: RefreshTokenRequest,
+    options?: RequestInit,
+  ): Promise<Response<Session>> => {
+    const res = await fetch(getRefreshTokenUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(refreshTokenRequest),
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: Session = body ? JSON.parse(body) : {};
+
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as Response<Session>;
+  };
+
+  /**
+   * @summary Sign out
+   */
+  const getSignOutUrl = () => {
+    return baseURL + `/signout`;
+  };
+
+  const signOut = async (
+    signOutSchema: SignOutSchema,
+    options?: RequestInit,
+  ): Promise<Response<OKResponse>> => {
+    const res = await fetch(getSignOutUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(signOutSchema),
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: OKResponse = body ? JSON.parse(body) : {};
+
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as Response<OKResponse>;
+  };
+
+  /**
+   * Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
+   * @summary Sign in with email and password
+   */
+  const getSignInEmailPasswordUrl = () => {
+    return baseURL + `/signin/email-password`;
+  };
+
+  const signInEmailPassword = async (
+    signInEmailPasswordRequest: SignInEmailPasswordRequest,
+    options?: RequestInit,
+  ): Promise<Response<SignInEmailPasswordResponse>> => {
+    const res = await fetch(getSignInEmailPasswordUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(signInEmailPasswordRequest),
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: SignInEmailPasswordResponse = body ? JSON.parse(body) : {};
+
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as Response<SignInEmailPasswordResponse>;
+  };
+
+  /**
+   * Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
+   * @summary Verify TOTP for MFA
+   */
+  const getSignInVerifyMfaTotpUrl = () => {
+    return baseURL + `/signin/mfa/totp`;
+  };
+
+  const signInVerifyMfaTotp = async (
+    signInMfaTotpRequest: SignInMfaTotpRequest,
+    options?: RequestInit,
+  ): Promise<Response<SessionPayload>> => {
+    const res = await fetch(getSignInVerifyMfaTotpUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(signInMfaTotpRequest),
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: SessionPayload = body ? JSON.parse(body) : {};
+
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as Response<SessionPayload>;
+  };
+
+  /**
+   * Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options.
+   * @summary Sign in with magic link email
+   */
+  const getSignInPasswordlessEmailUrl = () => {
+    return baseURL + `/signin/passwordless/email`;
+  };
+
+  const signInPasswordlessEmail = async (
+    signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest,
+    options?: RequestInit,
+  ): Promise<Response<OKResponse>> => {
+    const res = await fetch(getSignInPasswordlessEmailUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(signInPasswordlessEmailRequest),
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: OKResponse = body ? JSON.parse(body) : {};
+
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as Response<OKResponse>;
+  };
+
+  /**
+   * Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session.
+   * @summary Sign up with email and password
+   */
+  const getSignUpEmailPasswordUrl = () => {
+    return baseURL + `/signup/email-password`;
+  };
+
+  const signUpEmailPassword = async (
+    signUpEmailPasswordRequest: SignUpEmailPasswordRequest,
+    options?: RequestInit,
+  ): Promise<Response<SessionPayload | ErrorResponse>> => {
+    const res = await fetch(getSignUpEmailPasswordUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(signUpEmailPasswordRequest),
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: SessionPayload | ErrorResponse = body ? JSON.parse(body) : {};
+
+    return { data, status: res.status, headers: res.headers } as Response<
+      SessionPayload | ErrorResponse
+    >;
+  };
+
+  /**
+   * Activate or deactivate multi-factor authentication for the authenticated user
+   * @summary Manage multi-factor authentication
+   */
+  const getChangeUserMfaVerifyUrl = () => {
+    return baseURL + `/user/mfa`;
+  };
+
+  const changeUserMfaVerify = async (
+    userMfaRequest: UserMfaRequest,
+    options?: RequestInit,
+  ): Promise<Response<OKResponse>> => {
+    const res = await fetch(getChangeUserMfaVerifyUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(userMfaRequest),
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: OKResponse = body ? JSON.parse(body) : {};
+
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as Response<OKResponse>;
+  };
+
+  /**
+   * Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication
+   * @summary Generate TOTP secret
+   */
+  const getChangeUserMfaUrl = () => {
+    return baseURL + `/mfa/totp/generate`;
+  };
+
+  const changeUserMfa = async (
+    options?: RequestInit,
+  ): Promise<Response<TotpGenerateResponse>> => {
+    const res = await fetch(getChangeUserMfaUrl(), {
+      ...options,
+      method: "GET",
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: TotpGenerateResponse = body ? JSON.parse(body) : {};
+
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as Response<TotpGenerateResponse>;
+  };
+
+  return { signUpEmailPassword, healthCheckHead }
+};

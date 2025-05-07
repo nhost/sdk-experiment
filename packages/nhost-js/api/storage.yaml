@@ -20,7 +20,7 @@ paths:
       tags:
         - documentation
       responses:
-        '200':
+        "200":
           description: "OpenAPI schema definition"
           content:
             application/x-yaml:
@@ -35,12 +35,12 @@ paths:
       tags:
         - system
       responses:
-        '200':
+        "200":
           description: "Version information successfully retrieved"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VersionInformation'
+                $ref: "#/components/schemas/VersionInformation"
 
   /files/:
     post:
@@ -65,7 +65,7 @@ paths:
                   type: array
                   description: "Optional custom metadata for each uploaded file. Must match the order of the file[] array."
                   items:
-                    $ref: '#/components/schemas/UploadFileMetadata'
+                    $ref: "#/components/schemas/UploadFileMetadata"
                 file[]:
                   description: "Array of files to upload."
                   type: array
@@ -76,7 +76,7 @@ paths:
               file[]:
                 contentType: application/octet-stream
       responses:
-        '201':
+        "201":
           description: "Files successfully uploaded"
           content:
             application/json:
@@ -87,13 +87,13 @@ paths:
                     type: array
                     description: "List of successfully processed files with their metadata."
                     items:
-                      $ref: '#/components/schemas/FileMetadata'
+                      $ref: "#/components/schemas/FileMetadata"
         default:
           description: "Error occurred during upload"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 
   /files/{id}:
     head:
@@ -173,7 +173,7 @@ paths:
               - avif
 
       responses:
-        '200':
+        "200":
           description: "File information headers retrieved successfully"
           headers:
             Cache-Control:
@@ -197,7 +197,7 @@ paths:
               schema:
                 type: string
                 format: date-time
-        '304':
+        "304":
           description: "File not modified since the condition specified in If-Modified-Since or If-None-Match headers"
           headers:
             Cache-Control:
@@ -221,7 +221,7 @@ paths:
               schema:
                 type: string
                 format: date-time
-        '412':
+        "412":
           description: "Precondition failed for conditional request headers (If-Match, If-Unmodified-Since)"
           headers:
             Cache-Control:
@@ -329,7 +329,7 @@ paths:
               - png
               - avif
       responses:
-        '200':
+        "200":
           description: "File content retrieved successfully"
           headers:
             Cache-Control:
@@ -355,7 +355,7 @@ paths:
                 format: date-time
           content:
             application/octet-stream: {}
-        '304':
+        "304":
           description: "File not modified since the condition specified in If-Modified-Since or If-None-Match headers"
           headers:
             Cache-Control:
@@ -379,7 +379,7 @@ paths:
               schema:
                 type: string
                 format: date-time
-        '412':
+        "412":
           description: "Precondition failed for conditional request headers (If-Match, If-Unmodified-Since, If-None-Match)"
           headers:
             Cache-Control:
@@ -418,7 +418,7 @@ paths:
         1. The isUploaded flag is set to false to mark the file as being updated
         2. The file content is replaced in the storage backend
         3. File metadata is updated (size, mime-type, isUploaded, etc.)
-        
+
         Each step is atomic, but if a step fails, previous steps will not be automatically rolled back.
       operationId: replaceFile
       tags:
@@ -439,7 +439,7 @@ paths:
               type: object
               properties:
                 metadata:
-                  $ref: '#/components/schemas/UpdateFileMetadata'
+                  $ref: "#/components/schemas/UpdateFileMetadata"
                   description: "Optional metadata to update for the file"
                 file:
                   description: "New file content to replace the existing file"
@@ -449,18 +449,18 @@ paths:
               file:
                 contentType: application/octet-stream
       responses:
-        '200':
+        "200":
           description: "File successfully replaced"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FileMetadata'
+                $ref: "#/components/schemas/FileMetadata"
         default:
           description: "Error occurred during file replacement"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 
     delete:
       summary: "Delete file"
@@ -478,14 +478,14 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: "File successfully deleted"
         default:
           description: "Error occurred during file deletion"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error'
+                $ref: "#/components/schemas/Error"
 
   # /files/{id}/presignedurl:
   #   get:
@@ -930,7 +930,7 @@ components:
         etag:
           type: string
           description: "Entity tag for cache validation."
-          example: "\"a1b2c3d4e5f6\""
+          example: '"a1b2c3d4e5f6"'
         createdAt:
           type: string
           format: date-time
@@ -957,7 +957,7 @@ components:
           type: object
           additionalProperties: true
           description: "Custom metadata associated with the file."
-          example: {"alt": "Profile picture", "category": "avatar"}
+          example: { "alt": "Profile picture", "category": "avatar" }
     UploadFileMetadata:
       type: object
       description: "Metadata provided when uploading a new file."
@@ -974,7 +974,7 @@ components:
           type: object
           additionalProperties: true
           description: "Custom metadata to associate with the file."
-          example: {"alt": "Custom image", "category": "document"}
+          example: { "alt": "Custom image", "category": "document" }
     UpdateFileMetadata:
       type: object
       description: "Metadata that can be updated for an existing file."
@@ -987,7 +987,7 @@ components:
           type: object
           additionalProperties: true
           description: "Updated custom metadata to associate with the file."
-          example: {"alt": "Updated image description", "category": "profile"}
+          example: { "alt": "Updated image description", "category": "profile" }
     PresignedURLResponse:
       type: object
       description: "Contains a presigned URL for direct file operations."
