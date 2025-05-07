@@ -826,5 +826,17 @@ export const createApiClient = (baseURL: string) => {
     } as Response<TotpGenerateResponse>;
   };
 
-  return { signUpEmailPassword, healthCheckHead }
+  return {
+    healthCheckHead,
+    healthCheckGet,
+    getVersion,
+    refreshToken,
+    signOut,
+    signInEmailPassword,
+    signInVerifyMfaTotp,
+    signInPasswordlessEmail,
+    signUpEmailPassword,
+    changeUserMfaVerify,
+    changeUserMfa,
+  };
 };

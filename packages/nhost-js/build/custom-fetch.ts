@@ -264,8 +264,35 @@ export const generateFetchHeader: ClientHeaderBuilder = ({
       `;
 };
 
-export const generateFetchFooter: ClientFooterBuilder = ({}) => {
-  return `};`;
+const returnTypesToWrite: Map<string, (title?: string) => string> = new Map();
+
+export const generateFetchFooter: ClientFooterBuilder = ({
+  operationNames,
+  title,
+  noFunction,
+  hasMutator,
+  hasAwaitedType,
+}) => {
+  let footer = "";
+
+  if (!noFunction) {
+    footer += `return {${operationNames.join(",")}}};\n`;
+  }
+
+  if (hasMutator && !hasAwaitedType) {
+    footer += `\ntype AwaitedInput<T> = PromiseLike<T> | T;\n
+    type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
+\n`;
+  }
+
+  operationNames.forEach((operationName) => {
+    if (returnTypesToWrite.has(operationName)) {
+      const func = returnTypesToWrite.get(operationName)!;
+      footer += func(!noFunction ? title : undefined) + "\n";
+    }
+  });
+
+  return footer;
 };
 
 const fetchClientBuilder: ClientGeneratorsBuilder = {
