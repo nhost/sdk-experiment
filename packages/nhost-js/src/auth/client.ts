@@ -5,6 +5,9 @@
  * Comprehensive authentication service for managing user identities, sessions, and authentication methods
  * OpenAPI spec version: 1.0.0
  */
+import { createEnhancedFetch } from "../fetch";
+import type { Interceptor } from "../fetch";
+
 /**
  * JSON Web Key Set for verifying JWT signatures
  */
@@ -520,12 +523,17 @@ export type GetVersion200 = {
   version: string;
 };
 
-export type Response<T> = {
+export type FetchResponse<T> = {
   data: T;
   status: number;
   headers: Headers;
 };
-export const createApiClient = (baseURL: string) => {
+
+export const createAPIClient = (
+  baseURL: string,
+  requestInterceptors: Interceptor[] = [],
+) => {
+  const fetch = createEnhancedFetch(requestInterceptors);
   /**
    * Verify if the authentication service is operational using HEAD method
    * @summary Health check (HEAD)
@@ -536,7 +544,7 @@ export const createApiClient = (baseURL: string) => {
 
   const healthCheckHead = async (
     options?: RequestInit,
-  ): Promise<Response<void>> => {
+  ): Promise<FetchResponse<void>> => {
     const res = await fetch(getHealthCheckHeadUrl(), {
       ...options,
       method: "HEAD",
@@ -545,7 +553,11 @@ export const createApiClient = (baseURL: string) => {
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: void = body ? JSON.parse(body) : {};
 
-    return { data, status: res.status, headers: res.headers } as Response<void>;
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<void>;
   };
 
   /**
@@ -558,7 +570,7 @@ export const createApiClient = (baseURL: string) => {
 
   const healthCheckGet = async (
     options?: RequestInit,
-  ): Promise<Response<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse>> => {
     const res = await fetch(getHealthCheckGetUrl(), {
       ...options,
       method: "GET",
@@ -571,7 +583,7 @@ export const createApiClient = (baseURL: string) => {
       data,
       status: res.status,
       headers: res.headers,
-    } as Response<OKResponse>;
+    } as FetchResponse<OKResponse>;
   };
 
   /**
@@ -584,7 +596,7 @@ export const createApiClient = (baseURL: string) => {
 
   const getVersion = async (
     options?: RequestInit,
-  ): Promise<Response<GetVersion200>> => {
+  ): Promise<FetchResponse<GetVersion200>> => {
     const res = await fetch(getGetVersionUrl(), {
       ...options,
       method: "GET",
@@ -597,7 +609,7 @@ export const createApiClient = (baseURL: string) => {
       data,
       status: res.status,
       headers: res.headers,
-    } as Response<GetVersion200>;
+    } as FetchResponse<GetVersion200>;
   };
 
   /**
@@ -611,7 +623,7 @@ export const createApiClient = (baseURL: string) => {
   const refreshToken = async (
     refreshTokenRequest: RefreshTokenRequest,
     options?: RequestInit,
-  ): Promise<Response<Session>> => {
+  ): Promise<FetchResponse<Session>> => {
     const res = await fetch(getRefreshTokenUrl(), {
       ...options,
       method: "POST",
@@ -626,7 +638,7 @@ export const createApiClient = (baseURL: string) => {
       data,
       status: res.status,
       headers: res.headers,
-    } as Response<Session>;
+    } as FetchResponse<Session>;
   };
 
   /**
@@ -639,7 +651,7 @@ export const createApiClient = (baseURL: string) => {
   const signOut = async (
     signOutSchema: SignOutSchema,
     options?: RequestInit,
-  ): Promise<Response<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse>> => {
     const res = await fetch(getSignOutUrl(), {
       ...options,
       method: "POST",
@@ -654,7 +666,7 @@ export const createApiClient = (baseURL: string) => {
       data,
       status: res.status,
       headers: res.headers,
-    } as Response<OKResponse>;
+    } as FetchResponse<OKResponse>;
   };
 
   /**
@@ -668,7 +680,7 @@ export const createApiClient = (baseURL: string) => {
   const signInEmailPassword = async (
     signInEmailPasswordRequest: SignInEmailPasswordRequest,
     options?: RequestInit,
-  ): Promise<Response<SignInEmailPasswordResponse>> => {
+  ): Promise<FetchResponse<SignInEmailPasswordResponse>> => {
     const res = await fetch(getSignInEmailPasswordUrl(), {
       ...options,
       method: "POST",
@@ -683,7 +695,7 @@ export const createApiClient = (baseURL: string) => {
       data,
       status: res.status,
       headers: res.headers,
-    } as Response<SignInEmailPasswordResponse>;
+    } as FetchResponse<SignInEmailPasswordResponse>;
   };
 
   /**
@@ -697,7 +709,7 @@ export const createApiClient = (baseURL: string) => {
   const signInVerifyMfaTotp = async (
     signInMfaTotpRequest: SignInMfaTotpRequest,
     options?: RequestInit,
-  ): Promise<Response<SessionPayload>> => {
+  ): Promise<FetchResponse<SessionPayload>> => {
     const res = await fetch(getSignInVerifyMfaTotpUrl(), {
       ...options,
       method: "POST",
@@ -712,7 +724,7 @@ export const createApiClient = (baseURL: string) => {
       data,
       status: res.status,
       headers: res.headers,
-    } as Response<SessionPayload>;
+    } as FetchResponse<SessionPayload>;
   };
 
   /**
@@ -726,7 +738,7 @@ export const createApiClient = (baseURL: string) => {
   const signInPasswordlessEmail = async (
     signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest,
     options?: RequestInit,
-  ): Promise<Response<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse>> => {
     const res = await fetch(getSignInPasswordlessEmailUrl(), {
       ...options,
       method: "POST",
@@ -741,7 +753,7 @@ export const createApiClient = (baseURL: string) => {
       data,
       status: res.status,
       headers: res.headers,
-    } as Response<OKResponse>;
+    } as FetchResponse<OKResponse>;
   };
 
   /**
@@ -755,7 +767,7 @@ export const createApiClient = (baseURL: string) => {
   const signUpEmailPassword = async (
     signUpEmailPasswordRequest: SignUpEmailPasswordRequest,
     options?: RequestInit,
-  ): Promise<Response<SessionPayload | ErrorResponse>> => {
+  ): Promise<FetchResponse<SessionPayload | ErrorResponse>> => {
     const res = await fetch(getSignUpEmailPasswordUrl(), {
       ...options,
       method: "POST",
@@ -766,7 +778,7 @@ export const createApiClient = (baseURL: string) => {
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: SessionPayload | ErrorResponse = body ? JSON.parse(body) : {};
 
-    return { data, status: res.status, headers: res.headers } as Response<
+    return { data, status: res.status, headers: res.headers } as FetchResponse<
       SessionPayload | ErrorResponse
     >;
   };
@@ -782,7 +794,7 @@ export const createApiClient = (baseURL: string) => {
   const changeUserMfaVerify = async (
     userMfaRequest: UserMfaRequest,
     options?: RequestInit,
-  ): Promise<Response<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse>> => {
     const res = await fetch(getChangeUserMfaVerifyUrl(), {
       ...options,
       method: "POST",
@@ -797,7 +809,7 @@ export const createApiClient = (baseURL: string) => {
       data,
       status: res.status,
       headers: res.headers,
-    } as Response<OKResponse>;
+    } as FetchResponse<OKResponse>;
   };
 
   /**
@@ -810,7 +822,7 @@ export const createApiClient = (baseURL: string) => {
 
   const changeUserMfa = async (
     options?: RequestInit,
-  ): Promise<Response<TotpGenerateResponse>> => {
+  ): Promise<FetchResponse<TotpGenerateResponse>> => {
     const res = await fetch(getChangeUserMfaUrl(), {
       ...options,
       method: "GET",
@@ -823,7 +835,7 @@ export const createApiClient = (baseURL: string) => {
       data,
       status: res.status,
       headers: res.headers,
-    } as Response<TotpGenerateResponse>;
+    } as FetchResponse<TotpGenerateResponse>;
   };
 
   return {

@@ -5,12 +5,8 @@
  * Nhost Storage API - A service for managing and serving files with powerful access control capabilities
  * OpenAPI spec version: 1.0.0
  */
-import Axios from 'axios';
-import type {
-  AxiosRequestConfig,
-  AxiosResponse,
-  CreateAxiosDefaults
-} from 'axios';
+import { createEnhancedFetch } from "../fetch";
+import type { Interceptor } from "../fetch";
 
 /**
  * Contains version information about the storage service.
@@ -129,11 +125,11 @@ export type GetOpenAPISpec200 = { [key: string]: unknown };
 
 export type UploadFilesBody = {
   /** Target bucket identifier where files will be stored. */
-  'bucket-id'?: string;
+  "bucket-id"?: string;
   /** Optional custom metadata for each uploaded file. Must match the order of the file[] array. */
-  'metadata[]'?: UploadFileMetadata[];
+  "metadata[]"?: UploadFileMetadata[];
   /** Array of files to upload. */
-  'file[]'?: Blob[];
+  "file[]"?: Blob[];
 };
 
 export type UploadFiles201 = {
@@ -142,75 +138,74 @@ export type UploadFiles201 = {
 };
 
 export type GetFileMetadataHeadersParams = {
-/**
- * Image quality (1-100). Only applies to JPEG, WebP and PNG files
- */
-q?: number;
-/**
- * Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
- */
-h?: number;
-/**
- * Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
- */
-w?: number;
-/**
- * Blur the image using this sigma value. Only applies to image files
- */
-b?: number;
-/**
- * Output format for image files. Use 'auto' for content negotiation based on Accept header
- */
-f?: GetFileMetadataHeadersF;
+  /**
+   * Image quality (1-100). Only applies to JPEG, WebP and PNG files
+   */
+  q?: number;
+  /**
+   * Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+   */
+  h?: number;
+  /**
+   * Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+   */
+  w?: number;
+  /**
+   * Blur the image using this sigma value. Only applies to image files
+   */
+  b?: number;
+  /**
+   * Output format for image files. Use 'auto' for content negotiation based on Accept header
+   */
+  f?: GetFileMetadataHeadersF;
 };
 
-export type GetFileMetadataHeadersF = typeof GetFileMetadataHeadersF[keyof typeof GetFileMetadataHeadersF];
-
+export type GetFileMetadataHeadersF =
+  (typeof GetFileMetadataHeadersF)[keyof typeof GetFileMetadataHeadersF];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetFileMetadataHeadersF = {
-  auto: 'auto',
-  same: 'same',
-  jpeg: 'jpeg',
-  webp: 'webp',
-  png: 'png',
-  avif: 'avif',
+  auto: "auto",
+  same: "same",
+  jpeg: "jpeg",
+  webp: "webp",
+  png: "png",
+  avif: "avif",
 } as const;
 
 export type GetFileParams = {
-/**
- * Image quality (1-100). Only applies to JPEG, WebP and PNG files
- */
-q?: number;
-/**
- * Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
- */
-h?: number;
-/**
- * Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
- */
-w?: number;
-/**
- * Blur the image using this sigma value. Only applies to image files
- */
-b?: number;
-/**
- * Output format for image files. Use 'auto' for content negotiation based on Accept header
- */
-f?: GetFileF;
+  /**
+   * Image quality (1-100). Only applies to JPEG, WebP and PNG files
+   */
+  q?: number;
+  /**
+   * Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+   */
+  h?: number;
+  /**
+   * Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+   */
+  w?: number;
+  /**
+   * Blur the image using this sigma value. Only applies to image files
+   */
+  b?: number;
+  /**
+   * Output format for image files. Use 'auto' for content negotiation based on Accept header
+   */
+  f?: GetFileF;
 };
 
-export type GetFileF = typeof GetFileF[keyof typeof GetFileF];
-
+export type GetFileF = (typeof GetFileF)[keyof typeof GetFileF];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const GetFileF = {
-  auto: 'auto',
-  same: 'same',
-  jpeg: 'jpeg',
-  webp: 'webp',
-  png: 'png',
-  avif: 'avif',
+  auto: "auto",
+  same: "same",
+  jpeg: "jpeg",
+  webp: "webp",
+  png: "png",
+  avif: "avif",
 } as const;
 
 export type ReplaceFileBody = {
@@ -220,86 +215,198 @@ export type ReplaceFileBody = {
   file?: Blob;
 };
 
-export const createApiClient = (config?: CreateAxiosDefaults) => {
-  const axios = Axios.create(config);
-/**
- * Returns the OpenAPI schema definition for this API, allowing clients to understand the available endpoints and models.
- * @summary Get OpenAPI specification
- */
-const getOpenAPISpec = <TData = AxiosResponse<GetOpenAPISpec200>>(
-     options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.get(
-      `/openapi.yaml`,options
-    );
-  }
+export type FetchResponse<T> = {
+  data: T;
+  status: number;
+  headers: Headers;
+};
 
-/**
- * Retrieves build and version information about the storage service. Useful for monitoring and debugging.
- * @summary Get service version information
- */
-const getVersion = <TData = AxiosResponse<VersionInformation>>(
-     options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.get(
-      `/version`,options
-    );
-  }
+export const createAPIClient = (
+  baseURL: string,
+  requestInterceptors: Interceptor[] = [],
+) => {
+  const fetch = createEnhancedFetch(requestInterceptors);
+  /**
+   * Returns the OpenAPI schema definition for this API, allowing clients to understand the available endpoints and models.
+   * @summary Get OpenAPI specification
+   */
+  const getGetOpenAPISpecUrl = () => {
+    return baseURL + `/openapi.yaml`;
+  };
 
-/**
- * Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
- * @summary Upload files
- */
-const uploadFiles = <TData = AxiosResponse<UploadFiles201>>(
-    uploadFilesBody: UploadFilesBody, options?: AxiosRequestConfig
- ): Promise<TData> => {const formData = new FormData();
-if(uploadFilesBody['bucket-id'] !== undefined) {
- formData.append(`bucket-id`, uploadFilesBody['bucket-id'])
- }
-if(uploadFilesBody['metadata[]'] !== undefined) {
- uploadFilesBody['metadata[]'].forEach(value => formData.append(`metadata[]`, JSON.stringify(value)));
- }
-if(uploadFilesBody['file[]'] !== undefined) {
- uploadFilesBody['file[]'].forEach(value => formData.append(`file[]`, value));
- }
+  const getOpenAPISpec = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<GetOpenAPISpec200>> => {
+    const res = await fetch(getGetOpenAPISpecUrl(), {
+      ...options,
+      method: "GET",
+    });
 
-    return axios.post(
-      `/files/`,
-      formData,options
-    );
-  }
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: GetOpenAPISpec200 = body ? JSON.parse(body) : {};
 
-/**
- * Retrieve file metadata headers without downloading the file content. Supports conditional requests and provides caching information.
- * @summary Check file information
- */
-const getFileMetadataHeaders = <TData = AxiosResponse<void>>(
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<GetOpenAPISpec200>;
+  };
+
+  /**
+   * Retrieves build and version information about the storage service. Useful for monitoring and debugging.
+   * @summary Get service version information
+   */
+  const getGetVersionUrl = () => {
+    return baseURL + `/version`;
+  };
+
+  const getVersion = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<VersionInformation>> => {
+    const res = await fetch(getGetVersionUrl(), {
+      ...options,
+      method: "GET",
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: VersionInformation = body ? JSON.parse(body) : {};
+
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<VersionInformation>;
+  };
+
+  /**
+   * Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
+   * @summary Upload files
+   */
+  const getUploadFilesUrl = () => {
+    return baseURL + `/files/`;
+  };
+
+  const uploadFiles = async (
+    uploadFilesBody: UploadFilesBody,
+    options?: RequestInit,
+  ): Promise<FetchResponse<UploadFiles201 | Error>> => {
+    const formData = new FormData();
+    if (uploadFilesBody["bucket-id"] !== undefined) {
+      formData.append(`bucket-id`, uploadFilesBody["bucket-id"]);
+    }
+    if (uploadFilesBody["metadata[]"] !== undefined) {
+      uploadFilesBody["metadata[]"].forEach((value) =>
+        formData.append(`metadata[]`, JSON.stringify(value)),
+      );
+    }
+    if (uploadFilesBody["file[]"] !== undefined) {
+      uploadFilesBody["file[]"].forEach((value) =>
+        formData.append(`file[]`, value),
+      );
+    }
+
+    const res = await fetch(getUploadFilesUrl(), {
+      ...options,
+      method: "POST",
+      body: formData,
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: UploadFiles201 | Error = body ? JSON.parse(body) : {};
+
+    return { data, status: res.status, headers: res.headers } as FetchResponse<
+      UploadFiles201 | Error
+    >;
+  };
+
+  /**
+   * Retrieve file metadata headers without downloading the file content. Supports conditional requests and provides caching information.
+   * @summary Check file information
+   */
+  const getGetFileMetadataHeadersUrl = (
     id: string,
-    params?: GetFileMetadataHeadersParams, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.head(
-      `/files/${id}`,{
-    ...options,
-        params: {...params, ...options?.params},}
-    );
-  }
+    params?: GetFileMetadataHeadersParams,
+  ) => {
+    const normalizedParams = new URLSearchParams();
 
-/**
- * Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
- * @summary Download file
- */
-const getFile = <TData = AxiosResponse<unknown>>(
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value !== undefined) {
+        normalizedParams.append(
+          key,
+          value === null ? "null" : value.toString(),
+        );
+      }
+    });
+
+    const stringifiedParams = normalizedParams.toString();
+
+    return baseURL + stringifiedParams.length > 0
+      ? `/files/${id}?${stringifiedParams}`
+      : `/files/${id}`;
+  };
+
+  const getFileMetadataHeaders = async (
     id: string,
-    params?: GetFileParams, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.get(
-      `/files/${id}`,{
-    ...options,
-        params: {...params, ...options?.params},}
-    );
-  }
+    params?: GetFileMetadataHeadersParams,
+    options?: RequestInit,
+  ): Promise<FetchResponse<void | void>> => {
+    const res = await fetch(getGetFileMetadataHeadersUrl(id, params), {
+      ...options,
+      method: "HEAD",
+    });
 
-/**
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: void | void = body ? JSON.parse(body) : {};
+
+    return { data, status: res.status, headers: res.headers } as FetchResponse<
+      void | void
+    >;
+  };
+
+  /**
+   * Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
+   * @summary Download file
+   */
+  const getGetFileUrl = (id: string, params?: GetFileParams) => {
+    const normalizedParams = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value !== undefined) {
+        normalizedParams.append(
+          key,
+          value === null ? "null" : value.toString(),
+        );
+      }
+    });
+
+    const stringifiedParams = normalizedParams.toString();
+
+    return baseURL + stringifiedParams.length > 0
+      ? `/files/${id}?${stringifiedParams}`
+      : `/files/${id}`;
+  };
+
+  const getFile = async (
+    id: string,
+    params?: GetFileParams,
+    options?: RequestInit,
+  ): Promise<FetchResponse<void>> => {
+    const res = await fetch(getGetFileUrl(id, params), {
+      ...options,
+      method: "GET",
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: void = body ? JSON.parse(body) : {};
+
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<void>;
+  };
+
+  /**
  * Replace an existing file with new content while preserving the file ID. The operation follows these steps:
 1. The isUploaded flag is set to false to mark the file as being updated
 2. The file content is replaced in the storage backend
@@ -309,40 +416,71 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
 
  * @summary Replace file
  */
-const replaceFile = <TData = AxiosResponse<FileMetadata>>(
+  const getReplaceFileUrl = (id: string) => {
+    return baseURL + `/files/${id}`;
+  };
+
+  const replaceFile = async (
     id: string,
-    replaceFileBody: ReplaceFileBody, options?: AxiosRequestConfig
- ): Promise<TData> => {const formData = new FormData();
-if(replaceFileBody.metadata !== undefined) {
- formData.append(`metadata`, JSON.stringify(replaceFileBody.metadata));
- }
-if(replaceFileBody.file !== undefined) {
- formData.append(`file`, replaceFileBody.file)
- }
+    replaceFileBody: ReplaceFileBody,
+    options?: RequestInit,
+  ): Promise<FetchResponse<FileMetadata | Error>> => {
+    const formData = new FormData();
+    if (replaceFileBody.metadata !== undefined) {
+      formData.append(`metadata`, JSON.stringify(replaceFileBody.metadata));
+    }
+    if (replaceFileBody.file !== undefined) {
+      formData.append(`file`, replaceFileBody.file);
+    }
 
-    return axios.put(
-      `/files/${id}`,
-      formData,options
-    );
-  }
+    const res = await fetch(getReplaceFileUrl(id), {
+      ...options,
+      method: "PUT",
+      body: formData,
+    });
 
-/**
- * Permanently delete a file from storage. This removes both the file content and its associated metadata.
- * @summary Delete file
- */
-const deleteFile = <TData = AxiosResponse<void>>(
-    id: string, options?: AxiosRequestConfig
- ): Promise<TData> => {
-    return axios.delete(
-      `/files/${id}`,options
-    );
-  }
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: FileMetadata | Error = body ? JSON.parse(body) : {};
 
-return {getOpenAPISpec,getVersion,uploadFiles,getFileMetadataHeaders,getFile,replaceFile,deleteFile, axios}};
-export type GetOpenAPISpecResult = AxiosResponse<GetOpenAPISpec200>
-export type GetVersionResult = AxiosResponse<VersionInformation>
-export type UploadFilesResult = AxiosResponse<UploadFiles201>
-export type GetFileMetadataHeadersResult = AxiosResponse<void>
-export type GetFileResult = AxiosResponse<unknown>
-export type ReplaceFileResult = AxiosResponse<FileMetadata>
-export type DeleteFileResult = AxiosResponse<void>
+    return { data, status: res.status, headers: res.headers } as FetchResponse<
+      FileMetadata | Error
+    >;
+  };
+
+  /**
+   * Permanently delete a file from storage. This removes both the file content and its associated metadata.
+   * @summary Delete file
+   */
+  const getDeleteFileUrl = (id: string) => {
+    return baseURL + `/files/${id}`;
+  };
+
+  const deleteFile = async (
+    id: string,
+    options?: RequestInit,
+  ): Promise<FetchResponse<void | Error>> => {
+    const res = await fetch(getDeleteFileUrl(id), {
+      ...options,
+      method: "DELETE",
+    });
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const data: void | Error = body ? JSON.parse(body) : {};
+
+    return {
+      data,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<void | Error>;
+  };
+
+  return {
+    getOpenAPISpec,
+    getVersion,
+    uploadFiles,
+    getFileMetadataHeaders,
+    getFile,
+    replaceFile,
+    deleteFile,
+  };
+};

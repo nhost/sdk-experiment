@@ -1,47 +1,48 @@
-// NOTE: Supports cases where `content-type` is other than `json`
-const getBody = <T>(c: Response | Request): Promise<T> => {
-  const contentType = c.headers.get("content-type");
+/**
+ * Interface for request parameters
+ */
+interface RequestParams {
+  url: string;
+  options: RequestInit;
+}
 
-  if (contentType && contentType.includes("application/json")) {
-    return c.json();
-  }
+/**
+ * Type definition for interceptor function
+ */
+type Interceptor = (
+  params: RequestParams,
+) => Promise<RequestParams | void> | RequestParams | void;
 
-  if (contentType && contentType.includes("application/pdf")) {
-    return c.blob() as Promise<T>;
-  }
+/**
+ * Creates an enhanced fetch function with interceptors
+ * @param interceptors - Array of request interceptors
+ * @returns Enhanced fetch function
+ */
+function createEnhancedFetch(interceptors: Interceptor[] = []) {
+  /**
+   * Enhanced fetch function that applies interceptors
+   * @param url - The URL to fetch
+   * @param options - Fetch options
+   * @returns The fetch response
+   */
+  return async function enhancedFetch(
+    url: string,
+    options: RequestInit = {},
+  ): Promise<Response> {
+    let requestParams: RequestParams = { url, options };
 
-  return c.text() as Promise<T>;
-};
+    // Apply all interceptors sequentially
+    for (const interceptor of interceptors) {
+      const result = await interceptor(requestParams);
+      requestParams = result || requestParams;
+    }
 
-// NOTE: Update just base url
-const getUrl = (path: string): string => {
-  const baseUrl = "https://local.auth.local.nhost.run/v1";
-  return `${baseUrl}${path}`;
-};
+    // Destructure the potentially modified params
+    const { url: finalUrl, options: finalOptions } = requestParams;
 
-// NOTE: Add headers
-const getHeaders = (headers?: HeadersInit): HeadersInit => {
-  return {
-    ...headers,
-    Authorization: "token",
-    "Content-Type": "multipart/form-data",
+    // Make the actual fetch call
+    return fetch(finalUrl, finalOptions);
   };
-};
+}
 
-export const customFetch = async <T>(
-  url: string,
-  options: RequestInit,
-): Promise<T> => {
-  const requestUrl = getUrl(url);
-  // const requestHeaders = getHeaders(options.headers);
-
-  const requestInit: RequestInit = {
-    ...options,
-    headers: options.headers,
-  };
-
-  const response = await fetch(requestUrl, requestInit);
-  const data = await getBody<T>(response);
-
-  return { status: response.status, data, headers: response.headers } as T;
-};
+export { createEnhancedFetch, type RequestParams, type Interceptor };

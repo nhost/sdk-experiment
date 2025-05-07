@@ -159,7 +159,7 @@ ${
     .join(",");
 
   const args = `${toObjectString(props, "implementation")} ${isRequestOptions ? `options?: RequestInit` : ""}`;
-  const returnType = `Promise<Response<${responseTypeName}>>`;
+  const returnType = `Promise<FetchResponse<${responseTypeName}>>`;
 
   const globalFetchOptions = isObject(override?.requestOptions)
     ? `${stringify(override?.requestOptions)?.slice(1, -1)?.trim()}`
@@ -201,7 +201,7 @@ ${
   const body = [204, 205, 304].includes(res.status) ? null : await res.text()
   const data: ${responseTypeName} = body ? JSON.parse(body) : {}
 
-  ${override.fetch.includeHttpResponseReturnType ? `return { data, status: res.status, headers: res.headers } as Response<${responseTypeName}>` : "return data"}
+  ${override.fetch.includeHttpResponseReturnType ? `return { data, status: res.status, headers: res.headers } as FetchResponse<${responseTypeName}>` : "return data"}
 `;
   const customFetchResponseImplementation = `return ${mutator?.name}<${responseTypeName}>(${fetchFnOptions});`;
 
@@ -255,12 +255,17 @@ export const generateFetchHeader: ClientHeaderBuilder = ({
     ? getHTTPStatusCodes()
     : "" +
         `
-      export type Response<T> = {
+      export type FetchResponse<T> = {
           data: T;
           status: number;
           headers: Headers;
       };
-      export const createApiClient = (baseURL: string) => {
+
+      export const createAPIClient = (
+        baseURL: string,
+        requestInterceptors: Interceptor[] = [],
+      ) => {
+        const fetch = createEnhancedFetch(requestInterceptors);
       `;
 };
 
