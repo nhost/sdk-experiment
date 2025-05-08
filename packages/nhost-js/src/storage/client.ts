@@ -226,6 +226,7 @@ export const createAPIClient = (
   chainFunctions: ChainFunction[] = [],
 ) => {
   const fetch = createEnhancedFetch(chainFunctions);
+
   /**
    * Returns the OpenAPI schema definition for this API, allowing clients to understand the available endpoints and models.
    * @summary Get OpenAPI specification

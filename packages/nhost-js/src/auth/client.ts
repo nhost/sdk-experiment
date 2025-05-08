@@ -534,6 +534,7 @@ export const createAPIClient = (
   chainFunctions: ChainFunction[] = [],
 ) => {
   const fetch = createEnhancedFetch(chainFunctions);
+
   /**
    * Verify if the authentication service is operational using HEAD method
    * @summary Health check (HEAD)

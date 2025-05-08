@@ -1,5 +1,5 @@
 import { createAPIClient, type Session } from "./client";
-import { type StorageInterface, detectStorage } from "./storage";
+import { type StorageInterface } from "./storage";
 import { type ChainFunction, type FetchFunction } from "../fetch";
 
 /**
@@ -76,8 +76,6 @@ function decodeTokenPayload(base64Payload: string): any {
  * Options for token refresh chain function
  */
 export interface TokenRefreshOptions {
-  /** Storage implementation to use for session persistence */
-  storage?: StorageInterface;
   /** Seconds before expiration to trigger token refresh */
   marginSeconds?: number;
 }
@@ -90,9 +88,10 @@ export interface TokenRefreshOptions {
  */
 export const createTokenRefreshChain = (
   authClient: ReturnType<typeof createAPIClient>,
+  storage: StorageInterface,
   options?: TokenRefreshOptions,
 ): ChainFunction => {
-  const { storage = detectStorage(), marginSeconds = 60 } = options || {};
+  const { marginSeconds = 60 } = options || {};
 
   // Session state
   let currentSession: Session | null = null;

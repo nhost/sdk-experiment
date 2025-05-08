@@ -1,11 +1,9 @@
 import {
   createAPIClient,
-  type ErrorResponse,
-  type SessionPayload,
   type SignUpEmailPasswordRequest,
+  type FetchResponse,
+  type ErrorResponse,
 } from "../auth/client";
-
-// Configure axios for testing
 
 describe("Nhost Auth - Sign Up with Email and Password", () => {
   const nhostAuth = createAPIClient("https://local.auth.nhost.run/v1");
@@ -14,7 +12,7 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
   const uniqueEmail = `test-${Date.now()}@example.com`;
   const password = "password123";
 
-  it("should sign up a user with email and password (real API)", async () => {
+  it("should sign up a user with email and password", async () => {
     // Create request payload with unique email
     const signUpRequest: SignUpEmailPasswordRequest = {
       email: uniqueEmail,
@@ -33,20 +31,14 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
     // Make an actual API call
     const response = await nhostAuth.signUpEmailPassword(signUpRequest);
 
-    if (response.status === 200) {
-      const data = response.data as SessionPayload;
-    } else {
-      const data = response.data as ErrorResponse;
-    }
-
     // Verify structure of response
-    expect(data.session).toBeDefined();
-    expect(data.session?.accessToken).toBeDefined();
-    expect(data.session?.refreshToken).toBeDefined();
-    expect(data.session?.user).toBeDefined();
+    expect(response.data.session).toBeDefined();
+    expect(response.data.session?.accessToken).toBeDefined();
+    expect(response.data.session?.refreshToken).toBeDefined();
+    expect(response.data.session?.user).toBeDefined();
   });
 
-  it("should sign in a user with email and password (real API)", async () => {
+  it("should sign in a user with email and password", async () => {
     // Make an actual API call
     const response = await nhostAuth.signInEmailPassword({
       email: uniqueEmail,
@@ -60,7 +52,7 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
     expect(response.data.session?.user).toBeDefined();
   });
 
-  it("should fail sign in a user with email and password (real API)", async () => {
+  it("should fail sign in a user with email and password", async () => {
     // Make an actual API call with incorrect password
     try {
       await nhostAuth.signInEmailPassword({
@@ -70,10 +62,10 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
 
       // If we reach here, the test should fail
       fail("Expected sign in to fail with incorrect password");
-    } catch (error: any) {
-      // Verify error structure
-      expect(error.response.status).toBe(401);
-      expect(error.response.data).toStrictEqual({
+    } catch (error) {
+      const err = error as FetchResponse<ErrorResponse>;
+      expect(err.status).toBe(401);
+      expect(err.data).toStrictEqual({
         error: "invalid-email-password",
         message: "Incorrect email or password",
         status: 401,

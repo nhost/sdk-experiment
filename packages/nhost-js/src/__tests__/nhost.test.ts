@@ -10,7 +10,7 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
 
   it.only("should sign up a user with email and password and upload file", async () => {
     // magic
-    await nhost.auth.signUpEmailPassword({
+    const resp = await nhost.auth.signUpEmailPassword({
       email: `test-${Date.now()}@example.com`,
       password: "password123",
       options: {
@@ -23,6 +23,12 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
         },
       },
     });
+
+    if (!resp.data.session) {
+        throw new Error("Session is null");
+    }
+    nhost.sessionStorage.set(resp.data.session);
+
 
     const uuid = crypto.randomUUID();
     const fileUploadResponse = await nhost.storage.uploadFiles({
@@ -39,25 +45,6 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
       ],
     });
 
-    // test the object is like {
-    // +   "processedFiles": Array [
-    // +     Object {
-    // +       "bucketId": "default",
-    // +       "createdAt": "2025-04-30T07:22:31.793621+00:00",
-    // +       "etag": "\"0f343b0931126a20f133d67c2b018a3b\"",
-    // +       "id": "b7cbc4e2-ecf1-465a-83a6-615df794c83c",
-    // +       "isUploaded": true,
-    // +       "metadata": Object {
-    // +         "key": "value",
-    // +       },
-    // +       "mimeType": "application/octet-stream",
-    // +       "name": "test",
-    // +       "size": 1024,
-    // +       "updatedAt": "2025-04-30T07:22:31.800545+00:00",
-    // +       "uploadedByUserId": "",
-    // +     },
-    // +   ],
-    // + }
     expect(fileUploadResponse.data.processedFiles).toBeDefined();
     expect(fileUploadResponse.data.processedFiles?.[0]?.bucketId).toBe(
       "default",

@@ -1,6 +1,6 @@
-import { createAPIClient as createAuthClient } from "./auth/client";
-import { createAPIClient as createStorageClient } from "./storage/client";
-import { createAPIClient as createGraphQLClient } from "./graphql/client";
+import { createAPIClient as createAuthClient } from "./auth";
+import { createAPIClient as createStorageClient } from "./storage";
+import { createAPIClient as createGraphQLClient } from "./graphql";
 import {
   type StorageInterface,
   detectStorage,
@@ -9,7 +9,9 @@ import {
   LocalStorage,
   MemoryStorage,
 } from "./auth/storage";
-import type { Session } from "./auth/client";
+import type { Session } from "./auth";
+import { createTokenRefreshChain } from "./auth/token-interceptor";
+
 import type {
   GraphQLRequest,
   GraphQLResponse,
@@ -93,7 +95,7 @@ export class NhostClient {
   auth: ReturnType<typeof createAuthClient>;
   storage: ReturnType<typeof createStorageClient>;
   graphql: ReturnType<typeof createGraphQLClient>;
-  private _storage: StorageInterface;
+  sessionStorage: StorageInterface;
 
   /**
    * Create a new Nhost client
@@ -110,7 +112,7 @@ export class NhostClient {
     } = options;
 
     // Store storage references for future use
-    this._storage = storage;
+    this.sessionStorage = storage;
 
     // Determine base URLs for each service
     const authBaseUrl = generateServiceUrl("auth", authUrl, subdomain, region);
@@ -127,12 +129,13 @@ export class NhostClient {
       region,
     );
 
-    // Create client instances
     this.auth = createAuthClient(authBaseUrl);
+    const refreshToken = createTokenRefreshChain(
+        this.auth, storage,
+    )
 
-    this.storage = createStorageClient(storageBaseUrl);
-
-    this.graphql = createGraphQLClient(graphqlBaseUrl);
+    this.storage = createStorageClient(storageBaseUrl, [refreshToken]);
+    this.graphql = createGraphQLClient(graphqlBaseUrl, [refreshToken]);
   }
 
   /**
@@ -140,29 +143,27 @@ export class NhostClient {
    * @returns The current session or null if no session exists
    */
   getUserSession(): Session | null {
-    return this._storage.get();
+    return this.sessionStorage.get();
   }
 
   /**
    * Refresh the session using the current refresh token
    * in the storage and update the storage with the new session
-   * @returns The new session or null if refresh failed
+   * @returns The new session or an error if the refresh fails
    */
   async refreshSession(): Promise<Session | null> {
-    const session = this._storage.get();
+    const session = this.sessionStorage.get();
     if (!session) {
-      return null;
+        throw new Error("No session found");
     }
 
     const response = await this.auth.refreshToken({
       refreshToken: session.refreshToken,
     });
 
-    if (response.status !== 200) {
-      console.error("Failed to refresh session", response.data);
-    }
+    this.sessionStorage.set(response.data);
 
-    return response.data as Session;
+    return response.data;
   }
 }
 

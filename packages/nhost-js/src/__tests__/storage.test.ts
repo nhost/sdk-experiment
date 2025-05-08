@@ -20,7 +20,7 @@ describe("Test Storage API", () => {
 
   const nhostStorage = createStorageClient(
     "https://local.storage.local.nhost.run/v1",
-    [createTokenRefreshChain(nhostAuth, { storage })],
+    [createTokenRefreshChain(nhostAuth, storage)],
   );
 
   it("should sign up a user with email and password", async () => {
