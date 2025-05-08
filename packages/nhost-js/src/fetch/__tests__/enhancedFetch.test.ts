@@ -119,10 +119,17 @@ describe("Enhanced Fetch", () => {
     const enhancedFetch = createEnhancedFetch([addHeader, changeMethod]);
     const url = "https://api.example.com";
 
-    await enhancedFetch(url);
+    await enhancedFetch(url, {
+      headers: {
+        Authorization: "Bearer token123",
+      },
+    });
 
     expect(mockFetch).toHaveBeenCalledWith(url, {
-      headers: { Authorization: "Bearer token123" },
+      headers: {
+        "X-Test-Header": "test-value",
+        Authorization: "Bearer token123",
+      },
       method: "POST",
     });
   });
@@ -157,10 +164,9 @@ describe("Enhanced Fetch", () => {
     expect(data).toEqual({ original: "data", modified: true });
   });
 
-  test("should handle errors in chain functions", async () => {
+  test("errors in middleware should propagate", async () => {
     const errorMiddleware: ChainFunction = (_next) => {
       return async (_url, _options = {}) => {
-        // Simulate an error in the middleware
         throw new Error("Middleware error");
       };
     };
@@ -168,7 +174,7 @@ describe("Enhanced Fetch", () => {
     const enhancedFetch = createEnhancedFetch([errorMiddleware]);
 
     await expect(enhancedFetch("https://api.example.com")).rejects.toThrow(
-      "Test error",
+      "Middleware error",
     );
     expect(mockFetch).not.toHaveBeenCalled();
   });

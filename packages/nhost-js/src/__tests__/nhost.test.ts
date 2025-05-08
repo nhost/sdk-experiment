@@ -25,10 +25,9 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
     });
 
     if (!resp.data.session) {
-        throw new Error("Session is null");
+      throw new Error("Session is null");
     }
     nhost.sessionStorage.set(resp.data.session);
-
 
     const uuid = crypto.randomUUID();
     const fileUploadResponse = await nhost.storage.uploadFiles({

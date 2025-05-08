@@ -298,7 +298,13 @@ export const generateFetchHeader: ClientHeaderBuilder = ({
         baseURL: string,
         chainFunctions: ChainFunction[] = [],
       ) => {
-        const fetch = createEnhancedFetch(chainFunctions);
+        let fetch = createEnhancedFetch(chainFunctions);
+
+        const pushChainFunction = (chainFunction: ChainFunction) => {
+          chainFunctions.push(chainFunction);
+          fetch = createEnhancedFetch(chainFunctions);
+        }
+
       `;
 };
 
@@ -314,7 +320,7 @@ export const generateFetchFooter: ClientFooterBuilder = ({
   let footer = "";
 
   if (!noFunction) {
-    footer += `return {${operationNames.join(",")}, baseURL}};\n`;
+    footer += `return {${operationNames.join(",")}, pushChainFunction, baseURL}};\n`;
   }
 
   if (hasMutator && !hasAwaitedType) {

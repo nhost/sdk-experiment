@@ -533,7 +533,12 @@ export const createAPIClient = (
   baseURL: string,
   chainFunctions: ChainFunction[] = [],
 ) => {
-  const fetch = createEnhancedFetch(chainFunctions);
+  let fetch = createEnhancedFetch(chainFunctions);
+
+  const pushChainFunction = (chainFunction: ChainFunction) => {
+    chainFunctions.push(chainFunction);
+    fetch = createEnhancedFetch(chainFunctions);
+  };
 
   /**
    * Verify if the authentication service is operational using HEAD method
@@ -941,6 +946,7 @@ export const createAPIClient = (
     signUpEmailPassword,
     changeUserMfaVerify,
     changeUserMfa,
+    pushChainFunction,
     baseURL,
   };
 };

@@ -75,7 +75,7 @@ function decodeTokenPayload(base64Payload: string): any {
 /**
  * Options for token refresh chain function
  */
-export interface TokenRefreshOptions {
+export interface SessionRefreshOptions {
   /** Seconds before expiration to trigger token refresh */
   marginSeconds?: number;
 }
@@ -86,10 +86,10 @@ export interface TokenRefreshOptions {
  * @param options - Configuration options
  * @returns A chain function that handles token refresh
  */
-export const createTokenRefreshChain = (
+export const createSessionRefreshMiddleware = (
   authClient: ReturnType<typeof createAPIClient>,
   storage: StorageInterface,
-  options?: TokenRefreshOptions,
+  options?: SessionRefreshOptions,
 ): ChainFunction => {
   const { marginSeconds = 60 } = options || {};
 

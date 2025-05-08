@@ -225,7 +225,12 @@ export const createAPIClient = (
   baseURL: string,
   chainFunctions: ChainFunction[] = [],
 ) => {
-  const fetch = createEnhancedFetch(chainFunctions);
+  let fetch = createEnhancedFetch(chainFunctions);
+
+  const pushChainFunction = (chainFunction: ChainFunction) => {
+    chainFunctions.push(chainFunction);
+    fetch = createEnhancedFetch(chainFunctions);
+  };
 
   /**
    * Returns the OpenAPI schema definition for this API, allowing clients to understand the available endpoints and models.
@@ -542,6 +547,7 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     getFile,
     replaceFile,
     deleteFile,
+    pushChainFunction,
     baseURL,
   };
 };

@@ -10,7 +10,8 @@ import {
   MemoryStorage,
 } from "./auth/storage";
 import type { Session } from "./auth";
-import { createTokenRefreshChain } from "./auth/token-interceptor";
+import { createSessionRefreshMiddleware } from "./auth/middlewareRefreshSession";
+import { createSessionResponseMiddleware } from "./auth/middlewareResponseSession";
 
 import type {
   GraphQLRequest,
@@ -30,9 +31,6 @@ export type { StorageInterface, Session };
 
 // Re-export GraphQL types
 export type { GraphQLRequest, GraphQLResponse, GraphQLVariables, GraphQLError };
-
-// Re-export extractTokenExpiration
-export { extractTokenExpiration } from "./auth/token-interceptor";
 
 /**
  * Generates a base URL for a Nhost service based on configuration
@@ -130,9 +128,9 @@ export class NhostClient {
     );
 
     this.auth = createAuthClient(authBaseUrl);
-    const refreshToken = createTokenRefreshChain(
-        this.auth, storage,
-    )
+    const refreshToken = createSessionRefreshMiddleware(this.auth, storage);
+    this.auth.pushChainFunction(refreshToken);
+    this.auth.pushChainFunction(createSessionResponseMiddleware(storage));
 
     this.storage = createStorageClient(storageBaseUrl, [refreshToken]);
     this.graphql = createGraphQLClient(graphqlBaseUrl, [refreshToken]);
@@ -154,7 +152,7 @@ export class NhostClient {
   async refreshSession(): Promise<Session | null> {
     const session = this.sessionStorage.get();
     if (!session) {
-        throw new Error("No session found");
+      throw new Error("No session found");
     }
 
     const response = await this.auth.refreshToken({
