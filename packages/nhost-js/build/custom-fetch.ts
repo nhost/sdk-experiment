@@ -118,7 +118,8 @@ ${
     contentType === "application/x-ndjson";
 
   const isNdJson = response.contentTypes.some(isContentTypeNdJson);
-  const allResponses = [...response.types.success, ...response.types.errors];
+  const allResponses = [...response.types.success];
+  const allErrors = [...response.types.errors];
   if (allResponses.length === 0) {
     allResponses.push({
       contentType: "",
@@ -136,7 +137,20 @@ ${
     .map((response) => {
       const { value, type, schemas } = response;
       if (type === "unknown") {
-        return "unknown";
+        return value;
+      }
+      if (schemas.length > 0) {
+        return schemas[0]?.name;
+      }
+      return value;
+    })
+    .join(" | ");
+
+  const errorTypeName = allErrors
+    .map((response) => {
+      const { value, type, schemas } = response;
+      if (type === "unknown") {
+        return value;
       }
       if (schemas.length > 0) {
         return schemas[0]?.name;
@@ -201,8 +215,13 @@ ${
   `
     : `const res = await fetch(${fetchFnOptions})
 
-  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
+  ${
+    response.isBlob
+      ? `const data: ${responseTypeName} = await res.blob()`
+      : `  const body = [204, 205, 304, 412].includes(res.status) ? null : await res.text()
   const data: ${responseTypeName} = body ? JSON.parse(body) : {}
+    `
+  }
 
   const response = ${
     override.fetch.includeHttpResponseReturnType
@@ -237,8 +256,7 @@ ${
   ${fetchImplementationBody}}
 `;
 
-  const implementation =
-    `${getUrlFnImplementation}\n` + `${fetchImplementation}\n`;
+  const implementation = `${fetchImplementation}\n ${getUrlFnImplementation}\n`;
 
   return implementation;
 };

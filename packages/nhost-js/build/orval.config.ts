@@ -1,4 +1,4 @@
-import { defineConfig } from "orval";
+import { defineConfig, GeneratorVerbOptions } from "orval";
 import fetchClient from "./custom-fetch";
 
 function createClient() {
@@ -48,6 +48,29 @@ export default defineConfig({
     output: {
       target: "../src/storage/client.ts",
       client: createClient,
+      override: {
+        operations: {
+          getFile: {
+            transformer: (options: GeneratorVerbOptions) => {
+              options.response.isBlob = true;
+              options.response.types.success = [
+                {
+                  contentType: "application/octet-stream",
+                  hasReadonlyProps: false,
+                  imports: [],
+                  isEnum: false,
+                  isRef: false,
+                  key: "default",
+                  schemas: [],
+                  type: "unknown",
+                  value: "Blob",
+                },
+              ];
+              return options;
+            },
+          },
+        },
+      },
     },
     hooks: {
       afterAllFilesWrite: {

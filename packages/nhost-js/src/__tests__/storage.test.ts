@@ -50,6 +50,14 @@ describe("Test Storage API", () => {
   const uuid1 = crypto.randomUUID();
   const uuid2 = crypto.randomUUID();
 
+  it("should get version", async () => {
+    const resp = await nhostStorage.getVersion();
+
+    expect(resp.status).toBe(200);
+    expect(resp.data).toBeDefined();
+    expect(resp.data.buildVersion).toBe("0.7.1");
+  });
+
   it("should upload a file", async () => {
     const resp = await nhostStorage.uploadFiles({
       "bucket-id": "default",
@@ -231,18 +239,13 @@ describe("Test Storage API", () => {
     expect(resp.headers["last-modified"]).toBeDefined();
     expect(resp.headers["surrogate-key"]).toBeDefined();
     expect(resp.headers["cache-control"]).toBe("max-age=3600");
-    expect(resp.headers["surrogate-control"]).toBe(
-      "max-age=604800",
-    );
+    expect(resp.headers["surrogate-control"]).toBe("max-age=604800");
     expect(resp.headers["content-length"]).toBe("5");
     expect(resp.headers["date"]).toBeDefined();
   });
 
   it("should get file", async () => {
-    const resp = await nhostStorage.getFile(
-      uuid1,
-      {},
-    );
+    const resp = await nhostStorage.getFile(uuid1, {});
     expect(resp.status).toBe(200);
     expect(resp.data).toBeDefined();
     expect(resp.headers).toBeDefined();
@@ -254,64 +257,59 @@ describe("Test Storage API", () => {
     expect(resp.headers["surrogate-control"]).toBe("max-age=604800");
     expect(resp.headers["content-length"]).toBe("5");
     expect(resp.headers["date"]).toBeDefined();
-    expect(resp.data).toBe("test1");
+    expect(await resp.data.text()).toBe("test1");
   });
 
-  // it("should not get file If-None-Match matches", async () => {
-  //   try {
-  //     await nhostStorage.getFile(
-  //       uuid1,
-  //       {},
-  //       {
-  //         responseType: "text",
-  //         headers: {
-  //           "If-None-Match": etag,
-  //         },
-  //       },
-  //     );
-  //     expect(true).toBe(false); // should not reach here
-  //   } catch (error) {
-  //     const axiosError = error as AxiosError;
-  //     expect(axiosError.response?.status).toBe(304);
-  //     expect(axiosError.response?.data).toBeDefined();
-  //     expect(axiosError.response?.headers).toBeDefined();
-  //     expect(axiosError.response?.headers["etag"]).toBe(etag);
-  //     expect(axiosError.response?.headers["cache-control"]).toBe(
-  //       "max-age=3600",
-  //     );
-  //     expect(axiosError.response?.headers["surrogate-control"]).toBe(
-  //       "max-age=604800",
-  //     );
-  //     expect(axiosError.response?.headers["date"]).toBeDefined();
-  //   }
-  // });
+  it("should not get file If-None-Match matches", async () => {
+    try {
+      await nhostStorage.getFile(
+        uuid1,
+        {},
+        {
+          headers: {
+            "If-None-Match": etag,
+          },
+        },
+      );
+      expect(true).toBe(false); // should not reach here
+    } catch (error) {
+      const err = error as FetchResponse<Error>;
+      expect(err.status).toBe(304);
+      expect(err.data).toBeDefined();
+      expect(err.headers).toBeDefined();
+      expect(err.headers["etag"]).toBe(etag);
+      expect(err.headers["cache-control"]).toBe("max-age=3600");
+      expect(err.headers["surrogate-control"]).toBe("max-age=604800");
+      expect(err.headers["date"]).toBeDefined();
+    }
+  });
 
-  // it("should replace file", async () => {
-  //   const fileResponse = await nhostStorage.replaceFile(uuid1, {
-  //     file: new Blob(["test1 new"], { type: "text/plain" }),
-  //     metadata: {
-  //       name: "test1 new",
-  //       metadata: {
-  //         key1: "value1 new",
-  //       },
-  //     },
-  //   });
-  //   expect(fileResponse.status).toBe(200);
-  //   expect(fileResponse.data.bucketId).toBe("default");
-  //   expect(fileResponse.data.createdAt).toBeDefined();
-  //   expect(fileResponse.data.etag).toBeDefined();
-  //   expect(fileResponse.data.id).toBe(uuid1);
-  //   expect(fileResponse.data.isUploaded).toBe(true);
-  //   expect(fileResponse.data.metadata).toEqual({ key1: "value1 new" });
-  //   expect(fileResponse.data.mimeType).toBe("text/plain");
-  //   expect(fileResponse.data.name).toBe("test1 new");
-  //   expect(fileResponse.data.size).toBe(9);
-  //   expect(fileResponse.data.updatedAt).toBeDefined();
-  //   expect(fileResponse.data.uploadedByUserId).toBeDefined();
-  // });
+  it("should replace file", async () => {
+    const fileResponse = await nhostStorage.replaceFile(uuid1, {
+      file: new Blob(["test1 new"], { type: "text/plain" }),
+      metadata: {
+        name: "test1 new",
+        metadata: {
+          key1: "value1 new",
+        },
+      },
+    });
+    expect(fileResponse.status).toBe(200);
+    expect(fileResponse.data.bucketId).toBe("default");
+    expect(fileResponse.data.createdAt).toBeDefined();
+    expect(fileResponse.data.etag).toBeDefined();
+    expect(fileResponse.data.id).toBe(uuid1);
+    expect(fileResponse.data.isUploaded).toBe(true);
+    expect(fileResponse.data.metadata).toEqual({ key1: "value1 new" });
+    expect(fileResponse.data.mimeType).toBe("text/plain");
+    expect(fileResponse.data.name).toBe("test1 new");
+    expect(fileResponse.data.size).toBe(9);
+    expect(fileResponse.data.updatedAt).toBeDefined();
+    expect(fileResponse.data.uploadedByUserId).toBeDefined();
+  });
 
-  // it("should delete file", async () => {
-  //   const fileResponse = await nhostStorage.deleteFile(uuid1);
-  //   expect(fileResponse.status).toBe(204);
-  // });
+  it("should delete file", async () => {
+    const fileResponse = await nhostStorage.deleteFile(uuid1);
+    expect(fileResponse.status).toBe(204);
+  });
 });

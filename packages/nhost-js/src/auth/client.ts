@@ -538,10 +538,6 @@ export const createAPIClient = (
    * Verify if the authentication service is operational using HEAD method
    * @summary Health check (HEAD)
    */
-  const getHealthCheckHeadUrl = () => {
-    return baseURL + `/healthz`;
-  };
-
   const healthCheckHead = async (
     options?: RequestInit,
   ): Promise<FetchResponse<void>> => {
@@ -550,7 +546,9 @@ export const createAPIClient = (
       method: "HEAD",
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: void = body ? JSON.parse(body) : {};
 
     const response = {
@@ -566,14 +564,14 @@ export const createAPIClient = (
     return response;
   };
 
+  const getHealthCheckHeadUrl = () => {
+    return baseURL + `/healthz`;
+  };
+
   /**
    * Verify if the authentication service is operational using GET method
    * @summary Health check (GET)
    */
-  const getHealthCheckGetUrl = () => {
-    return baseURL + `/healthz`;
-  };
-
   const healthCheckGet = async (
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -582,7 +580,9 @@ export const createAPIClient = (
       method: "GET",
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: OKResponse = body ? JSON.parse(body) : {};
 
     const response = {
@@ -598,14 +598,14 @@ export const createAPIClient = (
     return response;
   };
 
+  const getHealthCheckGetUrl = () => {
+    return baseURL + `/healthz`;
+  };
+
   /**
    * Retrieve version information about the authentication service
    * @summary Get service version
    */
-  const getGetVersionUrl = () => {
-    return baseURL + `/version`;
-  };
-
   const getVersion = async (
     options?: RequestInit,
   ): Promise<FetchResponse<GetVersion200>> => {
@@ -614,7 +614,9 @@ export const createAPIClient = (
       method: "GET",
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: GetVersion200 = body ? JSON.parse(body) : {};
 
     const response = {
@@ -630,14 +632,14 @@ export const createAPIClient = (
     return response;
   };
 
+  const getGetVersionUrl = () => {
+    return baseURL + `/version`;
+  };
+
   /**
    * Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued.
    * @summary Refresh access token
    */
-  const getRefreshTokenUrl = () => {
-    return baseURL + `/token`;
-  };
-
   const refreshToken = async (
     refreshTokenRequest: RefreshTokenRequest,
     options?: RequestInit,
@@ -649,7 +651,9 @@ export const createAPIClient = (
       body: JSON.stringify(refreshTokenRequest),
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: Session = body ? JSON.parse(body) : {};
 
     const response = {
@@ -665,13 +669,13 @@ export const createAPIClient = (
     return response;
   };
 
+  const getRefreshTokenUrl = () => {
+    return baseURL + `/token`;
+  };
+
   /**
    * @summary Sign out
    */
-  const getSignOutUrl = () => {
-    return baseURL + `/signout`;
-  };
-
   const signOut = async (
     signOutSchema: SignOutSchema,
     options?: RequestInit,
@@ -683,7 +687,9 @@ export const createAPIClient = (
       body: JSON.stringify(signOutSchema),
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: OKResponse = body ? JSON.parse(body) : {};
 
     const response = {
@@ -699,14 +705,14 @@ export const createAPIClient = (
     return response;
   };
 
+  const getSignOutUrl = () => {
+    return baseURL + `/signout`;
+  };
+
   /**
    * Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
    * @summary Sign in with email and password
    */
-  const getSignInEmailPasswordUrl = () => {
-    return baseURL + `/signin/email-password`;
-  };
-
   const signInEmailPassword = async (
     signInEmailPasswordRequest: SignInEmailPasswordRequest,
     options?: RequestInit,
@@ -718,7 +724,9 @@ export const createAPIClient = (
       body: JSON.stringify(signInEmailPasswordRequest),
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: SignInEmailPasswordResponse = body ? JSON.parse(body) : {};
 
     const response = {
@@ -734,14 +742,14 @@ export const createAPIClient = (
     return response;
   };
 
+  const getSignInEmailPasswordUrl = () => {
+    return baseURL + `/signin/email-password`;
+  };
+
   /**
    * Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
    * @summary Verify TOTP for MFA
    */
-  const getSignInVerifyMfaTotpUrl = () => {
-    return baseURL + `/signin/mfa/totp`;
-  };
-
   const signInVerifyMfaTotp = async (
     signInMfaTotpRequest: SignInMfaTotpRequest,
     options?: RequestInit,
@@ -753,7 +761,9 @@ export const createAPIClient = (
       body: JSON.stringify(signInMfaTotpRequest),
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: SessionPayload = body ? JSON.parse(body) : {};
 
     const response = {
@@ -769,14 +779,14 @@ export const createAPIClient = (
     return response;
   };
 
+  const getSignInVerifyMfaTotpUrl = () => {
+    return baseURL + `/signin/mfa/totp`;
+  };
+
   /**
    * Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options.
    * @summary Sign in with magic link email
    */
-  const getSignInPasswordlessEmailUrl = () => {
-    return baseURL + `/signin/passwordless/email`;
-  };
-
   const signInPasswordlessEmail = async (
     signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest,
     options?: RequestInit,
@@ -788,7 +798,9 @@ export const createAPIClient = (
       body: JSON.stringify(signInPasswordlessEmailRequest),
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: OKResponse = body ? JSON.parse(body) : {};
 
     const response = {
@@ -804,18 +816,18 @@ export const createAPIClient = (
     return response;
   };
 
+  const getSignInPasswordlessEmailUrl = () => {
+    return baseURL + `/signin/passwordless/email`;
+  };
+
   /**
    * Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session.
    * @summary Sign up with email and password
    */
-  const getSignUpEmailPasswordUrl = () => {
-    return baseURL + `/signup/email-password`;
-  };
-
   const signUpEmailPassword = async (
     signUpEmailPasswordRequest: SignUpEmailPasswordRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload | ErrorResponse>> => {
+  ): Promise<FetchResponse<SessionPayload>> => {
     const res = await fetch(getSignUpEmailPasswordUrl(), {
       ...options,
       method: "POST",
@@ -823,14 +835,16 @@ export const createAPIClient = (
       body: JSON.stringify(signUpEmailPasswordRequest),
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const data: SessionPayload | ErrorResponse = body ? JSON.parse(body) : {};
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const data: SessionPayload = body ? JSON.parse(body) : {};
 
     const response = {
       data,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
-    } as FetchResponse<SessionPayload | ErrorResponse>;
+    } as FetchResponse<SessionPayload>;
 
     if (!res.ok) {
       throw response;
@@ -839,14 +853,14 @@ export const createAPIClient = (
     return response;
   };
 
+  const getSignUpEmailPasswordUrl = () => {
+    return baseURL + `/signup/email-password`;
+  };
+
   /**
    * Activate or deactivate multi-factor authentication for the authenticated user
    * @summary Manage multi-factor authentication
    */
-  const getChangeUserMfaVerifyUrl = () => {
-    return baseURL + `/user/mfa`;
-  };
-
   const changeUserMfaVerify = async (
     userMfaRequest: UserMfaRequest,
     options?: RequestInit,
@@ -858,7 +872,9 @@ export const createAPIClient = (
       body: JSON.stringify(userMfaRequest),
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: OKResponse = body ? JSON.parse(body) : {};
 
     const response = {
@@ -874,14 +890,14 @@ export const createAPIClient = (
     return response;
   };
 
+  const getChangeUserMfaVerifyUrl = () => {
+    return baseURL + `/user/mfa`;
+  };
+
   /**
    * Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication
    * @summary Generate TOTP secret
    */
-  const getChangeUserMfaUrl = () => {
-    return baseURL + `/mfa/totp/generate`;
-  };
-
   const changeUserMfa = async (
     options?: RequestInit,
   ): Promise<FetchResponse<TotpGenerateResponse>> => {
@@ -890,7 +906,9 @@ export const createAPIClient = (
       method: "GET",
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: TotpGenerateResponse = body ? JSON.parse(body) : {};
 
     const response = {
@@ -904,6 +922,10 @@ export const createAPIClient = (
     }
 
     return response;
+  };
+
+  const getChangeUserMfaUrl = () => {
+    return baseURL + `/mfa/totp/generate`;
   };
 
   return {

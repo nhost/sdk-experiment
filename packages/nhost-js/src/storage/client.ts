@@ -230,10 +230,6 @@ export const createAPIClient = (
    * Returns the OpenAPI schema definition for this API, allowing clients to understand the available endpoints and models.
    * @summary Get OpenAPI specification
    */
-  const getGetOpenAPISpecUrl = () => {
-    return baseURL + `/openapi.yaml`;
-  };
-
   const getOpenAPISpec = async (
     options?: RequestInit,
   ): Promise<FetchResponse<GetOpenAPISpec200>> => {
@@ -242,7 +238,9 @@ export const createAPIClient = (
       method: "GET",
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: GetOpenAPISpec200 = body ? JSON.parse(body) : {};
 
     const response = {
@@ -258,14 +256,14 @@ export const createAPIClient = (
     return response;
   };
 
+  const getGetOpenAPISpecUrl = () => {
+    return baseURL + `/openapi.yaml`;
+  };
+
   /**
    * Retrieves build and version information about the storage service. Useful for monitoring and debugging.
    * @summary Get service version information
    */
-  const getGetVersionUrl = () => {
-    return baseURL + `/version`;
-  };
-
   const getVersion = async (
     options?: RequestInit,
   ): Promise<FetchResponse<VersionInformation>> => {
@@ -274,7 +272,9 @@ export const createAPIClient = (
       method: "GET",
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: VersionInformation = body ? JSON.parse(body) : {};
 
     const response = {
@@ -290,18 +290,18 @@ export const createAPIClient = (
     return response;
   };
 
+  const getGetVersionUrl = () => {
+    return baseURL + `/version`;
+  };
+
   /**
    * Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
    * @summary Upload files
    */
-  const getUploadFilesUrl = () => {
-    return baseURL + `/files/`;
-  };
-
   const uploadFiles = async (
     uploadFilesBody: UploadFilesBody,
     options?: RequestInit,
-  ): Promise<FetchResponse<UploadFiles201 | Error>> => {
+  ): Promise<FetchResponse<UploadFiles201>> => {
     const formData = new FormData();
     if (uploadFilesBody["bucket-id"] !== undefined) {
       formData.append(`bucket-id`, uploadFilesBody["bucket-id"]);
@@ -323,14 +323,16 @@ export const createAPIClient = (
       body: formData,
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const data: UploadFiles201 | Error = body ? JSON.parse(body) : {};
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const data: UploadFiles201 = body ? JSON.parse(body) : {};
 
     const response = {
       data,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
-    } as FetchResponse<UploadFiles201 | Error>;
+    } as FetchResponse<UploadFiles201>;
 
     if (!res.ok) {
       throw response;
@@ -339,10 +341,42 @@ export const createAPIClient = (
     return response;
   };
 
+  const getUploadFilesUrl = () => {
+    return baseURL + `/files/`;
+  };
+
   /**
    * Retrieve file metadata headers without downloading the file content. Supports conditional requests and provides caching information.
    * @summary Check file information
    */
+  const getFileMetadataHeaders = async (
+    id: string,
+    params?: GetFileMetadataHeadersParams,
+    options?: RequestInit,
+  ): Promise<FetchResponse<void>> => {
+    const res = await fetch(getGetFileMetadataHeadersUrl(id, params), {
+      ...options,
+      method: "HEAD",
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const data: void = body ? JSON.parse(body) : {};
+
+    const response = {
+      data,
+      status: res.status,
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+    } as FetchResponse<void>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
   const getGetFileMetadataHeadersUrl = (
     id: string,
     params?: GetFileMetadataHeadersParams,
@@ -365,24 +399,27 @@ export const createAPIClient = (
       : baseURL + `/files/${id}`;
   };
 
-  const getFileMetadataHeaders = async (
+  /**
+   * Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
+   * @summary Download file
+   */
+  const getFile = async (
     id: string,
-    params?: GetFileMetadataHeadersParams,
+    params?: GetFileParams,
     options?: RequestInit,
-  ): Promise<FetchResponse<void | void>> => {
-    const res = await fetch(getGetFileMetadataHeadersUrl(id, params), {
+  ): Promise<FetchResponse<Blob>> => {
+    const res = await fetch(getGetFileUrl(id, params), {
       ...options,
-      method: "HEAD",
+      method: "GET",
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const data: void | void = body ? JSON.parse(body) : {};
+    const data: Blob = await res.blob();
 
     const response = {
       data,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
-    } as FetchResponse<void | void>;
+    } as FetchResponse<Blob>;
 
     if (!res.ok) {
       throw response;
@@ -391,10 +428,6 @@ export const createAPIClient = (
     return response;
   };
 
-  /**
-   * Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
-   * @summary Download file
-   */
   const getGetFileUrl = (id: string, params?: GetFileParams) => {
     const normalizedParams = new URLSearchParams();
 
@@ -414,17 +447,73 @@ export const createAPIClient = (
       : baseURL + `/files/${id}`;
   };
 
-  const getFile = async (
+  /**
+ * Replace an existing file with new content while preserving the file ID. The operation follows these steps:
+1. The isUploaded flag is set to false to mark the file as being updated
+2. The file content is replaced in the storage backend
+3. File metadata is updated (size, mime-type, isUploaded, etc.)
+
+Each step is atomic, but if a step fails, previous steps will not be automatically rolled back.
+
+ * @summary Replace file
+ */
+  const replaceFile = async (
     id: string,
-    params?: GetFileParams,
+    replaceFileBody: ReplaceFileBody,
     options?: RequestInit,
-  ): Promise<FetchResponse<void>> => {
-    const res = await fetch(getGetFileUrl(id, params), {
+  ): Promise<FetchResponse<FileMetadata>> => {
+    const formData = new FormData();
+    if (replaceFileBody.metadata !== undefined) {
+      formData.append(`metadata`, JSON.stringify(replaceFileBody.metadata));
+    }
+    if (replaceFileBody.file !== undefined) {
+      formData.append(`file`, replaceFileBody.file);
+    }
+
+    const res = await fetch(getReplaceFileUrl(id), {
       ...options,
-      method: "GET",
+      method: "PUT",
+      body: formData,
     });
 
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const data: FileMetadata = body ? JSON.parse(body) : {};
+
+    const response = {
+      data,
+      status: res.status,
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+    } as FetchResponse<FileMetadata>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getReplaceFileUrl = (id: string) => {
+    return baseURL + `/files/${id}`;
+  };
+
+  /**
+   * Permanently delete a file from storage. This removes both the file content and its associated metadata.
+   * @summary Delete file
+   */
+  const deleteFile = async (
+    id: string,
+    options?: RequestInit,
+  ): Promise<FetchResponse<void>> => {
+    const res = await fetch(getDeleteFileUrl(id), {
+      ...options,
+      method: "DELETE",
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
     const data: void = body ? JSON.parse(body) : {};
 
     const response = {
@@ -440,86 +529,8 @@ export const createAPIClient = (
     return response;
   };
 
-  /**
- * Replace an existing file with new content while preserving the file ID. The operation follows these steps:
-1. The isUploaded flag is set to false to mark the file as being updated
-2. The file content is replaced in the storage backend
-3. File metadata is updated (size, mime-type, isUploaded, etc.)
-
-Each step is atomic, but if a step fails, previous steps will not be automatically rolled back.
-
- * @summary Replace file
- */
-  const getReplaceFileUrl = (id: string) => {
-    return baseURL + `/files/${id}`;
-  };
-
-  const replaceFile = async (
-    id: string,
-    replaceFileBody: ReplaceFileBody,
-    options?: RequestInit,
-  ): Promise<FetchResponse<FileMetadata | Error>> => {
-    const formData = new FormData();
-    if (replaceFileBody.metadata !== undefined) {
-      formData.append(`metadata`, JSON.stringify(replaceFileBody.metadata));
-    }
-    if (replaceFileBody.file !== undefined) {
-      formData.append(`file`, replaceFileBody.file);
-    }
-
-    const res = await fetch(getReplaceFileUrl(id), {
-      ...options,
-      method: "PUT",
-      body: formData,
-    });
-
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const data: FileMetadata | Error = body ? JSON.parse(body) : {};
-
-    const response = {
-      data,
-      status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
-    } as FetchResponse<FileMetadata | Error>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
-  };
-
-  /**
-   * Permanently delete a file from storage. This removes both the file content and its associated metadata.
-   * @summary Delete file
-   */
   const getDeleteFileUrl = (id: string) => {
     return baseURL + `/files/${id}`;
-  };
-
-  const deleteFile = async (
-    id: string,
-    options?: RequestInit,
-  ): Promise<FetchResponse<void | Error>> => {
-    const res = await fetch(getDeleteFileUrl(id), {
-      ...options,
-      method: "DELETE",
-    });
-
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const data: void | Error = body ? JSON.parse(body) : {};
-
-    const response = {
-      data,
-      status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
-    } as FetchResponse<void | Error>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
   };
 
   return {
