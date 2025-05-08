@@ -4,35 +4,34 @@
   "description": "Nhost JavaScript SDK",
   "main": "./dist/nhost-js.cjs.js",
   "module": "./dist/nhost-js.es.js",
-  "types": "./dist/nhost-js.d.ts",
+  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/nhost-js.d.ts",
-      "node": "./dist/nhost-js.cjs.js",
+      "types": "./dist/src/index.d.ts",
       "import": "./dist/nhost-js.es.js",
-      "require": "./dist/nhost-js.cjs.js",
-      "default": "./dist/nhost-js.umd.js"
+      "require": "./dist/nhost-js.cjs.js"
     },
     "./auth": {
-      "types": "./dist/nhost-js/auth.d.ts",
-      "node": "./dist/nhost-js/auth.cjs.js",
+      "types": "./dist/src/auth/index.d.ts",
       "import": "./dist/nhost-js/auth.es.js",
-      "require": "./dist/nhost-js/auth.cjs.js",
-      "default": "./dist/nhost-js/auth.js"
+      "require": "./dist/nhost-js/auth.cjs.js"
     },
     "./storage": {
-      "types": "./dist/storage.d.ts",
-      "node": "./dist/storage.cjs.js",
-      "import": "./dist/storage.es.js",
-      "require": "./dist/storage.cjs.js",
-      "default": "./dist/storage.js"
+      "types": "./dist/src/storage/index.d.ts",
+      "import": "./dist/nhost-js/storage.es.js",
+      "require": "./dist/nhost-js/storage.cjs.js"
     },
     "./graphql": {
-      "types": "./dist/graphql.d.ts",
-      "node": "./dist/graphql.cjs.js",
-      "import": "./dist/graphql.es.js",
-      "require": "./dist/graphql.cjs.js",
-      "default": "./dist/graphql.js"
+      "types": "./dist/src/graphql/index.d.ts",
+      "import": "./dist/nhost-js/graphql.es.js",
+      "require": "./dist/nhost-js/graphql.cjs.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "auth": ["dist/src/auth/index.d.ts"],
+      "storage": ["dist/src/storage/index.d.ts"],
+      "graphql": ["dist/src/graphql/index.d.ts"]
     }
   },
   "files": [
@@ -42,7 +41,9 @@
     "test": "jest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "build": "vite build",
+    "build:types": "tsc -p tsconfig.json",
+    "build:js": "vite build --config vite.config.ts && vite build --config vite.umd.config.ts",
+    "build": "rm -rf dist && pnpm build:types && pnpm build:js",
     "generate": "orval --config build/orval.config.ts",
     "prepublishOnly": "pnpm build",
     "lint": "eslint src --ext .ts,.tsx",

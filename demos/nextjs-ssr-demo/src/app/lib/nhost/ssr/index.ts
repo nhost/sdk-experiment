@@ -1,5 +1,5 @@
 import { createClient } from 'nhost-js';
-import { extractTokenExpiration, Session } from 'nhost-js/auth';
+import { extractTokenExpiration, type Session } from 'nhost-js/auth';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 

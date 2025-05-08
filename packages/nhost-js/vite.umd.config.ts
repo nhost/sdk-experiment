@@ -6,18 +6,10 @@ import peerDepsExternal from "rollup-plugin-peer-deps-external";
 export default defineConfig({
   build: {
     lib: {
-      entry: {
-        "nhost-js": resolve(__dirname, "src/index.ts"),
-        "nhost-js/auth": resolve(__dirname, "src/auth/index.ts"),
-        "nhost-js/storage": resolve(__dirname, "src/storage/index.ts"),
-        "nhost-js/graphql": resolve(__dirname, "src/graphql/index.ts"),
-      },
+      entry: resolve(__dirname, "src/index.ts"),
       name: "NhostJs",
-      formats: ["es", "cjs"],
-      fileName: (format, entryName) =>
-        entryName === "nhost-js"
-          ? `nhost-js.${format}.js`
-          : `${entryName}.${format}.js`,
+      formats: ["umd"],
+      fileName: () => "nhost-js.umd.js",
     },
     rollupOptions: {
       external: [],
@@ -39,4 +31,4 @@ export default defineConfig({
       preferBuiltins: true,
     }),
   ],
-});
+}); 
