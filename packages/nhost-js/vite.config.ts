@@ -49,6 +49,7 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
       rollupTypes: true,
+      outDir: 'dist/',
     }),
   ],
 });

@@ -4,35 +4,35 @@
   "description": "Nhost JavaScript SDK",
   "main": "./dist/nhost-js.cjs.js",
   "module": "./dist/nhost-js.es.js",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/nhost-js.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/nhost-js.d.ts",
       "node": "./dist/nhost-js.cjs.js",
       "import": "./dist/nhost-js.es.js",
       "require": "./dist/nhost-js.cjs.js",
       "default": "./dist/nhost-js.umd.js"
     },
     "./auth": {
-      "types": "./dist/auth/index.d.ts",
-      "node": "./dist/auth/index.cjs.js",
-      "import": "./dist/auth/index.es.js",
-      "require": "./dist/auth/index.cjs.js",
-      "default": "./dist/auth/index.js"
+      "types": "./dist/nhost-js/auth.d.ts",
+      "node": "./dist/nhost-js/auth.cjs.js",
+      "import": "./dist/nhost-js/auth.es.js",
+      "require": "./dist/nhost-js/auth.cjs.js",
+      "default": "./dist/nhost-js/auth.js"
     },
     "./storage": {
-      "types": "./dist/storage/index.d.ts",
-      "node": "./dist/storage/index.cjs.js",
-      "import": "./dist/storage/index.es.js",
-      "require": "./dist/storage/index.cjs.js",
-      "default": "./dist/storage/index.js"
+      "types": "./dist/storage.d.ts",
+      "node": "./dist/storage.cjs.js",
+      "import": "./dist/storage.es.js",
+      "require": "./dist/storage.cjs.js",
+      "default": "./dist/storage.js"
     },
     "./graphql": {
-      "types": "./dist/graphql/index.d.ts",
-      "node": "./dist/graphql/index.cjs.js",
-      "import": "./dist/graphql/index.es.js",
-      "require": "./dist/graphql/index.cjs.js",
-      "default": "./dist/graphql/index.js"
+      "types": "./dist/graphql.d.ts",
+      "node": "./dist/graphql.cjs.js",
+      "import": "./dist/graphql.es.js",
+      "require": "./dist/graphql.cjs.js",
+      "default": "./dist/graphql.js"
     }
   },
   "files": [

@@ -10,6 +10,22 @@ import { type ChainFunction } from "../fetch";
 export const createSessionResponseMiddleware = (
   storage: StorageInterface,
 ): ChainFunction => {
+  const sessionExtractor = function (
+    data: any,
+  ): Session | null {
+    // Look for session in common response patterns
+    const session =
+      // Pattern: { session: {...} }
+      (data?.session as Session) ||
+      // Pattern: { data: { session: {...} } }
+      (data?.data?.session as Session) ||
+      // Pattern: { accessToken, refreshToken, ... } where data itself is the session
+      (data?.accessToken && data?.refreshToken && (data as Session)) ||
+      null;
+
+    return session;
+  };
+
   return (next: (url: string, options?: RequestInit) => Promise<Response>) => {
     return async (url: string, options?: RequestInit) => {
       // Call the next middleware in the chain
@@ -35,7 +51,7 @@ export const createSessionResponseMiddleware = (
 
           if (data) {
             // Extract session data from response using provided extractor
-            const session = (data?.session as Session) || null;
+            const session = sessionExtractor(data);
 
             // If session data is found, store it
             if (session && session.accessToken && session.refreshToken) {

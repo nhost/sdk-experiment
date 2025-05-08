@@ -1,4 +1,5 @@
-import { createClient, extractTokenExpiration, Session } from 'nhost-js';
+import { createClient } from 'nhost-js';
+import { extractTokenExpiration, Session } from 'nhost-js/auth';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -15,17 +16,24 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function createServerNhostClient(): Promise<ReturnType<typeof createClient>> {
   const cookieStore = await cookies();
 
+  const key = "nhostSession"
+
   const nhost = createClient({
     region: process.env.NHOST_REGION || 'local',
     subdomain: process.env.NHOST_SUBDOMAIN || 'local',
     storage: {
-      getItem: (key: string) => {
-        return cookieStore.get(key)?.value || null;
+      get: (): Session|null => {
+        const raw  = cookieStore.get(key)?.value || null;
+        if (!raw) {
+          return null;
+        }
+        const session: Session = JSON.parse(raw);
+        return session;
       },
-      setItem: (key: string, value: string) => {
-        cookieStore.set(key, value);
+      set: (value: Session) => {
+        cookieStore.set(key, JSON.stringify(value))
       },
-      removeItem: (key: string) => {
+      remove: () => {
         cookieStore.delete(key);
       },
     },
@@ -48,17 +56,24 @@ export async function createServerNhostClient(): Promise<ReturnType<typeof creat
 export async function handleNhostMiddleware(
     request: NextRequest, response: NextResponse<unknown>,
 ): Promise<Session | null> {
+  const key = "nhostSession"
+
   const nhost = createClient({
     region: process.env.NHOST_REGION || 'local',
     subdomain: process.env.NHOST_SUBDOMAIN || 'local',
     storage: {
-      getItem: (key: string) => {
-        return request.cookies.get(key)?.value || null;
+      get: (): Session|null => {
+        const raw = request.cookies.get(key)?.value || null;
+        if (!raw) {
+          return null;
+        }
+        const session: Session = JSON.parse(raw);
+        return session;
       },
-      setItem: (key: string, value: string) => {
+      set: (value: Session) => {
         response.cookies.set({
           name: key,
-          value: value,
+          value: JSON.stringify(value),
           path: '/',
           httpOnly: false, //if set to true we can't access it in the client
           secure: process.env.NODE_ENV === 'production',
@@ -66,7 +81,7 @@ export async function handleNhostMiddleware(
           maxAge: 60 * 60 * 24 * 30, // 30 days in seconds
         });
       },
-      removeItem: (key: string) => {
+      remove: () => {
         response.cookies.delete(key);
       },
     }
@@ -79,7 +94,7 @@ export async function handleNhostMiddleware(
     const tokenExpiresAt = extractTokenExpiration(session?.accessToken || '');
     const currentTime = Date.now();
     if (tokenExpiresAt - currentTime < 60 * 1000) {
-      await nhost.storage.getVersion();
+      await nhost.refreshSession();
       return nhost.getUserSession();
     }
   }

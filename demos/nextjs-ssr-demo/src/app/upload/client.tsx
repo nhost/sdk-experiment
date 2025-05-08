@@ -31,13 +31,10 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
 
     try {
       // Fetch the file with authentication using the SDK
-      const response = await nhost.storage.getFile(fileId, {}, {
-        responseType: 'blob'
-      });
+      const response = await nhost.storage.getFile(fileId);
 
       // Create a URL for the blob
-      const blob = response.data as Blob;
-      const url = URL.createObjectURL(blob);
+      const url = URL.createObjectURL(response.data);
 
       // Handle different file types appropriately
       if (mimeType.startsWith('image/') || mimeType === 'application/pdf' || mimeType.startsWith('text/') || mimeType.startsWith('video/') || mimeType.startsWith('audio/')) {
