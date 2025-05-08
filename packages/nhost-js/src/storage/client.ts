@@ -280,7 +280,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<VersionInformation>;
 
     if (!res.ok) {
@@ -329,7 +329,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<UploadFiles201 | Error>;
 
     if (!res.ok) {
@@ -381,7 +381,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<void | void>;
 
     if (!res.ok) {
@@ -430,7 +430,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<void>;
 
     if (!res.ok) {
@@ -479,7 +479,7 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<FileMetadata | Error>;
 
     if (!res.ok) {
@@ -512,7 +512,7 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<void | Error>;
 
     if (!res.ok) {

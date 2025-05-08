@@ -556,7 +556,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<void>;
 
     if (!res.ok) {
@@ -588,7 +588,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<OKResponse>;
 
     if (!res.ok) {
@@ -620,7 +620,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<GetVersion200>;
 
     if (!res.ok) {
@@ -655,7 +655,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<Session>;
 
     if (!res.ok) {
@@ -689,7 +689,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<OKResponse>;
 
     if (!res.ok) {
@@ -724,7 +724,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<SignInEmailPasswordResponse>;
 
     if (!res.ok) {
@@ -759,7 +759,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<SessionPayload>;
 
     if (!res.ok) {
@@ -794,7 +794,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<OKResponse>;
 
     if (!res.ok) {
@@ -829,7 +829,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<SessionPayload | ErrorResponse>;
 
     if (!res.ok) {
@@ -864,7 +864,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<OKResponse>;
 
     if (!res.ok) {
@@ -896,7 +896,7 @@ export const createAPIClient = (
     const response = {
       data,
       status: res.status,
-      headers: Object.fromEntries(Array.from(res.headers)),
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<TotpGenerateResponse>;
 
     if (!res.ok) {
