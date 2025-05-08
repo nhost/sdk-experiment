@@ -58,6 +58,7 @@ The application demonstrates how to implement server-side rendered navigation th
   - The navigation UI updates immediately after sign in/out actions
 
 This pattern demonstrates an efficient hybrid approach that leverages:
+
 1. Server components for data fetching and initial rendering
 2. Client components for interactivity
 3. Server actions for managing server-side state updates

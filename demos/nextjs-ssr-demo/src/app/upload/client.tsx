@@ -1,17 +1,20 @@
-'use client';
+"use client";
 
-import { useState, useRef, ChangeEvent } from 'react';
-import { useRouter } from 'next/navigation';
-import { createClientNhostClient } from '../lib/nhost/client';
-import { formatFileSize } from '../lib/utils';
-import { StorageFile } from './page';
+import { useState, useRef, ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
+import { createClientNhostClient } from "../lib/nhost/client";
+import { formatFileSize } from "../lib/utils";
+import { StorageFile } from "./page";
 
 interface UploadClientProps {
   initialFiles: StorageFile[];
   serverError: string | null;
 }
 
-export default function UploadClient({ initialFiles, serverError }: UploadClientProps) {
+export default function UploadClient({
+  initialFiles,
+  serverError,
+}: UploadClientProps) {
   const nhost = createClientNhostClient();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -23,10 +26,17 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
   const [files, setFiles] = useState<StorageFile[]>(initialFiles);
   const [viewingFile, setViewingFile] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
-  const [deleteStatus, setDeleteStatus] = useState<{message: string, isError: boolean} | null>(null);
+  const [deleteStatus, setDeleteStatus] = useState<{
+    message: string;
+    isError: boolean;
+  } | null>(null);
 
   // Function to handle viewing a file with proper authorization
-  const handleViewFile = async (fileId: string, fileName: string, mimeType: string) => {
+  const handleViewFile = async (
+    fileId: string,
+    fileName: string,
+    mimeType: string,
+  ) => {
     setViewingFile(fileId);
 
     try {
@@ -37,12 +47,18 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
       const url = URL.createObjectURL(response.data);
 
       // Handle different file types appropriately
-      if (mimeType.startsWith('image/') || mimeType === 'application/pdf' || mimeType.startsWith('text/') || mimeType.startsWith('video/') || mimeType.startsWith('audio/')) {
+      if (
+        mimeType.startsWith("image/") ||
+        mimeType === "application/pdf" ||
+        mimeType.startsWith("text/") ||
+        mimeType.startsWith("video/") ||
+        mimeType.startsWith("audio/")
+      ) {
         // For media types that browsers can display natively, just open in a new tab
-        window.open(url, '_blank');
+        window.open(url, "_blank");
       } else {
         // For other file types, trigger download
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
         link.download = fileName;
         document.body.appendChild(link);
@@ -50,7 +66,7 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
         document.body.removeChild(link);
 
         // Optional: Open a small window to inform the user about the download
-        const newWindow = window.open('', '_blank', 'width=400,height=200');
+        const newWindow = window.open("", "_blank", "width=400,height=200");
         if (newWindow) {
           newWindow.document.write(`
             <html>
@@ -71,7 +87,7 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
       }
     } catch (err: any) {
       setError(`Failed to view file: ${err.message}`);
-      console.error('Error viewing file:', err);
+      console.error("Error viewing file:", err);
     } finally {
       setViewingFile(null);
     }
@@ -80,15 +96,17 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      setSelectedFile(file);
-      setError(null);
-      setUploadResult(null);
+      if (file) {
+        setSelectedFile(file);
+        setError(null);
+        setUploadResult(null);
+      }
     }
   };
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setError('Please select a file to upload');
+      setError("Please select a file to upload");
       return;
     }
 
@@ -98,8 +116,8 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
     try {
       // Upload file using Nhost storage
       const response = await nhost.storage.uploadFiles({
-        'bucket-id': 'default',
-        'file[]': [selectedFile]
+        "bucket-id": "default",
+        "file[]": [selectedFile],
       });
 
       // Get the processed file data
@@ -109,21 +127,27 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
       // Reset form
       setSelectedFile(null);
       if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+        fileInputRef.current.value = "";
       }
 
       // Update the local files list with the new file if we have the data
-      if (uploadedFile && uploadedFile.id && uploadedFile.name && uploadedFile.size && uploadedFile.mimeType) {
+      if (
+        uploadedFile &&
+        uploadedFile.id &&
+        uploadedFile.name &&
+        uploadedFile.size &&
+        uploadedFile.mimeType
+      ) {
         const newFile: StorageFile = {
           id: uploadedFile.id,
           name: uploadedFile.name,
           size: uploadedFile.size,
           mimeType: uploadedFile.mimeType,
-          bucketId: 'default',
-          uploadedByUserId: ''  // This will be refreshed from server
+          bucketId: "default",
+          uploadedByUserId: "", // This will be refreshed from server
         };
 
-        setFiles(prevFiles => [newFile, ...prevFiles]);
+        setFiles((prevFiles) => [newFile, ...prevFiles]);
       }
 
       // Refresh page to get updated file list from server
@@ -134,7 +158,7 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
         setUploadResult(null);
       }, 3000);
     } catch (err: any) {
-      setError(err.message || 'Failed to upload file');
+      setError(err.message || "Failed to upload file");
     } finally {
       setUploading(false);
     }
@@ -149,8 +173,8 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
     setDeleteStatus(null);
 
     // Get the file name for the status message
-    const fileToDelete = files.find(file => file.id === fileId);
-    const fileName = fileToDelete?.name || 'File';
+    const fileToDelete = files.find((file) => file.id === fileId);
+    const fileName = fileToDelete?.name || "File";
 
     try {
       // Delete the file using the Nhost storage SDK with the correct method name
@@ -159,11 +183,11 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
       // Show success message
       setDeleteStatus({
         message: `${fileName} deleted successfully`,
-        isError: false
+        isError: false,
       });
 
       // Update the local files list by removing the deleted file
-      setFiles(files.filter(file => file.id !== fileId));
+      setFiles(files.filter((file) => file.id !== fileId));
 
       // Refresh the page to get updated file list from server
       router.refresh();
@@ -176,9 +200,9 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
       // Show error message
       setDeleteStatus({
         message: `Failed to delete ${fileName}: ${err.message}`,
-        isError: true
+        isError: true,
       });
-      console.error('Error deleting file:', err);
+      console.error("Error deleting file:", err);
     } finally {
       setDeleting(null);
     }
@@ -195,14 +219,14 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
             ref={fileInputRef}
             onChange={handleFileChange}
             style={{
-              position: 'absolute',
-              width: '1px',
-              height: '1px',
+              position: "absolute",
+              width: "1px",
+              height: "1px",
               padding: 0,
-              margin: '-1px',
-              overflow: 'hidden',
-              clip: 'rect(0,0,0,0)',
-              border: 0
+              margin: "-1px",
+              overflow: "hidden",
+              clip: "rect(0,0,0,0)",
+              border: 0,
             }}
             aria-hidden="true"
             tabIndex={-1}
@@ -211,28 +235,40 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
             className="file-upload"
             onClick={() => fileInputRef.current?.click()}
           >
-            <svg className="text-sm mb-2" width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            <svg
+              className="text-sm mb-2"
+              width="40"
+              height="40"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+              />
             </svg>
             <p>Click to select a file</p>
             {selectedFile && (
-              <p style={{ color: 'var(--primary)', marginTop: '0.5rem', fontSize: '0.875rem' }}>
+              <p
+                style={{
+                  color: "var(--primary)",
+                  marginTop: "0.5rem",
+                  fontSize: "0.875rem",
+                }}
+              >
                 {selectedFile.name} ({formatFileSize(selectedFile.size)})
               </p>
             )}
           </div>
         </div>
 
-        {error && (
-          <div className="alert alert-error">
-            {error}
-          </div>
-        )}
+        {error && <div className="alert alert-error">{error}</div>}
 
         {uploadResult && (
-          <div className="alert alert-success">
-            File uploaded successfully!
-          </div>
+          <div className="alert alert-success">File uploaded successfully!</div>
         )}
 
         <button
@@ -240,7 +276,7 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
           disabled={!selectedFile || uploading}
           className="btn btn-primary w-full"
         >
-          {uploading ? 'Uploading...' : 'Upload File'}
+          {uploading ? "Uploading..." : "Upload File"}
         </button>
       </div>
 
@@ -248,7 +284,9 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
         <h2 className="text-2xl mb-6">Your Files</h2>
 
         {deleteStatus && (
-          <div className={`alert ${deleteStatus.isError ? 'alert-error' : 'alert-success'} mb-4`}>
+          <div
+            className={`alert ${deleteStatus.isError ? "alert-error" : "alert-success"} mb-4`}
+          >
             {deleteStatus.message}
           </div>
         )}
@@ -256,7 +294,7 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
         {files.length === 0 ? (
           <p className="text-center">No files uploaded yet.</p>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          <div style={{ overflowX: "auto" }}>
             <table>
               <thead>
                 <tr>
@@ -275,18 +313,34 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
                     <td>
                       <div className="table-actions">
                         <button
-                          onClick={() => handleViewFile(file.id, file.name, file.mimeType)}
+                          onClick={() =>
+                            handleViewFile(file.id, file.name, file.mimeType)
+                          }
                           disabled={viewingFile === file.id}
                           className="action-icon action-icon-view"
                           title="View File"
                         >
                           {viewingFile === file.id ? (
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
                               <circle cx="12" cy="12" r="10"></circle>
                               <path d="M12 6v6"></path>
                             </svg>
                           ) : (
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
                               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                               <circle cx="12" cy="12" r="3"></circle>
                             </svg>
@@ -299,12 +353,26 @@ export default function UploadClient({ initialFiles, serverError }: UploadClient
                           title="Delete File"
                         >
                           {deleting === file.id ? (
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
                               <circle cx="12" cy="12" r="10"></circle>
                               <path d="M12 6v6"></path>
                             </svg>
                           ) : (
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
                               <path d="M3 6h18"></path>
                               <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
                               <path d="M10 11v6M14 11v6"></path>

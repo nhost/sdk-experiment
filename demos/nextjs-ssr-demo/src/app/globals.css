@@ -27,7 +27,8 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans, ui-sans-serif, system-ui, -apple-system), sans-serif;
+  font-family:
+    var(--font-geist-sans, ui-sans-serif, system-ui, -apple-system), sans-serif;
   line-height: 1.6;
   min-height: 100vh;
 }
@@ -112,7 +113,9 @@ body {
 }
 
 /* Typography */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-weight: bold;
   line-height: 1.2;
 }
@@ -230,7 +233,9 @@ h1, h2, h3 {
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   width: 100%;
   padding: 0.625rem 0.75rem;
   background-color: rgba(31, 41, 55, 0.8);
@@ -240,7 +245,9 @@ input, textarea, select {
   transition: all 0.2s;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);

@@ -1,14 +1,14 @@
-import { createServerNhostClient } from '../lib/nhost/ssr';
-import MFASettings from './mfa-settings';
+import { createServerNhostClient } from "../lib/nhost/ssr";
+import MFASettings from "./mfa-settings";
 
 export default async function Profile() {
   // Create the client with async cookie access
   const nhost = await createServerNhostClient();
   const session = nhost.getUserSession();
-  
+
   // Determine if MFA is enabled for the user by querying the activeMfaType
   let isMfaEnabled = false;
-  
+
   if (session?.user?.id) {
     try {
       const response = await nhost.graphql.query({
@@ -18,13 +18,13 @@ export default async function Profile() {
               activeMfaType
             }
           }
-        `
+        `,
       });
-      
+
       // MFA is enabled if activeMfaType is "totp"
       const userData = response.data?.data;
       isMfaEnabled = userData?.user?.activeMfaType === "totp";
-      
+
       if (response.data.errors && response.data.errors.length > 0) {
         console.error("Error fetching MFA status:", response.data.errors);
       }
@@ -41,29 +41,43 @@ export default async function Profile() {
         <div className="space-y-5">
           <div className="profile-item">
             <strong>Display Name:</strong>
-            <span className="ml-2">{session?.user?.displayName || 'Not set'}</span>
+            <span className="ml-2">
+              {session?.user?.displayName || "Not set"}
+            </span>
           </div>
 
           <div className="profile-item">
             <strong>Email:</strong>
-            <span className="ml-2">{session?.user?.email || 'Not available'}</span>
+            <span className="ml-2">
+              {session?.user?.email || "Not available"}
+            </span>
           </div>
 
           <div className="profile-item">
             <strong>User ID:</strong>
-            <span className="ml-2" style={{ fontFamily: 'var(--font-geist-mono)', fontSize: '0.875rem' }}>
-              {session?.user?.id || 'Not available'}
+            <span
+              className="ml-2"
+              style={{
+                fontFamily: "var(--font-geist-mono)",
+                fontSize: "0.875rem",
+              }}
+            >
+              {session?.user?.id || "Not available"}
             </span>
           </div>
 
           <div className="profile-item">
             <strong>Roles:</strong>
-            <span className="ml-2">{session?.user?.roles?.join(', ') || 'None'}</span>
+            <span className="ml-2">
+              {session?.user?.roles?.join(", ") || "None"}
+            </span>
           </div>
 
           <div className="profile-item">
             <strong>Email Verified:</strong>
-            <span className="ml-2">{session?.user?.emailVerified ? 'Yes' : 'No'}</span>
+            <span className="ml-2">
+              {session?.user?.emailVerified ? "Yes" : "No"}
+            </span>
           </div>
         </div>
       </div>
@@ -74,10 +88,10 @@ export default async function Profile() {
           {JSON.stringify(
             {
               refreshTokenId: session?.refreshTokenId,
-              accessTokenExpiresIn: session?.accessTokenExpiresIn
+              accessTokenExpiresIn: session?.accessTokenExpiresIn,
             },
             null,
-            2
+            2,
           )}
         </pre>
       </div>

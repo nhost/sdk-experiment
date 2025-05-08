@@ -28,11 +28,9 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <div className="flex-col min-h-screen">
           <Navigation />
-          <main className="max-w-2xl mx-auto p-6 w-full">
-            {children}
-          </main>
+          <main className="max-w-2xl mx-auto p-6 w-full">{children}</main>
           <footer>
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-sm" style={{ color: "var(--text-muted)" }}>
               © {new Date().getFullYear()} Nhost Demo
             </p>
           </footer>

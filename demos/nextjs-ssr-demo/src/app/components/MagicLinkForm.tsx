@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface MagicLinkFormProps {
   sendMagicLinkAction: (formData: FormData) => Promise<any>;
@@ -9,10 +9,10 @@ interface MagicLinkFormProps {
   buttonLabel?: string;
 }
 
-export default function MagicLinkForm({ 
-  sendMagicLinkAction, 
+export default function MagicLinkForm({
+  sendMagicLinkAction,
   showDisplayName = false,
-  buttonLabel = 'Sign in with Magic Link'
+  buttonLabel = "Sign in with Magic Link",
 }: MagicLinkFormProps) {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -20,14 +20,14 @@ export default function MagicLinkForm({
   const handleSubmit = async (formData: FormData) => {
     try {
       const result = await sendMagicLinkAction(formData);
-      
+
       if (result.redirect) {
         router.push(result.redirect);
       } else if (result.error) {
         setError(result.error);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to send magic link');
+      setError(err.message || "Failed to send magic link");
     }
   };
 
@@ -35,9 +35,7 @@ export default function MagicLinkForm({
     <form action={handleSubmit} className="w-full space-y-5">
       {showDisplayName && (
         <div>
-          <label htmlFor="magic-displayName">
-            Display Name
-          </label>
+          <label htmlFor="magic-displayName">Display Name</label>
           <input
             id="magic-displayName"
             name="displayName"
@@ -46,31 +44,17 @@ export default function MagicLinkForm({
           />
         </div>
       )}
-      
+
       <div>
-        <label htmlFor="magic-email">
-          Email
-        </label>
-        <input
-          id="magic-email"
-          name="email"
-          type="email"
-          required
-        />
+        <label htmlFor="magic-email">Email</label>
+        <input id="magic-email" name="email" type="email" required />
       </div>
-      
-      {error && (
-        <div className="alert alert-error mb-4">
-          {error}
-        </div>
-      )}
-      
-      <button
-        type="submit"
-        className="btn btn-primary w-full"
-      >
+
+      {error && <div className="alert alert-error mb-4">{error}</div>}
+
+      <button type="submit" className="btn btn-primary w-full">
         {buttonLabel}
       </button>
     </form>
   );
-} 
+}

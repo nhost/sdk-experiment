@@ -1,6 +1,6 @@
-import { createServerNhostClient } from '../lib/nhost/ssr';
-import SignOutButton from './SignOutButton';
-import ActiveLink from './ActiveLink';
+import { createServerNhostClient } from "../lib/nhost/ssr";
+import SignOutButton from "./SignOutButton";
+import ActiveLink from "./ActiveLink";
 
 export default async function Navigation() {
   const nhost = await createServerNhostClient();
@@ -14,31 +14,19 @@ export default async function Navigation() {
           <div className="navbar-links">
             {session ? (
               <>
-                <ActiveLink 
-                  href="/profile" 
-                  className="nav-link"
-                >
+                <ActiveLink href="/profile" className="nav-link">
                   Profile
                 </ActiveLink>
-                <ActiveLink 
-                  href="/upload" 
-                  className="nav-link"
-                >
+                <ActiveLink href="/upload" className="nav-link">
                   Upload
                 </ActiveLink>
               </>
             ) : (
               <>
-                <ActiveLink 
-                  href="/signin" 
-                  className="nav-link"
-                >
+                <ActiveLink href="/signin" className="nav-link">
                   Sign In
                 </ActiveLink>
-                <ActiveLink 
-                  href="/signup" 
-                  className="nav-link"
-                >
+                <ActiveLink href="/signup" className="nav-link">
                   Sign Up
                 </ActiveLink>
               </>
@@ -46,10 +34,8 @@ export default async function Navigation() {
           </div>
         </div>
 
-        {session && (
-          <SignOutButton />
-        )}
+        {session && <SignOutButton />}
       </div>
     </nav>
   );
-} 
+}

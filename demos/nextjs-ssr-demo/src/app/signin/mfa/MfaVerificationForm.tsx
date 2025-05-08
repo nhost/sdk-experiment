@@ -1,45 +1,42 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { verifyMfa } from '../actions';
+import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { verifyMfa } from "../actions";
 
 interface MfaVerificationFormProps {
   ticket: string;
   initialError?: string;
 }
 
-export default function MfaVerificationForm({ ticket, initialError }: MfaVerificationFormProps) {
+export default function MfaVerificationForm({
+  ticket,
+  initialError,
+}: MfaVerificationFormProps) {
   const [error, setError] = useState(initialError);
   const router = useRouter();
 
   const handleSubmit = async (formData: FormData) => {
     try {
       const result = await verifyMfa(formData);
-      
+
       if (result.redirect) {
         router.push(result.redirect);
       } else if (result.error) {
         setError(result.error);
       }
     } catch (err: any) {
-      setError(err.message || 'An error occurred during verification');
+      setError(err.message || "An error occurred during verification");
     }
   };
 
   return (
     <form action={handleSubmit} className="space-y-5">
-      <input 
-        type="hidden" 
-        name="ticket" 
-        value={ticket} 
-      />
-      
+      <input type="hidden" name="ticket" value={ticket} />
+
       <div>
-        <label htmlFor="otp">
-          Verification Code
-        </label>
+        <label htmlFor="otp">Verification Code</label>
         <input
           id="otp"
           name="otp"
@@ -52,25 +49,19 @@ export default function MfaVerificationForm({ ticket, initialError }: MfaVerific
 
       {error && (
         <div className="alert alert-error">
-          {typeof error === 'string' ? error : 'Verification failed'}
+          {typeof error === "string" ? error : "Verification failed"}
         </div>
       )}
 
       <div className="flex space-x-3">
-        <button
-          type="submit"
-          className="btn btn-primary"
-        >
+        <button type="submit" className="btn btn-primary">
           Verify
         </button>
 
-        <Link
-          href="/signin"
-          className="btn btn-secondary"
-        >
+        <Link href="/signin" className="btn btn-secondary">
           Back
         </Link>
       </div>
     </form>
   );
-} 
+}

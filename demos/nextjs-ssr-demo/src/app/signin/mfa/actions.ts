@@ -1,19 +1,19 @@
-'use server';
+"use server";
 
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-import { createServerNhostClient } from '../../lib/nhost/ssr';
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { createServerNhostClient } from "../../lib/nhost/ssr";
 
 /**
  * Verifies MFA code for sign in
  */
 export async function verifyMfa(formData: FormData): Promise<void> {
-  const otp = formData.get('otp') as string;
-  const ticket = formData.get('ticket') as string;
+  const otp = formData.get("otp") as string;
+  const ticket = formData.get("ticket") as string;
 
   // Validate inputs
   if (!otp || !ticket) {
-    redirect('/signin/mfa?error=Verification+code+and+ticket+are+required');
+    redirect("/signin/mfa?error=Verification+code+and+ticket+are+required");
   }
 
   try {
@@ -23,23 +23,25 @@ export async function verifyMfa(formData: FormData): Promise<void> {
     // Verify MFA code
     const response = await nhost.auth.signInVerifyMfaTotp({
       ticket,
-      otp
+      otp,
     });
 
     // If we have a session, verification was successful
     if (response.data.session) {
       // Revalidate all paths to ensure server components re-render
-      revalidatePath('/');
+      revalidatePath("/");
 
       // Redirect to profile page
-      redirect('/profile');
+      redirect("/profile");
     }
 
     // If we got here, something went wrong
     redirect(`/signin/mfa?ticket=${ticket}&error=Failed+to+verify+MFA+code`);
   } catch (error: any) {
-    console.error('MFA verification error:', error);
-    redirect(`/signin/mfa?ticket=${ticket}&error=${encodeURIComponent(error.message || 'Failed to verify code')}`);
+    console.error("MFA verification error:", error);
+    redirect(
+      `/signin/mfa?ticket=${ticket}&error=${encodeURIComponent(error.message || "Failed to verify code")}`,
+    );
   }
 }
 
@@ -47,38 +49,41 @@ export async function verifyMfa(formData: FormData): Promise<void> {
  * Sends a magic link to the provided email
  */
 export async function sendMagicLink(formData: FormData): Promise<void> {
-  const email = formData.get('email') as string;
-  const displayName = formData.get('displayName') as string || undefined;
+  const email = formData.get("email") as string;
+  const displayName = (formData.get("displayName") as string) || undefined;
 
   // Validate inputs
   if (!email) {
-    redirect('/signin?error=Email+is+required');
+    redirect("/signin?error=Email+is+required");
   }
 
   try {
     // Get origin for redirect URL
-    const origin = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const origin =
+      process.env["NEXT_PUBLIC_APP_URL"] || "http://localhost:3000";
 
     // Get the server Nhost client
     const nhost = await createServerNhostClient();
 
     // Send magic link
-    const response = await nhost.auth.signinPasswordlessEmail({
+    const response = await nhost.auth.signInPasswordlessEmail({
       email,
       options: {
         displayName,
-        redirectTo: origin
-      }
+        redirectTo: origin,
+      },
     });
 
     if (response.data) {
-      redirect('/signin?magic=success');
+      redirect("/signin?magic=success");
     }
 
     // If we got here, something went wrong
-    redirect('/signin?error=Failed+to+send+magic+link');
+    redirect("/signin?error=Failed+to+send+magic+link");
   } catch (error: any) {
-    console.error('Magic link error:', error);
-    redirect(`/signin?error=${encodeURIComponent(error.message || 'Failed to send magic link')}`);
+    console.error("Magic link error:", error);
+    redirect(
+      `/signin?error=${encodeURIComponent(error.message || "Failed to send magic link")}`,
+    );
   }
 }
