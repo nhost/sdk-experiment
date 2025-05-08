@@ -103,30 +103,72 @@ describe("Test Storage API", () => {
 
   it("upload fails", async () => {
     try {
-    await nhostStorage.uploadFiles({
-      "bucket-id": "default",
-      "metadata[]": [
-        {
-          id: uuid1,
-          name: "test1",
-          metadata: { key1: "value1" },
-        },
-        {
-          id: uuid2,
-          name: "test2",
-          metadata: { key2: "value2" },
-        },
-      ],
-    });
+      await nhostStorage.uploadFiles({
+        "bucket-id": "default",
+        "metadata[]": [
+          {
+            id: uuid1,
+            name: "test1",
+            metadata: { key1: "value1" },
+          },
+          {
+            id: uuid2,
+            name: "test2",
+            metadata: { key2: "value2" },
+          },
+        ],
+      });
     } catch (error) {
-        const err = error as FetchResponse<Error>;
-        expect(err).toBeDefined();
-        expect(err.status).toBe(400);
-        expect(err.data).toBeDefined();
-        expect(err.data.error?.message).toBe("file[] not found in Multipart form");
-        expect(err.headers["content-length"]).toBe("58");
-        expect(err.headers["content-type"]).toBe("application/json; charset=utf-8");
-        expect(err.headers["date"]).toBeDefined();
+      const err = error as FetchResponse<Error>;
+
+      expect(err).toBeDefined();
+      expect(err.status).toBe(400);
+      expect(err.data).toBeDefined();
+      expect(err.data.error?.message).toBe(
+        "file[] not found in Multipart form",
+      );
+      expect(err.headers["content-length"]).toBe("58");
+      expect(err.headers["content-type"]).toBe(
+        "application/json; charset=utf-8",
+      );
+      expect(err.headers["date"]).toBeDefined();
+    }
+  });
+
+  it("upload fails", async () => {
+    try {
+      const resp = await nhostStorage.uploadFiles({
+        "bucket-id": "default",
+        "metadata[]": [
+          {
+            id: uuid1,
+            name: "test1",
+            metadata: { key1: "value1" },
+          },
+          {
+            id: uuid2,
+            name: "test2",
+            metadata: { key2: "value2" },
+          },
+        ],
+      });
+      if (resp.status !== 200) {
+        // handle error
+      }
+    } catch (error) {
+      const err = error as FetchResponse<Error>;
+
+      expect(err).toBeDefined();
+      expect(err.status).toBe(400);
+      expect(err.data).toBeDefined();
+      expect(err.data.error?.message).toBe(
+        "file[] not found in Multipart form",
+      );
+      expect(err.headers["content-length"]).toBe("58");
+      expect(err.headers["content-type"]).toBe(
+        "application/json; charset=utf-8",
+      );
+      expect(err.headers["date"]).toBeDefined();
     }
   });
 
@@ -161,8 +203,7 @@ describe("Test Storage API", () => {
       );
       expect(true).toBe(false); // should not reach here
     } catch (error) {
-      const err = error as FetchResponse<ErrorResponse>;
-      // axios error
+      const err = error as FetchResponse<Error>;
       expect(err).toBeDefined();
       expect(err.status).toBe(304);
       expect(err.headers).toBeDefined();
@@ -173,51 +214,48 @@ describe("Test Storage API", () => {
     }
   });
 
-  // it("should get file metadata headers with If-None-Match does not match", async () => {
-  //   const fileMetadataResponse = await nhostStorage.getFileMetadataHeaders(
-  //     uuid1,
-  //     {},
-  //     {
-  //       headers: {
-  //         "If-None-Match": "wrong-etag",
-  //       },
-  //     },
-  //   );
-  //   expect(fileMetadataResponse.status).toBe(200);
-  //   expect(fileMetadataResponse.headers).toBeDefined();
-  //   expect(fileMetadataResponse.headers["content-type"]).toBe("text/plain");
-  //   expect(fileMetadataResponse.headers["etag"]).toBeDefined();
-  //   expect(fileMetadataResponse.headers["last-modified"]).toBeDefined();
-  //   expect(fileMetadataResponse.headers["surrogate-key"]).toBeDefined();
-  //   expect(fileMetadataResponse.headers["cache-control"]).toBe("max-age=3600");
-  //   expect(fileMetadataResponse.headers["surrogate-control"]).toBe(
-  //     "max-age=604800",
-  //   );
-  //   expect(fileMetadataResponse.headers["content-length"]).toBe("5");
-  //   expect(fileMetadataResponse.headers["date"]).toBeDefined();
-  // });
+  it("should get file metadata headers with If-None-Match does not match", async () => {
+    const resp = await nhostStorage.getFileMetadataHeaders(
+      uuid1,
+      {},
+      {
+        headers: {
+          "If-None-Match": "wrong-etag",
+        },
+      },
+    );
+    expect(resp.status).toBe(200);
+    expect(resp.headers).toBeDefined();
+    expect(resp.headers["content-type"]).toBe("text/plain");
+    expect(resp.headers["etag"]).toBeDefined();
+    expect(resp.headers["last-modified"]).toBeDefined();
+    expect(resp.headers["surrogate-key"]).toBeDefined();
+    expect(resp.headers["cache-control"]).toBe("max-age=3600");
+    expect(resp.headers["surrogate-control"]).toBe(
+      "max-age=604800",
+    );
+    expect(resp.headers["content-length"]).toBe("5");
+    expect(resp.headers["date"]).toBeDefined();
+  });
 
-  // it("should get file", async () => {
-  //   const fileResponse = await nhostStorage.getFile(
-  //     uuid1,
-  //     {},
-  //     {
-  //       responseType: "text",
-  //     },
-  //   );
-  //   expect(fileResponse.status).toBe(200);
-  //   expect(fileResponse.data).toBeDefined();
-  //   expect(fileResponse.headers).toBeDefined();
-  //   expect(fileResponse.headers["content-type"]).toBe("text/plain");
-  //   expect(fileResponse.headers["etag"]).toBeDefined();
-  //   expect(fileResponse.headers["last-modified"]).toBeDefined();
-  //   expect(fileResponse.headers["surrogate-key"]).toBeDefined();
-  //   expect(fileResponse.headers["cache-control"]).toBe("max-age=3600");
-  //   expect(fileResponse.headers["surrogate-control"]).toBe("max-age=604800");
-  //   expect(fileResponse.headers["content-length"]).toBe("5");
-  //   expect(fileResponse.headers["date"]).toBeDefined();
-  //   expect(fileResponse.data).toBe("test1");
-  // });
+  it("should get file", async () => {
+    const resp = await nhostStorage.getFile(
+      uuid1,
+      {},
+    );
+    expect(resp.status).toBe(200);
+    expect(resp.data).toBeDefined();
+    expect(resp.headers).toBeDefined();
+    expect(resp.headers["content-type"]).toBe("text/plain");
+    expect(resp.headers["etag"]).toBeDefined();
+    expect(resp.headers["last-modified"]).toBeDefined();
+    expect(resp.headers["surrogate-key"]).toBeDefined();
+    expect(resp.headers["cache-control"]).toBe("max-age=3600");
+    expect(resp.headers["surrogate-control"]).toBe("max-age=604800");
+    expect(resp.headers["content-length"]).toBe("5");
+    expect(resp.headers["date"]).toBeDefined();
+    expect(resp.data).toBe("test1");
+  });
 
   // it("should not get file If-None-Match matches", async () => {
   //   try {
