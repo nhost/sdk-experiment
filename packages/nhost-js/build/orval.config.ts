@@ -14,7 +14,7 @@ function createClient() {
               name: "createEnhancedFetch",
               values: true,
             },
-            { name: "Interceptor" },
+            { name: "ChainFunction" },
           ],
           dependency: "../fetch",
         },
@@ -37,7 +37,7 @@ export default defineConfig({
     },
     hooks: {
       afterAllFilesWrite: {
-        command: "bunx prettier -w .",
+        command: "prettier -w .",
       },
     },
   },
@@ -51,7 +51,7 @@ export default defineConfig({
     },
     hooks: {
       afterAllFilesWrite: {
-        command: "bunx prettier -w .",
+        command: "prettier -w .",
       },
     },
   },

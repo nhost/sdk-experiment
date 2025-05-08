@@ -1,3 +1,5 @@
+import { type Session } from "./client";
+
 /**
  * Storage interface for session persistence
  */
@@ -7,20 +9,20 @@ export interface StorageInterface {
    * @param key - The key to retrieve
    * @returns The stored value or null if not found
    */
-  getItem(key: string): string | null;
+  get(): Session | null;
 
   /**
    * Set an item in storage
    * @param key - The key to store
    * @param value - The value to store
    */
-  setItem(key: string, value: string): void;
+  set(value: Session): void;
 
   /**
    * Remove an item from storage
    * @param key - The key to remove
    */
-  removeItem(key: string): void;
+  remove(): void;
 }
 
 // Default storage key for session data
@@ -30,16 +32,28 @@ export const DEFAULT_SESSION_KEY = "nhostSession";
  * Browser localStorage implementation of StorageInterface
  */
 export class LocalStorage implements StorageInterface {
-  getItem(key: string): string | null {
-    return localStorage.getItem(key);
+  private readonly storageKey: string;
+
+  constructor(storageKey = DEFAULT_SESSION_KEY) {
+    this.storageKey = storageKey;
   }
 
-  setItem(key: string, value: string): void {
-    localStorage.setItem(key, value);
+  get(): Session | null {
+    try {
+      const value = window.localStorage.getItem(this.storageKey);
+      return value ? (JSON.parse(value) as Session) : null;
+    } catch (e) {
+      this.remove();
+      return null;
+    }
   }
 
-  removeItem(key: string): void {
-    localStorage.removeItem(key);
+  set(value: Session): void {
+    window.localStorage.setItem(this.storageKey, JSON.stringify(value));
+  }
+
+  remove(): void {
+    window.localStorage.removeItem(this.storageKey);
   }
 }
 
@@ -47,42 +61,69 @@ export class LocalStorage implements StorageInterface {
  * In-memory storage implementation for non-browser environments
  */
 export class MemoryStorage implements StorageInterface {
-  private storage: Record<string, string> = {};
+  private session: Session | null = null;
 
-  getItem(key: string): string | null {
-    return this.storage[key] || null;
+  get(): Session | null {
+    return this.session;
   }
 
-  setItem(key: string, value: string): void {
-    this.storage[key] = value;
+  set(value: Session): void {
+    this.session = value;
   }
 
-  removeItem(key: string): void {
-    delete this.storage[key];
+  remove(): void {
+    this.session = null;
   }
 }
 
 export class CookieStorage implements StorageInterface {
-  /**
-   * Get an item from the cookie storage
-   */
-  getItem(key: string): string | null {
-    const match = document.cookie.match(new RegExp("(^| )" + key + "=([^;]+)"));
-    return match ? decodeURIComponent(match[2]) : null;
+  private readonly cookieName: string;
+  private readonly expirationDays: number;
+  private readonly secure: boolean;
+  private readonly sameSite: "strict" | "lax" | "none";
+
+  constructor(
+    cookieName = DEFAULT_SESSION_KEY,
+    expirationDays = 30,
+    secure = true,
+    sameSite: "strict" | "lax" | "none" = "lax",
+  ) {
+    this.cookieName = cookieName;
+    this.expirationDays = expirationDays;
+    this.secure = secure;
+    this.sameSite = sameSite;
   }
 
-  /**
-   * Set an item in cookie storage
-   */
-  setItem(key: string, value: string): void {
-    document.cookie = `${key}=${encodeURIComponent(value)}; path=/; SameSite=Lax;`;
+  get(): Session | null {
+    const cookies = document.cookie.split(";");
+    for (const cookie of cookies) {
+      const [name, value] = cookie.trim().split("=");
+      if (name === this.cookieName) {
+        try {
+          return JSON.parse(decodeURIComponent(value || "")) as Session;
+        } catch (e) {
+          this.remove();
+          return null;
+        }
+      }
+    }
+    return null;
   }
 
-  /**
-   * Remove an item from cookie storage
-   */
-  removeItem(key: string): void {
-    document.cookie = `${key}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax;`;
+  set(value: Session): void {
+    const expires = new Date();
+    expires.setTime(
+      expires.getTime() + this.expirationDays * 24 * 60 * 60 * 1000,
+    );
+
+    const cookieValue = encodeURIComponent(JSON.stringify(value));
+    const cookieString = `${this.cookieName}=${cookieValue}; expires=${expires.toUTCString()}; path=/; ${this.secure ? "secure; " : ""}SameSite=${this.sameSite}`;
+
+    document.cookie = cookieString;
+  }
+
+  remove(): void {
+    document.cookie = `${this.cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; ${this.secure ? "secure; " : ""}SameSite=${this.sameSite}`;
   }
 }
 

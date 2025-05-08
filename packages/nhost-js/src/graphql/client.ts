@@ -1,15 +1,11 @@
-import Axios from "axios";
-import type {
-  AxiosRequestConfig,
-  AxiosResponse,
-  CreateAxiosDefaults,
-} from "axios";
+import { createEnhancedFetch } from "../fetch";
+import type { ChainFunction } from "../fetch";
 
 export interface GraphQLVariables {
   [key: string]: any;
 }
 
-export interface GraphQLRequest<T = any> {
+export interface GraphQLRequest {
   query: string;
   variables?: GraphQLVariables;
   operationName?: string;
@@ -27,78 +23,81 @@ export interface GraphQLResponse<T = any> {
   errors?: GraphQLError[];
 }
 
+export interface FetchResponse<T = any> {
+  data: T;
+  status: number;
+  headers: Headers;
+}
+
 /**
- * Creates a GraphQL API client for interacting with Hasura GraphQL API
- * @param config - Axios configuration
- * @returns GraphQL client with axios instance and query methods
+ * Creates a GraphQL API client for interacting with GraphQL API using fetch
+ * @param baseURL - Base URL for the GraphQL endpoint
+ * @param requestInterceptors - Array of request interceptors
+ * @returns GraphQL client with fetch instance and query methods
  */
-export const createApiClient = (config?: CreateAxiosDefaults) => {
-  const axiosInstance = Axios.create({
-    ...config,
-  });
+export const createAPIClient = (
+  baseURL: string,
+  chainFunctions: ChainFunction[] = [],
+) => {
+  const enhancedFetch = createEnhancedFetch(chainFunctions);
 
   /**
    * Execute a GraphQL operation (query or mutation)
    * @param request - GraphQL request object containing query and optional variables
-   * @param options - Axios request configuration
+   * @param options - Fetch request configuration
    * @returns Promise with the GraphQL response
    */
-  const executeOperation = <TData = any, TVariables = GraphQLVariables>(
-    request: GraphQLRequest<TVariables>,
-    options?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<GraphQLResponse<TData>>> => {
-    return axiosInstance.post<GraphQLResponse<TData>>("", request, options);
+  const executeOperation = async (
+    request: GraphQLRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<GraphQLResponse>> => {
+    const response = await enhancedFetch(`${baseURL}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+      ...options,
+    });
+
+    const body = await response.text();
+    const data: GraphQLResponse = body ? JSON.parse(body) : {};
+
+    return {
+      data,
+      status: response.status,
+      headers: response.headers,
+    };
   };
 
   /**
    * Execute a GraphQL query
    * @param request - GraphQL request object containing query and optional variables
-   * @param options - Axios request configuration
+   * @param options - Fetch request configuration
    * @returns Promise with the GraphQL response
    */
-  const query = <TData = any, TVariables = GraphQLVariables>(
-    request: GraphQLRequest<TVariables>,
-    options?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<GraphQLResponse<TData>>> => {
-    return executeOperation<TData, TVariables>(request, options);
+  const query = (
+    request: GraphQLRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<GraphQLResponse>> => {
+    return executeOperation(request, options);
   };
 
   /**
    * Execute a GraphQL mutation
    * @param request - GraphQL request object containing mutation and optional variables
-   * @param options - Axios request configuration
+   * @param options - Fetch request configuration
    * @returns Promise with the GraphQL response
    */
-  const mutation = <TData = any, TVariables = GraphQLVariables>(
-    request: GraphQLRequest<TVariables>,
-    options?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<GraphQLResponse<TData>>> => {
-    return executeOperation<TData, TVariables>(request, options);
-  };
-
-  /**
-   * Execute a GraphQL subscription (not implemented in REST client, requires WebSocket)
-   * This is a placeholder for future implementation
-   */
-  const subscription = <TData = any, TVariables = GraphQLVariables>(
-    _request: GraphQLRequest<TVariables>,
-    _options?: AxiosRequestConfig,
-  ): Promise<AxiosResponse<GraphQLResponse<TData>>> => {
-    throw new Error(
-      "Subscriptions are not supported in the REST GraphQL client. Use a WebSocket client instead.",
-    );
+  const mutation = (
+    request: GraphQLRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<GraphQLResponse>> => {
+    return executeOperation(request, options);
   };
 
   return {
     query,
     mutation,
-    subscription,
-    axios: axiosInstance,
   };
 };
-
-export type QueryResult<TData = any> = AxiosResponse<GraphQLResponse<TData>>;
-export type MutationResult<TData = any> = AxiosResponse<GraphQLResponse<TData>>;
-export type SubscriptionResult<TData = any> = AxiosResponse<
-  GraphQLResponse<TData>
->;

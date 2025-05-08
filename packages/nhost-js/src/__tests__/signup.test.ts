@@ -1,14 +1,14 @@
 import {
-  createApiClient,
+  createAPIClient,
+  type ErrorResponse,
+  type SessionPayload,
   type SignUpEmailPasswordRequest,
 } from "../auth/client";
 
 // Configure axios for testing
 
 describe("Nhost Auth - Sign Up with Email and Password", () => {
-  const nhostAuth = createApiClient({
-    baseURL: "https://local.auth.nhost.run/v1",
-  });
+  const nhostAuth = createAPIClient("https://local.auth.nhost.run/v1");
 
   // Create a unique email for each test run to avoid conflicts
   const uniqueEmail = `test-${Date.now()}@example.com`;
@@ -33,11 +33,17 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
     // Make an actual API call
     const response = await nhostAuth.signUpEmailPassword(signUpRequest);
 
+    if (response.status === 200) {
+      const data = response.data as SessionPayload;
+    } else {
+      const data = response.data as ErrorResponse;
+    }
+
     // Verify structure of response
-    expect(response.data.session).toBeDefined();
-    expect(response.data.session?.accessToken).toBeDefined();
-    expect(response.data.session?.refreshToken).toBeDefined();
-    expect(response.data.session?.user).toBeDefined();
+    expect(data.session).toBeDefined();
+    expect(data.session?.accessToken).toBeDefined();
+    expect(data.session?.refreshToken).toBeDefined();
+    expect(data.session?.user).toBeDefined();
   });
 
   it("should sign in a user with email and password (real API)", async () => {

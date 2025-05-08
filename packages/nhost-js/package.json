@@ -1,20 +1,85 @@
 {
   "name": "nhost-js",
-  "module": "src/index.ts",
-  "type": "module",
-  "devDependencies": {
-    "@orval/axios": "^7.9.0",
-    "@types/bun": "latest",
-    "orval": "^7.9.0"
+  "version": "1.0.0",
+  "description": "Nhost JavaScript SDK",
+  "main": "./dist/nhost-js.cjs.js",
+  "module": "./dist/nhost-js.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "node": "./dist/nhost-js.cjs.js",
+      "import": "./dist/nhost-js.es.js",
+      "require": "./dist/nhost-js.cjs.js",
+      "default": "./dist/nhost-js.umd.js"
+    },
+    "./auth": {
+      "types": "./dist/auth/index.d.ts",
+      "node": "./dist/auth/index.cjs.js",
+      "import": "./dist/auth/index.es.js",
+      "require": "./dist/auth/index.cjs.js",
+      "default": "./dist/auth/index.js"
+    },
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "node": "./dist/storage/index.cjs.js",
+      "import": "./dist/storage/index.es.js",
+      "require": "./dist/storage/index.cjs.js",
+      "default": "./dist/storage/index.js"
+    },
+    "./graphql": {
+      "types": "./dist/graphql/index.d.ts",
+      "node": "./dist/graphql/index.cjs.js",
+      "import": "./dist/graphql/index.es.js",
+      "require": "./dist/graphql/index.cjs.js",
+      "default": "./dist/graphql/index.js"
+    }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "generate": "bunx orval@7.9.0 --config build/orval.config.ts",
-    "lint": "bun run eslint ."
+    "test": "jest",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "build": "vite build",
+    "generate": "orval --config build/orval.config.ts",
+    "prepublishOnly": "pnpm build",
+    "lint": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
   },
-  "peerDependencies": {
-    "typescript": "^5"
+  "keywords": [
+    "nhost",
+    "sdk",
+    "api",
+    "javascript",
+    "typescript"
+  ],
+  "author": "Nhost",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhost/nhost.git"
   },
-  "dependencies": {
-    "axios": "^1.9.0"
-  }
+  "homepage": "https://nhost.io",
+  "bugs": {
+    "url": "https://github.com/nhost/nhost/issues"
+  },
+  "packageManager": "pnpm@10.9.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@types/rollup-plugin-peer-deps-external": "^2.2.5",
+    "jest": "^29.7.0",
+    "orval": "7.9.0",
+    "prettier": "^3.5.3",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "terser": "^5.39.0",
+    "ts-jest": "^29.3.2",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.3"
+  },
+  "sideEffects": false
 }

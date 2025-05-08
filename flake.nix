@@ -25,7 +25,6 @@
         };
 
         checkDeps = with pkgs; [
-          bun
         ];
 
         buildInputs = with pkgs; [

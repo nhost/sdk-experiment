@@ -1,16 +1,14 @@
-import { createApiClient as createAuthClient } from "./auth/client";
-import { createApiClient as createStorageClient } from "./storage/client";
-import { createApiClient as createGraphQLClient } from "./graphql/client";
+import { createAPIClient as createAuthClient } from "./auth/client";
+import { createAPIClient as createStorageClient } from "./storage/client";
+import { createAPIClient as createGraphQLClient } from "./graphql/client";
 import {
-  StorageInterface,
+  type StorageInterface,
   detectStorage,
   DEFAULT_SESSION_KEY,
   CookieStorage,
   LocalStorage,
   MemoryStorage,
 } from "./auth/storage";
-import { createTokenRefreshInterceptor } from "./auth/token-interceptor";
-import { createSessionResponseInterceptor } from "./auth/response-interceptor";
 import type { Session } from "./auth/client";
 import type {
   GraphQLRequest,
@@ -89,11 +87,6 @@ export interface NhostClientOptions {
    * Storage implementation to use for session persistence
    */
   storage?: StorageInterface;
-
-  /**
-   * Key to use for storing session data
-   */
-  storageKey?: string;
 }
 
 export class NhostClient {
@@ -101,7 +94,6 @@ export class NhostClient {
   storage: ReturnType<typeof createStorageClient>;
   graphql: ReturnType<typeof createGraphQLClient>;
   private _storage: StorageInterface;
-  private _storageKey: string;
 
   /**
    * Create a new Nhost client
@@ -115,12 +107,10 @@ export class NhostClient {
       storageUrl,
       graphqlUrl,
       storage = detectStorage(),
-      storageKey = DEFAULT_SESSION_KEY,
     } = options;
 
     // Store storage references for future use
     this._storage = storage;
-    this._storageKey = storageKey;
 
     // Determine base URLs for each service
     const authBaseUrl = generateServiceUrl("auth", authUrl, subdomain, region);
@@ -138,34 +128,11 @@ export class NhostClient {
     );
 
     // Create client instances
-    this.auth = createAuthClient({
-      baseURL: authBaseUrl,
-    });
+    this.auth = createAuthClient(authBaseUrl);
 
-    this.storage = createStorageClient({
-      baseURL: storageBaseUrl,
-    });
+    this.storage = createStorageClient(storageBaseUrl);
 
-    this.graphql = createGraphQLClient({
-      baseURL: graphqlBaseUrl,
-    });
-
-    // Set up interceptors for authentication
-    const tokenRefreshInterceptor = createTokenRefreshInterceptor(this.auth, {
-      storage,
-      storageKey,
-    });
-
-    const sessionResponseInterceptor = createSessionResponseInterceptor({
-      storage,
-      storageKey,
-    });
-
-    // Apply interceptors to all clients
-    tokenRefreshInterceptor(this.auth.axios);
-    tokenRefreshInterceptor(this.storage.axios);
-    tokenRefreshInterceptor(this.graphql.axios);
-    sessionResponseInterceptor(this.auth.axios);
+    this.graphql = createGraphQLClient(graphqlBaseUrl);
   }
 
   /**
@@ -173,15 +140,29 @@ export class NhostClient {
    * @returns The current session or null if no session exists
    */
   getUserSession(): Session | null {
-    try {
-      const storedSession = this._storage.getItem(this._storageKey);
-      if (storedSession) {
-        return JSON.parse(storedSession) as Session;
-      }
-    } catch (error) {
-      console.warn("Failed to get session from storage:", error);
+    return this._storage.get();
+  }
+
+  /**
+   * Refresh the session using the current refresh token
+   * in the storage and update the storage with the new session
+   * @returns The new session or null if refresh failed
+   */
+  async refreshSession(): Promise<Session | null> {
+    const session = this._storage.get();
+    if (!session) {
+      return null;
     }
-    return null;
+
+    const response = await this.auth.refreshToken({
+      refreshToken: session.refreshToken,
+    });
+
+    if (response.status !== 200) {
+      console.error("Failed to refresh session", response.data);
+    }
+
+    return response.data as Session;
   }
 }
 

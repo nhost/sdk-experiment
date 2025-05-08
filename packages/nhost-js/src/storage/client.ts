@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import { createEnhancedFetch } from "../fetch";
-import type { Interceptor } from "../fetch";
+import type { ChainFunction } from "../fetch";
 
 /**
  * Contains version information about the storage service.
@@ -223,9 +223,9 @@ export type FetchResponse<T> = {
 
 export const createAPIClient = (
   baseURL: string,
-  requestInterceptors: Interceptor[] = [],
+  chainFunctions: ChainFunction[] = [],
 ) => {
-  const fetch = createEnhancedFetch(requestInterceptors);
+  const fetch = createEnhancedFetch(chainFunctions);
   /**
    * Returns the OpenAPI schema definition for this API, allowing clients to understand the available endpoints and models.
    * @summary Get OpenAPI specification
@@ -340,9 +340,9 @@ export const createAPIClient = (
 
     const stringifiedParams = normalizedParams.toString();
 
-    return baseURL + stringifiedParams.length > 0
-      ? `/files/${id}?${stringifiedParams}`
-      : `/files/${id}`;
+    return stringifiedParams.length > 0
+      ? baseURL + `/files/${id}?${stringifiedParams}`
+      : baseURL + `/files/${id}`;
   };
 
   const getFileMetadataHeaders = async (
@@ -381,9 +381,9 @@ export const createAPIClient = (
 
     const stringifiedParams = normalizedParams.toString();
 
-    return baseURL + stringifiedParams.length > 0
-      ? `/files/${id}?${stringifiedParams}`
-      : `/files/${id}`;
+    return stringifiedParams.length > 0
+      ? baseURL + `/files/${id}?${stringifiedParams}`
+      : baseURL + `/files/${id}`;
   };
 
   const getFile = async (
@@ -482,5 +482,6 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     getFile,
     replaceFile,
     deleteFile,
+    baseURL,
   };
 };

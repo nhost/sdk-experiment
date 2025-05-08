@@ -1,14 +1,17 @@
 // borrowed from:
 // https://github.com/orval-labs/orval/blob/58ce90762c5d7170a3624f05972f934db7acac9c/packages/fetch/src/index.ts
-import { ClientFooterBuilder, ClientHeaderBuilder } from "@orval/core";
+import {
+  type ClientFooterBuilder,
+  type ClientHeaderBuilder,
+} from "@orval/core";
 import {
   camel,
-  ClientBuilder,
-  ClientGeneratorsBuilder,
+  type ClientBuilder,
+  type ClientGeneratorsBuilder,
   generateFormDataAndUrlEncodedFunction,
   generateVerbImports,
-  GeneratorOptions,
-  GeneratorVerbOptions,
+  type GeneratorOptions,
+  type GeneratorVerbOptions,
   GetterPropType,
   stringify,
   toObjectString,
@@ -17,9 +20,9 @@ import {
   resolveRef,
 } from "@orval/core";
 import {
-  PathItemObject,
-  ParameterObject,
-  ReferenceObject,
+  type PathItemObject,
+  type ParameterObject,
+  type ReferenceObject,
 } from "openapi3-ts/oas30";
 
 export const generateRequestFunction = (
@@ -105,7 +108,7 @@ ${
 
   ${
     queryParams
-      ? `return baseURL + stringifiedParams.length > 0 ? \`${route}${"?${stringifiedParams}"}\` : \`${route}\``
+      ? `return stringifiedParams.length > 0 ? baseURL + \`${route}${"?${stringifiedParams}"}\` : baseURL + \`${route}\``
       : `return baseURL + \`${route}\``
   }
 }\n`;
@@ -136,7 +139,7 @@ ${
         return "unknown";
       }
       if (schemas.length > 0) {
-        return schemas[0].name;
+        return schemas[0]?.name;
       }
       return value;
     })
@@ -263,9 +266,9 @@ export const generateFetchHeader: ClientHeaderBuilder = ({
 
       export const createAPIClient = (
         baseURL: string,
-        requestInterceptors: Interceptor[] = [],
+        chainFunctions: ChainFunction[] = [],
       ) => {
-        const fetch = createEnhancedFetch(requestInterceptors);
+        const fetch = createEnhancedFetch(chainFunctions);
       `;
 };
 
@@ -281,7 +284,7 @@ export const generateFetchFooter: ClientFooterBuilder = ({
   let footer = "";
 
   if (!noFunction) {
-    footer += `return {${operationNames.join(",")}}};\n`;
+    footer += `return {${operationNames.join(",")}, baseURL}};\n`;
   }
 
   if (hasMutator && !hasAwaitedType) {

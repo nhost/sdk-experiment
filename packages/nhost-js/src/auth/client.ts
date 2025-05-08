@@ -6,7 +6,7 @@
  * OpenAPI spec version: 1.0.0
  */
 import { createEnhancedFetch } from "../fetch";
-import type { Interceptor } from "../fetch";
+import type { ChainFunction } from "../fetch";
 
 /**
  * JSON Web Key Set for verifying JWT signatures
@@ -531,9 +531,9 @@ export type FetchResponse<T> = {
 
 export const createAPIClient = (
   baseURL: string,
-  requestInterceptors: Interceptor[] = [],
+  chainFunctions: ChainFunction[] = [],
 ) => {
-  const fetch = createEnhancedFetch(requestInterceptors);
+  const fetch = createEnhancedFetch(chainFunctions);
   /**
    * Verify if the authentication service is operational using HEAD method
    * @summary Health check (HEAD)
@@ -850,5 +850,6 @@ export const createAPIClient = (
     signUpEmailPassword,
     changeUserMfaVerify,
     changeUserMfa,
+    baseURL,
   };
 };
