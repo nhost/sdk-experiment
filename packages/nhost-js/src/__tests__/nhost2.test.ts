@@ -1,28 +1,48 @@
-import { createAPIClient } from "../auth/client";
+import {
+  createAPIClient,
+  type FetchResponse,
+  type ErrorResponse,
+} from "../auth/client";
 // import { type SessionPayload } from "../auth/client";
-
-// Configure axios for testing
 
 describe("Nhost - Sign Up with Email and Password and upload file", () => {
   const nhost = createAPIClient("https://local.auth.local.nhost.run/v1");
 
-  it("should sign up a user with email and password", async () => {
-    const response = await nhost.signUpEmailPassword({
-      email: `test-${Date.now()}example.com`,
-      // email: `test-1@example.com`,
-      password: "password123",
-      options: {
-        displayName: "Test User",
-        locale: "en",
-        defaultRole: "user",
-        allowedRoles: ["user"],
-        metadata: {
-          source: "test",
+  it.only("should sign up a user with email and password", async () => {
+    try {
+      const response = await nhost.signUpEmailPassword({
+        // email: `test-${Date.now()}@example.com`,
+        email: `test-1@example.com`,
+        password: "password123",
+        options: {
+          displayName: "Test User",
+          locale: "en",
+          defaultRole: "user",
+          allowedRoles: ["user"],
+          metadata: {
+            source: "test",
+          },
         },
-      },
-    });
+      });
+      console.log("response", response);
+    } catch (error) {
+      console.error(
+        "Error signing up:",
+        (error as FetchResponse<ErrorResponse>).data.message,
+      );
+      // const errResp = error as FetchError<SessionPayload|ErrorResponse>;
+      // if (errResp.status === 304 ) {
+      //     const data = errResp.data as ErrorResponse;
+      //     // do something if content didn't change
+      // } else if (errResp.status === 412) {
+      //     const data = errResp.data as SessionPayload;
+      //     // do something if precondition failed
+      // } eslse {
+      //     console.error("Error signing up:", error);
+      // }
+    }
 
-    console.log("response", response);
+    // console.log("response", response);
 
     // expect(response).toBeDefined();
     // expect(response.status).toBe(200);

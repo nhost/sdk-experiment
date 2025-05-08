@@ -218,7 +218,7 @@ export type ReplaceFileBody = {
 export type FetchResponse<T> = {
   data: T;
   status: number;
-  headers: Headers;
+  headers: Record<string, string>;
 };
 
 export const createAPIClient = (
@@ -245,11 +245,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: GetOpenAPISpec200 = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<GetOpenAPISpec200>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -271,11 +277,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: VersionInformation = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<VersionInformation>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -314,9 +326,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: UploadFiles201 | Error = body ? JSON.parse(body) : {};
 
-    return { data, status: res.status, headers: res.headers } as FetchResponse<
-      UploadFiles201 | Error
-    >;
+    const response = {
+      data,
+      status: res.status,
+      headers: Object.fromEntries(Array.from(res.headers)),
+    } as FetchResponse<UploadFiles201 | Error>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -358,9 +378,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: void | void = body ? JSON.parse(body) : {};
 
-    return { data, status: res.status, headers: res.headers } as FetchResponse<
-      void | void
-    >;
+    const response = {
+      data,
+      status: res.status,
+      headers: Object.fromEntries(Array.from(res.headers)),
+    } as FetchResponse<void | void>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -399,11 +427,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: void = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<void>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -442,9 +476,17 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: FileMetadata | Error = body ? JSON.parse(body) : {};
 
-    return { data, status: res.status, headers: res.headers } as FetchResponse<
-      FileMetadata | Error
-    >;
+    const response = {
+      data,
+      status: res.status,
+      headers: Object.fromEntries(Array.from(res.headers)),
+    } as FetchResponse<FileMetadata | Error>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -467,11 +509,17 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: void | Error = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<void | Error>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   return {

@@ -526,7 +526,7 @@ export type GetVersion200 = {
 export type FetchResponse<T> = {
   data: T;
   status: number;
-  headers: Headers;
+  headers: Record<string, string>;
 };
 
 export const createAPIClient = (
@@ -553,11 +553,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: void = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<void>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -579,11 +585,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: OKResponse = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<OKResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -605,11 +617,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: GetVersion200 = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<GetVersion200>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -634,11 +652,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: Session = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<Session>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -662,11 +686,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: OKResponse = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<OKResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -691,11 +721,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: SignInEmailPasswordResponse = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<SignInEmailPasswordResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -720,11 +756,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: SessionPayload = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<SessionPayload>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -749,11 +791,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: OKResponse = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<OKResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -778,9 +826,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: SessionPayload | ErrorResponse = body ? JSON.parse(body) : {};
 
-    return { data, status: res.status, headers: res.headers } as FetchResponse<
-      SessionPayload | ErrorResponse
-    >;
+    const response = {
+      data,
+      status: res.status,
+      headers: Object.fromEntries(Array.from(res.headers)),
+    } as FetchResponse<SessionPayload | ErrorResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -805,11 +861,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: OKResponse = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<OKResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   /**
@@ -831,11 +893,17 @@ export const createAPIClient = (
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const data: TotpGenerateResponse = body ? JSON.parse(body) : {};
 
-    return {
+    const response = {
       data,
       status: res.status,
-      headers: res.headers,
+      headers: Object.fromEntries(Array.from(res.headers)),
     } as FetchResponse<TotpGenerateResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
   };
 
   return {

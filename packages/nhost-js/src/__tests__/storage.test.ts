@@ -1,36 +1,29 @@
 import {
   createAPIClient as createAuthClient,
   type SessionPayload,
-} from "../auth/client";
+  MemoryStorage,
+  createTokenRefreshChain,
+} from "../auth";
 import {
   createAPIClient as createStorageClient,
   type UploadFiles201,
-} from "../storage/client";
+  type FetchResponse,
+  type Error,
+} from "../storage";
 
 // Configure axios for testing
 
 describe("Test Storage API", () => {
   const nhostAuth = createAuthClient("https://local.auth.local.nhost.run/v1");
+
+  const storage = new MemoryStorage();
+
   const nhostStorage = createStorageClient(
     "https://local.storage.local.nhost.run/v1",
+    [createTokenRefreshChain(nhostAuth, { storage })],
   );
 
-  // const memoryStorage = new MemoryStorage();
-  // const tokenRefreshInterceptor = createTokenRefreshInterceptor(nhostAuth, {
-  //   storage: memoryStorage,
-  //   storageKey: "test-session-key",
-  // });
-  // tokenRefreshInterceptor(nhostStorage.axios);
-
-  // const responseInterceptor = createSessionResponseInterceptor({
-  //   storage: memoryStorage,
-  //   storageKey: "test-session-key",
-  // });
-  // responseInterceptor(nhostAuth.axios);
-
-  let accessToken: string;
   it("should sign up a user with email and password", async () => {
-    // magic
     const response = await nhostAuth.signUpEmailPassword({
       email: `test-${Date.now()}@example.com`,
       password: "password123",
@@ -47,46 +40,38 @@ describe("Test Storage API", () => {
     expect(response.status).toBe(200);
 
     const data = response.data as SessionPayload;
-    expect(data).toBeDefined();
-    expect(data.session?.accessToken).toBeDefined();
+    if (!data.session) {
+      throw new Error("Session is undefined");
+    }
 
-    accessToken = data.session?.accessToken as string;
+    storage.set(data.session);
   });
 
   const uuid1 = crypto.randomUUID();
   const uuid2 = crypto.randomUUID();
 
   it("should upload a file", async () => {
-    const response = await nhostStorage.uploadFiles(
-      {
-        "bucket-id": "default",
-        "metadata[]": [
-          {
-            id: uuid1,
-            name: "test1",
-            metadata: { key1: "value1" },
-          },
-          {
-            id: uuid2,
-            name: "test2",
-            metadata: { key2: "value2" },
-          },
-        ],
-        "file[]": [
-          new File(["test1"], "test1", { type: "text/plain" }),
-          new File(["test2 is larger"], "test2", { type: "text/plain" }),
-        ],
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+    const resp = await nhostStorage.uploadFiles({
+      "bucket-id": "default",
+      "metadata[]": [
+        {
+          id: uuid1,
+          name: "test1",
+          metadata: { key1: "value1" },
         },
-      },
-    );
+        {
+          id: uuid2,
+          name: "test2",
+          metadata: { key2: "value2" },
+        },
+      ],
+      "file[]": [
+        new Blob(["test1"], { type: "text/plain" }),
+        new Blob(["test2 is larger"], { type: "text/plain" }),
+      ],
+    });
 
-    console.log("response", response);
-
-    const data = response.data as UploadFiles201;
+    const data = resp.data as UploadFiles201;
     expect(data.processedFiles).toBeDefined();
     expect(data.processedFiles?.[0]?.bucketId).toBe("default");
     expect(data.processedFiles?.[0]?.createdAt).toBeDefined();
@@ -116,59 +101,77 @@ describe("Test Storage API", () => {
     expect(data.processedFiles?.[1]?.uploadedByUserId).toBeDefined();
   });
 
-  // let etag: string;
+  it("upload fails", async () => {
+    try {
+    await nhostStorage.uploadFiles({
+      "bucket-id": "default",
+      "metadata[]": [
+        {
+          id: uuid1,
+          name: "test1",
+          metadata: { key1: "value1" },
+        },
+        {
+          id: uuid2,
+          name: "test2",
+          metadata: { key2: "value2" },
+        },
+      ],
+    });
+    } catch (error) {
+        const err = error as FetchResponse<Error>;
+        expect(err).toBeDefined();
+        expect(err.status).toBe(400);
+        expect(err.data).toBeDefined();
+        expect(err.data.error?.message).toBe("file[] not found in Multipart form");
+        expect(err.headers["content-length"]).toBe("58");
+        expect(err.headers["content-type"]).toBe("application/json; charset=utf-8");
+        expect(err.headers["date"]).toBeDefined();
+    }
+  });
 
-  // it("should get file metadata headers", async () => {
-  //   const fileMetadataHeadersResponse =
-  //     await nhostStorage.getFileMetadataHeaders(uuid1);
-  //   expect(fileMetadataHeadersResponse.headers).toBeDefined();
-  //   expect(fileMetadataHeadersResponse.status).toBe(200);
-  //   expect(fileMetadataHeadersResponse.headers["content-type"]).toBe(
-  //     "text/plain",
-  //   );
-  //   expect(fileMetadataHeadersResponse.headers["etag"]).toBeDefined();
-  //   expect(fileMetadataHeadersResponse.headers["last-modified"]).toBeDefined();
-  //   expect(fileMetadataHeadersResponse.headers["surrogate-key"]).toBeDefined();
-  //   expect(fileMetadataHeadersResponse.headers["cache-control"]).toBe(
-  //     "max-age=3600",
-  //   );
-  //   expect(fileMetadataHeadersResponse.headers["surrogate-control"]).toBe(
-  //     "max-age=604800",
-  //   );
-  //   expect(fileMetadataHeadersResponse.headers["content-length"]).toBe("5");
-  //   expect(fileMetadataHeadersResponse.headers["date"]).toBeDefined();
+  let etag: string;
 
-  //   etag = fileMetadataHeadersResponse.headers["etag"];
-  // });
+  it("should get file metadata headers", async () => {
+    const resp = await nhostStorage.getFileMetadataHeaders(uuid1);
 
-  // it("should get file metadata headers with If-None-Match matches", async () => {
-  //   try {
-  //     await nhostStorage.getFileMetadataHeaders(
-  //       uuid1,
-  //       {},
-  //       {
-  //         headers: {
-  //           "If-None-Match": etag,
-  //         },
-  //       },
-  //     );
-  //     expect(true).toBe(false); // should not reach here
-  //   } catch (error) {
-  //     const axiosError = error as AxiosError;
-  //     // axios error
-  //     expect(axiosError).toBeDefined();
-  //     expect(axiosError.response?.status).toBe(304);
-  //     expect(axiosError.response?.headers).toBeDefined();
-  //     expect(axiosError.response?.headers["etag"]).toBe(etag);
-  //     expect(axiosError.response?.headers["cache-control"]).toBe(
-  //       "max-age=3600",
-  //     );
-  //     expect(axiosError.response?.headers["surrogate-control"]).toBe(
-  //       "max-age=604800",
-  //     );
-  //     expect(axiosError.response?.headers["date"]).toBeDefined();
-  //   }
-  // });
+    expect(resp.status).toBe(200);
+    expect(resp.headers["content-type"]).toBe("text/plain");
+    expect(resp.headers["etag"]).toBeDefined();
+    expect(resp.headers["last-modified"]).toBeDefined();
+    expect(resp.headers["surrogate-key"]).toBeDefined();
+    expect(resp.headers["cache-control"]).toBe("max-age=3600");
+    expect(resp.headers["surrogate-control"]).toBe("max-age=604800");
+    expect(resp.headers["content-length"]).toBe("5");
+    expect(resp.headers["date"]).toBeDefined();
+
+    etag = resp.headers["etag"];
+  });
+
+  it("should get file metadata headers with If-None-Match matches", async () => {
+    try {
+      await nhostStorage.getFileMetadataHeaders(
+        uuid1,
+        {},
+        {
+          headers: {
+            "If-None-Match": etag,
+          },
+        },
+      );
+      expect(true).toBe(false); // should not reach here
+    } catch (error) {
+      const err = error as FetchResponse<ErrorResponse>;
+      // axios error
+      expect(err).toBeDefined();
+      expect(err.status).toBe(304);
+      expect(err.headers).toBeDefined();
+      expect(err.headers["etag"]).toBe(etag);
+      expect(err.headers["cache-control"]).toBe("max-age=3600");
+      expect(err.headers["surrogate-control"]).toBe("max-age=604800");
+      expect(err.headers["date"]).toBeDefined();
+    }
+  });
 
   // it("should get file metadata headers with If-None-Match does not match", async () => {
   //   const fileMetadataResponse = await nhostStorage.getFileMetadataHeaders(

@@ -204,7 +204,19 @@ ${
   const body = [204, 205, 304].includes(res.status) ? null : await res.text()
   const data: ${responseTypeName} = body ? JSON.parse(body) : {}
 
-  ${override.fetch.includeHttpResponseReturnType ? `return { data, status: res.status, headers: res.headers } as FetchResponse<${responseTypeName}>` : "return data"}
+  const response = ${
+    override.fetch.includeHttpResponseReturnType
+      ? `{ data, status: res.status,
+          headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      } as FetchResponse<${responseTypeName}>
+
+    if (!res.ok) {
+            throw response;
+    }
+
+    return response;`
+      : "return data"
+  }
 `;
   const customFetchResponseImplementation = `return ${mutator?.name}<${responseTypeName}>(${fetchFnOptions});`;
 
@@ -261,7 +273,7 @@ export const generateFetchHeader: ClientHeaderBuilder = ({
       export type FetchResponse<T> = {
           data: T;
           status: number;
-          headers: Headers;
+          headers: Record<string, string>;
       };
 
       export const createAPIClient = (

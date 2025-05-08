@@ -78,8 +78,6 @@ function decodeTokenPayload(base64Payload: string): any {
 export interface TokenRefreshOptions {
   /** Storage implementation to use for session persistence */
   storage?: StorageInterface;
-  /** Key to use for storing session data */
-  storageKey?: string;
   /** Seconds before expiration to trigger token refresh */
   marginSeconds?: number;
 }
