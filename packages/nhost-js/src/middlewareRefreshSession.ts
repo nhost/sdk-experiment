@@ -6,9 +6,9 @@
  * without requiring manual token refresh by the application.
  */
 
-import { createAPIClient, type Session } from "./client";
-import { type SessionStorageInterface } from "./storage";
-import { type ChainFunction, type FetchFunction } from "../fetch";
+import type { Client, Session } from "./auth";
+import { type SessionStorageInterface } from "./sessionStorage";
+import { type ChainFunction, type FetchFunction } from "./fetch";
 
 /**
  * Extracts the expiration time from a JWT token
@@ -102,26 +102,13 @@ export type SessionRefreshOptions = {
  * The middleware handles token refresh transparently, so the application
  * doesn't need to manually refresh tokens.
  *
- * @example
- * ```typescript
- * import { createClient } from 'nhost-js';
- *
- * const nhost = createClient({
- *   subdomain: 'your-project',
- *   region: 'eu-central-1'
- * });
- *
- * // The refresh middleware is automatically configured in the client
- * // and will handle token refresh for all requests to Nhost services
- * ```
- *
  * @param authClient - Auth API client for token refresh operations
  * @param storage - Storage implementation for persisting session data
  * @param options - Configuration options for token refresh behavior
  * @returns A middleware function that can be used in the fetch chain
  */
 export const createSessionRefreshMiddleware = (
-  authClient: ReturnType<typeof createAPIClient>,
+  authClient: Client,
   storage: SessionStorageInterface,
   options?: SessionRefreshOptions,
 ): ChainFunction => {
@@ -198,7 +185,7 @@ export const createSessionRefreshMiddleware = (
  * @returns A new session if refresh was successful, null otherwise
  */
 async function refreshToken(
-  authClient: ReturnType<typeof createAPIClient>,
+  authClient: Client,
   storage: SessionStorageInterface,
   refreshToken: string,
 ): Promise<Session | null> {

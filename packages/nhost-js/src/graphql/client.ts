@@ -104,32 +104,6 @@ export interface Client {
  * a GraphQL API, with support for middleware functions to handle authentication,
  * error handling, and other cross-cutting concerns.
  *
- * @example
- * ```typescript
- * import { createClient } from 'nhost-js';
- *
- * const nhost = createClient({
- *   subdomain: 'your-project',
- *   region: 'eu-central-1'
- * });
- *
- * // Execute a GraphQL query
- * const response = await nhost.graphql.query({
- *   query: `
- *     query GetUsers {
- *       users {
- *         id
- *         displayName
- *         email
- *       }
- *     }
- *   `
- * });
- *
- * // Access the data
- * const users = response.body.data.users;
- * ```
- *
  * @param baseURL - Base URL for the GraphQL endpoint
  * @param chainFunctions - Array of middleware functions for the fetch chain
  * @returns GraphQL client with query and mutation methods

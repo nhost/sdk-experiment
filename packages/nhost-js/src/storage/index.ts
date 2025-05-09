@@ -1,12 +1,7 @@
 /**
- * Storage module for the Nhost JavaScript SDK
- *
- * This module provides functionality for file operations with Nhost Storage:
- * - File upload and download
- * - File metadata management
- * - File deletion and replacement
- * - Access control through authentication integration
- * - Public and protected file handling
+ * This is the main module to interact with Nhost's Storage service.
+ * Typically you would use this modula via the main [Nhost client](main#createclient)
+ * but you can also use it directly if you have a specific use case.
  *
  * @module storage
  * @packageDocumentation

@@ -1,12 +1,6 @@
-GraphQL module for the Nhost JavaScript SDK
-
-This module provides functionality for interacting with Hasura GraphQL APIs:
-
-- Execute queries and mutations
-- Automatic authentication token handling
-- Error handling and response parsing
-- Support for variables and operation names
-- Type-safe GraphQL operations (when used with codegen)
+This is the main module to interact with Nhost's GraphQL service.
+Typically you would use this modula via the main [Nhost client](main#createclient)
+but you can also use it directly if you have a specific use case.
 
 ## Interfaces
 
@@ -131,30 +125,3 @@ error handling, and other cross-cutting concerns.
 [`Client`](#client)
 
 GraphQL client with query and mutation methods
-
-#### Example
-
-```typescript
-import { createClient } from "nhost-js";
-
-const nhost = createClient({
-  subdomain: "your-project",
-  region: "eu-central-1",
-});
-
-// Execute a GraphQL query
-const response = await nhost.graphql.query({
-  query: `
-    query GetUsers {
-      users {
-        id
-        displayName
-        email
-      }
-    }
-  `,
-});
-
-// Access the data
-const users = response.body.data.users;
-```

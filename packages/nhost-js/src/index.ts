@@ -11,7 +11,7 @@
  * You can import and use this package with:
  *
  * ```ts
- * import { createClient } from "@nhost/nhost-js-sdk";
+ * import { createClient } from "@nhost/nhost-js";
  * ```
  *
  * and use it like:
@@ -24,10 +24,14 @@
 import { createAPIClient as createAuthClient } from "./auth";
 import { createAPIClient as createStorageClient } from "./storage";
 import { createAPIClient as createGraphQLClient } from "./graphql";
-import { type SessionStorageInterface, detectStorage } from "./auth/storage";
+import { type SessionStorageInterface, detectStorage } from "./sessionStorage";
 import type { Session } from "./auth";
-import { createSessionRefreshMiddleware } from "./auth/middlewareRefreshSession";
-import { createSessionResponseMiddleware } from "./auth/middlewareResponseSession";
+import { createSessionRefreshMiddleware } from "./middlewareRefreshSession";
+import { createSessionResponseMiddleware } from "./middlewareResponseSession";
+
+export * from "./sessionStorage";
+export * from "./middlewareRefreshSession";
+export * from "./middlewareResponseSession";
 
 /**
  * Generates a base URL for a Nhost service based on configuration
@@ -62,12 +66,12 @@ export const generateServiceUrl = (
  */
 export interface NhostClientOptions {
   /**
-   * Nhost project subdomain (e.g., 'abcdefgh')
+   * Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for services for the Nhost cloud.
    */
   subdomain?: string;
 
   /**
-   * Nhost region (e.g., 'eu-central-1')
+   * Nhost region (e.g., 'eu-central-1'). Used to construct the base URL for services for the Nhost cloud.
    */
   region?: string;
 
@@ -87,7 +91,8 @@ export interface NhostClientOptions {
   graphqlUrl?: string;
 
   /**
-   * Storage implementation to use for session persistence
+   * Storage implementation to use for session persistence. If not provided, the SDK will
+   * default to localStorage in the browser or memory in other environments.
    */
   storage?: SessionStorageInterface;
 }
@@ -118,7 +123,7 @@ export class NhostClient {
 
   /**
    * Create a new Nhost client. This constructor is reserved for advanced use cases.
-   * For typical usage, use createClient instead.
+   * For typical usage, use [createClient](#createclient) instead.
    *
    * @param auth - Authentication client
    * @param storage - Storage client
@@ -187,9 +192,14 @@ export class NhostClient {
 }
 
 /**
- * Creates and configures a new Nhost client instance
+ * Creates and configures a new Nhost client instance.
  *
- * This is the recommended way to initialize the Nhost SDK in your application.
+ * This helper method instantiates a fully configured Nhost client by:
+ * - Instantiating the various service clients (auth, storage, functions and graphql)
+ * - Configuring a session storage if none is provided
+ * - Setting up the necessary middleware for automatic session management:
+ *   - Automatically attaching the authorization token to requests
+ *   - Refreshing the session when it expires
  *
  * @param options - Configuration options for the client
  * @returns A configured Nhost client

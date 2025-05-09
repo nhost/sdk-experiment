@@ -6,9 +6,9 @@
  * that new sessions are properly stored after sign-in operations.
  */
 
-import { type Session } from "./client";
-import { type SessionStorageInterface } from "./storage";
-import { type ChainFunction } from "../fetch";
+import { type Session } from "./auth";
+import { type SessionStorageInterface } from "./sessionStorage";
+import { type ChainFunction } from "./fetch";
 
 /**
  * Creates a fetch middleware that automatically extracts and stores session data from API responses.
@@ -21,19 +21,6 @@ import { type ChainFunction } from "../fetch";
  *
  * This ensures that session data is always up-to-date in storage after operations
  * that create or invalidate sessions.
- *
- * @example
- * ```typescript
- * import { createEnhancedFetch } from '../fetch';
- * import { createSessionResponseMiddleware } from './middlewareResponseSession';
- * import { LocalStorage } from './storage';
- *
- * const storage = new LocalStorage();
- * const sessionMiddleware = createSessionResponseMiddleware(storage);
- * const enhancedFetch = createEnhancedFetch([sessionMiddleware]);
- *
- * // Session data will be automatically stored from responses
- * ```
  *
  * @param storage - Storage implementation for persisting session data
  * @returns A middleware function that can be used in the fetch chain

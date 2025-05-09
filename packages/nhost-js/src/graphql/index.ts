@@ -1,12 +1,7 @@
 /**
- * GraphQL module for the Nhost JavaScript SDK
- *
- * This module provides functionality for interacting with Hasura GraphQL APIs:
- * - Execute queries and mutations
- * - Automatic authentication token handling
- * - Error handling and response parsing
- * - Support for variables and operation names
- * - Type-safe GraphQL operations (when used with codegen)
+ * This is the main module to interact with Nhost's GraphQL service.
+ * Typically you would use this modula via the main [Nhost client](main#createclient)
+ * but you can also use it directly if you have a specific use case.
  *
  * @module graphql
  * @packageDocumentation

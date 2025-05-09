@@ -5,7 +5,7 @@
  * across page reloads and browser sessions.
  */
 
-import { type Session } from "./client";
+import { type Session } from "./auth";
 
 /**
  * Session storage interface for session persistence.
@@ -83,7 +83,6 @@ export class LocalStorage implements SessionStorageInterface {
 /**
  * In-memory storage implementation for non-browser environments or when
  * persistent storage is not available or desirable.
- * Session is lost when the page is refreshed or the app is restarted.
  */
 export class MemoryStorage implements SessionStorageInterface {
   private session: Session | null = null;

@@ -12,7 +12,7 @@ This package provides a unified client for interacting with Nhost services:
 You can import and use this package with:
 
 ```ts
-import { createClient } from "@nhost/nhost-js-sdk";
+import { createClient } from "@nhost/nhost-js";
 ```
 
 and use it like:
@@ -116,6 +116,274 @@ console.log(JSON.stringify(graphResp, null, 2));
 
 ## Classes
 
+### CookieStorage
+
+Cookie-based storage implementation.
+This storage uses web browser cookies to store the session so it's not
+available in server-side environments. It is useful though for sinchronizing
+sessions between client and server environments.
+
+#### Implements
+
+- [`SessionStorageInterface`](#sessionstorageinterface)
+
+#### Constructors
+
+##### Constructor
+
+```ts
+new CookieStorage(
+   cookieName: string,
+   expirationDays: number,
+   secure: boolean,
+   sameSite: "strict" | "lax" | "none"): CookieStorage;
+```
+
+Creates a new CookieStorage instance
+
+###### Parameters
+
+| Parameter        | Type                              | Default value         | Description                                                     |
+| ---------------- | --------------------------------- | --------------------- | --------------------------------------------------------------- |
+| `cookieName`     | `string`                          | `DEFAULT_SESSION_KEY` | Name of the cookie to use (defaults to "nhostSession")          |
+| `expirationDays` | `number`                          | `30`                  | Number of days until the cookie expires (defaults to 30)        |
+| `secure`         | `boolean`                         | `true`                | Whether to set the Secure flag on the cookie (defaults to true) |
+| `sameSite`       | `"strict"` \| `"lax"` \| `"none"` | `"lax"`               | SameSite policy for the cookie (defaults to "lax")              |
+
+###### Returns
+
+[`CookieStorage`](#cookiestorage)
+
+#### Methods
+
+##### get()
+
+```ts
+get(): null | Session;
+```
+
+Gets the session from cookies
+
+###### Returns
+
+`null` \| [`Session`](auth#session)
+
+The stored session or null if not found
+
+###### Implementation of
+
+[`SessionStorageInterface`](#sessionstorageinterface).[`get`](#get-6)
+
+##### remove()
+
+```ts
+remove(): void;
+```
+
+Removes the session cookie
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`SessionStorageInterface`](#sessionstorageinterface).[`remove`](#remove-6)
+
+##### set()
+
+```ts
+set(value: Session): void;
+```
+
+Sets the session in a cookie
+
+###### Parameters
+
+| Parameter | Type                          | Description          |
+| --------- | ----------------------------- | -------------------- |
+| `value`   | [`Session`](auth#session) | The session to store |
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`SessionStorageInterface`](#sessionstorageinterface).[`set`](#set-6)
+
+---
+
+### LocalStorage
+
+Browser localStorage implementation of StorageInterface.
+Persists the session across page reloads and browser restarts.
+
+#### Implements
+
+- [`SessionStorageInterface`](#sessionstorageinterface)
+
+#### Constructors
+
+##### Constructor
+
+```ts
+new LocalStorage(storageKey: string): LocalStorage;
+```
+
+Creates a new LocalStorage instance
+
+###### Parameters
+
+| Parameter    | Type     | Default value         | Description                                                 |
+| ------------ | -------- | --------------------- | ----------------------------------------------------------- |
+| `storageKey` | `string` | `DEFAULT_SESSION_KEY` | The key to use in localStorage (defaults to "nhostSession") |
+
+###### Returns
+
+[`LocalStorage`](#localstorage)
+
+#### Methods
+
+##### get()
+
+```ts
+get(): null | Session;
+```
+
+Gets the session from localStorage
+
+###### Returns
+
+`null` \| [`Session`](auth#session)
+
+The stored session or null if not found
+
+###### Implementation of
+
+[`SessionStorageInterface`](#sessionstorageinterface).[`get`](#get-6)
+
+##### remove()
+
+```ts
+remove(): void;
+```
+
+Removes the session from localStorage
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`SessionStorageInterface`](#sessionstorageinterface).[`remove`](#remove-6)
+
+##### set()
+
+```ts
+set(value: Session): void;
+```
+
+Sets the session in localStorage
+
+###### Parameters
+
+| Parameter | Type                          | Description          |
+| --------- | ----------------------------- | -------------------- |
+| `value`   | [`Session`](auth#session) | The session to store |
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`SessionStorageInterface`](#sessionstorageinterface).[`set`](#set-6)
+
+---
+
+### MemoryStorage
+
+In-memory storage implementation for non-browser environments or when
+persistent storage is not available or desirable.
+
+#### Implements
+
+- [`SessionStorageInterface`](#sessionstorageinterface)
+
+#### Constructors
+
+##### Constructor
+
+```ts
+new MemoryStorage(): MemoryStorage;
+```
+
+###### Returns
+
+[`MemoryStorage`](#memorystorage)
+
+#### Methods
+
+##### get()
+
+```ts
+get(): null | Session;
+```
+
+Gets the session from memory
+
+###### Returns
+
+`null` \| [`Session`](auth#session)
+
+The stored session or null if not set
+
+###### Implementation of
+
+[`SessionStorageInterface`](#sessionstorageinterface).[`get`](#get-6)
+
+##### remove()
+
+```ts
+remove(): void;
+```
+
+Clears the session from memory
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`SessionStorageInterface`](#sessionstorageinterface).[`remove`](#remove-6)
+
+##### set()
+
+```ts
+set(value: Session): void;
+```
+
+Sets the session in memory
+
+###### Parameters
+
+| Parameter | Type                          | Description          |
+| --------- | ----------------------------- | -------------------- |
+| `value`   | [`Session`](auth#session) | The session to store |
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`SessionStorageInterface`](#sessionstorageinterface).[`set`](#set-6)
+
+---
+
 ### NhostClient
 
 Main client class that provides access to all Nhost services
@@ -133,16 +401,16 @@ new NhostClient(
 ```
 
 Create a new Nhost client. This constructor is reserved for advanced use cases.
-For typical usage, use createClient instead.
+For typical usage, use [createClient](#createclient) instead.
 
 ###### Parameters
 
-| Parameter        | Type                                                          | Description                                    |
-| ---------------- | ------------------------------------------------------------- | ---------------------------------------------- |
-| `auth`           | [`Client`](auth#client)                                   | Authentication client                          |
-| `storage`        | [`Client`](storage#client)                                | Storage client                                 |
-| `graphql`        | [`Client`](graphql#client)                                | GraphQL client                                 |
-| `sessionStorage` | [`SessionStorageInterface`](auth#sessionstorageinterface) | Storage implementation for session persistence |
+| Parameter        | Type                                                  | Description                                    |
+| ---------------- | ----------------------------------------------------- | ---------------------------------------------- |
+| `auth`           | [`Client`](auth#client)                           | Authentication client                          |
+| `storage`        | [`Client`](storage#client)                        | Storage client                                 |
+| `graphql`        | [`Client`](graphql#client)                        | GraphQL client                                 |
+| `sessionStorage` | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation for session persistence |
 
 ###### Returns
 
@@ -150,12 +418,12 @@ For typical usage, use createClient instead.
 
 #### Properties
 
-| Property                                     | Type                                                          | Description                                                                                   |
-| -------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| <a id="auth"></a> `auth`                     | [`Client`](auth#client)                                   | Authentication client providing methods for user sign-in, sign-up, and session management     |
-| <a id="graphql"></a> `graphql`               | [`Client`](graphql#client)                                | GraphQL client providing methods for executing GraphQL operations against your Hasura backend |
-| <a id="sessionstorage"></a> `sessionStorage` | [`SessionStorageInterface`](auth#sessionstorageinterface) | Storage implementation used for persisting session information                                |
-| <a id="storage"></a> `storage`               | [`Client`](storage#client)                                | Storage client providing methods for file operations (upload, download, delete)               |
+| Property                                     | Type                                                  | Description                                                                                   |
+| -------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| <a id="auth"></a> `auth`                     | [`Client`](auth#client)                           | Authentication client providing methods for user sign-in, sign-up, and session management     |
+| <a id="graphql"></a> `graphql`               | [`Client`](graphql#client)                        | GraphQL client providing methods for executing GraphQL operations against your Hasura backend |
+| <a id="sessionstorage"></a> `sessionStorage` | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation used for persisting session information                                |
+| <a id="storage"></a> `storage`               | [`Client`](storage#client)                        | Storage client providing methods for file operations (upload, download, delete)               |
 
 #### Methods
 
@@ -223,14 +491,93 @@ Configuration options for creating an Nhost client
 
 #### Properties
 
-| Property                              | Type                                                          | Description                                                            |
-| ------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| <a id="authurl"></a> `authUrl?`       | `string`                                                      | Complete base URL for the auth service (overrides subdomain/region)    |
-| <a id="graphqlurl"></a> `graphqlUrl?` | `string`                                                      | Complete base URL for the GraphQL service (overrides subdomain/region) |
-| <a id="region"></a> `region?`         | `string`                                                      | Nhost region (e.g., 'eu-central-1')                                    |
-| <a id="storage-1"></a> `storage?`     | [`SessionStorageInterface`](auth#sessionstorageinterface) | Storage implementation to use for session persistence                  |
-| <a id="storageurl"></a> `storageUrl?` | `string`                                                      | Complete base URL for the storage service (overrides subdomain/region) |
-| <a id="subdomain"></a> `subdomain?`   | `string`                                                      | Nhost project subdomain (e.g., 'abcdefgh')                             |
+| Property                              | Type                                                  | Description                                                                                                                                                  |
+| ------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| <a id="authurl"></a> `authUrl?`       | `string`                                              | Complete base URL for the auth service (overrides subdomain/region)                                                                                          |
+| <a id="graphqlurl"></a> `graphqlUrl?` | `string`                                              | Complete base URL for the GraphQL service (overrides subdomain/region)                                                                                       |
+| <a id="region"></a> `region?`         | `string`                                              | Nhost region (e.g., 'eu-central-1'). Used to construct the base URL for services for the Nhost cloud.                                                        |
+| <a id="storage-1"></a> `storage?`     | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation to use for session persistence. If not provided, the SDK will default to localStorage in the browser or memory in other environments. |
+| <a id="storageurl"></a> `storageUrl?` | `string`                                              | Complete base URL for the storage service (overrides subdomain/region)                                                                                       |
+| <a id="subdomain"></a> `subdomain?`   | `string`                                              | Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for services for the Nhost cloud.                                                 |
+
+---
+
+### SessionStorageInterface
+
+Session storage interface for session persistence.
+This interface can be implemented to provide custom storage solutions.
+
+#### Methods
+
+##### get()
+
+```ts
+get(): null | Session;
+```
+
+Get the current session from storage
+
+###### Returns
+
+`null` \| [`Session`](auth#session)
+
+The stored session or null if not found
+
+##### remove()
+
+```ts
+remove(): void;
+```
+
+Remove the session from storage
+
+###### Returns
+
+`void`
+
+##### set()
+
+```ts
+set(value: Session): void;
+```
+
+Set the session in storage
+
+###### Parameters
+
+| Parameter | Type                          | Description          |
+| --------- | ----------------------------- | -------------------- |
+| `value`   | [`Session`](auth#session) | The session to store |
+
+###### Returns
+
+`void`
+
+## Type Aliases
+
+### SessionRefreshOptions
+
+```ts
+type SessionRefreshOptions = object;
+```
+
+Configuration options for the session refresh middleware
+
+#### Properties
+
+| Property                                    | Type     | Description                                                                                                     |
+| ------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------- |
+| <a id="marginseconds"></a> `marginSeconds?` | `number` | Number of seconds before token expiration when a refresh should be triggered. Default is 60 seconds (1 minute). |
+
+## Variables
+
+### DEFAULT_SESSION_KEY
+
+```ts
+const DEFAULT_SESSION_KEY: "nhostSession" = "nhostSession";
+```
+
+Default storage key used for storing the Nhost session
 
 ## Functions
 
@@ -240,9 +587,15 @@ Configuration options for creating an Nhost client
 function createClient(options: NhostClientOptions): NhostClient;
 ```
 
-Creates and configures a new Nhost client instance
+Creates and configures a new Nhost client instance.
 
-This is the recommended way to initialize the Nhost SDK in your application.
+This helper method instantiates a fully configured Nhost client by:
+
+- Instantiating the various service clients (auth, storage, functions and graphql)
+- Configuring a session storage if none is provided
+- Setting up the necessary middleware for automatic session management:
+  - Automatically attaching the authorization token to requests
+  - Refreshing the session when it expires
 
 #### Parameters
 
@@ -255,3 +608,117 @@ This is the recommended way to initialize the Nhost SDK in your application.
 [`NhostClient`](#nhostclient)
 
 A configured Nhost client
+
+---
+
+### createSessionRefreshMiddleware()
+
+```ts
+function createSessionRefreshMiddleware(
+  authClient: Client,
+  storage: SessionStorageInterface,
+  options?: SessionRefreshOptions,
+): ChainFunction;
+```
+
+Creates a fetch middleware that automatically refreshes authentication tokens.
+
+This middleware:
+
+1. Checks if the current token is about to expire
+2. If so, uses the refresh token to obtain a new access token
+3. Adds the current access token to outgoing requests
+
+The middleware handles token refresh transparently, so the application
+doesn't need to manually refresh tokens.
+
+#### Parameters
+
+| Parameter    | Type                                                  | Description                                        |
+| ------------ | ----------------------------------------------------- | -------------------------------------------------- |
+| `authClient` | [`Client`](auth#client)                           | Auth API client for token refresh operations       |
+| `storage`    | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation for persisting session data |
+| `options?`   | [`SessionRefreshOptions`](#sessionrefreshoptions)     | Configuration options for token refresh behavior   |
+
+#### Returns
+
+[`ChainFunction`](fetch#chainfunction)
+
+A middleware function that can be used in the fetch chain
+
+---
+
+### createSessionResponseMiddleware()
+
+```ts
+function createSessionResponseMiddleware(
+  storage: SessionStorageInterface,
+): ChainFunction;
+```
+
+Creates a fetch middleware that automatically extracts and stores session data from API responses.
+
+This middleware:
+
+1. Monitors responses from authentication-related endpoints
+2. Extracts session information when present
+3. Stores the session in the provided storage implementation
+4. Handles session removal on sign-out
+
+This ensures that session data is always up-to-date in storage after operations
+that create or invalidate sessions.
+
+#### Parameters
+
+| Parameter | Type                                                  | Description                                        |
+| --------- | ----------------------------------------------------- | -------------------------------------------------- |
+| `storage` | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation for persisting session data |
+
+#### Returns
+
+[`ChainFunction`](fetch#chainfunction)
+
+A middleware function that can be used in the fetch chain
+
+---
+
+### detectStorage()
+
+```ts
+function detectStorage(): SessionStorageInterface;
+```
+
+Detects the best available storage implementation for the current environment.
+
+The detection process follows this order:
+
+1. Try to use localStorage if we're in a browser environment
+2. Fall back to in-memory storage if localStorage isn't available
+
+#### Returns
+
+[`SessionStorageInterface`](#sessionstorageinterface)
+
+The best available storage implementation for the current environment
+
+---
+
+### extractTokenExpiration()
+
+```ts
+function extractTokenExpiration(token: string): number;
+```
+
+Extracts the expiration time from a JWT token
+
+#### Parameters
+
+| Parameter | Type     | Description      |
+| --------- | -------- | ---------------- |
+| `token`   | `string` | JWT token string |
+
+#### Returns
+
+`number`
+
+Expiration timestamp in milliseconds, or 0 if unable to extract
