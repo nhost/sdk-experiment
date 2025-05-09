@@ -6,60 +6,10 @@
 import { createAPIClient as createAuthClient } from "./auth";
 import { createAPIClient as createStorageClient } from "./storage";
 import { createAPIClient as createGraphQLClient } from "./graphql";
-import {
-  type StorageInterface,
-  detectStorage,
-  DEFAULT_SESSION_KEY,
-  CookieStorage,
-  LocalStorage,
-  MemoryStorage,
-} from "./auth/storage";
+import { type StorageInterface, detectStorage } from "./auth/storage";
 import type { Session } from "./auth";
 import { createSessionRefreshMiddleware } from "./auth/middlewareRefreshSession";
 import { createSessionResponseMiddleware } from "./auth/middlewareResponseSession";
-
-import type {
-  GraphQLRequest,
-  GraphQLResponse,
-  GraphQLVariables,
-  GraphQLError,
-} from "./graphql/client";
-
-// Re-export storage utilities
-/**
- * Utility function to automatically detect the best available storage mechanism
- * for the current environment (localStorage, cookies, or memory).
- * 
- * @returns An appropriate storage implementation for the current environment
- */
-export { detectStorage, DEFAULT_SESSION_KEY };
-
-// Re-export storage classes
-/**
- * Storage classes for persisting session information
- * CookieStorage - Uses browser cookies for session storage
- * LocalStorage - Uses browser localStorage for session storage
- * MemoryStorage - Uses in-memory storage (for environments without localStorage or cookies)
- */
-export { CookieStorage, LocalStorage, MemoryStorage };
-
-// Re-export types
-/**
- * Core types for the SDK's storage and session management
- * StorageInterface - Interface for implementing custom storage adapters
- * Session - User authentication session containing tokens and user information
- */
-export type { StorageInterface, Session };
-
-// Re-export GraphQL types
-/**
- * Types for GraphQL operations
- * GraphQLRequest - Structure of a GraphQL request
- * GraphQLResponse - Structure of a GraphQL response
- * GraphQLVariables - Variables for GraphQL operations
- * GraphQLError - Error information from GraphQL operations
- */
-export type { GraphQLRequest, GraphQLResponse, GraphQLVariables, GraphQLError };
 
 /**
  * Generates a base URL for a Nhost service based on configuration
@@ -129,17 +79,17 @@ export class NhostClient {
    * Authentication client providing methods for user sign-in, sign-up, and session management
    */
   auth: ReturnType<typeof createAuthClient>;
-  
+
   /**
    * Storage client providing methods for file operations (upload, download, delete)
    */
   storage: ReturnType<typeof createStorageClient>;
-  
+
   /**
    * GraphQL client providing methods for executing GraphQL operations against your Hasura backend
    */
   graphql: ReturnType<typeof createGraphQLClient>;
-  
+
   /**
    * Storage implementation used for persisting session information
    */
@@ -217,21 +167,21 @@ export class NhostClient {
 
 /**
  * Creates and configures a new Nhost client instance
- * 
+ *
  * This is the recommended way to initialize the Nhost SDK in your application.
- * 
+ *
  * @example
  * ```typescript
  * import { createClient } from 'nhost-js';
- * 
+ *
  * const nhost = createClient({
  *   subdomain: 'your-project',
  *   region: 'eu-central-1'
  * });
- * 
+ *
  * // Now you can use nhost.auth, nhost.storage, and nhost.graphql
  * ```
- * 
+ *
  * @param options - Configuration options for the client
  * @returns A configured Nhost client
  */

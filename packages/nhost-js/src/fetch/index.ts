@@ -1,6 +1,6 @@
 /**
  * @fileoverview Enhanced fetch implementation with middleware support.
- * 
+ *
  * This module provides a middleware pattern for the Fetch API, allowing
  * chain functions to be applied to requests and responses, such as
  * authentication token refreshing, error handling, and request/response transformation.
@@ -19,7 +19,7 @@ export type FetchFunction = (
 /**
  * Type definition for a chain function (middleware).
  * Takes a fetch-like function and returns another fetch-like function.
- * 
+ *
  * Chain functions can be used to implement:
  * - Authentication token handling
  * - Error handling and retry logic
@@ -30,12 +30,12 @@ export type ChainFunction = (next: FetchFunction) => FetchFunction;
 
 /**
  * Creates an enhanced fetch function using a chain of middleware functions.
- * 
+ *
  * The fetch chain executes in the order of the array, with each middleware
  * wrapping the next one in the chain. This allows each middleware to
  * intercept both the request (before calling next) and the response
  * (after calling next).
- * 
+ *
  * @example
  * ```typescript
  * // Simple logging middleware
@@ -47,11 +47,11 @@ export type ChainFunction = (next: FetchFunction) => FetchFunction;
  *     return response;
  *   };
  * };
- * 
+ *
  * const enhancedFetch = createEnhancedFetch([loggingMiddleware]);
  * const response = await enhancedFetch('https://api.example.com/data');
  * ```
- * 
+ *
  * @param chainFunctions - Array of chain functions to apply in order
  * @returns Enhanced fetch function with all middleware applied
  */

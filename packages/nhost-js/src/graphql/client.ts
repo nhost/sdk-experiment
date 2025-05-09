@@ -1,6 +1,6 @@
 /**
  * @fileoverview GraphQL client for the Nhost JavaScript SDK.
- * 
+ *
  * This module provides functionality for executing GraphQL operations against
  * a Hasura GraphQL API, with automatic authentication token handling.
  */
@@ -66,20 +66,20 @@ export interface FetchResponse<T = any> {
 
 /**
  * Creates a GraphQL API client for interacting with a GraphQL endpoint.
- * 
+ *
  * This client provides methods for executing queries and mutations against
  * a GraphQL API, with support for middleware functions to handle authentication,
  * error handling, and other cross-cutting concerns.
- * 
+ *
  * @example
  * ```typescript
  * import { createClient } from 'nhost-js';
- * 
+ *
  * const nhost = createClient({
  *   subdomain: 'your-project',
  *   region: 'eu-central-1'
  * });
- * 
+ *
  * // Execute a GraphQL query
  * const response = await nhost.graphql.query({
  *   query: `
@@ -92,11 +92,11 @@ export interface FetchResponse<T = any> {
  *     }
  *   `
  * });
- * 
+ *
  * // Access the data
  * const users = response.data.data.users;
  * ```
- * 
+ *
  * @param baseURL - Base URL for the GraphQL endpoint
  * @param chainFunctions - Array of middleware functions for the fetch chain
  * @returns GraphQL client with query and mutation methods
@@ -109,9 +109,9 @@ export const createAPIClient = (
 
   /**
    * Execute a GraphQL operation (query or mutation)
-   * 
+   *
    * This is an internal function used by both query and mutation methods.
-   * 
+   *
    * @param request - GraphQL request object containing query and optional variables
    * @param options - Additional fetch options to apply to the request
    * @returns Promise with the GraphQL response and metadata
@@ -141,9 +141,9 @@ export const createAPIClient = (
 
   /**
    * Execute a GraphQL query operation
-   * 
+   *
    * Queries are used to fetch data and should not modify any data on the server.
-   * 
+   *
    * @example
    * ```typescript
    * const response = await graphqlClient.query({
@@ -159,7 +159,7 @@ export const createAPIClient = (
    *   variables: { id: "123e4567-e89b-12d3-a456-426614174000" }
    * });
    * ```
-   * 
+   *
    * @param request - GraphQL request object containing query and optional variables
    * @param options - Additional fetch options to apply to the request
    * @returns Promise with the GraphQL response and metadata
@@ -173,9 +173,9 @@ export const createAPIClient = (
 
   /**
    * Execute a GraphQL mutation operation
-   * 
+   *
    * Mutations are used to modify data on the server.
-   * 
+   *
    * @example
    * ```typescript
    * const response = await graphqlClient.mutation({
@@ -188,13 +188,13 @@ export const createAPIClient = (
    *       }
    *     }
    *   `,
-   *   variables: { 
+   *   variables: {
    *     id: "123e4567-e89b-12d3-a456-426614174000",
    *     data: { displayName: "New Name" }
    *   }
    * });
    * ```
-   * 
+   *
    * @param request - GraphQL request object containing mutation and optional variables
    * @param options - Additional fetch options to apply to the request
    * @returns Promise with the GraphQL response and metadata

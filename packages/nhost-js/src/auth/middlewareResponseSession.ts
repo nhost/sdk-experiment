@@ -1,6 +1,6 @@
 /**
  * @fileoverview Session response middleware for the Nhost SDK.
- * 
+ *
  * This module provides middleware functionality to automatically extract
  * and persist session information from authentication responses, ensuring
  * that new sessions are properly stored after sign-in operations.
@@ -12,29 +12,29 @@ import { type ChainFunction } from "../fetch";
 
 /**
  * Creates a fetch middleware that automatically extracts and stores session data from API responses.
- * 
+ *
  * This middleware:
  * 1. Monitors responses from authentication-related endpoints
  * 2. Extracts session information when present
  * 3. Stores the session in the provided storage implementation
  * 4. Handles session removal on sign-out
- * 
+ *
  * This ensures that session data is always up-to-date in storage after operations
  * that create or invalidate sessions.
- * 
+ *
  * @example
  * ```typescript
  * import { createEnhancedFetch } from '../fetch';
  * import { createSessionResponseMiddleware } from './middlewareResponseSession';
  * import { LocalStorage } from './storage';
- * 
+ *
  * const storage = new LocalStorage();
  * const sessionMiddleware = createSessionResponseMiddleware(storage);
  * const enhancedFetch = createEnhancedFetch([sessionMiddleware]);
- * 
+ *
  * // Session data will be automatically stored from responses
  * ```
- * 
+ *
  * @param storage - Storage implementation for persisting session data
  * @returns A middleware function that can be used in the fetch chain
  */
@@ -43,13 +43,11 @@ export const createSessionResponseMiddleware = (
 ): ChainFunction => {
   /**
    * Helper function to extract session data from various response formats
-   * 
+   *
    * @param data - Response data to extract session from
    * @returns Session object if found, null otherwise
    */
-  const sessionExtractor = function (
-    data: any,
-  ): Session | null {
+  const sessionExtractor = function (data: any): Session | null {
     // Look for session in common response patterns
     const session =
       // Pattern: { session: {...} }

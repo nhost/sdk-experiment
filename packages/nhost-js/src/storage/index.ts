@@ -1,6 +1,6 @@
 /**
  * @fileoverview Storage module for the Nhost JavaScript SDK.
- * 
+ *
  * This module provides functionality for file operations with Nhost Storage:
  * - File upload and download
  * - File metadata management

@@ -18,23 +18,23 @@ pnpm add nhost-js
 ## Quick Start
 
 ```typescript
-import { createClient } from 'nhost-js';
+import { createClient } from "nhost-js";
 
 // Initialize the Nhost client
 const nhost = createClient({
-  subdomain: 'your-project',
-  region: 'eu-central-1'
+  subdomain: "your-project",
+  region: "eu-central-1",
 });
 
 // Use authentication features
 async function signIn() {
   const response = await nhost.auth.signInEmailPassword({
-    email: 'user@example.com',
-    password: 'password123'
+    email: "user@example.com",
+    password: "password123",
   });
-  
+
   if (response.data.session) {
-    console.log('Signed in successfully!');
+    console.log("Signed in successfully!");
   }
 }
 
@@ -49,18 +49,18 @@ async function fetchUsers() {
           email
         }
       }
-    `
+    `,
   });
-  
+
   return response.data.data.users;
 }
 
 // Use storage features
 async function uploadFile(file) {
   const response = await nhost.storage.uploadFiles({
-    'file[]': [file]
+    "file[]": [file],
   });
-  
+
   return response.data.processedFiles[0];
 }
 ```

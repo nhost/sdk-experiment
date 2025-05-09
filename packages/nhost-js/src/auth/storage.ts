@@ -1,6 +1,6 @@
 /**
  * @fileoverview Storage implementations for session persistence in different environments.
- * 
+ *
  * This module provides different storage adapters for persisting authentication sessions
  * across page reloads and browser sessions.
  */
@@ -187,11 +187,11 @@ export class CookieStorage implements StorageInterface {
 
 /**
  * Detects the best available storage implementation for the current environment.
- * 
+ *
  * The detection process follows this order:
  * 1. Try to use localStorage if we're in a browser environment
  * 2. Fall back to in-memory storage if localStorage isn't available
- * 
+ *
  * @returns The best available storage implementation for the current environment
  */
 export const detectStorage = (): StorageInterface => {

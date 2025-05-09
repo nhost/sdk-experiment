@@ -6,34 +6,9 @@ Error information returned by the API.
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="error-1"></a> `error?`
-
-</td>
-<td>
-
-[`ErrorError`](#errorerror-1)
-
-</td>
-<td>
-
-Error details.
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                      | Type                          | Description    |
+| ----------------------------- | ----------------------------- | -------------- |
+| <a id="error-1"></a> `error?` | [`ErrorError`](#errorerror-1) | Error details. |
 
 ---
 
@@ -43,204 +18,19 @@ Comprehensive metadata information about a file in storage.
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="bucketid"></a> `bucketId?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-ID of the bucket containing the file.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="createdat"></a> `createdAt?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-Timestamp when the file was created.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="etag"></a> `etag?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-Entity tag for cache validation.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="id"></a> `id?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-Unique identifier for the file.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="isuploaded"></a> `isUploaded?`
-
-</td>
-<td>
-
-`boolean`
-
-</td>
-<td>
-
-Whether the file has been successfully uploaded.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="metadata"></a> `metadata?`
-
-</td>
-<td>
-
-[`FileMetadataMetadata`](#filemetadatametadata-1)
-
-</td>
-<td>
-
-Custom metadata associated with the file.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="mimetype"></a> `mimeType?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-MIME type of the file.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="name"></a> `name?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-Name of the file including extension.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="size"></a> `size?`
-
-</td>
-<td>
-
-`number`
-
-</td>
-<td>
-
-Size of the file in bytes.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="updatedat"></a> `updatedAt?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-Timestamp when the file was last updated.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="uploadedbyuserid"></a> `uploadedByUserId?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-ID of the user who uploaded the file.
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                                          | Type                                              | Description                                      |
+| ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------ |
+| <a id="bucketid"></a> `bucketId?`                 | `string`                                          | ID of the bucket containing the file.            |
+| <a id="createdat"></a> `createdAt?`               | `string`                                          | Timestamp when the file was created.             |
+| <a id="etag"></a> `etag?`                         | `string`                                          | Entity tag for cache validation.                 |
+| <a id="id"></a> `id?`                             | `string`                                          | Unique identifier for the file.                  |
+| <a id="isuploaded"></a> `isUploaded?`             | `boolean`                                         | Whether the file has been successfully uploaded. |
+| <a id="metadata"></a> `metadata?`                 | [`FileMetadataMetadata`](#filemetadatametadata-1) | Custom metadata associated with the file.        |
+| <a id="mimetype"></a> `mimeType?`                 | `string`                                          | MIME type of the file.                           |
+| <a id="name"></a> `name?`                         | `string`                                          | Name of the file including extension.            |
+| <a id="size"></a> `size?`                         | `number`                                          | Size of the file in bytes.                       |
+| <a id="updatedat"></a> `updatedAt?`               | `string`                                          | Timestamp when the file was last updated.        |
+| <a id="uploadedbyuserid"></a> `uploadedByUserId?` | `string`                                          | ID of the user who uploaded the file.            |
 
 ---
 
@@ -250,85 +40,12 @@ Basic information about a file in storage.
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="bucketid-1"></a> `bucketId?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-ID of the bucket containing the file.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="id-1"></a> `id?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-Unique identifier for the file.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="isuploaded-1"></a> `isUploaded?`
-
-</td>
-<td>
-
-`boolean`
-
-</td>
-<td>
-
-Whether the file has been successfully uploaded.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="name-1"></a> `name?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-Name of the file including extension.
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                                | Type      | Description                                      |
+| --------------------------------------- | --------- | ------------------------------------------------ |
+| <a id="bucketid-1"></a> `bucketId?`     | `string`  | ID of the bucket containing the file.            |
+| <a id="id-1"></a> `id?`                 | `string`  | Unique identifier for the file.                  |
+| <a id="isuploaded-1"></a> `isUploaded?` | `boolean` | Whether the file has been successfully uploaded. |
+| <a id="name-1"></a> `name?`             | `string`  | Name of the file including extension.            |
 
 ---
 
@@ -338,51 +55,10 @@ Contains a presigned URL for direct file operations.
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="expiration"></a> `expiration?`
-
-</td>
-<td>
-
-`number`
-
-</td>
-<td>
-
-The time in seconds until the URL expires.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="url"></a> `url?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-The presigned URL for file operations.
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                              | Type     | Description                                |
+| ------------------------------------- | -------- | ------------------------------------------ |
+| <a id="expiration"></a> `expiration?` | `number` | The time in seconds until the URL expires. |
+| <a id="url"></a> `url?`               | `string` | The presigned URL for file operations.     |
 
 ---
 
@@ -392,51 +68,10 @@ Metadata that can be updated for an existing file.
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="metadata-2"></a> `metadata?`
-
-</td>
-<td>
-
-[`UpdateFileMetadataMetadata`](#updatefilemetadatametadata-1)
-
-</td>
-<td>
-
-Updated custom metadata to associate with the file.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="name-2"></a> `name?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-New name to assign to the file.
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                            | Type                                                          | Description                                         |
+| ----------------------------------- | ------------------------------------------------------------- | --------------------------------------------------- |
+| <a id="metadata-2"></a> `metadata?` | [`UpdateFileMetadataMetadata`](#updatefilemetadatametadata-1) | Updated custom metadata to associate with the file. |
+| <a id="name-2"></a> `name?`         | `string`                                                      | New name to assign to the file.                     |
 
 ---
 
@@ -446,68 +81,11 @@ Metadata provided when uploading a new file.
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="id-2"></a> `id?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-Optional custom ID for the file. If not provided, a UUID will be generated.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="metadata-3"></a> `metadata?`
-
-</td>
-<td>
-
-[`UploadFileMetadataMetadata`](#uploadfilemetadatametadata-1)
-
-</td>
-<td>
-
-Custom metadata to associate with the file.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="name-3"></a> `name?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-Name to assign to the file. If not provided, the original filename will be used.
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                            | Type                                                          | Description                                                                      |
+| ----------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| <a id="id-2"></a> `id?`             | `string`                                                      | Optional custom ID for the file. If not provided, a UUID will be generated.      |
+| <a id="metadata-3"></a> `metadata?` | [`UploadFileMetadataMetadata`](#uploadfilemetadatametadata-1) | Custom metadata to associate with the file.                                      |
+| <a id="name-3"></a> `name?`         | `string`                                                      | Name to assign to the file. If not provided, the original filename will be used. |
 
 ---
 
@@ -517,166 +95,54 @@ Contains version information about the storage service.
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="buildversion"></a> `buildVersion?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-The version number of the storage service build.
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                                  | Type     | Description                                      |
+| ----------------------------------------- | -------- | ------------------------------------------------ |
+| <a id="buildversion"></a> `buildVersion?` | `string` | The version number of the storage service build. |
 
 ## Type Aliases
 
 ### ErrorError
 
 ```ts
-type ErrorError = {
-  message: string;
-};
+type ErrorError = object;
 ```
 
 Error details.
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="message"></a> `message`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-Human-readable error message.
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                       | Type     | Description                   |
+| ------------------------------ | -------- | ----------------------------- |
+| <a id="message"></a> `message` | `string` | Human-readable error message. |
 
 ---
 
 ### FetchResponse&lt;T&gt;
 
 ```ts
-type FetchResponse<T> = {
-  data: T;
-  headers: Record<string, string>;
-  status: number;
-};
+type FetchResponse<T> = object;
 ```
 
 #### Type Parameters
 
-<table>
-<thead>
-<tr>
-<th>Type Parameter</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-`T`
-
-</td>
-</tr>
-</tbody>
-</table>
+| Type Parameter |
+| -------------- |
+| `T`            |
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="data"></a> `data`
-
-</td>
-<td>
-
-`T`
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="headers"></a> `headers`
-
-</td>
-<td>
-
-`Record`&lt;`string`, `string`&gt;
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="status"></a> `status`
-
-</td>
-<td>
-
-`number`
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                       | Type                               |
+| ------------------------------ | ---------------------------------- |
+| <a id="data"></a> `data`       | `T`                                |
+| <a id="headers"></a> `headers` | `Record`&lt;`string`, `string`&gt; |
+| <a id="status"></a> `status`   | `number`                           |
 
 ---
 
 ### FileMetadataMetadata
 
 ```ts
-type FileMetadataMetadata = {
-  [key: string]: unknown;
-};
+type FileMetadataMetadata = object;
 ```
 
 Custom metadata associated with the file.
@@ -709,235 +175,43 @@ type GetFileMetadataHeadersF =
 ### GetFileMetadataHeadersParams
 
 ```ts
-type GetFileMetadataHeadersParams = {
-  b?: number;
-  f?: GetFileMetadataHeadersF;
-  h?: number;
-  q?: number;
-  w?: number;
-};
+type GetFileMetadataHeadersParams = object;
 ```
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="b"></a> `b?`
-
-</td>
-<td>
-
-`number`
-
-</td>
-<td>
-
-Blur the image using this sigma value. Only applies to image files
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="f"></a> `f?`
-
-</td>
-<td>
-
-[`GetFileMetadataHeadersF`](#getfilemetadataheadersf-1)
-
-</td>
-<td>
-
-Output format for image files. Use 'auto' for content negotiation based on Accept header
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="h"></a> `h?`
-
-</td>
-<td>
-
-`number`
-
-</td>
-<td>
-
-Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="q"></a> `q?`
-
-</td>
-<td>
-
-`number`
-
-</td>
-<td>
-
-Image quality (1-100). Only applies to JPEG, WebP and PNG files
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="w"></a> `w?`
-
-</td>
-<td>
-
-`number`
-
-</td>
-<td>
-
-Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property            | Type                                                    | Description                                                                                   |
+| ------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| <a id="b"></a> `b?` | `number`                                                | Blur the image using this sigma value. Only applies to image files                            |
+| <a id="f"></a> `f?` | [`GetFileMetadataHeadersF`](#getfilemetadataheadersf-1) | Output format for image files. Use 'auto' for content negotiation based on Accept header      |
+| <a id="h"></a> `h?` | `number`                                                | Maximum height to resize image to while maintaining aspect ratio. Only applies to image files |
+| <a id="q"></a> `q?` | `number`                                                | Image quality (1-100). Only applies to JPEG, WebP and PNG files                               |
+| <a id="w"></a> `w?` | `number`                                                | Maximum width to resize image to while maintaining aspect ratio. Only applies to image files  |
 
 ---
 
 ### GetFileParams
 
 ```ts
-type GetFileParams = {
-  b?: number;
-  f?: GetFileF;
-  h?: number;
-  q?: number;
-  w?: number;
-};
+type GetFileParams = object;
 ```
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="b-1"></a> `b?`
-
-</td>
-<td>
-
-`number`
-
-</td>
-<td>
-
-Blur the image using this sigma value. Only applies to image files
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="f-1"></a> `f?`
-
-</td>
-<td>
-
-[`GetFileF`](#getfilef-1)
-
-</td>
-<td>
-
-Output format for image files. Use 'auto' for content negotiation based on Accept header
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="h-1"></a> `h?`
-
-</td>
-<td>
-
-`number`
-
-</td>
-<td>
-
-Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="q-1"></a> `q?`
-
-</td>
-<td>
-
-`number`
-
-</td>
-<td>
-
-Image quality (1-100). Only applies to JPEG, WebP and PNG files
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="w-1"></a> `w?`
-
-</td>
-<td>
-
-`number`
-
-</td>
-<td>
-
-Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property              | Type                      | Description                                                                                   |
+| --------------------- | ------------------------- | --------------------------------------------------------------------------------------------- |
+| <a id="b-1"></a> `b?` | `number`                  | Blur the image using this sigma value. Only applies to image files                            |
+| <a id="f-1"></a> `f?` | [`GetFileF`](#getfilef-1) | Output format for image files. Use 'auto' for content negotiation based on Accept header      |
+| <a id="h-1"></a> `h?` | `number`                  | Maximum height to resize image to while maintaining aspect ratio. Only applies to image files |
+| <a id="q-1"></a> `q?` | `number`                  | Image quality (1-100). Only applies to JPEG, WebP and PNG files                               |
+| <a id="w-1"></a> `w?` | `number`                  | Maximum width to resize image to while maintaining aspect ratio. Only applies to image files  |
 
 ---
 
 ### GetOpenAPISpec200
 
 ```ts
-type GetOpenAPISpec200 = {
-  [key: string]: unknown;
-};
+type GetOpenAPISpec200 = object;
 ```
 
 #### Index Signature
@@ -951,68 +225,22 @@ type GetOpenAPISpec200 = {
 ### ReplaceFileBody
 
 ```ts
-type ReplaceFileBody = {
-  file?: Blob;
-  metadata?: UpdateFileMetadata;
-};
+type ReplaceFileBody = object;
 ```
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="file"></a> `file?`
-
-</td>
-<td>
-
-`Blob`
-
-</td>
-<td>
-
-New file content to replace the existing file
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="metadata-1"></a> `metadata?`
-
-</td>
-<td>
-
-[`UpdateFileMetadata`](#updatefilemetadata)
-
-</td>
-<td>
-
-Optional metadata to update for the file
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                            | Type                                        | Description                                   |
+| ----------------------------------- | ------------------------------------------- | --------------------------------------------- |
+| <a id="file"></a> `file?`           | `Blob`                                      | New file content to replace the existing file |
+| <a id="metadata-1"></a> `metadata?` | [`UpdateFileMetadata`](#updatefilemetadata) | Optional metadata to update for the file      |
 
 ---
 
 ### UpdateFileMetadataMetadata
 
 ```ts
-type UpdateFileMetadataMetadata = {
-  [key: string]: unknown;
-};
+type UpdateFileMetadataMetadata = object;
 ```
 
 Updated custom metadata to associate with the file.
@@ -1028,9 +256,7 @@ Updated custom metadata to associate with the file.
 ### UploadFileMetadataMetadata
 
 ```ts
-type UploadFileMetadataMetadata = {
-  [key: string]: unknown;
-};
+type UploadFileMetadataMetadata = object;
 ```
 
 Custom metadata to associate with the file.
@@ -1046,380 +272,68 @@ Custom metadata to associate with the file.
 ### UploadFiles201
 
 ```ts
-type UploadFiles201 = {
-  processedFiles?: FileMetadata[];
-};
+type UploadFiles201 = object;
 ```
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="processedfiles"></a> `processedFiles?`
-
-</td>
-<td>
-
-[`FileMetadata`](#filemetadata)[]
-
-</td>
-<td>
-
-List of successfully processed files with their metadata.
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                                      | Type                              | Description                                               |
+| --------------------------------------------- | --------------------------------- | --------------------------------------------------------- |
+| <a id="processedfiles"></a> `processedFiles?` | [`FileMetadata`](#filemetadata)[] | List of successfully processed files with their metadata. |
 
 ---
 
 ### UploadFilesBody
 
 ```ts
-type UploadFilesBody = {
-  bucket-id?: string;
-  file[]?: Blob[];
-  metadata[]?: UploadFileMetadata[];
-};
+type UploadFilesBody = object;
 ```
 
 #### Properties
 
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="bucket-id"></a> `bucket-id?`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-Target bucket identifier where files will be stored.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="file-1"></a> `file[]?`
-
-</td>
-<td>
-
-`Blob`[]
-
-</td>
-<td>
-
-Array of files to upload.
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="metadata-4"></a> `metadata[]?`
-
-</td>
-<td>
-
-[`UploadFileMetadata`](#uploadfilemetadata)[]
-
-</td>
-<td>
-
-Optional custom metadata for each uploaded file. Must match the order of the file[] array.
-
-</td>
-</tr>
-</tbody>
-</table>
+| Property                              | Type                                          | Description                                                                                |
+| ------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| <a id="bucket-id"></a> `bucket-id?`   | `string`                                      | Target bucket identifier where files will be stored.                                       |
+| <a id="file-1"></a> `file[]?`         | `Blob`[]                                      | Array of files to upload.                                                                  |
+| <a id="metadata-4"></a> `metadata[]?` | [`UploadFileMetadata`](#uploadfilemetadata)[] | Optional custom metadata for each uploaded file. Must match the order of the file[] array. |
 
 ## Variables
 
 ### GetFileF
 
 ```ts
-GetFileF: {
-  auto: "auto";
-  avif: "avif";
-  jpeg: "jpeg";
-  png: "png";
-  same: "same";
-  webp: "webp";
-}
+GetFileF: object;
 ```
 
 #### Type declaration
 
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Default value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="auto"></a> `auto`
-
-</td>
-<td>
-
-`"auto"`
-
-</td>
-<td>
-
-`"auto"`
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="avif"></a> `avif`
-
-</td>
-<td>
-
-`"avif"`
-
-</td>
-<td>
-
-`"avif"`
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="jpeg"></a> `jpeg`
-
-</td>
-<td>
-
-`"jpeg"`
-
-</td>
-<td>
-
-`"jpeg"`
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="png"></a> `png`
-
-</td>
-<td>
-
-`"png"`
-
-</td>
-<td>
-
-`"png"`
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="same"></a> `same`
-
-</td>
-<td>
-
-`"same"`
-
-</td>
-<td>
-
-`"same"`
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="webp"></a> `webp`
-
-</td>
-<td>
-
-`"webp"`
-
-</td>
-<td>
-
-`"webp"`
-
-</td>
-</tr>
-</tbody>
-</table>
+| Name                     | Type     | Default value |
+| ------------------------ | -------- | ------------- |
+| <a id="auto"></a> `auto` | `"auto"` | `"auto"`      |
+| <a id="avif"></a> `avif` | `"avif"` | `"avif"`      |
+| <a id="jpeg"></a> `jpeg` | `"jpeg"` | `"jpeg"`      |
+| <a id="png"></a> `png`   | `"png"`  | `"png"`       |
+| <a id="same"></a> `same` | `"same"` | `"same"`      |
+| <a id="webp"></a> `webp` | `"webp"` | `"webp"`      |
 
 ---
 
 ### GetFileMetadataHeadersF
 
 ```ts
-GetFileMetadataHeadersF: {
-  auto: "auto";
-  avif: "avif";
-  jpeg: "jpeg";
-  png: "png";
-  same: "same";
-  webp: "webp";
-}
+GetFileMetadataHeadersF: object;
 ```
 
 #### Type declaration
 
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Default value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-<a id="auto-1"></a> `auto`
-
-</td>
-<td>
-
-`"auto"`
-
-</td>
-<td>
-
-`"auto"`
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="avif-1"></a> `avif`
-
-</td>
-<td>
-
-`"avif"`
-
-</td>
-<td>
-
-`"avif"`
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="jpeg-1"></a> `jpeg`
-
-</td>
-<td>
-
-`"jpeg"`
-
-</td>
-<td>
-
-`"jpeg"`
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="png-1"></a> `png`
-
-</td>
-<td>
-
-`"png"`
-
-</td>
-<td>
-
-`"png"`
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="same-1"></a> `same`
-
-</td>
-<td>
-
-`"same"`
-
-</td>
-<td>
-
-`"same"`
-
-</td>
-</tr>
-<tr>
-<td>
-
-<a id="webp-1"></a> `webp`
-
-</td>
-<td>
-
-`"webp"`
-
-</td>
-<td>
-
-`"webp"`
-
-</td>
-</tr>
-</tbody>
-</table>
+| Name                       | Type     | Default value |
+| -------------------------- | -------- | ------------- |
+| <a id="auto-1"></a> `auto` | `"auto"` | `"auto"`      |
+| <a id="avif-1"></a> `avif` | `"avif"` | `"avif"`      |
+| <a id="jpeg-1"></a> `jpeg` | `"jpeg"` | `"jpeg"`      |
+| <a id="png-1"></a> `png`   | `"png"`  | `"png"`       |
+| <a id="same-1"></a> `same` | `"same"` | `"same"`      |
+| <a id="webp-1"></a> `webp` | `"webp"` | `"webp"`      |
 
 ## Functions
 
@@ -1429,206 +343,26 @@ GetFileMetadataHeadersF: {
 function createAPIClient(
   baseURL: string,
   chainFunctions: ChainFunction[],
-): {
-  baseURL: string;
-  deleteFile: (
-    id: string,
-    options?: RequestInit,
-  ) => Promise<FetchResponse<void>>;
-  getFile: (
-    id: string,
-    params?: GetFileParams,
-    options?: RequestInit,
-  ) => Promise<FetchResponse<Blob>>;
-  getFileMetadataHeaders: (
-    id: string,
-    params?: GetFileMetadataHeadersParams,
-    options?: RequestInit,
-  ) => Promise<FetchResponse<void>>;
-  getOpenAPISpec: (
-    options?: RequestInit,
-  ) => Promise<FetchResponse<GetOpenAPISpec200>>;
-  getVersion: (
-    options?: RequestInit,
-  ) => Promise<FetchResponse<VersionInformation>>;
-  pushChainFunction: (chainFunction: ChainFunction) => void;
-  replaceFile: (
-    id: string,
-    replaceFileBody: ReplaceFileBody,
-    options?: RequestInit,
-  ) => Promise<FetchResponse<FileMetadata>>;
-  uploadFiles: (
-    uploadFilesBody: UploadFilesBody,
-    options?: RequestInit,
-  ) => Promise<FetchResponse<UploadFiles201>>;
-};
+): object;
 ```
 
 #### Parameters
 
-<table>
-<thead>
-<tr>
-<th>Parameter</th>
-<th>Type</th>
-<th>Default value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-`baseURL`
-
-</td>
-<td>
-
-`string`
-
-</td>
-<td>
-
-`undefined`
-
-</td>
-</tr>
-<tr>
-<td>
-
-`chainFunctions`
-
-</td>
-<td>
-
-`ChainFunction`[]
-
-</td>
-<td>
-
-`[]`
-
-</td>
-</tr>
-</tbody>
-</table>
+| Parameter        | Type              | Default value |
+| ---------------- | ----------------- | ------------- |
+| `baseURL`        | `string`          | `undefined`   |
+| `chainFunctions` | `ChainFunction`[] | `[]`          |
 
 #### Returns
 
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-
-`baseURL`
-
-</td>
-<td>
-
-`string`
-
-</td>
-</tr>
-<tr>
-<td>
-
-`deleteFile()`
-
-</td>
-<td>
-
-(`id`: `string`, `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
-
-</td>
-</tr>
-<tr>
-<td>
-
-`getFile()`
-
-</td>
-<td>
-
-(`id`: `string`, `params?`: [`GetFileParams`](#getfileparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`Blob`&gt;&gt;
-
-</td>
-</tr>
-<tr>
-<td>
-
-`getFileMetadataHeaders()`
-
-</td>
-<td>
-
-(`id`: `string`, `params?`: [`GetFileMetadataHeadersParams`](#getfilemetadataheadersparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
-
-</td>
-</tr>
-<tr>
-<td>
-
-`getOpenAPISpec()`
-
-</td>
-<td>
-
-(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetOpenAPISpec200`](#getopenapispec200)&gt;&gt;
-
-</td>
-</tr>
-<tr>
-<td>
-
-`getVersion()`
-
-</td>
-<td>
-
-(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`VersionInformation`](#versioninformation)&gt;&gt;
-
-</td>
-</tr>
-<tr>
-<td>
-
-`pushChainFunction()`
-
-</td>
-<td>
-
-(`chainFunction`: `ChainFunction`) => `void`
-
-</td>
-</tr>
-<tr>
-<td>
-
-`replaceFile()`
-
-</td>
-<td>
-
-(`id`: `string`, `replaceFileBody`: [`ReplaceFileBody`](#replacefilebody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`FileMetadata`](#filemetadata)&gt;&gt;
-
-</td>
-</tr>
-<tr>
-<td>
-
-`uploadFiles()`
-
-</td>
-<td>
-
-(`uploadFilesBody`: [`UploadFilesBody`](#uploadfilesbody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;
-
-</td>
-</tr>
-</tbody>
-</table>
+| Name                       | Type                                                                                                                                                                                               |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `baseURL`                  | `string`                                                                                                                                                                                           |
+| `deleteFile()`             | (`id`: `string`, `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;                                                                                    |
+| `getFile()`                | (`id`: `string`, `params?`: [`GetFileParams`](#getfileparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`Blob`&gt;&gt;                                      |
+| `getFileMetadataHeaders()` | (`id`: `string`, `params?`: [`GetFileMetadataHeadersParams`](#getfilemetadataheadersparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;        |
+| `getOpenAPISpec()`         | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetOpenAPISpec200`](#getopenapispec200)&gt;&gt;                                                                 |
+| `getVersion()`             | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`VersionInformation`](#versioninformation)&gt;&gt;                                                               |
+| `pushChainFunction()`      | (`chainFunction`: `ChainFunction`) => `void`                                                                                                                                                       |
+| `replaceFile()`            | (`id`: `string`, `replaceFileBody`: [`ReplaceFileBody`](#replacefilebody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`FileMetadata`](#filemetadata)&gt;&gt; |
+| `uploadFiles()`            | (`uploadFilesBody`: [`UploadFilesBody`](#uploadfilesbody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;             |

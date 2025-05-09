@@ -1,10 +1,10 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": [
-      "src/index.ts",
-      "src/auth/index.ts",
-      "src/storage/index.ts",
-      "src/graphql/index.ts"
+    "src/index.ts",
+    "src/auth/index.ts",
+    "src/storage/index.ts",
+    "src/graphql/index.ts"
   ],
   "entryPointStrategy": "expand",
   "out": "../../docs/reference/javascript/nhost-js",
@@ -28,7 +28,7 @@
   "outputFileStrategy": "modules",
   "titleLink": "sdk-reference",
 
-  "entryFileName": "none",
+  "entryFileName": null,
   "fileExtension": ".mdx",
 
   "hidePageTitle": true,
@@ -36,15 +36,15 @@
   "hideGenerator": true,
   "hideBreadcrumbs": true,
   "useCodeBlocks": true,
-  "expandObjects": true,
+  "expandObjects": false,
   "expandParameters": true,
-  "parametersFormat": "htmlTable",
-  "interfacePropertiesFormat": "htmlTable",
-  "classPropertiesFormat": "htmlTable",
-  "typeAliasPropertiesFormat": "htmlTable",
-  "enumMembersFormat": "htmlTable",
-  "propertyMembersFormat": "htmlTable",
-  "typeDeclarationFormat": "htmlTable",
+  "parametersFormat": "table",
+  "interfacePropertiesFormat": "table",
+  "classPropertiesFormat": "table",
+  "typeAliasPropertiesFormat": "table",
+  "enumMembersFormat": "table",
+  "propertyMembersFormat": "table",
+  "typeDeclarationFormat": "table",
 
   "formatWithPrettier": true,
   "useHTMLEncodedBrackets": true
