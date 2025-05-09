@@ -7,7 +7,7 @@
  */
 
 import { type Session } from "./client";
-import { type StorageInterface } from "./storage";
+import { type SessionStorageInterface } from "./storage";
 import { type ChainFunction } from "../fetch";
 
 /**
@@ -39,7 +39,7 @@ import { type ChainFunction } from "../fetch";
  * @returns A middleware function that can be used in the fetch chain
  */
 export const createSessionResponseMiddleware = (
-  storage: StorageInterface,
+  storage: SessionStorageInterface,
 ): ChainFunction => {
   /**
    * Helper function to extract session data from various response formats

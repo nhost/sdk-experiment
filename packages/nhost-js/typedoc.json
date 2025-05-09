@@ -4,7 +4,8 @@
     "src/index.ts",
     "src/auth/index.ts",
     "src/storage/index.ts",
-    "src/graphql/index.ts"
+    "src/graphql/index.ts",
+    "src/fetch/index.ts",
   ],
   "entryPointStrategy": "expand",
   "out": "../../docs/reference/javascript/nhost-js",
@@ -38,6 +39,7 @@
   "useCodeBlocks": true,
   "expandObjects": false,
   "expandParameters": true,
+  "indexFormat": "table",
   "parametersFormat": "table",
   "interfacePropertiesFormat": "table",
   "classPropertiesFormat": "table",

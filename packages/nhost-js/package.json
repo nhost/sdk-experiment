@@ -25,6 +25,11 @@
       "types": "./dist/src/graphql/index.d.ts",
       "import": "./dist/nhost-js/graphql.es.js",
       "require": "./dist/nhost-js/graphql.cjs.js"
+    },
+    "./fetch": {
+      "types": "./dist/src/fetch/index.d.ts",
+      "import": "./dist/nhost-js/fetch.es.js",
+      "require": "./dist/nhost-js/fetch.cjs.js"
     }
   },
   "typesVersions": {
@@ -37,6 +42,9 @@
       ],
       "graphql": [
         "dist/src/graphql/index.d.ts"
+      ],
+      "fetch": [
+        "dist/src/fetch/index.d.ts"
       ]
     }
   },

@@ -17,7 +17,7 @@ Useful for server-side rendering and when localStorage is not available.
 
 #### Implements
 
-- [`StorageInterface`](#storageinterface)
+- [`SessionStorageInterface`](#sessionstorageinterface)
 
 #### Constructors
 
@@ -64,7 +64,7 @@ The stored session or null if not found
 
 ###### Implementation of
 
-[`StorageInterface`](#storageinterface).[`get`](#get-6)
+[`SessionStorageInterface`](#sessionstorageinterface).[`get`](#get-6)
 
 ##### remove()
 
@@ -80,7 +80,7 @@ Removes the session cookie
 
 ###### Implementation of
 
-[`StorageInterface`](#storageinterface).[`remove`](#remove-6)
+[`SessionStorageInterface`](#sessionstorageinterface).[`remove`](#remove-6)
 
 ##### set()
 
@@ -102,7 +102,7 @@ Sets the session in a cookie
 
 ###### Implementation of
 
-[`StorageInterface`](#storageinterface).[`set`](#set-6)
+[`SessionStorageInterface`](#sessionstorageinterface).[`set`](#set-6)
 
 ---
 
@@ -113,7 +113,7 @@ Persists the session across page reloads and browser restarts.
 
 #### Implements
 
-- [`StorageInterface`](#storageinterface)
+- [`SessionStorageInterface`](#sessionstorageinterface)
 
 #### Constructors
 
@@ -153,7 +153,7 @@ The stored session or null if not found
 
 ###### Implementation of
 
-[`StorageInterface`](#storageinterface).[`get`](#get-6)
+[`SessionStorageInterface`](#sessionstorageinterface).[`get`](#get-6)
 
 ##### remove()
 
@@ -169,7 +169,7 @@ Removes the session from localStorage
 
 ###### Implementation of
 
-[`StorageInterface`](#storageinterface).[`remove`](#remove-6)
+[`SessionStorageInterface`](#sessionstorageinterface).[`remove`](#remove-6)
 
 ##### set()
 
@@ -191,7 +191,7 @@ Sets the session in localStorage
 
 ###### Implementation of
 
-[`StorageInterface`](#storageinterface).[`set`](#set-6)
+[`SessionStorageInterface`](#sessionstorageinterface).[`set`](#set-6)
 
 ---
 
@@ -203,7 +203,7 @@ Session is lost when the page is refreshed or the app is restarted.
 
 #### Implements
 
-- [`StorageInterface`](#storageinterface)
+- [`SessionStorageInterface`](#sessionstorageinterface)
 
 #### Constructors
 
@@ -235,7 +235,7 @@ The stored session or null if not set
 
 ###### Implementation of
 
-[`StorageInterface`](#storageinterface).[`get`](#get-6)
+[`SessionStorageInterface`](#sessionstorageinterface).[`get`](#get-6)
 
 ##### remove()
 
@@ -251,7 +251,7 @@ Clears the session from memory
 
 ###### Implementation of
 
-[`StorageInterface`](#storageinterface).[`remove`](#remove-6)
+[`SessionStorageInterface`](#sessionstorageinterface).[`remove`](#remove-6)
 
 ##### set()
 
@@ -273,11 +273,11 @@ Sets the session in memory
 
 ###### Implementation of
 
-[`StorageInterface`](#storageinterface).[`set`](#set-6)
+[`SessionStorageInterface`](#sessionstorageinterface).[`set`](#set-6)
 
 ## Interfaces
 
-### AuthClient
+### Client
 
 Authentication client interface providing methods for user sign-in, sign-up, and session management
 
@@ -291,7 +291,7 @@ Authentication client interface providing methods for user sign-in, sign-up, and
 | <a id="getversion"></a> `getVersion`                           | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;                                                                                                                        | Retrieve version information about the authentication service                                    |
 | <a id="healthcheckget"></a> `healthCheckGet`                   | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                                                                                   | Verify if the authentication service is operational using GET method                             |
 | <a id="healthcheckhead"></a> `healthCheckHead`                 | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;                                                                                                                                                   | Verify if the authentication service is operational using HEAD method                            |
-| <a id="pushchainfunction"></a> `pushChainFunction`             | (`chainFunction`: `ChainFunction`) => `void`                                                                                                                                                                                                      | Add a middleware function to the request chain                                                   |
+| <a id="pushchainfunction"></a> `pushChainFunction`             | (`chainFunction`: [`ChainFunction`](fetch#chainfunction)) => `void`                                                                                                                                                                           | Add a middleware function to the request chain                                                   |
 | <a id="refreshtoken"></a> `refreshToken`                       | (`refreshTokenRequest`: [`RefreshTokenRequest`](#refreshtokenrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;                                                              | Generate a new JWT access token using a valid refresh token                                      |
 | <a id="signinemailpassword"></a> `signInEmailPassword`         | (`signInEmailPasswordRequest`: [`SignInEmailPasswordRequest`](#signinemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt; | Authenticate a user with their email and password                                                |
 | <a id="signinpasswordlessemail"></a> `signInPasswordlessEmail` | (`signInPasswordlessEmailRequest`: [`SignInPasswordlessEmailRequest`](#signinpasswordlessemailrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                            | Initiate passwordless authentication by sending a magic link to the user's email                 |
@@ -449,6 +449,59 @@ Configuration options for the session refresh middleware
 | Property                                    | Type     | Description                                                                                                     |
 | ------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------- |
 | <a id="marginseconds"></a> `marginSeconds?` | `number` | Number of seconds before token expiration when a refresh should be triggered. Default is 60 seconds (1 minute). |
+
+---
+
+### SessionStorageInterface
+
+Session storage interface for session persistence.
+This interface can be implemented to provide custom storage solutions.
+
+#### Methods
+
+##### get()
+
+```ts
+get(): null | Session;
+```
+
+Get the current session from storage
+
+###### Returns
+
+`null` \| [`Session`](#session)
+
+The stored session or null if not found
+
+##### remove()
+
+```ts
+remove(): void;
+```
+
+Remove the session from storage
+
+###### Returns
+
+`void`
+
+##### set()
+
+```ts
+set(value: Session): void;
+```
+
+Set the session in storage
+
+###### Parameters
+
+| Parameter | Type                  | Description          |
+| --------- | --------------------- | -------------------- |
+| `value`   | [`Session`](#session) | The session to store |
+
+###### Returns
+
+`void`
 
 ---
 
@@ -679,59 +732,6 @@ Request to register a new user with email and password
 | --------------------------------------- | ----------------------------------------------------------------------------------- |
 | <a id="credential-1"></a> `credential?` | [`SignUpWebauthnVerifyRequestCredential`](#signupwebauthnverifyrequestcredential-1) |
 | <a id="options-5"></a> `options?`       | [`SignUpWebauthnVerifyRequestOptions`](#signupwebauthnverifyrequestoptions-1)       |
-
----
-
-### StorageInterface
-
-Storage interface for session persistence.
-This interface can be implemented to provide custom storage solutions.
-
-#### Methods
-
-##### get()
-
-```ts
-get(): null | Session;
-```
-
-Get the current session from storage
-
-###### Returns
-
-`null` \| [`Session`](#session)
-
-The stored session or null if not found
-
-##### remove()
-
-```ts
-remove(): void;
-```
-
-Remove the session from storage
-
-###### Returns
-
-`void`
-
-##### set()
-
-```ts
-set(value: Session): void;
-```
-
-Set the session in storage
-
-###### Parameters
-
-| Parameter | Type                  | Description          |
-| --------- | --------------------- | -------------------- |
-| `value`   | [`Session`](#session) | The session to store |
-
-###### Returns
-
-`void`
 
 ---
 
@@ -1109,19 +1109,19 @@ Default storage key used for storing the Nhost session
 function createAPIClient(
   baseURL: string,
   chainFunctions: ChainFunction[],
-): AuthClient;
+): Client;
 ```
 
 #### Parameters
 
-| Parameter        | Type              | Default value |
-| ---------------- | ----------------- | ------------- |
-| `baseURL`        | `string`          | `undefined`   |
-| `chainFunctions` | `ChainFunction`[] | `[]`          |
+| Parameter        | Type                                         | Default value |
+| ---------------- | -------------------------------------------- | ------------- |
+| `baseURL`        | `string`                                     | `undefined`   |
+| `chainFunctions` | [`ChainFunction`](fetch#chainfunction)[] | `[]`          |
 
 #### Returns
 
-[`AuthClient`](#authclient)
+[`Client`](#client)
 
 ---
 
@@ -1129,8 +1129,8 @@ function createAPIClient(
 
 ```ts
 function createSessionRefreshMiddleware(
-  authClient: AuthClient,
-  storage: StorageInterface,
+  authClient: Client,
+  storage: SessionStorageInterface,
   options?: SessionRefreshOptions,
 ): ChainFunction;
 ```
@@ -1148,15 +1148,15 @@ doesn't need to manually refresh tokens.
 
 #### Parameters
 
-| Parameter    | Type                                              | Description                                        |
-| ------------ | ------------------------------------------------- | -------------------------------------------------- |
-| `authClient` | [`AuthClient`](#authclient)                       | Auth API client for token refresh operations       |
-| `storage`    | [`StorageInterface`](#storageinterface)           | Storage implementation for persisting session data |
-| `options?`   | [`SessionRefreshOptions`](#sessionrefreshoptions) | Configuration options for token refresh behavior   |
+| Parameter    | Type                                                  | Description                                        |
+| ------------ | ----------------------------------------------------- | -------------------------------------------------- |
+| `authClient` | [`Client`](#client)                                   | Auth API client for token refresh operations       |
+| `storage`    | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation for persisting session data |
+| `options?`   | [`SessionRefreshOptions`](#sessionrefreshoptions)     | Configuration options for token refresh behavior   |
 
 #### Returns
 
-`ChainFunction`
+[`ChainFunction`](fetch#chainfunction)
 
 A middleware function that can be used in the fetch chain
 
@@ -1180,7 +1180,7 @@ const nhost = createClient({
 
 ```ts
 function createSessionResponseMiddleware(
-  storage: StorageInterface,
+  storage: SessionStorageInterface,
 ): ChainFunction;
 ```
 
@@ -1198,13 +1198,13 @@ that create or invalidate sessions.
 
 #### Parameters
 
-| Parameter | Type                                    | Description                                        |
-| --------- | --------------------------------------- | -------------------------------------------------- |
-| `storage` | [`StorageInterface`](#storageinterface) | Storage implementation for persisting session data |
+| Parameter | Type                                                  | Description                                        |
+| --------- | ----------------------------------------------------- | -------------------------------------------------- |
+| `storage` | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation for persisting session data |
 
 #### Returns
 
-`ChainFunction`
+[`ChainFunction`](fetch#chainfunction)
 
 A middleware function that can be used in the fetch chain
 
@@ -1227,7 +1227,7 @@ const enhancedFetch = createEnhancedFetch([sessionMiddleware]);
 ### detectStorage()
 
 ```ts
-function detectStorage(): StorageInterface;
+function detectStorage(): SessionStorageInterface;
 ```
 
 Detects the best available storage implementation for the current environment.
@@ -1239,7 +1239,7 @@ The detection process follows this order:
 
 #### Returns
 
-[`StorageInterface`](#storageinterface)
+[`SessionStorageInterface`](#sessionstorageinterface)
 
 The best available storage implementation for the current environment
 

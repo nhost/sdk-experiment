@@ -8,10 +8,10 @@
 import { type Session } from "./client";
 
 /**
- * Storage interface for session persistence.
+ * Session storage interface for session persistence.
  * This interface can be implemented to provide custom storage solutions.
  */
-export interface StorageInterface {
+export interface SessionStorageInterface {
   /**
    * Get the current session from storage
    * @returns The stored session or null if not found
@@ -39,7 +39,7 @@ export const DEFAULT_SESSION_KEY = "nhostSession";
  * Browser localStorage implementation of StorageInterface.
  * Persists the session across page reloads and browser restarts.
  */
-export class LocalStorage implements StorageInterface {
+export class LocalStorage implements SessionStorageInterface {
   private readonly storageKey: string;
 
   /**
@@ -85,7 +85,7 @@ export class LocalStorage implements StorageInterface {
  * persistent storage is not available or desirable.
  * Session is lost when the page is refreshed or the app is restarted.
  */
-export class MemoryStorage implements StorageInterface {
+export class MemoryStorage implements SessionStorageInterface {
   private session: Session | null = null;
 
   /**
@@ -116,7 +116,7 @@ export class MemoryStorage implements StorageInterface {
  * Cookie-based storage implementation.
  * Useful for server-side rendering and when localStorage is not available.
  */
-export class CookieStorage implements StorageInterface {
+export class CookieStorage implements SessionStorageInterface {
   private readonly cookieName: string;
   private readonly expirationDays: number;
   private readonly secure: boolean;
@@ -194,7 +194,7 @@ export class CookieStorage implements StorageInterface {
  *
  * @returns The best available storage implementation for the current environment
  */
-export const detectStorage = (): StorageInterface => {
+export const detectStorage = (): SessionStorageInterface => {
   if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
     try {
       // Test if localStorage is actually available (could be disabled)

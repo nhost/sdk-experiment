@@ -11,6 +11,7 @@ export default defineConfig({
         "nhost-js/auth": resolve(__dirname, "src/auth/index.ts"),
         "nhost-js/storage": resolve(__dirname, "src/storage/index.ts"),
         "nhost-js/graphql": resolve(__dirname, "src/graphql/index.ts"),
+        "nhost-js/fetch": resolve(__dirname, "src/fetch/index.ts"),
       },
       name: "NhostJs",
       formats: ["es", "cjs"],

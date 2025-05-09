@@ -10,6 +10,26 @@ This module provides functionality for file operations with Nhost Storage:
 
 ## Interfaces
 
+### Client
+
+Storage client interface providing methods for file operations
+
+#### Properties
+
+| Property                                                     | Type                                                                                                                                                                                               | Description                                                       |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| <a id="baseurl"></a> `baseURL`                               | `string`                                                                                                                                                                                           | Base URL for the storage service                                  |
+| <a id="deletefile"></a> `deleteFile`                         | (`id`: `string`, `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;                                                                                    | Delete a file                                                     |
+| <a id="getfile"></a> `getFile`                               | (`id`: `string`, `params?`: [`GetFileParams`](#getfileparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`Blob`&gt;&gt;                                      | Download a file                                                   |
+| <a id="getfilemetadataheaders"></a> `getFileMetadataHeaders` | (`id`: `string`, `params?`: [`GetFileMetadataHeadersParams`](#getfilemetadataheadersparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;        | Retrieve file metadata using HTTP HEAD method                     |
+| <a id="getopenapispec"></a> `getOpenAPISpec`                 | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetOpenAPISpec200`](#getopenapispec200)&gt;&gt;                                                                 | Returns the OpenAPI schema definition for this API                |
+| <a id="getversion"></a> `getVersion`                         | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`VersionInformation`](#versioninformation)&gt;&gt;                                                               | Retrieves build and version information about the storage service |
+| <a id="pushchainfunction"></a> `pushChainFunction`           | (`chainFunction`: [`ChainFunction`](fetch#chainfunction)) => `void`                                                                                                                            | Add a middleware function to the request chain                    |
+| <a id="replacefile"></a> `replaceFile`                       | (`id`: `string`, `replaceFileBody`: [`ReplaceFileBody`](#replacefilebody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`FileMetadata`](#filemetadata)&gt;&gt; | Replace an existing file                                          |
+| <a id="uploadfiles"></a> `uploadFiles`                       | (`uploadFilesBody`: [`UploadFilesBody`](#uploadfilesbody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;             | Upload one or more files to storage                               |
+
+---
+
 ### Error
 
 Error information returned by the API.
@@ -69,26 +89,6 @@ Contains a presigned URL for direct file operations.
 | ------------------------------------- | -------- | ------------------------------------------ |
 | <a id="expiration"></a> `expiration?` | `number` | The time in seconds until the URL expires. |
 | <a id="url"></a> `url?`               | `string` | The presigned URL for file operations.     |
-
----
-
-### StorageClient
-
-Storage client interface providing methods for file operations
-
-#### Properties
-
-| Property                                                     | Type                                                                                                                                                                                               | Description                                                       |
-| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| <a id="baseurl"></a> `baseURL`                               | `string`                                                                                                                                                                                           | Base URL for the storage service                                  |
-| <a id="deletefile"></a> `deleteFile`                         | (`id`: `string`, `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;                                                                                    | Delete a file                                                     |
-| <a id="getfile"></a> `getFile`                               | (`id`: `string`, `params?`: [`GetFileParams`](#getfileparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`Blob`&gt;&gt;                                      | Download a file                                                   |
-| <a id="getfilemetadataheaders"></a> `getFileMetadataHeaders` | (`id`: `string`, `params?`: [`GetFileMetadataHeadersParams`](#getfilemetadataheadersparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;        | Retrieve file metadata using HTTP HEAD method                     |
-| <a id="getopenapispec"></a> `getOpenAPISpec`                 | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetOpenAPISpec200`](#getopenapispec200)&gt;&gt;                                                                 | Returns the OpenAPI schema definition for this API                |
-| <a id="getversion"></a> `getVersion`                         | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`VersionInformation`](#versioninformation)&gt;&gt;                                                               | Retrieves build and version information about the storage service |
-| <a id="pushchainfunction"></a> `pushChainFunction`           | (`chainFunction`: `ChainFunction`) => `void`                                                                                                                                                       | Add a middleware function to the request chain                    |
-| <a id="replacefile"></a> `replaceFile`                       | (`id`: `string`, `replaceFileBody`: [`ReplaceFileBody`](#replacefilebody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`FileMetadata`](#filemetadata)&gt;&gt; | Replace an existing file                                          |
-| <a id="uploadfiles"></a> `uploadFiles`                       | (`uploadFilesBody`: [`UploadFilesBody`](#uploadfilesbody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;             | Upload one or more files to storage                               |
 
 ---
 
@@ -340,16 +340,16 @@ type UploadFilesBody = object;
 function createAPIClient(
   baseURL: string,
   chainFunctions: ChainFunction[],
-): StorageClient;
+): Client;
 ```
 
 #### Parameters
 
-| Parameter        | Type              | Default value |
-| ---------------- | ----------------- | ------------- |
-| `baseURL`        | `string`          | `undefined`   |
-| `chainFunctions` | `ChainFunction`[] | `[]`          |
+| Parameter        | Type                                         | Default value |
+| ---------------- | -------------------------------------------- | ------------- |
+| `baseURL`        | `string`                                     | `undefined`   |
+| `chainFunctions` | [`ChainFunction`](fetch#chainfunction)[] | `[]`          |
 
 #### Returns
 
-[`StorageClient`](#storageclient)
+[`Client`](#client)

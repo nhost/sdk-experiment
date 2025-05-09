@@ -7,7 +7,7 @@
  */
 
 import { createAPIClient, type Session } from "./client";
-import { type StorageInterface } from "./storage";
+import { type SessionStorageInterface } from "./storage";
 import { type ChainFunction, type FetchFunction } from "../fetch";
 
 /**
@@ -122,7 +122,7 @@ export interface SessionRefreshOptions {
  */
 export const createSessionRefreshMiddleware = (
   authClient: ReturnType<typeof createAPIClient>,
-  storage: StorageInterface,
+  storage: SessionStorageInterface,
   options?: SessionRefreshOptions,
 ): ChainFunction => {
   const { marginSeconds = 60 } = options || {};
@@ -199,7 +199,7 @@ export const createSessionRefreshMiddleware = (
  */
 async function refreshToken(
   authClient: ReturnType<typeof createAPIClient>,
-  storage: StorageInterface,
+  storage: SessionStorageInterface,
   refreshToken: string,
 ): Promise<Session | null> {
   try {

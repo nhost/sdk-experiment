@@ -348,7 +348,8 @@
                       "reference/javascript/nhost-js/main",
                       "reference/javascript/nhost-js/auth",
                       "reference/javascript/nhost-js/graphql",
-                      "reference/javascript/nhost-js/storage"
+                      "reference/javascript/nhost-js/storage",
+                      "reference/javascript/nhost-js/fetch"
                     ]
                   }
                 ]
