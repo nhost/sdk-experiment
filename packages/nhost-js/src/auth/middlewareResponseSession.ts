@@ -1,15 +1,52 @@
+/**
+ * @fileoverview Session response middleware for the Nhost SDK.
+ * 
+ * This module provides middleware functionality to automatically extract
+ * and persist session information from authentication responses, ensuring
+ * that new sessions are properly stored after sign-in operations.
+ */
+
 import { type Session } from "./client";
 import { type StorageInterface } from "./storage";
 import { type ChainFunction } from "../fetch";
 
 /**
- * Creates a fetch middleware that stores session data from responses
- * @param options - Configuration options for the middleware
- * @returns A chain function to be used with createEnhancedFetch
+ * Creates a fetch middleware that automatically extracts and stores session data from API responses.
+ * 
+ * This middleware:
+ * 1. Monitors responses from authentication-related endpoints
+ * 2. Extracts session information when present
+ * 3. Stores the session in the provided storage implementation
+ * 4. Handles session removal on sign-out
+ * 
+ * This ensures that session data is always up-to-date in storage after operations
+ * that create or invalidate sessions.
+ * 
+ * @example
+ * ```typescript
+ * import { createEnhancedFetch } from '../fetch';
+ * import { createSessionResponseMiddleware } from './middlewareResponseSession';
+ * import { LocalStorage } from './storage';
+ * 
+ * const storage = new LocalStorage();
+ * const sessionMiddleware = createSessionResponseMiddleware(storage);
+ * const enhancedFetch = createEnhancedFetch([sessionMiddleware]);
+ * 
+ * // Session data will be automatically stored from responses
+ * ```
+ * 
+ * @param storage - Storage implementation for persisting session data
+ * @returns A middleware function that can be used in the fetch chain
  */
 export const createSessionResponseMiddleware = (
   storage: StorageInterface,
 ): ChainFunction => {
+  /**
+   * Helper function to extract session data from various response formats
+   * 
+   * @param data - Response data to extract session from
+   * @returns Session object if found, null otherwise
+   */
   const sessionExtractor = function (
     data: any,
   ): Session | null {
@@ -34,10 +71,12 @@ export const createSessionResponseMiddleware = (
       try {
         // Check if this is a logout request
         if (url.endsWith("/signout")) {
+          // Remove session on sign-out
           storage.remove();
           return response;
         }
 
+        // Check if this is an auth-related endpoint that might return session data
         if (
           url.endsWith("/token") ||
           url.includes("/signin/") ||

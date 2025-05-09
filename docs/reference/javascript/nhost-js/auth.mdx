@@ -1,0 +1,4895 @@
+## Classes
+
+### CookieStorage
+
+Cookie-based storage implementation.
+Useful for server-side rendering and when localStorage is not available.
+
+#### Implements
+
+- [`StorageInterface`](#storageinterface)
+
+#### Constructors
+
+##### Constructor
+
+```ts
+new CookieStorage(
+   cookieName: string,
+   expirationDays: number,
+   secure: boolean,
+   sameSite: "strict" | "lax" | "none"): CookieStorage;
+```
+
+Creates a new CookieStorage instance
+
+###### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`cookieName`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+`DEFAULT_SESSION_KEY`
+
+</td>
+<td>
+
+Name of the cookie to use (defaults to "nhostSession")
+
+</td>
+</tr>
+<tr>
+<td>
+
+`expirationDays`
+
+</td>
+<td>
+
+`number`
+
+</td>
+<td>
+
+`30`
+
+</td>
+<td>
+
+Number of days until the cookie expires (defaults to 30)
+
+</td>
+</tr>
+<tr>
+<td>
+
+`secure`
+
+</td>
+<td>
+
+`boolean`
+
+</td>
+<td>
+
+`true`
+
+</td>
+<td>
+
+Whether to set the Secure flag on the cookie (defaults to true)
+
+</td>
+</tr>
+<tr>
+<td>
+
+`sameSite`
+
+</td>
+<td>
+
+`"strict"` \| `"lax"` \| `"none"`
+
+</td>
+<td>
+
+`"lax"`
+
+</td>
+<td>
+
+SameSite policy for the cookie (defaults to "lax")
+
+</td>
+</tr>
+</tbody>
+</table>
+
+###### Returns
+
+[`CookieStorage`](#cookiestorage)
+
+#### Methods
+
+##### get()
+
+```ts
+get(): null | Session;
+```
+
+Gets the session from cookies
+
+###### Returns
+
+`null` \| [`Session`](#session)
+
+The stored session or null if not found
+
+###### Implementation of
+
+[`StorageInterface`](#storageinterface).[`get`](#get-6)
+
+##### remove()
+
+```ts
+remove(): void;
+```
+
+Removes the session cookie
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`StorageInterface`](#storageinterface).[`remove`](#remove-6)
+
+##### set()
+
+```ts
+set(value: Session): void;
+```
+
+Sets the session in a cookie
+
+###### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`value`
+
+</td>
+<td>
+
+[`Session`](#session)
+
+</td>
+<td>
+
+The session to store
+
+</td>
+</tr>
+</tbody>
+</table>
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`StorageInterface`](#storageinterface).[`set`](#set-6)
+
+---
+
+### LocalStorage
+
+Browser localStorage implementation of StorageInterface.
+Persists the session across page reloads and browser restarts.
+
+#### Implements
+
+- [`StorageInterface`](#storageinterface)
+
+#### Constructors
+
+##### Constructor
+
+```ts
+new LocalStorage(storageKey: string): LocalStorage;
+```
+
+Creates a new LocalStorage instance
+
+###### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`storageKey`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+`DEFAULT_SESSION_KEY`
+
+</td>
+<td>
+
+The key to use in localStorage (defaults to "nhostSession")
+
+</td>
+</tr>
+</tbody>
+</table>
+
+###### Returns
+
+[`LocalStorage`](#localstorage)
+
+#### Methods
+
+##### get()
+
+```ts
+get(): null | Session;
+```
+
+Gets the session from localStorage
+
+###### Returns
+
+`null` \| [`Session`](#session)
+
+The stored session or null if not found
+
+###### Implementation of
+
+[`StorageInterface`](#storageinterface).[`get`](#get-6)
+
+##### remove()
+
+```ts
+remove(): void;
+```
+
+Removes the session from localStorage
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`StorageInterface`](#storageinterface).[`remove`](#remove-6)
+
+##### set()
+
+```ts
+set(value: Session): void;
+```
+
+Sets the session in localStorage
+
+###### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`value`
+
+</td>
+<td>
+
+[`Session`](#session)
+
+</td>
+<td>
+
+The session to store
+
+</td>
+</tr>
+</tbody>
+</table>
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`StorageInterface`](#storageinterface).[`set`](#set-6)
+
+---
+
+### MemoryStorage
+
+In-memory storage implementation for non-browser environments or when
+persistent storage is not available or desirable.
+Session is lost when the page is refreshed or the app is restarted.
+
+#### Implements
+
+- [`StorageInterface`](#storageinterface)
+
+#### Constructors
+
+##### Constructor
+
+```ts
+new MemoryStorage(): MemoryStorage;
+```
+
+###### Returns
+
+[`MemoryStorage`](#memorystorage)
+
+#### Methods
+
+##### get()
+
+```ts
+get(): null | Session;
+```
+
+Gets the session from memory
+
+###### Returns
+
+`null` \| [`Session`](#session)
+
+The stored session or null if not set
+
+###### Implementation of
+
+[`StorageInterface`](#storageinterface).[`get`](#get-6)
+
+##### remove()
+
+```ts
+remove(): void;
+```
+
+Clears the session from memory
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`StorageInterface`](#storageinterface).[`remove`](#remove-6)
+
+##### set()
+
+```ts
+set(value: Session): void;
+```
+
+Sets the session in memory
+
+###### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`value`
+
+</td>
+<td>
+
+[`Session`](#session)
+
+</td>
+<td>
+
+The session to store
+
+</td>
+</tr>
+</tbody>
+</table>
+
+###### Returns
+
+`void`
+
+###### Implementation of
+
+[`StorageInterface`](#storageinterface).[`set`](#set-6)
+
+## Interfaces
+
+### CreatePATRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="expiresat"></a> `expiresAt`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Expiration date of the PAT
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="metadata"></a> `metadata?`
+
+</td>
+<td>
+
+[`CreatePATRequestMetadata`](#createpatrequestmetadata-1)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### CreatePATResponse
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="id"></a> `id`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+ID of the PAT
+
+**Pattern**
+
+\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="personalaccesstoken"></a> `personalAccessToken`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+PAT
+
+**Pattern**
+
+\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### ErrorResponse
+
+Standardized error response
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="error"></a> `error`
+
+</td>
+<td>
+
+[`ErrorResponseError`](#errorresponseerror-2)
+
+</td>
+<td>
+
+Error code identifying the specific application error
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="message"></a> `message`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Human-friendly error message
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="status"></a> `status`
+
+</td>
+<td>
+
+`number`
+
+</td>
+<td>
+
+HTTP status error code
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### Jwk
+
+JSON Web Key for JWT verification
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="alg"></a> `alg`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Algorithm used with this key
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="e"></a> `e`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+RSA public exponent
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="kid"></a> `kid`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Key ID
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="kty"></a> `kty`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Key type
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="n"></a> `n`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+RSA modulus
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="use"></a> `use`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Key usage
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### JWKSet
+
+JSON Web Key Set for verifying JWT signatures
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="keys"></a> `keys`
+
+</td>
+<td>
+
+[`Jwk`](#jwk)[]
+
+</td>
+<td>
+
+Array of public keys
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### LinkIdTokenRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="idtoken"></a> `idToken`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Apple ID token
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="nonce"></a> `nonce?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Nonce used during sign in process
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="provider"></a> `provider`
+
+</td>
+<td>
+
+[`Provider`](#provider-2)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### MFAChallengePayload
+
+Challenge payload for multi-factor authentication
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="ticket"></a> `ticket`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Ticket to use when completing the MFA challenge
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### OptionsRedirectTo
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="redirectto"></a> `redirectTo?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### RefreshTokenRequest
+
+Request to refresh an access token
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="refreshtoken"></a> `refreshToken`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Refresh token used to generate a new access token
+
+**Pattern**
+
+\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### Session
+
+User authentication session containing tokens and user information
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="accesstoken"></a> `accessToken`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+JWT token for authenticating API requests
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="accesstokenexpiresin"></a> `accessTokenExpiresIn`
+
+</td>
+<td>
+
+`number`
+
+</td>
+<td>
+
+Expiration time of the access token in seconds
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="refreshtoken-1"></a> `refreshToken`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Token used to refresh the access token
+
+**Pattern**
+
+\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="refreshtokenid"></a> `refreshTokenId`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Identifier for the refresh token
+
+**Pattern**
+
+\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="user"></a> `user?`
+
+</td>
+<td>
+
+[`User`](#user-1)
+
+</td>
+<td>
+
+Information about the authenticated user
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SessionPayload
+
+Container for session information
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="session-1"></a> `session?`
+
+</td>
+<td>
+
+[`Session`](#session)
+
+</td>
+<td>
+
+User session data. Null if authentication requires additional steps.
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SessionRefreshOptions
+
+Configuration options for the session refresh middleware
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="marginseconds"></a> `marginSeconds?`
+
+</td>
+<td>
+
+`number`
+
+</td>
+<td>
+
+Number of seconds before token expiration when a refresh should be triggered.
+Default is 60 seconds (1 minute).
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SigninAnonymousRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="displayname"></a> `displayName?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="locale"></a> `locale?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A two-characters locale
+
+**Min Length**
+
+2
+
+**Max Length**
+
+2
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="metadata-1"></a> `metadata?`
+
+</td>
+<td>
+
+[`SigninAnonymousRequestMetadata`](#signinanonymousrequestmetadata-1)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignInEmailPasswordRequest
+
+Request to authenticate using email and password
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="email"></a> `email`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+User's email address
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="password"></a> `password`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+User's password
+
+**Min Length**
+
+3
+
+**Max Length**
+
+50
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignInEmailPasswordResponse
+
+Response for email-password authentication that may include a session or MFA challenge
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="mfa"></a> `mfa?`
+
+</td>
+<td>
+
+[`MFAChallengePayload`](#mfachallengepayload)
+
+</td>
+<td>
+
+MFA challenge if two-factor authentication is required
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="session-2"></a> `session?`
+
+</td>
+<td>
+
+[`Session`](#session)
+
+</td>
+<td>
+
+User session if authentication was successful. Null if MFA challenge is required.
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignInIdTokenRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="idtoken-1"></a> `idToken`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Apple ID token
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="nonce-1"></a> `nonce?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Nonce used during sign in process
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="options"></a> `options?`
+
+</td>
+<td>
+
+[`SignUpOptions`](#signupoptions)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="provider-3"></a> `provider`
+
+</td>
+<td>
+
+[`Provider`](#provider-2)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignInMfaTotpRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="otp"></a> `otp`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+One time password
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="ticket-1"></a> `ticket`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Ticket
+
+**Pattern**
+
+^mfaTotp:.\*$
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignInOTPEmailRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="email-1"></a> `email`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A valid email
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="options-1"></a> `options?`
+
+</td>
+<td>
+
+[`SignUpOptions`](#signupoptions)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignInOTPEmailVerifyRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="email-2"></a> `email`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A valid email
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="otp-1"></a> `otp`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+One time password
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignInOTPEmailVerifyResponse
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="session-3"></a> `session?`
+
+</td>
+<td>
+
+[`Session`](#session)
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignInPasswordlessEmailRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="email-3"></a> `email`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A valid email
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="options-2"></a> `options?`
+
+</td>
+<td>
+
+[`SignUpOptions`](#signupoptions)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignInPATRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="personalaccesstoken-1"></a> `personalAccessToken`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+PAT
+
+**Pattern**
+
+\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignInWebauthnRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="email-4"></a> `email?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A valid email
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignInWebauthnResponse
+
+#### Indexable
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignInWebauthnVerifyRequest
+
+#### Indexable
+
+```ts
+[key: string]: unknown
+```
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="credential"></a> `credential`
+
+</td>
+<td>
+
+[`SignInWebauthnVerifyRequestCredential`](#signinwebauthnverifyrequestcredential-1)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="email-5"></a> ~~`email?`~~
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A valid email. Deprecated, no longer used
+
+**Deprecated**
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignOutSchema
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="all"></a> `all?`
+
+</td>
+<td>
+
+`boolean`
+
+</td>
+<td>
+
+Sign out from all connected devices
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="refreshtoken-2"></a> `refreshToken`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Refresh token for the current session
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignUpEmailPasswordRequest
+
+Request to register a new user with email and password
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="email-6"></a> `email`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Email address for the new user account
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="options-3"></a> `options?`
+
+</td>
+<td>
+
+[`SignUpOptions`](#signupoptions)
+
+</td>
+<td>
+
+Optional configuration for the new user account
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="password-1"></a> `password`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Password for the new user account
+
+**Min Length**
+
+3
+
+**Max Length**
+
+50
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignUpOptions
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="allowedroles"></a> `allowedRoles?`
+
+</td>
+<td>
+
+`string`[]
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="defaultrole"></a> `defaultRole?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="displayname-1"></a> `displayName?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+**Max Length**
+
+32
+
+**Pattern**
+
+^[\p{L}\p{N}\p{S} ,.'-]+$
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="locale-1"></a> `locale?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A two-characters locale
+
+**Min Length**
+
+2
+
+**Max Length**
+
+2
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="metadata-2"></a> `metadata?`
+
+</td>
+<td>
+
+[`SignUpOptionsMetadata`](#signupoptionsmetadata-1)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="redirectto-1"></a> `redirectTo?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignUpWebauthnRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="email-7"></a> `email`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A valid email
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="options-4"></a> `options?`
+
+</td>
+<td>
+
+[`SignUpOptions`](#signupoptions)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### SignUpWebauthnResponse
+
+#### Indexable
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignUpWebauthnVerifyRequest
+
+#### Indexable
+
+```ts
+[key: string]: unknown
+```
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="credential-1"></a> `credential?`
+
+</td>
+<td>
+
+[`SignUpWebauthnVerifyRequestCredential`](#signupwebauthnverifyrequestcredential-1)
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="options-5"></a> `options?`
+
+</td>
+<td>
+
+[`SignUpWebauthnVerifyRequestOptions`](#signupwebauthnverifyrequestoptions-1)
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### StorageInterface
+
+Storage interface for session persistence.
+This interface can be implemented to provide custom storage solutions.
+
+#### Methods
+
+##### get()
+
+```ts
+get(): null | Session;
+```
+
+Get the current session from storage
+
+###### Returns
+
+`null` \| [`Session`](#session)
+
+The stored session or null if not found
+
+##### remove()
+
+```ts
+remove(): void;
+```
+
+Remove the session from storage
+
+###### Returns
+
+`void`
+
+##### set()
+
+```ts
+set(value: Session): void;
+```
+
+Set the session in storage
+
+###### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`value`
+
+</td>
+<td>
+
+[`Session`](#session)
+
+</td>
+<td>
+
+The session to store
+
+</td>
+</tr>
+</tbody>
+</table>
+
+###### Returns
+
+`void`
+
+---
+
+### TotpGenerateResponse
+
+Response containing TOTP setup information for MFA
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="imageurl"></a> `imageUrl`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+URL to QR code image for scanning with an authenticator app
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="totpsecret"></a> `totpSecret`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+TOTP secret key for manual setup with an authenticator app
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### User
+
+User profile and account information
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="avatarurl"></a> `avatarUrl`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+URL to the user's profile picture
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="createdat"></a> `createdAt`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Timestamp when the user account was created
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="defaultrole-1"></a> `defaultRole`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Default authorization role for the user
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="displayname-2"></a> `displayName`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+User's display name
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="email-8"></a> `email?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+User's email address
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="emailverified"></a> `emailVerified`
+
+</td>
+<td>
+
+`boolean`
+
+</td>
+<td>
+
+Whether the user's email has been verified
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="id-1"></a> `id`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Unique identifier for the user
+
+**Pattern**
+
+\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="isanonymous"></a> `isAnonymous`
+
+</td>
+<td>
+
+`boolean`
+
+</td>
+<td>
+
+Whether this is an anonymous user account
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="locale-2"></a> `locale`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+User's preferred locale (language code)
+
+**Min Length**
+
+2
+
+**Max Length**
+
+2
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="metadata-3"></a> `metadata`
+
+</td>
+<td>
+
+[`UserMetadata`](#usermetadata-1)
+
+</td>
+<td>
+
+Custom metadata associated with the user
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="phonenumber"></a> `phoneNumber?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+User's phone number
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="phonenumberverified"></a> `phoneNumberVerified`
+
+</td>
+<td>
+
+`boolean`
+
+</td>
+<td>
+
+Whether the user's phone number has been verified
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="roles"></a> `roles`
+
+</td>
+<td>
+
+`string`[]
+
+</td>
+<td>
+
+List of roles assigned to the user
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### UserDeanonymizeRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="connection"></a> ~~`connection?`~~
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Deprecated, will be ignored
+
+**Deprecated**
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="email-9"></a> `email`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A valid email
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="options-6"></a> `options?`
+
+</td>
+<td>
+
+[`SignUpOptions`](#signupoptions)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="password-2"></a> `password?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A password of minimum 3 characters
+
+**Min Length**
+
+3
+
+**Max Length**
+
+50
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="signinmethod"></a> `signInMethod`
+
+</td>
+<td>
+
+[`UserDeanonymizeRequestSignInMethod`](#userdeanonymizerequestsigninmethod-2)
+
+</td>
+<td>
+
+Which sign-in method to use
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### UserEmailChangeRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="newemail"></a> `newEmail`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A valid email
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="options-7"></a> `options?`
+
+</td>
+<td>
+
+[`OptionsRedirectTo`](#optionsredirectto)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### UserEmailSendVerificationEmailRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="email-10"></a> `email`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A valid email
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="options-8"></a> `options?`
+
+</td>
+<td>
+
+[`OptionsRedirectTo`](#optionsredirectto)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### UserMfaRequest
+
+Request to activate or deactivate multi-factor authentication
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="activemfatype"></a> `activeMfaType?`
+
+</td>
+<td>
+
+[`UserMfaRequestActiveMfaType`](#usermfarequestactivemfatype-3)
+
+</td>
+<td>
+
+Type of MFA to activate. Use empty string to disable MFA.
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="code"></a> `code`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Verification code from the authenticator app when activating MFA
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### UserPasswordRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="newpassword"></a> `newPassword`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A password of minimum 3 characters
+
+**Min Length**
+
+3
+
+**Max Length**
+
+50
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="ticket-2"></a> `ticket?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Ticket to reset the password, required if the user is not authenticated
+
+**Pattern**
+
+^passwordReset\:.\*$
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### UserPasswordResetRequest
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="email-11"></a> `email`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+A valid email
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="options-9"></a> `options?`
+
+</td>
+<td>
+
+[`OptionsRedirectTo`](#optionsredirectto)
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+## Type Aliases
+
+### CreatePATRequestMetadata
+
+```ts
+type CreatePATRequestMetadata = {
+  [key: string]: unknown;
+};
+```
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### ErrorResponseError
+
+```ts
+type ErrorResponseError =
+  (typeof ErrorResponseError)[keyof typeof ErrorResponseError];
+```
+
+Error code identifying the specific application error
+
+---
+
+### FetchResponse&lt;T&gt;
+
+```ts
+type FetchResponse<T> = {
+  data: T;
+  headers: Record<string, string>;
+  status: number;
+};
+```
+
+#### Type Parameters
+
+<table>
+<thead>
+<tr>
+<th>Type Parameter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`T`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="data"></a> `data`
+
+</td>
+<td>
+
+`T`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="headers"></a> `headers`
+
+</td>
+<td>
+
+`Record`&lt;`string`, `string`&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="status-1"></a> `status`
+
+</td>
+<td>
+
+`number`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### GetVersion200
+
+```ts
+type GetVersion200 = {
+  version: string;
+};
+```
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="version"></a> `version`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+The version of the authentication service
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### OKResponse
+
+```ts
+type OKResponse = (typeof OKResponse)[keyof typeof OKResponse];
+```
+
+---
+
+### Provider
+
+```ts
+type Provider = (typeof Provider)[keyof typeof Provider];
+```
+
+---
+
+### RedirectToQueryParameter
+
+```ts
+type RedirectToQueryParameter = string;
+```
+
+Target URL for the redirect
+
+---
+
+### SigninAnonymousRequestMetadata
+
+```ts
+type SigninAnonymousRequestMetadata = {
+  [key: string]: unknown;
+};
+```
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignInWebauthnVerifyRequestCredential
+
+```ts
+type SignInWebauthnVerifyRequestCredential = {
+  [key: string]: unknown;
+};
+```
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignUpOptionsMetadata
+
+```ts
+type SignUpOptionsMetadata = {
+  [key: string]: unknown;
+};
+```
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignUpWebauthnVerifyRequestCredential
+
+```ts
+type SignUpWebauthnVerifyRequestCredential = {
+  [key: string]: unknown;
+};
+```
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignUpWebauthnVerifyRequestOptions
+
+```ts
+type SignUpWebauthnVerifyRequestOptions = SignUpOptions &
+  SignUpWebauthnVerifyRequestOptionsAllOf;
+```
+
+---
+
+### SignUpWebauthnVerifyRequestOptionsAllOf
+
+```ts
+type SignUpWebauthnVerifyRequestOptionsAllOf = {
+  nickname?: string;
+};
+```
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="nickname"></a> `nickname?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### TicketQueryParameter
+
+```ts
+type TicketQueryParameter = string;
+```
+
+Ticket
+
+---
+
+### TicketTypeQueryParameter
+
+```ts
+type TicketTypeQueryParameter =
+  (typeof TicketTypeQueryParameter)[keyof typeof TicketTypeQueryParameter];
+```
+
+Type of the ticket
+
+---
+
+### UserDeanonymizeRequestSignInMethod
+
+```ts
+type UserDeanonymizeRequestSignInMethod =
+  (typeof UserDeanonymizeRequestSignInMethod)[keyof typeof UserDeanonymizeRequestSignInMethod];
+```
+
+Which sign-in method to use
+
+---
+
+### UserMetadata
+
+```ts
+type UserMetadata = {
+  [key: string]: unknown;
+};
+```
+
+Custom metadata associated with the user
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### UserMfaRequestActiveMfaType
+
+```ts
+type UserMfaRequestActiveMfaType =
+  (typeof UserMfaRequestActiveMfaType)[keyof typeof UserMfaRequestActiveMfaType];
+```
+
+Type of MFA to activate. Use empty string to disable MFA.
+
+## Variables
+
+### DEFAULT_SESSION_KEY
+
+```ts
+const DEFAULT_SESSION_KEY: "nhostSession" = "nhostSession";
+```
+
+Default storage key used for storing the Nhost session
+
+---
+
+### ErrorResponseError
+
+```ts
+ErrorResponseError: {
+  default-role-must-be-in-allowed-roles: "default-role-must-be-in-allowed-roles";
+  disabled-endpoint: "disabled-endpoint";
+  disabled-mfa-totp: "disabled-mfa-totp";
+  disabled-user: "disabled-user";
+  email-already-in-use: "email-already-in-use";
+  email-already-verified: "email-already-verified";
+  forbidden-anonymous: "forbidden-anonymous";
+  internal-server-error: "internal-server-error";
+  invalid-email-password: "invalid-email-password";
+  invalid-pat: "invalid-pat";
+  invalid-refresh-token: "invalid-refresh-token";
+  invalid-request: "invalid-request";
+  invalid-ticket: "invalid-ticket";
+  invalid-totp: "invalid-totp";
+  locale-not-allowed: "locale-not-allowed";
+  mfa-type-not-found: "mfa-type-not-found";
+  no-totp-secret: "no-totp-secret";
+  password-in-hibp-database: "password-in-hibp-database";
+  password-too-short: "password-too-short";
+  redirectTo-not-allowed: "redirectTo-not-allowed";
+  role-not-allowed: "role-not-allowed";
+  signup-disabled: "signup-disabled";
+  totp-already-active: "totp-already-active";
+  unverified-user: "unverified-user";
+  user-not-anonymous: "user-not-anonymous";
+};
+```
+
+#### Type declaration
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="default-role-must-be-in-allowed-roles"></a> `default-role-must-be-in-allowed-roles`
+
+</td>
+<td>
+
+`"default-role-must-be-in-allowed-roles"`
+
+</td>
+<td>
+
+`"default-role-must-be-in-allowed-roles"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="disabled-endpoint"></a> `disabled-endpoint`
+
+</td>
+<td>
+
+`"disabled-endpoint"`
+
+</td>
+<td>
+
+`"disabled-endpoint"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="disabled-mfa-totp"></a> `disabled-mfa-totp`
+
+</td>
+<td>
+
+`"disabled-mfa-totp"`
+
+</td>
+<td>
+
+`"disabled-mfa-totp"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="disabled-user"></a> `disabled-user`
+
+</td>
+<td>
+
+`"disabled-user"`
+
+</td>
+<td>
+
+`"disabled-user"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="email-already-in-use"></a> `email-already-in-use`
+
+</td>
+<td>
+
+`"email-already-in-use"`
+
+</td>
+<td>
+
+`"email-already-in-use"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="email-already-verified"></a> `email-already-verified`
+
+</td>
+<td>
+
+`"email-already-verified"`
+
+</td>
+<td>
+
+`"email-already-verified"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="forbidden-anonymous"></a> `forbidden-anonymous`
+
+</td>
+<td>
+
+`"forbidden-anonymous"`
+
+</td>
+<td>
+
+`"forbidden-anonymous"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="internal-server-error"></a> `internal-server-error`
+
+</td>
+<td>
+
+`"internal-server-error"`
+
+</td>
+<td>
+
+`"internal-server-error"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="invalid-email-password"></a> `invalid-email-password`
+
+</td>
+<td>
+
+`"invalid-email-password"`
+
+</td>
+<td>
+
+`"invalid-email-password"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="invalid-pat"></a> `invalid-pat`
+
+</td>
+<td>
+
+`"invalid-pat"`
+
+</td>
+<td>
+
+`"invalid-pat"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="invalid-refresh-token"></a> `invalid-refresh-token`
+
+</td>
+<td>
+
+`"invalid-refresh-token"`
+
+</td>
+<td>
+
+`"invalid-refresh-token"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="invalid-request"></a> `invalid-request`
+
+</td>
+<td>
+
+`"invalid-request"`
+
+</td>
+<td>
+
+`"invalid-request"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="invalid-ticket"></a> `invalid-ticket`
+
+</td>
+<td>
+
+`"invalid-ticket"`
+
+</td>
+<td>
+
+`"invalid-ticket"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="invalid-totp"></a> `invalid-totp`
+
+</td>
+<td>
+
+`"invalid-totp"`
+
+</td>
+<td>
+
+`"invalid-totp"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="locale-not-allowed"></a> `locale-not-allowed`
+
+</td>
+<td>
+
+`"locale-not-allowed"`
+
+</td>
+<td>
+
+`"locale-not-allowed"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="mfa-type-not-found"></a> `mfa-type-not-found`
+
+</td>
+<td>
+
+`"mfa-type-not-found"`
+
+</td>
+<td>
+
+`"mfa-type-not-found"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="no-totp-secret"></a> `no-totp-secret`
+
+</td>
+<td>
+
+`"no-totp-secret"`
+
+</td>
+<td>
+
+`"no-totp-secret"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="password-in-hibp-database"></a> `password-in-hibp-database`
+
+</td>
+<td>
+
+`"password-in-hibp-database"`
+
+</td>
+<td>
+
+`"password-in-hibp-database"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="password-too-short"></a> `password-too-short`
+
+</td>
+<td>
+
+`"password-too-short"`
+
+</td>
+<td>
+
+`"password-too-short"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="redirectto-not-allowed"></a> `redirectTo-not-allowed`
+
+</td>
+<td>
+
+`"redirectTo-not-allowed"`
+
+</td>
+<td>
+
+`"redirectTo-not-allowed"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="role-not-allowed"></a> `role-not-allowed`
+
+</td>
+<td>
+
+`"role-not-allowed"`
+
+</td>
+<td>
+
+`"role-not-allowed"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="signup-disabled"></a> `signup-disabled`
+
+</td>
+<td>
+
+`"signup-disabled"`
+
+</td>
+<td>
+
+`"signup-disabled"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="totp-already-active"></a> `totp-already-active`
+
+</td>
+<td>
+
+`"totp-already-active"`
+
+</td>
+<td>
+
+`"totp-already-active"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="unverified-user"></a> `unverified-user`
+
+</td>
+<td>
+
+`"unverified-user"`
+
+</td>
+<td>
+
+`"unverified-user"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="user-not-anonymous"></a> `user-not-anonymous`
+
+</td>
+<td>
+
+`"user-not-anonymous"`
+
+</td>
+<td>
+
+`"user-not-anonymous"`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### OKResponse
+
+```ts
+OKResponse: {
+  OK: "OK";
+}
+```
+
+#### Type declaration
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="ok"></a> `OK`
+
+</td>
+<td>
+
+`"OK"`
+
+</td>
+<td>
+
+`"OK"`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### Provider
+
+```ts
+Provider: {
+  apple: "apple";
+  google: "google";
+}
+```
+
+#### Type declaration
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="apple"></a> `apple`
+
+</td>
+<td>
+
+`"apple"`
+
+</td>
+<td>
+
+`"apple"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="google"></a> `google`
+
+</td>
+<td>
+
+`"google"`
+
+</td>
+<td>
+
+`"google"`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### TicketTypeQueryParameter
+
+```ts
+TicketTypeQueryParameter: {
+  emailConfirmChange: "emailConfirmChange";
+  emailVerify: "emailVerify";
+  passwordReset: "passwordReset";
+  signinPasswordless: "signinPasswordless";
+}
+```
+
+#### Type declaration
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="emailconfirmchange"></a> `emailConfirmChange`
+
+</td>
+<td>
+
+`"emailConfirmChange"`
+
+</td>
+<td>
+
+`"emailConfirmChange"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="emailverify"></a> `emailVerify`
+
+</td>
+<td>
+
+`"emailVerify"`
+
+</td>
+<td>
+
+`"emailVerify"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="passwordreset"></a> `passwordReset`
+
+</td>
+<td>
+
+`"passwordReset"`
+
+</td>
+<td>
+
+`"passwordReset"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="signinpasswordless"></a> `signinPasswordless`
+
+</td>
+<td>
+
+`"signinPasswordless"`
+
+</td>
+<td>
+
+`"signinPasswordless"`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### UserDeanonymizeRequestSignInMethod
+
+```ts
+UserDeanonymizeRequestSignInMethod: {
+  email-password: "email-password";
+  passwordless: "passwordless";
+};
+```
+
+#### Type declaration
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="email-password"></a> `email-password`
+
+</td>
+<td>
+
+`"email-password"`
+
+</td>
+<td>
+
+`"email-password"`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="passwordless"></a> `passwordless`
+
+</td>
+<td>
+
+`"passwordless"`
+
+</td>
+<td>
+
+`"passwordless"`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### UserMfaRequestActiveMfaType
+
+```ts
+UserMfaRequestActiveMfaType: {
+  : "";
+  totp: "totp";
+};
+```
+
+#### Type declaration
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+``
+
+</td>
+<td>
+
+`""`
+
+</td>
+<td>
+
+`""`
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="totp"></a> `totp`
+
+</td>
+<td>
+
+`"totp"`
+
+</td>
+<td>
+
+`"totp"`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+## Functions
+
+### createAPIClient()
+
+```ts
+function createAPIClient(
+  baseURL: string,
+  chainFunctions: ChainFunction[],
+): {
+  baseURL: string;
+  changeUserMfa: (
+    options?: RequestInit,
+  ) => Promise<FetchResponse<TotpGenerateResponse>>;
+  changeUserMfaVerify: (
+    userMfaRequest: UserMfaRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<"OK">>;
+  getVersion: (options?: RequestInit) => Promise<FetchResponse<GetVersion200>>;
+  healthCheckGet: (options?: RequestInit) => Promise<FetchResponse<"OK">>;
+  healthCheckHead: (options?: RequestInit) => Promise<FetchResponse<void>>;
+  pushChainFunction: (chainFunction: ChainFunction) => void;
+  refreshToken: (
+    refreshTokenRequest: RefreshTokenRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<Session>>;
+  signInEmailPassword: (
+    signInEmailPasswordRequest: SignInEmailPasswordRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<SignInEmailPasswordResponse>>;
+  signInPasswordlessEmail: (
+    signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<"OK">>;
+  signInVerifyMfaTotp: (
+    signInMfaTotpRequest: SignInMfaTotpRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<SessionPayload>>;
+  signOut: (
+    signOutSchema: SignOutSchema,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<"OK">>;
+  signUpEmailPassword: (
+    signUpEmailPasswordRequest: SignUpEmailPasswordRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<SessionPayload>>;
+};
+```
+
+#### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`baseURL`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+`undefined`
+
+</td>
+</tr>
+<tr>
+<td>
+
+`chainFunctions`
+
+</td>
+<td>
+
+`ChainFunction`[]
+
+</td>
+<td>
+
+`[]`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Returns
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`baseURL`
+
+</td>
+<td>
+
+`string`
+
+</td>
+</tr>
+<tr>
+<td>
+
+`changeUserMfa()`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`changeUserMfaVerify()`
+
+</td>
+<td>
+
+(`userMfaRequest`: [`UserMfaRequest`](#usermfarequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`getVersion()`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`healthCheckGet()`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`healthCheckHead()`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`pushChainFunction()`
+
+</td>
+<td>
+
+(`chainFunction`: `ChainFunction`) => `void`
+
+</td>
+</tr>
+<tr>
+<td>
+
+`refreshToken()`
+
+</td>
+<td>
+
+(`refreshTokenRequest`: [`RefreshTokenRequest`](#refreshtokenrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`signInEmailPassword()`
+
+</td>
+<td>
+
+(`signInEmailPasswordRequest`: [`SignInEmailPasswordRequest`](#signinemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`signInPasswordlessEmail()`
+
+</td>
+<td>
+
+(`signInPasswordlessEmailRequest`: [`SignInPasswordlessEmailRequest`](#signinpasswordlessemailrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`signInVerifyMfaTotp()`
+
+</td>
+<td>
+
+(`signInMfaTotpRequest`: [`SignInMfaTotpRequest`](#signinmfatotprequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`signOut()`
+
+</td>
+<td>
+
+(`signOutSchema`: [`SignOutSchema`](#signoutschema), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`signUpEmailPassword()`
+
+</td>
+<td>
+
+(`signUpEmailPasswordRequest`: [`SignUpEmailPasswordRequest`](#signupemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### createSessionRefreshMiddleware()
+
+```ts
+function createSessionRefreshMiddleware(
+  authClient: {
+    baseURL: string;
+    changeUserMfa: (
+      options?: RequestInit,
+    ) => Promise<FetchResponse<TotpGenerateResponse>>;
+    changeUserMfaVerify: (
+      userMfaRequest: UserMfaRequest,
+      options?: RequestInit,
+    ) => Promise<FetchResponse<"OK">>;
+    getVersion: (
+      options?: RequestInit,
+    ) => Promise<FetchResponse<GetVersion200>>;
+    healthCheckGet: (options?: RequestInit) => Promise<FetchResponse<"OK">>;
+    healthCheckHead: (options?: RequestInit) => Promise<FetchResponse<void>>;
+    pushChainFunction: (chainFunction: ChainFunction) => void;
+    refreshToken: (
+      refreshTokenRequest: RefreshTokenRequest,
+      options?: RequestInit,
+    ) => Promise<FetchResponse<Session>>;
+    signInEmailPassword: (
+      signInEmailPasswordRequest: SignInEmailPasswordRequest,
+      options?: RequestInit,
+    ) => Promise<FetchResponse<SignInEmailPasswordResponse>>;
+    signInPasswordlessEmail: (
+      signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest,
+      options?: RequestInit,
+    ) => Promise<FetchResponse<"OK">>;
+    signInVerifyMfaTotp: (
+      signInMfaTotpRequest: SignInMfaTotpRequest,
+      options?: RequestInit,
+    ) => Promise<FetchResponse<SessionPayload>>;
+    signOut: (
+      signOutSchema: SignOutSchema,
+      options?: RequestInit,
+    ) => Promise<FetchResponse<"OK">>;
+    signUpEmailPassword: (
+      signUpEmailPasswordRequest: SignUpEmailPasswordRequest,
+      options?: RequestInit,
+    ) => Promise<FetchResponse<SessionPayload>>;
+  },
+  storage: StorageInterface,
+  options?: SessionRefreshOptions,
+): ChainFunction;
+```
+
+Creates a fetch middleware that automatically refreshes authentication tokens.
+
+This middleware:
+
+1. Checks if the current token is about to expire
+2. If so, uses the refresh token to obtain a new access token
+3. Adds the current access token to outgoing requests
+
+The middleware handles token refresh transparently, so the application
+doesn't need to manually refresh tokens.
+
+#### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`authClient`
+
+</td>
+<td>
+
+\{ `baseURL`: `string`; `changeUserMfa`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;; `changeUserMfaVerify`: (`userMfaRequest`: [`UserMfaRequest`](#usermfarequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;; `getVersion`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;; `healthCheckGet`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;; `healthCheckHead`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;; `pushChainFunction`: (`chainFunction`: `ChainFunction`) => `void`; `refreshToken`: (`refreshTokenRequest`: [`RefreshTokenRequest`](#refreshtokenrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;; `signInEmailPassword`: (`signInEmailPasswordRequest`: [`SignInEmailPasswordRequest`](#signinemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt;; `signInPasswordlessEmail`: (`signInPasswordlessEmailRequest`: [`SignInPasswordlessEmailRequest`](#signinpasswordlessemailrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;; `signInVerifyMfaTotp`: (`signInMfaTotpRequest`: [`SignInMfaTotpRequest`](#signinmfatotprequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;; `signOut`: (`signOutSchema`: [`SignOutSchema`](#signoutschema), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;; `signUpEmailPassword`: (`signUpEmailPasswordRequest`: [`SignUpEmailPasswordRequest`](#signupemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;; \}
+
+</td>
+<td>
+
+Auth API client for token refresh operations
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.baseURL`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.changeUserMfa`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.changeUserMfaVerify?`
+
+</td>
+<td>
+
+(`userMfaRequest`: [`UserMfaRequest`](#usermfarequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.getVersion?`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.healthCheckGet?`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.healthCheckHead?`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.pushChainFunction?`
+
+</td>
+<td>
+
+(`chainFunction`: `ChainFunction`) => `void`
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.refreshToken?`
+
+</td>
+<td>
+
+(`refreshTokenRequest`: [`RefreshTokenRequest`](#refreshtokenrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.signInEmailPassword?`
+
+</td>
+<td>
+
+(`signInEmailPasswordRequest`: [`SignInEmailPasswordRequest`](#signinemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.signInPasswordlessEmail?`
+
+</td>
+<td>
+
+(`signInPasswordlessEmailRequest`: [`SignInPasswordlessEmailRequest`](#signinpasswordlessemailrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.signInVerifyMfaTotp?`
+
+</td>
+<td>
+
+(`signInMfaTotpRequest`: [`SignInMfaTotpRequest`](#signinmfatotprequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.signOut?`
+
+</td>
+<td>
+
+(`signOutSchema`: [`SignOutSchema`](#signoutschema), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`authClient.signUpEmailPassword?`
+
+</td>
+<td>
+
+(`signUpEmailPasswordRequest`: [`SignUpEmailPasswordRequest`](#signupemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`storage?`
+
+</td>
+<td>
+
+[`StorageInterface`](#storageinterface)
+
+</td>
+<td>
+
+Storage implementation for persisting session data
+
+</td>
+</tr>
+<tr>
+<td>
+
+`options?`
+
+</td>
+<td>
+
+[`SessionRefreshOptions`](#sessionrefreshoptions)
+
+</td>
+<td>
+
+Configuration options for token refresh behavior
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Returns
+
+`ChainFunction`
+
+A middleware function that can be used in the fetch chain
+
+#### Example
+
+```typescript
+import { createClient } from "nhost-js";
+
+const nhost = createClient({
+  subdomain: "your-project",
+  region: "eu-central-1",
+});
+
+// The refresh middleware is automatically configured in the client
+// and will handle token refresh for all requests to Nhost services
+```
+
+---
+
+### createSessionResponseMiddleware()
+
+```ts
+function createSessionResponseMiddleware(
+  storage: StorageInterface,
+): ChainFunction;
+```
+
+Creates a fetch middleware that automatically extracts and stores session data from API responses.
+
+This middleware:
+
+1. Monitors responses from authentication-related endpoints
+2. Extracts session information when present
+3. Stores the session in the provided storage implementation
+4. Handles session removal on sign-out
+
+This ensures that session data is always up-to-date in storage after operations
+that create or invalidate sessions.
+
+#### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`storage`
+
+</td>
+<td>
+
+[`StorageInterface`](#storageinterface)
+
+</td>
+<td>
+
+Storage implementation for persisting session data
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Returns
+
+`ChainFunction`
+
+A middleware function that can be used in the fetch chain
+
+#### Example
+
+```typescript
+import { createEnhancedFetch } from "../fetch";
+import { createSessionResponseMiddleware } from "./middlewareResponseSession";
+import { LocalStorage } from "./storage";
+
+const storage = new LocalStorage();
+const sessionMiddleware = createSessionResponseMiddleware(storage);
+const enhancedFetch = createEnhancedFetch([sessionMiddleware]);
+
+// Session data will be automatically stored from responses
+```
+
+---
+
+### detectStorage()
+
+```ts
+function detectStorage(): StorageInterface;
+```
+
+Detects the best available storage implementation for the current environment.
+
+The detection process follows this order:
+
+1. Try to use localStorage if we're in a browser environment
+2. Fall back to in-memory storage if localStorage isn't available
+
+#### Returns
+
+[`StorageInterface`](#storageinterface)
+
+The best available storage implementation for the current environment
+
+---
+
+### extractTokenExpiration()
+
+```ts
+function extractTokenExpiration(token: string): number;
+```
+
+Extracts the expiration time from a JWT token
+
+#### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`token`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+JWT token string
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Returns
+
+`number`
+
+Expiration timestamp in milliseconds, or 0 if unable to extract

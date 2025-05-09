@@ -1,0 +1,924 @@
+## Classes
+
+### NhostClient
+
+Main client class that provides access to all Nhost services (auth, storage, graphql)
+
+#### Constructors
+
+##### Constructor
+
+```ts
+new NhostClient(options: NhostClientOptions): NhostClient;
+```
+
+Create a new Nhost client
+
+###### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`options`
+
+</td>
+<td>
+
+[`NhostClientOptions`](#nhostclientoptions)
+
+</td>
+<td>
+
+Configuration options for the client
+
+</td>
+</tr>
+</tbody>
+</table>
+
+###### Returns
+
+[`NhostClient`](#nhostclient)
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="auth"></a> `auth`
+
+</td>
+<td>
+
+\{ `baseURL`: `string`; `changeUserMfa`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`TotpGenerateResponse`](auth.mdx#totpgenerateresponse)&gt;&gt;; `changeUserMfaVerify`: (`userMfaRequest`: [`UserMfaRequest`](auth.mdx#usermfarequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;`"OK"`&gt;&gt;; `getVersion`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`GetVersion200`](auth.mdx#getversion200)&gt;&gt;; `healthCheckGet`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;`"OK"`&gt;&gt;; `healthCheckHead`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;`void`&gt;&gt;; `pushChainFunction`: (`chainFunction`: `ChainFunction`) => `void`; `refreshToken`: (`refreshTokenRequest`: [`RefreshTokenRequest`](auth.mdx#refreshtokenrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`Session`](auth.mdx#session)&gt;&gt;; `signInEmailPassword`: (`signInEmailPasswordRequest`: [`SignInEmailPasswordRequest`](auth.mdx#signinemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`SignInEmailPasswordResponse`](auth.mdx#signinemailpasswordresponse)&gt;&gt;; `signInPasswordlessEmail`: (`signInPasswordlessEmailRequest`: [`SignInPasswordlessEmailRequest`](auth.mdx#signinpasswordlessemailrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;`"OK"`&gt;&gt;; `signInVerifyMfaTotp`: (`signInMfaTotpRequest`: [`SignInMfaTotpRequest`](auth.mdx#signinmfatotprequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`SessionPayload`](auth.mdx#sessionpayload)&gt;&gt;; `signOut`: (`signOutSchema`: [`SignOutSchema`](auth.mdx#signoutschema), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;`"OK"`&gt;&gt;; `signUpEmailPassword`: (`signUpEmailPasswordRequest`: [`SignUpEmailPasswordRequest`](auth.mdx#signupemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`SessionPayload`](auth.mdx#sessionpayload)&gt;&gt;; \}
+
+</td>
+<td>
+
+Authentication client providing methods for user sign-in, sign-up, and session management
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.baseURL`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.changeUserMfa`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`TotpGenerateResponse`](auth.mdx#totpgenerateresponse)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.changeUserMfaVerify`
+
+</td>
+<td>
+
+(`userMfaRequest`: [`UserMfaRequest`](auth.mdx#usermfarequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.getVersion`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`GetVersion200`](auth.mdx#getversion200)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.healthCheckGet`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.healthCheckHead`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;`void`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.pushChainFunction`
+
+</td>
+<td>
+
+(`chainFunction`: `ChainFunction`) => `void`
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.refreshToken`
+
+</td>
+<td>
+
+(`refreshTokenRequest`: [`RefreshTokenRequest`](auth.mdx#refreshtokenrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`Session`](auth.mdx#session)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.signInEmailPassword`
+
+</td>
+<td>
+
+(`signInEmailPasswordRequest`: [`SignInEmailPasswordRequest`](auth.mdx#signinemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`SignInEmailPasswordResponse`](auth.mdx#signinemailpasswordresponse)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.signInPasswordlessEmail`
+
+</td>
+<td>
+
+(`signInPasswordlessEmailRequest`: [`SignInPasswordlessEmailRequest`](auth.mdx#signinpasswordlessemailrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.signInVerifyMfaTotp`
+
+</td>
+<td>
+
+(`signInMfaTotpRequest`: [`SignInMfaTotpRequest`](auth.mdx#signinmfatotprequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`SessionPayload`](auth.mdx#sessionpayload)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.signOut`
+
+</td>
+<td>
+
+(`signOutSchema`: [`SignOutSchema`](auth.mdx#signoutschema), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`auth.signUpEmailPassword`
+
+</td>
+<td>
+
+(`signUpEmailPasswordRequest`: [`SignUpEmailPasswordRequest`](auth.mdx#signupemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](auth.mdx#fetchresponse)&lt;[`SessionPayload`](auth.mdx#sessionpayload)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="graphql"></a> `graphql`
+
+</td>
+<td>
+
+\{ `mutation`: (`request`: [`GraphQLRequest`](graphql.mdx#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](graphql.mdx#fetchresponse)&lt;[`GraphQLResponse`](graphql.mdx#graphqlresponse)&lt;`any`&gt;&gt;&gt;; `query`: (`request`: [`GraphQLRequest`](graphql.mdx#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](graphql.mdx#fetchresponse)&lt;[`GraphQLResponse`](graphql.mdx#graphqlresponse)&lt;`any`&gt;&gt;&gt;; \}
+
+</td>
+<td>
+
+GraphQL client providing methods for executing GraphQL operations against your Hasura backend
+
+</td>
+</tr>
+<tr>
+<td>
+
+`graphql.mutation`
+
+</td>
+<td>
+
+(`request`: [`GraphQLRequest`](graphql.mdx#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](graphql.mdx#fetchresponse)&lt;[`GraphQLResponse`](graphql.mdx#graphqlresponse)&lt;`any`&gt;&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`graphql.query`
+
+</td>
+<td>
+
+(`request`: [`GraphQLRequest`](graphql.mdx#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](graphql.mdx#fetchresponse)&lt;[`GraphQLResponse`](graphql.mdx#graphqlresponse)&lt;`any`&gt;&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="sessionstorage"></a> `sessionStorage`
+
+</td>
+<td>
+
+[`StorageInterface`](auth.mdx#storageinterface)
+
+</td>
+<td>
+
+Storage implementation used for persisting session information
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="storage"></a> `storage`
+
+</td>
+<td>
+
+\{ `baseURL`: `string`; `deleteFile`: (`id`: `string`, `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;`void`&gt;&gt;; `getFile`: (`id`: `string`, `params?`: [`GetFileParams`](storage.mdx#getfileparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;`Blob`&gt;&gt;; `getFileMetadataHeaders`: (`id`: `string`, `params?`: [`GetFileMetadataHeadersParams`](storage.mdx#getfilemetadataheadersparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;`void`&gt;&gt;; `getOpenAPISpec`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;[`GetOpenAPISpec200`](storage.mdx#getopenapispec200)&gt;&gt;; `getVersion`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;[`VersionInformation`](storage.mdx#versioninformation)&gt;&gt;; `pushChainFunction`: (`chainFunction`: `ChainFunction`) => `void`; `replaceFile`: (`id`: `string`, `replaceFileBody`: [`ReplaceFileBody`](storage.mdx#replacefilebody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;[`FileMetadata`](storage.mdx#filemetadata)&gt;&gt;; `uploadFiles`: (`uploadFilesBody`: [`UploadFilesBody`](storage.mdx#uploadfilesbody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;[`UploadFiles201`](storage.mdx#uploadfiles201)&gt;&gt;; \}
+
+</td>
+<td>
+
+Storage client providing methods for file operations (upload, download, delete)
+
+</td>
+</tr>
+<tr>
+<td>
+
+`storage.baseURL`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`storage.deleteFile`
+
+</td>
+<td>
+
+(`id`: `string`, `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;`void`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`storage.getFile`
+
+</td>
+<td>
+
+(`id`: `string`, `params?`: [`GetFileParams`](storage.mdx#getfileparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;`Blob`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`storage.getFileMetadataHeaders`
+
+</td>
+<td>
+
+(`id`: `string`, `params?`: [`GetFileMetadataHeadersParams`](storage.mdx#getfilemetadataheadersparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;`void`&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`storage.getOpenAPISpec`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;[`GetOpenAPISpec200`](storage.mdx#getopenapispec200)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`storage.getVersion`
+
+</td>
+<td>
+
+(`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;[`VersionInformation`](storage.mdx#versioninformation)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`storage.pushChainFunction`
+
+</td>
+<td>
+
+(`chainFunction`: `ChainFunction`) => `void`
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`storage.replaceFile`
+
+</td>
+<td>
+
+(`id`: `string`, `replaceFileBody`: [`ReplaceFileBody`](storage.mdx#replacefilebody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;[`FileMetadata`](storage.mdx#filemetadata)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`storage.uploadFiles`
+
+</td>
+<td>
+
+(`uploadFilesBody`: [`UploadFilesBody`](storage.mdx#uploadfilesbody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](storage.mdx#fetchresponse)&lt;[`UploadFiles201`](storage.mdx#uploadfiles201)&gt;&gt;
+
+</td>
+<td>
+
+&hyphen;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Methods
+
+##### getUserSession()
+
+```ts
+getUserSession(): null | Session;
+```
+
+Get the current session from storage
+
+###### Returns
+
+`null` \| [`Session`](auth.mdx#session)
+
+The current session or null if no session exists
+
+##### refreshSession()
+
+```ts
+refreshSession(): Promise<null | Session>;
+```
+
+Refresh the session using the current refresh token
+in the storage and update the storage with the new session
+
+###### Returns
+
+`Promise`&lt;`null` \| [`Session`](auth.mdx#session)&gt;
+
+The new session or an error if the refresh fails
+
+## Interfaces
+
+### NhostClientOptions
+
+Configuration options for creating an Nhost client
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="authurl"></a> `authUrl?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Complete base URL for the auth service (overrides subdomain/region)
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="graphqlurl"></a> `graphqlUrl?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Complete base URL for the GraphQL service (overrides subdomain/region)
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="region"></a> `region?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Nhost region (e.g., 'eu-central-1')
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="storage-1"></a> `storage?`
+
+</td>
+<td>
+
+[`StorageInterface`](auth.mdx#storageinterface)
+
+</td>
+<td>
+
+Storage implementation to use for session persistence
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="storageurl"></a> `storageUrl?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Complete base URL for the storage service (overrides subdomain/region)
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="subdomain"></a> `subdomain?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Nhost project subdomain (e.g., 'abcdefgh')
+
+</td>
+</tr>
+</tbody>
+</table>
+
+## Functions
+
+### createClient()
+
+```ts
+function createClient(options: NhostClientOptions): NhostClient;
+```
+
+Creates and configures a new Nhost client instance
+
+This is the recommended way to initialize the Nhost SDK in your application.
+
+#### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`options`
+
+</td>
+<td>
+
+[`NhostClientOptions`](#nhostclientoptions)
+
+</td>
+<td>
+
+Configuration options for the client
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Returns
+
+[`NhostClient`](#nhostclient)
+
+A configured Nhost client
+
+#### Example
+
+```typescript
+import { createClient } from "nhost-js";
+
+const nhost = createClient({
+  subdomain: "your-project",
+  region: "eu-central-1",
+});
+
+// Now you can use nhost.auth, nhost.storage, and nhost.graphql
+```
+
+---
+
+### generateServiceUrl()
+
+```ts
+function generateServiceUrl(
+  serviceType: "auth" | "storage" | "graphql",
+  customUrl?: string,
+  subdomain?: string,
+  region?: string,
+): string;
+```
+
+Generates a base URL for a Nhost service based on configuration
+
+#### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`serviceType`
+
+</td>
+<td>
+
+`"auth"` \| `"storage"` \| `"graphql"`
+
+</td>
+<td>
+
+Type of service (auth, storage, graphql)
+
+</td>
+</tr>
+<tr>
+<td>
+
+`customUrl?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Custom URL override if provided
+
+</td>
+</tr>
+<tr>
+<td>
+
+`subdomain?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Nhost project subdomain
+
+</td>
+</tr>
+<tr>
+<td>
+
+`region?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Nhost region
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Returns
+
+`string`
+
+The base URL for the service
+
+## References
+
+### CookieStorage
+
+Re-exports [CookieStorage](auth.mdx#cookiestorage)
+
+---
+
+### DEFAULT_SESSION_KEY
+
+Re-exports [DEFAULT_SESSION_KEY](auth.mdx#default_session_key)
+
+---
+
+### detectStorage
+
+Re-exports [detectStorage](auth.mdx#detectstorage)
+
+---
+
+### GraphQLError
+
+Re-exports [GraphQLError](graphql.mdx#graphqlerror)
+
+---
+
+### GraphQLRequest
+
+Re-exports [GraphQLRequest](graphql.mdx#graphqlrequest)
+
+---
+
+### GraphQLResponse
+
+Re-exports [GraphQLResponse](graphql.mdx#graphqlresponse)
+
+---
+
+### GraphQLVariables
+
+Re-exports [GraphQLVariables](graphql.mdx#graphqlvariables)
+
+---
+
+### LocalStorage
+
+Re-exports [LocalStorage](auth.mdx#localstorage)
+
+---
+
+### MemoryStorage
+
+Re-exports [MemoryStorage](auth.mdx#memorystorage)
+
+---
+
+### Session
+
+Re-exports [Session](auth.mdx#session)
+
+---
+
+### StorageInterface
+
+Re-exports [StorageInterface](auth.mdx#storageinterface)

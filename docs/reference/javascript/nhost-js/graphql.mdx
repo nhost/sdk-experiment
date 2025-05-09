@@ -1,0 +1,497 @@
+## Interfaces
+
+### FetchResponse&lt;T&gt;
+
+Response wrapper for GraphQL operations with additional metadata.
+
+#### Type Parameters
+
+<table>
+<thead>
+<tr>
+<th>Type Parameter</th>
+<th>Default type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`T`
+
+</td>
+<td>
+
+`any`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="data"></a> `data`
+
+</td>
+<td>
+
+`T`
+
+</td>
+<td>
+
+The parsed response body
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="headers"></a> `headers`
+
+</td>
+<td>
+
+`Headers`
+
+</td>
+<td>
+
+HTTP headers from the response
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="status"></a> `status`
+
+</td>
+<td>
+
+`number`
+
+</td>
+<td>
+
+HTTP status code of the response
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### GraphQLError
+
+Represents a GraphQL error returned from the server.
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="extensions"></a> `extensions?`
+
+</td>
+<td>
+
+`any`
+
+</td>
+<td>
+
+Additional error information specific to the GraphQL implementation
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="locations"></a> `locations?`
+
+</td>
+<td>
+
+\{ `column`: `number`; `line`: `number`; \}[]
+
+</td>
+<td>
+
+Source locations in the GraphQL document where the error occurred
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="message"></a> `message`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Error message
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="path"></a> `path?`
+
+</td>
+<td>
+
+`string`[]
+
+</td>
+<td>
+
+Path in the query where the error occurred
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### GraphQLRequest
+
+GraphQL request object used for queries and mutations.
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="operationname"></a> `operationName?`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+Optional name of the operation to execute
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="query"></a> `query`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+The GraphQL query or mutation string
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="variables"></a> `variables?`
+
+</td>
+<td>
+
+[`GraphQLVariables`](#graphqlvariables)
+
+</td>
+<td>
+
+Optional variables for parameterized queries
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### GraphQLResponse&lt;T&gt;
+
+Standard GraphQL response format as defined by the GraphQL specification.
+
+#### Type Parameters
+
+<table>
+<thead>
+<tr>
+<th>Type Parameter</th>
+<th>Default type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`T`
+
+</td>
+<td>
+
+`any`
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Properties
+
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+<a id="data-1"></a> `data?`
+
+</td>
+<td>
+
+`T`
+
+</td>
+<td>
+
+The data returned from successful execution
+
+</td>
+</tr>
+<tr>
+<td>
+
+<a id="errors"></a> `errors?`
+
+</td>
+<td>
+
+[`GraphQLError`](#graphqlerror)[]
+
+</td>
+<td>
+
+Array of errors if execution was unsuccessful or partially successful
+
+</td>
+</tr>
+</tbody>
+</table>
+
+---
+
+### GraphQLVariables
+
+Variables object for GraphQL operations.
+Key-value pairs of variable names and their values.
+
+#### Indexable
+
+```ts
+[key: string]: any
+```
+
+## Functions
+
+### createAPIClient()
+
+```ts
+function createAPIClient(
+  baseURL: string,
+  chainFunctions: ChainFunction[],
+): {
+  mutation: (
+    request: GraphQLRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<GraphQLResponse<any>>>;
+  query: (
+    request: GraphQLRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<GraphQLResponse<any>>>;
+};
+```
+
+Creates a GraphQL API client for interacting with a GraphQL endpoint.
+
+This client provides methods for executing queries and mutations against
+a GraphQL API, with support for middleware functions to handle authentication,
+error handling, and other cross-cutting concerns.
+
+#### Parameters
+
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Default value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`baseURL`
+
+</td>
+<td>
+
+`string`
+
+</td>
+<td>
+
+`undefined`
+
+</td>
+<td>
+
+Base URL for the GraphQL endpoint
+
+</td>
+</tr>
+<tr>
+<td>
+
+`chainFunctions`
+
+</td>
+<td>
+
+`ChainFunction`[]
+
+</td>
+<td>
+
+`[]`
+
+</td>
+<td>
+
+Array of middleware functions for the fetch chain
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Returns
+
+GraphQL client with query and mutation methods
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+
+`mutation()`
+
+</td>
+<td>
+
+(`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt;
+
+</td>
+</tr>
+<tr>
+<td>
+
+`query()`
+
+</td>
+<td>
+
+(`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt;
+
+</td>
+</tr>
+</tbody>
+</table>
+
+#### Example
+
+```typescript
+import { createClient } from "nhost-js";
+
+const nhost = createClient({
+  subdomain: "your-project",
+  region: "eu-central-1",
+});
+
+// Execute a GraphQL query
+const response = await nhost.graphql.query({
+  query: `
+    query GetUsers {
+      users {
+        id
+        displayName
+        email
+      }
+    }
+  `,
+});
+
+// Access the data
+const users = response.data.data.users;
+```
