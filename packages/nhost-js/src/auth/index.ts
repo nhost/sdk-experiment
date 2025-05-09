@@ -1,12 +1,15 @@
 /**
- * @fileoverview Authentication module for the Nhost JavaScript SDK.
- *
- * This module provides functionality for user authentication, including:
+ * Authentication module for the Nhost JavaScript SDK
+ * 
+ * This module provides comprehensive authentication functionality:
  * - Email/password authentication
- * - Passwordless authentication
- * - Social login
+ * - Passwordless authentication (email, SMS)
+ * - Social login (OAuth providers)
  * - Multi-factor authentication
- * - Session management
+ * - Session management and persistence
+ * 
+ * @module auth
+ * @packageDocumentation
  */
 
 export * from "./client";

@@ -1,8 +1,62 @@
+Main entry point for the Nhost JavaScript SDK.
+
+This package provides a unified client for interacting with Nhost services:
+
+- Authentication
+- Storage
+- GraphQL
+- Functions
+
+## Example
+
+You can import and use this package in your project with:
+
+```ts
+import { createClient } from "@nhost/nhost-js";
+
+const nhost = createClient({
+  subdomain: "your-project",
+  region: "eu-central-1",
+});
+
+// Sign in with email/password
+// This will create a session and persist it in the storage
+// Subsequent calls will use the session from the storage
+// If the session is about to expire, it will be refreshed
+// automatically
+await nhost.auth.signInEmailPassword({
+  email: "user@example.com",
+  password: "password123",
+});
+
+const { data } = await nhost.graphql.query({
+  query: `
+    query {
+      users {
+        id
+        displayName
+      }
+    }
+  `,
+});
+
+console.log(data);
+
+const resp = await nhostStorage.uploadFiles({
+  "file[]": [
+    new Blob(["test1"], { type: "text/plain" }),
+    new Blob(["test2 is larger"], { type: "text/plain" }),
+  ],
+});
+
+console.log(resp);
+```
+
 ## Classes
 
 ### NhostClient
 
-Main client class that provides access to all Nhost services (auth, storage, graphql)
+Main client class that provides access to all Nhost services
 
 #### Constructors
 
@@ -23,6 +77,15 @@ Create a new Nhost client
 ###### Returns
 
 [`NhostClient`](#nhostclient)
+
+###### Example
+
+```ts
+const nhost = new NhostClient({
+  subdomain: "your-project",
+  region: "eu-central-1",
+});
+```
 
 #### Properties
 
@@ -73,6 +136,17 @@ Get the current session from storage
 
 The current session or null if no session exists
 
+###### Example
+
+```ts
+const session = nhost.getUserSession();
+if (session) {
+  console.log("User is authenticated:", session.user.id);
+} else {
+  console.log("No active session");
+}
+```
+
 ##### refreshSession()
 
 ```ts
@@ -86,7 +160,11 @@ in the storage and update the storage with the new session
 
 `Promise`&lt;`null` \| [`Session`](auth.mdx#session)&gt;
 
-The new session or an error if the refresh fails
+The new session or null if refresh fails
+
+###### Throws
+
+Error if no session exists in storage
 
 ## Interfaces
 
@@ -129,45 +207,6 @@ This is the recommended way to initialize the Nhost SDK in your application.
 
 A configured Nhost client
 
-#### Example
-
-```typescript
-import { createClient } from "nhost-js";
-
-const nhost = createClient({
-  subdomain: "your-project",
-  region: "eu-central-1",
-});
-
-// Now you can use nhost.auth, nhost.storage, and nhost.graphql
 ```
 
----
-
-### generateServiceUrl()
-
-```ts
-function generateServiceUrl(
-  serviceType: "auth" | "storage" | "graphql",
-  customUrl?: string,
-  subdomain?: string,
-  region?: string,
-): string;
 ```
-
-Generates a base URL for a Nhost service based on configuration
-
-#### Parameters
-
-| Parameter     | Type                                   | Description                              |
-| ------------- | -------------------------------------- | ---------------------------------------- |
-| `serviceType` | `"auth"` \| `"storage"` \| `"graphql"` | Type of service (auth, storage, graphql) |
-| `customUrl?`  | `string`                               | Custom URL override if provided          |
-| `subdomain?`  | `string`                               | Nhost project subdomain                  |
-| `region?`     | `string`                               | Nhost region                             |
-
-#### Returns
-
-`string`
-
-The base URL for the service
