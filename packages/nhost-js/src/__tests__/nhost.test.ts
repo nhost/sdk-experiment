@@ -24,10 +24,10 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
       },
     });
 
-    if (!resp.data.session) {
+    if (!resp.body.session) {
       throw new Error("Session is null");
     }
-    nhost.sessionStorage.set(resp.data.session);
+    nhost.sessionStorage.set(resp.body.session);
 
     const uuid = crypto.randomUUID();
     const fileUploadResponse = await nhost.storage.uploadFiles({
@@ -44,29 +44,29 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
       ],
     });
 
-    expect(fileUploadResponse.data.processedFiles).toBeDefined();
-    expect(fileUploadResponse.data.processedFiles?.[0]?.bucketId).toBe(
+    expect(fileUploadResponse.body.processedFiles).toBeDefined();
+    expect(fileUploadResponse.body.processedFiles?.[0]?.bucketId).toBe(
       "default",
     );
     expect(
-      fileUploadResponse.data.processedFiles?.[0]?.createdAt,
+      fileUploadResponse.body.processedFiles?.[0]?.createdAt,
     ).toBeDefined();
-    expect(fileUploadResponse.data.processedFiles?.[0]?.etag).toBeDefined();
-    expect(fileUploadResponse.data.processedFiles?.[0]?.id).toBe(uuid);
-    expect(fileUploadResponse.data.processedFiles?.[0]?.isUploaded).toBe(true);
-    expect(fileUploadResponse.data.processedFiles?.[0]?.metadata).toEqual({
+    expect(fileUploadResponse.body.processedFiles?.[0]?.etag).toBeDefined();
+    expect(fileUploadResponse.body.processedFiles?.[0]?.id).toBe(uuid);
+    expect(fileUploadResponse.body.processedFiles?.[0]?.isUploaded).toBe(true);
+    expect(fileUploadResponse.body.processedFiles?.[0]?.metadata).toEqual({
       key: "value",
     });
-    expect(fileUploadResponse.data.processedFiles?.[0]?.mimeType).toBe(
+    expect(fileUploadResponse.body.processedFiles?.[0]?.mimeType).toBe(
       "application/octet-stream",
     );
-    expect(fileUploadResponse.data.processedFiles?.[0]?.name).toBe("test");
-    expect(fileUploadResponse.data.processedFiles?.[0]?.size).toBe(1024);
+    expect(fileUploadResponse.body.processedFiles?.[0]?.name).toBe("test");
+    expect(fileUploadResponse.body.processedFiles?.[0]?.size).toBe(1024);
     expect(
-      fileUploadResponse.data.processedFiles?.[0]?.updatedAt,
+      fileUploadResponse.body.processedFiles?.[0]?.updatedAt,
     ).toBeDefined();
     expect(
-      fileUploadResponse.data.processedFiles?.[0]?.uploadedByUserId,
+      fileUploadResponse.body.processedFiles?.[0]?.uploadedByUserId,
     ).toBeDefined();
 
     const session = nhost.getUserSession();
@@ -92,11 +92,11 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
           }
         `,
     });
-    expect(files.data.data.files[0].id).toBe(uuid);
-    expect(files.data.data.files[0].name).toBe("test");
-    expect(files.data.data.files[0].size).toBe(1024);
-    expect(files.data.data.files[0].mimeType).toBe("application/octet-stream");
-    expect(files.data.data.files[0].bucketId).toBe("default");
-    expect(files.data.data.files[0].uploadedByUserId).toBeDefined();
+    expect(files.body.data.files[0].id).toBe(uuid);
+    expect(files.body.data.files[0].name).toBe("test");
+    expect(files.body.data.files[0].size).toBe(1024);
+    expect(files.body.data.files[0].mimeType).toBe("application/octet-stream");
+    expect(files.body.data.files[0].bucketId).toBe("default");
+    expect(files.body.data.files[0].uploadedByUserId).toBeDefined();
   });
 });

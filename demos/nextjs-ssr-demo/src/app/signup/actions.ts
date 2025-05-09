@@ -30,7 +30,7 @@ export async function signUp(formData: FormData) {
     });
 
     // If we have a session, sign up was successful
-    if (response.data.session) {
+    if (response.body.session) {
       // Revalidate all paths to ensure server components re-render
       revalidatePath("/");
 
@@ -75,7 +75,7 @@ export async function sendMagicLink(formData: FormData) {
       },
     });
 
-    if (response.data) {
+    if (response.body) {
       return { redirect: "/signup?magic=success" };
     }
 

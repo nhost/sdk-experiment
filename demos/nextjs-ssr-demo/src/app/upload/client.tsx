@@ -44,7 +44,7 @@ export default function UploadClient({
       const response = await nhost.storage.getFile(fileId);
 
       // Create a URL for the blob
-      const url = URL.createObjectURL(response.data);
+      const url = URL.createObjectURL(response.body);
 
       // Handle different file types appropriately
       if (
@@ -121,7 +121,7 @@ export default function UploadClient({
       });
 
       // Get the processed file data
-      const uploadedFile = response.data.processedFiles?.[0];
+      const uploadedFile = response.body.processedFiles?.[0];
       setUploadResult(uploadedFile);
 
       // Reset form

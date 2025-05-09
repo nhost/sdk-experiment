@@ -35,9 +35,9 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
       // Generate TOTP secret
       const response = await nhost.auth.changeUserMfa();
 
-      if (response.data) {
-        setTotpSecret(response.data.totpSecret);
-        setQrCodeUrl(response.data.imageUrl);
+      if (response.body) {
+        setTotpSecret(response.body.totpSecret);
+        setQrCodeUrl(response.body.imageUrl);
         setIsSettingUpMfa(true);
       }
     } catch (err) {
@@ -66,7 +66,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
         code: verificationCode,
       });
 
-      if (response.data) {
+      if (response.body) {
         setIsMfaEnabled(true);
         setIsSettingUpMfa(false);
         setSuccess("MFA has been successfully enabled.");
@@ -107,7 +107,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
         code: disableVerificationCode,
       });
 
-      if (response.data) {
+      if (response.body) {
         setIsMfaEnabled(false);
         setIsDisablingMfa(false);
         setDisableVerificationCode("");

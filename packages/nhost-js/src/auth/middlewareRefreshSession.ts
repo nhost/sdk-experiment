@@ -206,7 +206,7 @@ async function refreshToken(
     const refreshResponse = await authClient.refreshToken({ refreshToken });
 
     if (refreshResponse.status === 200) {
-      const session = refreshResponse.data;
+      const session = refreshResponse.body;
       storage.set(session);
       return session;
     }

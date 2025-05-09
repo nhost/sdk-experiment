@@ -486,7 +486,7 @@ export type GetVersion200 = {
 };
 
 export type FetchResponse<T> = {
-  data: T;
+  body: T;
   status: number;
   headers: Record<string, string>;
 };
@@ -517,10 +517,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: void = body ? JSON.parse(body) : {};
+    const payload: void = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<void>;
@@ -551,10 +551,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: OKResponse = body ? JSON.parse(body) : {};
+    const payload: OKResponse = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<OKResponse>;
@@ -585,10 +585,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: GetVersion200 = body ? JSON.parse(body) : {};
+    const payload: GetVersion200 = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<GetVersion200>;
@@ -622,10 +622,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: Session = body ? JSON.parse(body) : {};
+    const payload: Session = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<Session>;
@@ -658,10 +658,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: OKResponse = body ? JSON.parse(body) : {};
+    const payload: OKResponse = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<OKResponse>;
@@ -695,10 +695,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: SignInEmailPasswordResponse = body ? JSON.parse(body) : {};
+    const payload: SignInEmailPasswordResponse = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<SignInEmailPasswordResponse>;
@@ -732,10 +732,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: SessionPayload = body ? JSON.parse(body) : {};
+    const payload: SessionPayload = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<SessionPayload>;
@@ -769,10 +769,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: OKResponse = body ? JSON.parse(body) : {};
+    const payload: OKResponse = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<OKResponse>;
@@ -806,10 +806,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: SessionPayload = body ? JSON.parse(body) : {};
+    const payload: SessionPayload = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<SessionPayload>;
@@ -843,10 +843,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: OKResponse = body ? JSON.parse(body) : {};
+    const payload: OKResponse = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<OKResponse>;
@@ -877,10 +877,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: TotpGenerateResponse = body ? JSON.parse(body) : {};
+    const payload: TotpGenerateResponse = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<TotpGenerateResponse>;

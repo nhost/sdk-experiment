@@ -33,7 +33,7 @@ async function signIn() {
     password: "password123",
   });
 
-  if (response.data.session) {
+  if (response.body.session) {
     console.log("Signed in successfully!");
   }
 }
@@ -52,7 +52,7 @@ async function fetchUsers() {
     `,
   });
 
-  return response.data.data.users;
+  return response.body.data.users;
 }
 
 // Use storage features
@@ -61,7 +61,7 @@ async function uploadFile(file) {
     "file[]": [file],
   });
 
-  return response.data.processedFiles[0];
+  return response.body.processedFiles[0];
 }
 ```
 

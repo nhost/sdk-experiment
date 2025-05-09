@@ -217,15 +217,15 @@ ${
 
   ${
     response.isBlob
-      ? `const data: ${responseTypeName} = await res.blob()`
+      ? `const payload: ${responseTypeName} = await res.blob()`
       : `  const body = [204, 205, 304, 412].includes(res.status) ? null : await res.text()
-  const data: ${responseTypeName} = body ? JSON.parse(body) : {}
+  const payload: ${responseTypeName} = body ? JSON.parse(body) : {}
     `
   }
 
   const response = ${
     override.fetch.includeHttpResponseReturnType
-      ? `{ data, status: res.status,
+      ? `{ body: payload, status: res.status,
           headers: Object.fromEntries(Array.from((res.headers as any).entries())),
       } as FetchResponse<${responseTypeName}>
 
@@ -234,7 +234,7 @@ ${
     }
 
     return response;`
-      : "return data"
+      : "return payload"
   }
 `;
   const customFetchResponseImplementation = `return ${mutator?.name}<${responseTypeName}>(${fetchFnOptions});`;
@@ -289,7 +289,7 @@ export const generateFetchHeader: ClientHeaderBuilder = ({
     : "" +
         `
       export type FetchResponse<T> = {
-          data: T;
+          body: T;
           status: number;
           headers: Record<string, string>;
       };

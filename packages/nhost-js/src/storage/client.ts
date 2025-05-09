@@ -201,7 +201,7 @@ export type ReplaceFileBody = {
 };
 
 export type FetchResponse<T> = {
-  data: T;
+  body: T;
   status: number;
   headers: Record<string, string>;
 };
@@ -232,10 +232,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: GetOpenAPISpec200 = body ? JSON.parse(body) : {};
+    const payload: GetOpenAPISpec200 = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<GetOpenAPISpec200>;
@@ -266,10 +266,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: VersionInformation = body ? JSON.parse(body) : {};
+    const payload: VersionInformation = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<VersionInformation>;
@@ -317,10 +317,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: UploadFiles201 = body ? JSON.parse(body) : {};
+    const payload: UploadFiles201 = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<UploadFiles201>;
@@ -353,10 +353,10 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: void = body ? JSON.parse(body) : {};
+    const payload: void = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<void>;
@@ -404,10 +404,10 @@ export const createAPIClient = (
       method: "GET",
     });
 
-    const data: Blob = await res.blob();
+    const payload: Blob = await res.blob();
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<Blob>;
@@ -470,10 +470,10 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: FileMetadata = body ? JSON.parse(body) : {};
+    const payload: FileMetadata = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<FileMetadata>;
@@ -505,10 +505,10 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const data: void = body ? JSON.parse(body) : {};
+    const payload: void = body ? JSON.parse(body) : {};
 
     const response = {
-      data,
+      body: payload,
       status: res.status,
       headers: Object.fromEntries(Array.from((res.headers as any).entries())),
     } as FetchResponse<void>;

@@ -57,7 +57,7 @@ export interface GraphQLResponse<T = any> {
  */
 export interface FetchResponse<T = any> {
   /** The parsed response body */
-  data: T;
+  body: T;
   /** HTTP status code of the response */
   status: number;
   /** HTTP headers from the response */
@@ -127,7 +127,7 @@ export interface Client {
  * });
  *
  * // Access the data
- * const users = response.data.data.users;
+ * const users = response.body.data.users;
  * ```
  *
  * @param baseURL - Base URL for the GraphQL endpoint
@@ -157,7 +157,7 @@ export const createAPIClient = (
     const data: GraphQLResponse = body ? JSON.parse(body) : {};
 
     return {
-      data,
+      body: data,
       status: response.status,
       headers: response.headers,
     };

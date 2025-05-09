@@ -36,11 +36,11 @@ export default async function UploadPage() {
       `,
     });
 
-    if (response.data.errors) {
-      throw new Error(response.data.errors[0]?.message);
+    if (response.body.errors) {
+      throw new Error(response.body.errors[0]?.message);
     }
 
-    files = response.data.data.files;
+    files = response.body.data.files;
   } catch (err: any) {
     error = `Failed to load files: ${err.message}`;
     console.error("Error fetching files:", err);

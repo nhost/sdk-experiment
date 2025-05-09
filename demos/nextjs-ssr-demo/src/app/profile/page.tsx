@@ -22,11 +22,11 @@ export default async function Profile() {
       });
 
       // MFA is enabled if activeMfaType is "totp"
-      const userData = response.data?.data;
+      const userData = response.body?.data;
       isMfaEnabled = userData?.user?.activeMfaType === "totp";
 
-      if (response.data.errors && response.data.errors.length > 0) {
-        console.error("Error fetching MFA status:", response.data.errors);
+      if (response.body.errors && response.body.errors.length > 0) {
+        console.error("Error fetching MFA status:", response.body.errors);
       }
     } catch (err) {
       console.error("Failed to query MFA status:", err);

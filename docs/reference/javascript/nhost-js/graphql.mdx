@@ -37,7 +37,7 @@ Response wrapper for GraphQL operations with additional metadata.
 
 | Property                       | Type      | Description                      |
 | ------------------------------ | --------- | -------------------------------- |
-| <a id="data"></a> `data`       | `T`       | The parsed response body         |
+| <a id="body"></a> `body`       | `T`       | The parsed response body         |
 | <a id="headers"></a> `headers` | `Headers` | HTTP headers from the response   |
 | <a id="status"></a> `status`   | `number`  | HTTP status code of the response |
 
@@ -86,7 +86,7 @@ Standard GraphQL response format as defined by the GraphQL specification.
 
 | Property                      | Type                              | Description                                                           |
 | ----------------------------- | --------------------------------- | --------------------------------------------------------------------- |
-| <a id="data-1"></a> `data?`   | `T`                               | The data returned from successful execution                           |
+| <a id="data"></a> `data?`     | `T`                               | The data returned from successful execution                           |
 | <a id="errors"></a> `errors?` | [`GraphQLError`](#graphqlerror)[] | Array of errors if execution was unsuccessful or partially successful |
 
 ---
@@ -156,5 +156,5 @@ const response = await nhost.graphql.query({
 });
 
 // Access the data
-const users = response.data.data.users;
+const users = response.body.data.users;
 ```

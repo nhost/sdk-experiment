@@ -47,15 +47,15 @@ export const createSessionResponseMiddleware = (
    * @param data - Response data to extract session from
    * @returns Session object if found, null otherwise
    */
-  const sessionExtractor = function (data: any): Session | null {
+  const sessionExtractor = function (body: any): Session | null {
     // Look for session in common response patterns
     const session =
       // Pattern: { session: {...} }
-      (data?.session as Session) ||
+      (body?.session as Session) ||
       // Pattern: { data: { session: {...} } }
-      (data?.data?.session as Session) ||
+      (body?.data?.session as Session) ||
       // Pattern: { accessToken, refreshToken, ... } where data itself is the session
-      (data?.accessToken && data?.refreshToken && (data as Session)) ||
+      (body?.accessToken && body?.refreshToken && (body as Session)) ||
       null;
 
     return session;
@@ -84,11 +84,11 @@ export const createSessionResponseMiddleware = (
           const clonedResponse = response.clone();
 
           // Parse the JSON data
-          const data = await clonedResponse.json().catch(() => null);
+          const body = await clonedResponse.json().catch(() => null);
 
-          if (data) {
+          if (body) {
             // Extract session data from response using provided extractor
-            const session = sessionExtractor(data);
+            const session = sessionExtractor(body);
 
             // If session data is found, store it
             if (session && session.accessToken && session.refreshToken) {

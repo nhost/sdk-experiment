@@ -32,10 +32,10 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
     const response = await nhostAuth.signUpEmailPassword(signUpRequest);
 
     // Verify structure of response
-    expect(response.data.session).toBeDefined();
-    expect(response.data.session?.accessToken).toBeDefined();
-    expect(response.data.session?.refreshToken).toBeDefined();
-    expect(response.data.session?.user).toBeDefined();
+    expect(response.body.session).toBeDefined();
+    expect(response.body.session?.accessToken).toBeDefined();
+    expect(response.body.session?.refreshToken).toBeDefined();
+    expect(response.body.session?.user).toBeDefined();
   });
 
   it("should sign in a user with email and password", async () => {
@@ -46,10 +46,10 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
     });
 
     // Verify structure of response
-    expect(response.data.session).toBeDefined();
-    expect(response.data.session?.accessToken).toBeDefined();
-    expect(response.data.session?.refreshToken).toBeDefined();
-    expect(response.data.session?.user).toBeDefined();
+    expect(response.body.session).toBeDefined();
+    expect(response.body.session?.accessToken).toBeDefined();
+    expect(response.body.session?.refreshToken).toBeDefined();
+    expect(response.body.session?.user).toBeDefined();
   });
 
   it("should fail sign in a user with email and password", async () => {
@@ -65,7 +65,7 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
     } catch (error) {
       const err = error as FetchResponse<ErrorResponse>;
       expect(err.status).toBe(401);
-      expect(err.data).toStrictEqual({
+      expect(err.body).toStrictEqual({
         error: "invalid-email-password",
         message: "Incorrect email or password",
         status: 401,

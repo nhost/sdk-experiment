@@ -27,7 +27,7 @@ export async function verifyMfa(formData: FormData): Promise<void> {
     });
 
     // If we have a session, verification was successful
-    if (response.data.session) {
+    if (response.body.session) {
       // Revalidate all paths to ensure server components re-render
       revalidatePath("/");
 
@@ -74,7 +74,7 @@ export async function sendMagicLink(formData: FormData): Promise<void> {
       },
     });
 
-    if (response.data) {
+    if (response.body) {
       redirect("/signin?magic=success");
     }
 

@@ -109,7 +109,7 @@ async function signIn() {
     password: 'password123'
   });
 
-  console.log('Signed in:', response.data.session?.user);
+  console.log('Signed in:', response.body.session?.user);
 }
 
 // Use the storage client
@@ -119,7 +119,7 @@ async function uploadFile(file: Blob) {
     'file[]': [file]
   });
 
-  console.log('Uploaded file:', response.data.processedFiles?.[0]);
+  console.log('Uploaded file:', response.body.processedFiles?.[0]);
 }
 
 // Get the current session

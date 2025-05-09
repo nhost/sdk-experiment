@@ -26,13 +26,13 @@ export async function signIn(formData: FormData) {
     });
 
     // Check if MFA is required
-    if (response.data.mfa) {
+    if (response.body.mfa) {
       // Return redirect URL for MFA
-      return { redirect: `/signin/mfa?ticket=${response.data.mfa.ticket}` };
+      return { redirect: `/signin/mfa?ticket=${response.body.mfa.ticket}` };
     }
 
     // If we have a session, sign in was successful
-    if (response.data.session) {
+    if (response.body.session) {
       // Revalidate all paths to ensure server components re-render
       revalidatePath("/");
 
@@ -71,7 +71,7 @@ export async function verifyMfa(formData: FormData) {
     });
 
     // If we have a session, verification was successful
-    if (response.data.session) {
+    if (response.body.session) {
       // Revalidate all paths to ensure server components re-render
       revalidatePath("/");
 
@@ -116,7 +116,7 @@ export async function sendMagicLink(formData: FormData) {
       },
     });
 
-    if (response.data) {
+    if (response.body) {
       return { redirect: "/signin?magic=success" };
     }
 

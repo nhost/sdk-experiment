@@ -26,8 +26,8 @@ export async function GET(request: NextRequest) {
     console.error("Token verification error:", error);
 
     let errorMessage = "Failed to verify token";
-    if (error.response?.data?.message) {
-      errorMessage = error.response.data.message;
+    if (error.response?.body?.message) {
+      errorMessage = error.response.body.message;
     } else if (error.message) {
       errorMessage = error.message;
     }

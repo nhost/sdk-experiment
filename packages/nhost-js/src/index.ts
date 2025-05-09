@@ -8,48 +8,15 @@
  * - Functions
  *
  * @example
- * You can import and use this package in your project with:
+ * You can import and use this package with:
  *
  * ```ts
- * import { createClient } from '@nhost/nhost-js';
- *
- * const nhost = createClient({
- *   subdomain: 'your-project',
- *   region: 'eu-central-1'
- * });
- *
- * // Sign in with email/password
- * // This will create a session and persist it in the storage
- * // Subsequent calls will use the session from the storage
- * // If the session is about to expire, it will be refreshed
- * // automatically
- * await nhost.auth.signInEmailPassword({
- *   email: 'user@example.com',
- *   password: 'password123'
- * });
- *
- * const { data } = await nhost.graphql.query({
- *   query: `
- *     query {
- *       users {
- *         id
- *         displayName
- *       }
- *     }
- *   `
- * });
- *
- * console.log(data);
- *
- * const resp = await nhost.storage.uploadFiles({
- *   "file[]": [
- *     new Blob(["test1"], { type: "text/plain" }),
- *     new Blob(["test2 is larger"], { type: "text/plain" }),
- *   ],
- * });
- *
- * console.log(resp);
+ * import { createClient } from "@nhost/nhost-js-sdk";
  * ```
+ *
+ * and use it like:
+ *
+ * {@includeCode ./__tests__/docstrings.test.ts#mainExample}
  *
  * @packageDocumentation
  */
@@ -206,9 +173,9 @@ export class NhostClient {
       refreshToken: session.refreshToken,
     });
 
-    this.sessionStorage.set(response.data);
+    this.sessionStorage.set(response.body);
 
-    return response.data;
+    return response.body;
   }
 
   /**

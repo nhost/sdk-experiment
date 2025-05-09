@@ -9,14 +9,18 @@ This package provides a unified client for interacting with Nhost services:
 
 ## Example
 
-You can import and use this package in your project with:
+You can import and use this package with:
 
 ```ts
-import { createClient } from "@nhost/nhost-js";
+import { createClient } from "@nhost/nhost-js-sdk";
+```
 
+and use it like:
+
+```ts
 const nhost = createClient({
-  subdomain: "your-project",
-  region: "eu-central-1",
+  subdomain: subdomain,
+  region: region,
 });
 
 // Sign in with email/password
@@ -24,32 +28,90 @@ const nhost = createClient({
 // Subsequent calls will use the session from the storage
 // If the session is about to expire, it will be refreshed
 // automatically
-await nhost.auth.signInEmailPassword({
-  email: "user@example.com",
-  password: "password123",
+await nhost.auth.signUpEmailPassword({
+  email,
+  password,
 });
 
-const { data } = await nhost.graphql.query({
-  query: `
-    query {
-      users {
-        id
-        displayName
-      }
-    }
-  `,
-});
-
-console.log(data);
-
-const resp = await nhost.storage.uploadFiles({
+const uplFilesResp = await nhost.storage.uploadFiles({
   "file[]": [
-    new Blob(["test1"], { type: "text/plain" }),
-    new Blob(["test2 is larger"], { type: "text/plain" }),
+    new File(["test1"], "file-1", { type: "text/plain" }),
+    new File(["test2 is larger"], "file-2", { type: "text/plain" }),
   ],
 });
+console.log(JSON.stringify(uplFilesResp, null, 2));
+// {
+//   "data": {
+//     "processedFiles": [
+//       {
+//         "id": "c0e83185-0ce5-435c-bd46-9841adc30699",
+//         "name": "file-1",
+//         "size": 5,
+//         "bucketId": "default",
+//         "etag": "\"5a105e8b9d40e1329780d62ea2265d8a\"",
+//         "createdAt": "2025-05-09T17:26:04.579839+00:00",
+//         "updatedAt": "2025-05-09T17:26:04.589692+00:00",
+//         "isUploaded": true,
+//         "mimeType": "text/plain",
+//         "uploadedByUserId": "",
+//         "metadata": null
+//       },
+//       {
+//         "id": "3f189004-21fd-42d0-be1d-1ead021ab167",
+//         "name": "file-2",
+//         "size": 15,
+//         "bucketId": "default",
+//         "etag": "\"302e888c5e289fe6b02115b748771ee9\"",
+//         "createdAt": "2025-05-09T17:26:04.59245+00:00",
+//         "updatedAt": "2025-05-09T17:26:04.596831+00:00",
+//         "isUploaded": true,
+//         "mimeType": "text/plain",
+//         "uploadedByUserId": "",
+//         "metadata": null
+//       }
+//     ]
+//   },
+//   "status": 201,
+//   "headers": {
+//     "content-length": "644",
+//     "content-type": "application/json; charset=utf-8",
+//     "date": "Fri, 09 May 2025 17:26:04 GMT"
+//   }
+// }
 
-console.log(resp);
+const graphResp = await nhost.graphql.query({
+  query: `
+   query {
+     files {
+       name
+       size
+       mimeType
+     }
+   }
+ `,
+});
+
+console.log(JSON.stringify(graphResp, null, 2));
+// {
+//   "body": {
+//     "data": {
+//       "files": [
+//         {
+//           "name": "file-1",
+//           "size": 5,
+//           "mimeType": "text/plain"
+//         },
+//         {
+//           "name": "file-2",
+//           "size": 15,
+//           "mimeType": "text/plain"
+//         }
+//       ]
+//     }
+//   },
+//   "status": 200,
+//   "headers": {}
+// }
 ```
 
 ## Classes
