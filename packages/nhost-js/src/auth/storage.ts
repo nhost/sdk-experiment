@@ -114,7 +114,9 @@ export class MemoryStorage implements SessionStorageInterface {
 
 /**
  * Cookie-based storage implementation.
- * Useful for server-side rendering and when localStorage is not available.
+ * This storage uses web browser cookies to store the session so it's not
+ * available in server-side environments. It is useful though for sinchronizing
+ * sessions between client and server environments.
  */
 export class CookieStorage implements SessionStorageInterface {
   private readonly cookieName: string;
