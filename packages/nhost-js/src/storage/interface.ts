@@ -1,21 +1,20 @@
-import type { ChainFunction } from '../fetch';
+import type { ChainFunction } from "../fetch";
 import type {
-    FetchResponse,
-    GetOpenAPISpec200,
-    VersionInformation,
-    UploadFilesBody,
-    UploadFiles201,
-    GetFileMetadataHeadersParams,
-    GetFileParams,
-    ReplaceFileBody,
-    FileMetadata,
-} from './client';
-
+  FetchResponse,
+  GetOpenAPISpec200,
+  VersionInformation,
+  UploadFilesBody,
+  UploadFiles201,
+  GetFileMetadataHeadersParams,
+  GetFileParams,
+  ReplaceFileBody,
+  FileMetadata,
+} from "./client";
 
 /**
  * Storage client interface providing methods for file operations
  */
-export interface StorageClient {
+export interface Client {
   /**
    * Base URL for the storage service
    */
@@ -31,13 +30,17 @@ export interface StorageClient {
    * Returns the OpenAPI schema definition for this API
    * @summary Get OpenAPI specification
    */
-  getOpenAPISpec: (options?: RequestInit) => Promise<FetchResponse<GetOpenAPISpec200>>;
+  getOpenAPISpec: (
+    options?: RequestInit,
+  ) => Promise<FetchResponse<GetOpenAPISpec200>>;
 
   /**
    * Retrieves build and version information about the storage service
    * @summary Get service version information
    */
-  getVersion: (options?: RequestInit) => Promise<FetchResponse<VersionInformation>>;
+  getVersion: (
+    options?: RequestInit,
+  ) => Promise<FetchResponse<VersionInformation>>;
 
   /**
    * Upload one or more files to storage

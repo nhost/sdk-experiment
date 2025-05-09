@@ -18,6 +18,14 @@ function createClient() {
           ],
           dependency: "../fetch",
         },
+        {
+          exports: [
+            {
+              name: "Client",
+            },
+          ],
+          dependency: "./interface",
+        },
       ];
     },
     footer: builder.footer,

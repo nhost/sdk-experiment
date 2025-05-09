@@ -67,7 +67,7 @@ export interface FetchResponse<T = any> {
 /**
  * GraphQL client interface providing methods for executing queries and mutations
  */
-export interface GraphQLClient {
+export interface Client {
   /**
    * Execute a GraphQL query operation
    *
@@ -140,7 +140,6 @@ export const createAPIClient = (
 ) => {
   const enhancedFetch = createEnhancedFetch(chainFunctions);
 
-
   const executeOperation = async (
     request: GraphQLRequest,
     options?: RequestInit,
@@ -164,14 +163,12 @@ export const createAPIClient = (
     };
   };
 
-
   const query = (
     request: GraphQLRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse>> => {
     return executeOperation(request, options);
   };
-
 
   const mutation = (
     request: GraphQLRequest,
@@ -183,5 +180,5 @@ export const createAPIClient = (
   return {
     query,
     mutation,
-  } as GraphQLClient;
+  } as Client;
 };

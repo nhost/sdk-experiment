@@ -7,7 +7,8 @@
  */
 import { createEnhancedFetch } from "../fetch";
 import type { ChainFunction } from "../fetch";
-import type { AuthClient } from "./interface";
+
+import type { Client } from "./interface";
 
 /**
  * JSON Web Key Set for verifying JWT signatures
@@ -493,7 +494,7 @@ export type FetchResponse<T> = {
 export const createAPIClient = (
   baseURL: string,
   chainFunctions: ChainFunction[] = [],
-): AuthClient => {
+): Client => {
   let fetch = createEnhancedFetch(chainFunctions);
 
   const pushChainFunction = (chainFunction: ChainFunction) => {

@@ -1,18 +1,18 @@
 import type {
-    FetchResponse,
-    OKResponse,
-    GetVersion200,
-    SignInEmailPasswordRequest,
-    SignInEmailPasswordResponse,
-    SignInMfaTotpRequest,
-    SignInPasswordlessEmailRequest,
-    RefreshTokenRequest,
-    Session,
-    SessionPayload,
-    SignOutSchema,
-    SignUpEmailPasswordRequest,
-    TotpGenerateResponse,
-    UserMfaRequest,
+  FetchResponse,
+  OKResponse,
+  GetVersion200,
+  SignInEmailPasswordRequest,
+  SignInEmailPasswordResponse,
+  SignInMfaTotpRequest,
+  SignInPasswordlessEmailRequest,
+  RefreshTokenRequest,
+  Session,
+  SessionPayload,
+  SignOutSchema,
+  SignUpEmailPasswordRequest,
+  TotpGenerateResponse,
+  UserMfaRequest,
 } from "./client";
 
 import type { ChainFunction } from "../fetch";
@@ -20,7 +20,7 @@ import type { ChainFunction } from "../fetch";
 /**
  * Authentication client interface providing methods for user sign-in, sign-up, and session management
  */
-export interface AuthClient {
+export interface Client {
   /**
    * Base URL for the authentication service
    */
@@ -56,7 +56,7 @@ export interface AuthClient {
    */
   refreshToken: (
     refreshTokenRequest: RefreshTokenRequest,
-    options?: RequestInit
+    options?: RequestInit,
   ) => Promise<FetchResponse<Session>>;
 
   /**
@@ -65,7 +65,7 @@ export interface AuthClient {
    */
   signOut: (
     signOutSchema: SignOutSchema,
-    options?: RequestInit
+    options?: RequestInit,
   ) => Promise<FetchResponse<OKResponse>>;
 
   /**
@@ -74,7 +74,7 @@ export interface AuthClient {
    */
   signInEmailPassword: (
     signInEmailPasswordRequest: SignInEmailPasswordRequest,
-    options?: RequestInit
+    options?: RequestInit,
   ) => Promise<FetchResponse<SignInEmailPasswordResponse>>;
 
   /**
@@ -83,7 +83,7 @@ export interface AuthClient {
    */
   signInVerifyMfaTotp: (
     signInMfaTotpRequest: SignInMfaTotpRequest,
-    options?: RequestInit
+    options?: RequestInit,
   ) => Promise<FetchResponse<SessionPayload>>;
 
   /**
@@ -92,7 +92,7 @@ export interface AuthClient {
    */
   signInPasswordlessEmail: (
     signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest,
-    options?: RequestInit
+    options?: RequestInit,
   ) => Promise<FetchResponse<OKResponse>>;
 
   /**
@@ -101,7 +101,7 @@ export interface AuthClient {
    */
   signUpEmailPassword: (
     signUpEmailPasswordRequest: SignUpEmailPasswordRequest,
-    options?: RequestInit
+    options?: RequestInit,
   ) => Promise<FetchResponse<SessionPayload>>;
 
   /**
@@ -110,12 +110,14 @@ export interface AuthClient {
    */
   changeUserMfaVerify: (
     userMfaRequest: UserMfaRequest,
-    options?: RequestInit
+    options?: RequestInit,
   ) => Promise<FetchResponse<OKResponse>>;
 
   /**
    * Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication
    * @summary Generate TOTP secret
    */
-  changeUserMfa: (options?: RequestInit) => Promise<FetchResponse<TotpGenerateResponse>>;
+  changeUserMfa: (
+    options?: RequestInit,
+  ) => Promise<FetchResponse<TotpGenerateResponse>>;
 }

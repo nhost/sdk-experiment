@@ -297,7 +297,7 @@ export const generateFetchHeader: ClientHeaderBuilder = ({
       export const createAPIClient = (
         baseURL: string,
         chainFunctions: ChainFunction[] = [],
-      ) => {
+      ): Client => {
         let fetch = createEnhancedFetch(chainFunctions);
 
         const pushChainFunction = (chainFunction: ChainFunction) => {

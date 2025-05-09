@@ -7,7 +7,8 @@
  */
 import { createEnhancedFetch } from "../fetch";
 import type { ChainFunction } from "../fetch";
-import type { StorageClient } from "./interface";
+
+import type { Client } from "./interface";
 
 /**
  * Contains version information about the storage service.
@@ -208,7 +209,7 @@ export type FetchResponse<T> = {
 export const createAPIClient = (
   baseURL: string,
   chainFunctions: ChainFunction[] = [],
-): StorageClient => {
+): Client => {
   let fetch = createEnhancedFetch(chainFunctions);
 
   const pushChainFunction = (chainFunction: ChainFunction) => {
