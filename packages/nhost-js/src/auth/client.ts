@@ -13,15 +13,15 @@ import type { Client } from "./interface";
 /**
  * JSON Web Key Set for verifying JWT signatures
  */
-export type JWKSet = {
+export interface JWKSet {
   /** Array of public keys */
   keys: Jwk[];
-};
+}
 
 /**
  * JSON Web Key for JWT verification
  */
-export type Jwk = {
+export interface Jwk {
   /** Algorithm used with this key */
   alg: string;
   /** RSA public exponent */
@@ -34,35 +34,35 @@ export type Jwk = {
   n: string;
   /** Key usage */
   use: string;
-};
+}
 
 /**
  * Request to refresh an access token
  */
-export type RefreshTokenRequest = {
+export interface RefreshTokenRequest {
   /**
    * Refresh token used to generate a new access token
    * @pattern \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
   refreshToken: string;
-};
+}
 
-export type SignOutSchema = {
+export interface SignOutSchema {
   /** Refresh token for the current session */
   refreshToken: string;
   /** Sign out from all connected devices */
   all?: boolean;
-};
+}
 
 export type CreatePATRequestMetadata = { [key: string]: unknown };
 
-export type CreatePATRequest = {
+export interface CreatePATRequest {
   /** Expiration date of the PAT */
   expiresAt: string;
   metadata?: CreatePATRequestMetadata;
-};
+}
 
-export type CreatePATResponse = {
+export interface CreatePATResponse {
   /**
    * ID of the PAT
    * @pattern \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
@@ -73,7 +73,7 @@ export type CreatePATResponse = {
    * @pattern \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
   personalAccessToken: string;
-};
+}
 
 /**
  * Error code identifying the specific application error
@@ -107,45 +107,45 @@ export type ErrorResponseError =
 /**
  * Standardized error response
  */
-export type ErrorResponse = {
+export interface ErrorResponse {
   /** HTTP status error code */
   status: number;
   /** Human-friendly error message */
   message: string;
   /** Error code identifying the specific application error */
   error: ErrorResponseError;
-};
+}
 
 /**
  * Response for email-password authentication that may include a session or MFA challenge
  */
-export type SignInEmailPasswordResponse = {
+export interface SignInEmailPasswordResponse {
   /** User session if authentication was successful. Null if MFA challenge is required. */
   session?: Session;
   /** MFA challenge if two-factor authentication is required */
   mfa?: MFAChallengePayload;
-};
+}
 
 /**
  * Challenge payload for multi-factor authentication
  */
-export type MFAChallengePayload = {
+export interface MFAChallengePayload {
   /** Ticket to use when completing the MFA challenge */
   ticket: string;
-};
+}
 
 /**
  * Container for session information
  */
-export type SessionPayload = {
+export interface SessionPayload {
   /** User session data. Null if authentication requires additional steps. */
   session?: Session;
-};
+}
 
 /**
  * User authentication session containing tokens and user information
  */
-export type Session = {
+export interface Session {
   /** JWT token for authenticating API requests */
   accessToken: string;
   /** Expiration time of the access token in seconds */
@@ -162,15 +162,15 @@ export type Session = {
   refreshToken: string;
   /** Information about the authenticated user */
   user?: User;
-};
+}
 
-export type SignInPATRequest = {
+export interface SignInPATRequest {
   /**
    * PAT
    * @pattern \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
   personalAccessToken: string;
-};
+}
 
 /**
  * Custom metadata associated with the user
@@ -180,7 +180,7 @@ export type UserMetadata = { [key: string]: unknown };
 /**
  * User profile and account information
  */
-export type User = {
+export interface User {
   /** URL to the user's profile picture */
   avatarUrl: string;
   /** Timestamp when the user account was created */
@@ -214,7 +214,7 @@ export type User = {
   phoneNumberVerified: boolean;
   /** List of roles assigned to the user */
   roles: string[];
-};
+}
 
 /**
  * Which sign-in method to use
@@ -222,7 +222,7 @@ export type User = {
 export type UserDeanonymizeRequestSignInMethod =
   | "email-password"
   | "passwordless";
-export type UserDeanonymizeRequest = {
+export interface UserDeanonymizeRequest {
   /** Which sign-in method to use */
   signInMethod: UserDeanonymizeRequestSignInMethod;
   /** A valid email */
@@ -239,27 +239,27 @@ export type UserDeanonymizeRequest = {
    */
   connection?: string;
   options?: SignUpOptions;
-};
+}
 
-export type UserEmailChangeRequest = {
+export interface UserEmailChangeRequest {
   /** A valid email */
   newEmail: string;
   options?: OptionsRedirectTo;
-};
+}
 
-export type UserEmailSendVerificationEmailRequest = {
+export interface UserEmailSendVerificationEmailRequest {
   /** A valid email */
   email: string;
   options?: OptionsRedirectTo;
-};
+}
 
-export type UserPasswordResetRequest = {
+export interface UserPasswordResetRequest {
   /** A valid email */
   email: string;
   options?: OptionsRedirectTo;
-};
+}
 
-export type UserPasswordRequest = {
+export interface UserPasswordRequest {
   /**
    * A password of minimum 3 characters
    * @minLength 3
@@ -271,16 +271,16 @@ export type UserPasswordRequest = {
    * @pattern ^passwordReset\:.*$
    */
   ticket?: string;
-};
+}
 
 export type OKResponse = "OK";
-export type OptionsRedirectTo = {
+export interface OptionsRedirectTo {
   redirectTo?: string;
-};
+}
 
 export type SigninAnonymousRequestMetadata = { [key: string]: unknown };
 
-export type SigninAnonymousRequest = {
+export interface SigninAnonymousRequest {
   displayName?: string;
   /**
    * A two-characters locale
@@ -289,12 +289,12 @@ export type SigninAnonymousRequest = {
    */
   locale?: string;
   metadata?: SigninAnonymousRequestMetadata;
-};
+}
 
 /**
  * Request to authenticate using email and password
  */
-export type SignInEmailPasswordRequest = {
+export interface SignInEmailPasswordRequest {
   /** User's email address */
   email: string;
   /**
@@ -303,35 +303,35 @@ export type SignInEmailPasswordRequest = {
    * @maxLength 50
    */
   password: string;
-};
+}
 
-export type SignInPasswordlessEmailRequest = {
+export interface SignInPasswordlessEmailRequest {
   /** A valid email */
   email: string;
   options?: SignUpOptions;
-};
+}
 
-export type SignInOTPEmailRequest = {
+export interface SignInOTPEmailRequest {
   /** A valid email */
   email: string;
   options?: SignUpOptions;
-};
+}
 
-export type SignInOTPEmailVerifyRequest = {
+export interface SignInOTPEmailVerifyRequest {
   /** One time password */
   otp: string;
   /** A valid email */
   email: string;
-};
+}
 
-export type SignInOTPEmailVerifyResponse = {
+export interface SignInOTPEmailVerifyResponse {
   session?: Session;
-};
+}
 
 /**
  * Request to register a new user with email and password
  */
-export type SignUpEmailPasswordRequest = {
+export interface SignUpEmailPasswordRequest {
   /** Email address for the new user account */
   email: string;
   /**
@@ -342,11 +342,11 @@ export type SignUpEmailPasswordRequest = {
   password: string;
   /** Optional configuration for the new user account */
   options?: SignUpOptions;
-};
+}
 
 export type SignUpOptionsMetadata = { [key: string]: unknown };
 
-export type SignUpOptions = {
+export interface SignUpOptions {
   allowedRoles?: string[];
   defaultRole?: string;
   /**
@@ -362,26 +362,30 @@ export type SignUpOptions = {
   locale?: string;
   metadata?: SignUpOptionsMetadata;
   redirectTo?: string;
-};
+}
 
-export type SignInWebauthnRequest = {
+export interface SignInWebauthnRequest {
   /** A valid email */
   email?: string;
-};
+}
 
-export type SignUpWebauthnRequest = {
+export interface SignUpWebauthnRequest {
   /** A valid email */
   email: string;
   options?: SignUpOptions;
-};
+}
 
-export type SignInWebauthnResponse = { [key: string]: unknown };
+export interface SignInWebauthnResponse {
+  [key: string]: unknown;
+}
 
-export type SignUpWebauthnResponse = { [key: string]: unknown };
+export interface SignUpWebauthnResponse {
+  [key: string]: unknown;
+}
 
 export type SignInWebauthnVerifyRequestCredential = { [key: string]: unknown };
 
-export type SignInWebauthnVerifyRequest = {
+export interface SignInWebauthnVerifyRequest {
   /**
    * A valid email. Deprecated, no longer used
    * @deprecated
@@ -389,7 +393,7 @@ export type SignInWebauthnVerifyRequest = {
   email?: string;
   credential: SignInWebauthnVerifyRequestCredential;
   [key: string]: unknown;
-};
+}
 
 export type SignUpWebauthnVerifyRequestCredential = { [key: string]: unknown };
 
@@ -400,22 +404,22 @@ export type SignUpWebauthnVerifyRequestOptionsAllOf = {
 export type SignUpWebauthnVerifyRequestOptions = SignUpOptions &
   SignUpWebauthnVerifyRequestOptionsAllOf;
 
-export type SignUpWebauthnVerifyRequest = {
+export interface SignUpWebauthnVerifyRequest {
   credential?: SignUpWebauthnVerifyRequestCredential;
   options?: SignUpWebauthnVerifyRequestOptions;
   [key: string]: unknown;
-};
+}
 
-export type SignInIdTokenRequest = {
+export interface SignInIdTokenRequest {
   provider: Provider;
   /** Apple ID token */
   idToken: string;
   /** Nonce used during sign in process */
   nonce?: string;
   options?: SignUpOptions;
-};
+}
 
-export type SignInMfaTotpRequest = {
+export interface SignInMfaTotpRequest {
   /**
    * Ticket
    * @pattern ^mfaTotp:.*$
@@ -423,16 +427,16 @@ export type SignInMfaTotpRequest = {
   ticket: string;
   /** One time password */
   otp: string;
-};
+}
 
 export type Provider = "apple" | "google";
-export type LinkIdTokenRequest = {
+export interface LinkIdTokenRequest {
   provider: Provider;
   /** Apple ID token */
   idToken: string;
   /** Nonce used during sign in process */
   nonce?: string;
-};
+}
 
 /**
  * Type of MFA to activate. Use empty string to disable MFA.
@@ -441,22 +445,22 @@ export type UserMfaRequestActiveMfaType = "totp" | "";
 /**
  * Request to activate or deactivate multi-factor authentication
  */
-export type UserMfaRequest = {
+export interface UserMfaRequest {
   /** Verification code from the authenticator app when activating MFA */
   code: string;
   /** Type of MFA to activate. Use empty string to disable MFA. */
   activeMfaType?: UserMfaRequestActiveMfaType;
-};
+}
 
 /**
  * Response containing TOTP setup information for MFA
  */
-export type TotpGenerateResponse = {
+export interface TotpGenerateResponse {
   /** URL to QR code image for scanning with an authenticator app */
   imageUrl: string;
   /** TOTP secret key for manual setup with an authenticator app */
   totpSecret: string;
-};
+}
 
 /**
  * Ticket

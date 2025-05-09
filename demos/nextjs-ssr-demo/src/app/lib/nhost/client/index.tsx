@@ -1,6 +1,7 @@
 "use client";
 
-import { createClient, CookieStorage } from "nhost-js";
+import { createClient } from "nhost-js";
+import { CookieStorage } from "nhost-js/auth";
 
 export function createClientNhostClient() {
   return createClient({

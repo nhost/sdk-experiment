@@ -89,7 +89,7 @@ export type SessionRefreshOptions = {
    * Default is 60 seconds (1 minute).
    */
   marginSeconds?: number;
-}
+};
 
 /**
  * Creates a fetch middleware that automatically refreshes authentication tokens.

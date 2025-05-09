@@ -88,37 +88,12 @@ For typical usage, use createClient instead.
 
 #### Properties
 
-##### auth
-
-```ts
-auth: Client;
-```
-
-Authentication client providing methods for user sign-in, sign-up, and session management
-
-##### graphql
-
-```ts
-graphql: Client;
-```
-
-GraphQL client providing methods for executing GraphQL operations against your Hasura backend
-
-##### sessionStorage
-
-```ts
-sessionStorage: SessionStorageInterface;
-```
-
-Storage implementation used for persisting session information
-
-##### storage
-
-```ts
-storage: Client;
-```
-
-Storage client providing methods for file operations (upload, download, delete)
+| Property                                     | Type                                                          | Description                                                                                   |
+| -------------------------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| <a id="auth"></a> `auth`                     | [`Client`](auth#client)                                   | Authentication client providing methods for user sign-in, sign-up, and session management     |
+| <a id="graphql"></a> `graphql`               | [`Client`](graphql#client)                                | GraphQL client providing methods for executing GraphQL operations against your Hasura backend |
+| <a id="sessionstorage"></a> `sessionStorage` | [`SessionStorageInterface`](auth#sessionstorageinterface) | Storage implementation used for persisting session information                                |
+| <a id="storage"></a> `storage`               | [`Client`](storage#client)                                | Storage client providing methods for file operations (upload, download, delete)               |
 
 #### Methods
 
@@ -186,53 +161,14 @@ Configuration options for creating an Nhost client
 
 #### Properties
 
-##### authUrl?
-
-```ts
-optional authUrl: string;
-```
-
-Complete base URL for the auth service (overrides subdomain/region)
-
-##### graphqlUrl?
-
-```ts
-optional graphqlUrl: string;
-```
-
-Complete base URL for the GraphQL service (overrides subdomain/region)
-
-##### region?
-
-```ts
-optional region: string;
-```
-
-Nhost region (e.g., 'eu-central-1')
-
-##### storage?
-
-```ts
-optional storage: SessionStorageInterface;
-```
-
-Storage implementation to use for session persistence
-
-##### storageUrl?
-
-```ts
-optional storageUrl: string;
-```
-
-Complete base URL for the storage service (overrides subdomain/region)
-
-##### subdomain?
-
-```ts
-optional subdomain: string;
-```
-
-Nhost project subdomain (e.g., 'abcdefgh')
+| Property                              | Type                                                          | Description                                                            |
+| ------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| <a id="authurl"></a> `authUrl?`       | `string`                                                      | Complete base URL for the auth service (overrides subdomain/region)    |
+| <a id="graphqlurl"></a> `graphqlUrl?` | `string`                                                      | Complete base URL for the GraphQL service (overrides subdomain/region) |
+| <a id="region"></a> `region?`         | `string`                                                      | Nhost region (e.g., 'eu-central-1')                                    |
+| <a id="storage-1"></a> `storage?`     | [`SessionStorageInterface`](auth#sessionstorageinterface) | Storage implementation to use for session persistence                  |
+| <a id="storageurl"></a> `storageUrl?` | `string`                                                      | Complete base URL for the storage service (overrides subdomain/region) |
+| <a id="subdomain"></a> `subdomain?`   | `string`                                                      | Nhost project subdomain (e.g., 'abcdefgh')                             |
 
 ## Functions
 
