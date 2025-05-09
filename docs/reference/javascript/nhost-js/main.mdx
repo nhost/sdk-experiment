@@ -1,0 +1,188 @@
+Main entry point for the Nhost JavaScript SDK.
+
+This package provides a unified client for interacting with Nhost services:
+
+- Authentication
+- Storage
+- GraphQL
+- Functions
+
+## Example
+
+You can import and use this package in your project with:
+
+```ts
+import { createClient } from "@nhost/nhost-js";
+
+const nhost = createClient({
+  subdomain: "your-project",
+  region: "eu-central-1",
+});
+
+// Sign in with email/password
+// This will create a session and persist it in the storage
+// Subsequent calls will use the session from the storage
+// If the session is about to expire, it will be refreshed
+// automatically
+await nhost.auth.signInEmailPassword({
+  email: "user@example.com",
+  password: "password123",
+});
+
+const { data } = await nhost.graphql.query({
+  query: `
+    query {
+      users {
+        id
+        displayName
+      }
+    }
+  `,
+});
+
+console.log(data);
+
+const resp = await nhostStorage.uploadFiles({
+  "file[]": [
+    new Blob(["test1"], { type: "text/plain" }),
+    new Blob(["test2 is larger"], { type: "text/plain" }),
+  ],
+});
+
+console.log(resp);
+```
+
+## Classes
+
+### NhostClient
+
+Main client class that provides access to all Nhost services
+
+#### Constructors
+
+##### Constructor
+
+```ts
+new NhostClient(options: NhostClientOptions): NhostClient;
+```
+
+Create a new Nhost client
+
+###### Parameters
+
+| Parameter | Type                                        | Description                          |
+| --------- | ------------------------------------------- | ------------------------------------ |
+| `options` | [`NhostClientOptions`](#nhostclientoptions) | Configuration options for the client |
+
+###### Returns
+
+[`NhostClient`](#nhostclient)
+
+###### Example
+
+```ts
+const nhost = new NhostClient({
+  subdomain: "your-project",
+  region: "eu-central-1",
+});
+```
+
+#### Properties
+
+| Property                                     | Type                                            | Description                                                                                   |
+| -------------------------------------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| <a id="auth"></a> `auth`                     | [`AuthClient`](auth#authclient)             | Authentication client providing methods for user sign-in, sign-up, and session management     |
+| <a id="graphql"></a> `graphql`               | [`GraphQLClient`](graphql#graphqlclient)    | GraphQL client providing methods for executing GraphQL operations against your Hasura backend |
+| <a id="sessionstorage"></a> `sessionStorage` | [`StorageInterface`](auth#storageinterface) | Storage implementation used for persisting session information                                |
+| <a id="storage"></a> `storage`               | [`StorageClient`](storage#storageclient)    | Storage client providing methods for file operations (upload, download, delete)               |
+
+#### Methods
+
+##### getUserSession()
+
+```ts
+getUserSession(): null | Session;
+```
+
+Get the current session from storage
+
+###### Returns
+
+`null` \| [`Session`](auth#session)
+
+The current session or null if no session exists
+
+###### Example
+
+```ts
+const session = nhost.getUserSession();
+if (session) {
+  console.log("User is authenticated:", session.user.id);
+} else {
+  console.log("No active session");
+}
+```
+
+##### refreshSession()
+
+```ts
+refreshSession(): Promise<null | Session>;
+```
+
+Refresh the session using the current refresh token
+in the storage and update the storage with the new session
+
+###### Returns
+
+`Promise`&lt;`null` \| [`Session`](auth#session)&gt;
+
+The new session or null if refresh fails
+
+###### Throws
+
+Error if no session exists in storage
+
+## Interfaces
+
+### NhostClientOptions
+
+Configuration options for creating an Nhost client
+
+#### Properties
+
+| Property                              | Type                                            | Description                                                            |
+| ------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------- |
+| <a id="authurl"></a> `authUrl?`       | `string`                                        | Complete base URL for the auth service (overrides subdomain/region)    |
+| <a id="graphqlurl"></a> `graphqlUrl?` | `string`                                        | Complete base URL for the GraphQL service (overrides subdomain/region) |
+| <a id="region"></a> `region?`         | `string`                                        | Nhost region (e.g., 'eu-central-1')                                    |
+| <a id="storage-1"></a> `storage?`     | [`StorageInterface`](auth#storageinterface) | Storage implementation to use for session persistence                  |
+| <a id="storageurl"></a> `storageUrl?` | `string`                                        | Complete base URL for the storage service (overrides subdomain/region) |
+| <a id="subdomain"></a> `subdomain?`   | `string`                                        | Nhost project subdomain (e.g., 'abcdefgh')                             |
+
+## Functions
+
+### createClient()
+
+```ts
+function createClient(options: NhostClientOptions): NhostClient;
+```
+
+Creates and configures a new Nhost client instance
+
+This is the recommended way to initialize the Nhost SDK in your application.
+
+#### Parameters
+
+| Parameter | Type                                        | Description                          |
+| --------- | ------------------------------------------- | ------------------------------------ |
+| `options` | [`NhostClientOptions`](#nhostclientoptions) | Configuration options for the client |
+
+#### Returns
+
+[`NhostClient`](#nhostclient)
+
+A configured Nhost client
+
+```
+
+```

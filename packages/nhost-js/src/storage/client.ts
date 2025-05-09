@@ -7,6 +7,7 @@
  */
 import { createEnhancedFetch } from "../fetch";
 import type { ChainFunction } from "../fetch";
+import type { StorageClient } from "./interface";
 
 /**
  * Contains version information about the storage service.
@@ -161,18 +162,12 @@ export type GetFileMetadataHeadersParams = {
 };
 
 export type GetFileMetadataHeadersF =
-  (typeof GetFileMetadataHeadersF)[keyof typeof GetFileMetadataHeadersF];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetFileMetadataHeadersF = {
-  auto: "auto",
-  same: "same",
-  jpeg: "jpeg",
-  webp: "webp",
-  png: "png",
-  avif: "avif",
-} as const;
-
+  | "auto"
+  | "same"
+  | "jpeg"
+  | "webp"
+  | "png"
+  | "avif";
 export type GetFileParams = {
   /**
    * Image quality (1-100). Only applies to JPEG, WebP and PNG files
@@ -196,18 +191,7 @@ export type GetFileParams = {
   f?: GetFileF;
 };
 
-export type GetFileF = (typeof GetFileF)[keyof typeof GetFileF];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GetFileF = {
-  auto: "auto",
-  same: "same",
-  jpeg: "jpeg",
-  webp: "webp",
-  png: "png",
-  avif: "avif",
-} as const;
-
+export type GetFileF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
 export type ReplaceFileBody = {
   /** Optional metadata to update for the file */
   metadata?: UpdateFileMetadata;
@@ -224,7 +208,7 @@ export type FetchResponse<T> = {
 export const createAPIClient = (
   baseURL: string,
   chainFunctions: ChainFunction[] = [],
-) => {
+): StorageClient => {
   let fetch = createEnhancedFetch(chainFunctions);
 
   const pushChainFunction = (chainFunction: ChainFunction) => {

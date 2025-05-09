@@ -69,7 +69,7 @@ import { createSessionResponseMiddleware } from "./auth/middlewareResponseSessio
  * @param subdomain - Nhost project subdomain
  * @param region - Nhost region
  * @param customUrl - Custom URL override if provided
-* @returns The base URL for the service
+ * @returns The base URL for the service
  *
  * @internal
  */

@@ -54,7 +54,7 @@
     "prepublishOnly": "pnpm build",
     "lint": "eslint src --ext .ts,.tsx",
     "typecheck": "tsc --noEmit",
-    "docs:markdown": "typedoc --options typedoc.json"
+    "docs:markdown": "./typedoc.sh"
   },
   "keywords": [
     "nhost",

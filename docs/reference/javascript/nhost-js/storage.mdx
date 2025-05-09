@@ -72,6 +72,26 @@ Contains a presigned URL for direct file operations.
 
 ---
 
+### StorageClient
+
+Storage client interface providing methods for file operations
+
+#### Properties
+
+| Property                                                     | Type                                                                                                                                                                                               | Description                                                       |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| <a id="baseurl"></a> `baseURL`                               | `string`                                                                                                                                                                                           | Base URL for the storage service                                  |
+| <a id="deletefile"></a> `deleteFile`                         | (`id`: `string`, `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;                                                                                    | Delete a file                                                     |
+| <a id="getfile"></a> `getFile`                               | (`id`: `string`, `params?`: [`GetFileParams`](#getfileparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`Blob`&gt;&gt;                                      | Download a file                                                   |
+| <a id="getfilemetadataheaders"></a> `getFileMetadataHeaders` | (`id`: `string`, `params?`: [`GetFileMetadataHeadersParams`](#getfilemetadataheadersparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;        | Retrieve file metadata using HTTP HEAD method                     |
+| <a id="getopenapispec"></a> `getOpenAPISpec`                 | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetOpenAPISpec200`](#getopenapispec200)&gt;&gt;                                                                 | Returns the OpenAPI schema definition for this API                |
+| <a id="getversion"></a> `getVersion`                         | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`VersionInformation`](#versioninformation)&gt;&gt;                                                               | Retrieves build and version information about the storage service |
+| <a id="pushchainfunction"></a> `pushChainFunction`           | (`chainFunction`: `ChainFunction`) => `void`                                                                                                                                                       | Add a middleware function to the request chain                    |
+| <a id="replacefile"></a> `replaceFile`                       | (`id`: `string`, `replaceFileBody`: [`ReplaceFileBody`](#replacefilebody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`FileMetadata`](#filemetadata)&gt;&gt; | Replace an existing file                                          |
+| <a id="uploadfiles"></a> `uploadFiles`                       | (`uploadFilesBody`: [`UploadFilesBody`](#uploadfilesbody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;             | Upload one or more files to storage                               |
+
+---
+
 ### UpdateFileMetadata
 
 Metadata that can be updated for an existing file.
@@ -168,7 +188,7 @@ Custom metadata associated with the file.
 ### GetFileF
 
 ```ts
-type GetFileF = (typeof GetFileF)[keyof typeof GetFileF];
+type GetFileF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
 ```
 
 ---
@@ -177,7 +197,12 @@ type GetFileF = (typeof GetFileF)[keyof typeof GetFileF];
 
 ```ts
 type GetFileMetadataHeadersF =
-  (typeof GetFileMetadataHeadersF)[keyof typeof GetFileMetadataHeadersF];
+  | "auto"
+  | "same"
+  | "jpeg"
+  | "webp"
+  | "png"
+  | "avif";
 ```
 
 ---
@@ -190,13 +215,13 @@ type GetFileMetadataHeadersParams = object;
 
 #### Properties
 
-| Property            | Type                                                    | Description                                                                                   |
-| ------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| <a id="b"></a> `b?` | `number`                                                | Blur the image using this sigma value. Only applies to image files                            |
-| <a id="f"></a> `f?` | [`GetFileMetadataHeadersF`](#getfilemetadataheadersf-1) | Output format for image files. Use 'auto' for content negotiation based on Accept header      |
-| <a id="h"></a> `h?` | `number`                                                | Maximum height to resize image to while maintaining aspect ratio. Only applies to image files |
-| <a id="q"></a> `q?` | `number`                                                | Image quality (1-100). Only applies to JPEG, WebP and PNG files                               |
-| <a id="w"></a> `w?` | `number`                                                | Maximum width to resize image to while maintaining aspect ratio. Only applies to image files  |
+| Property            | Type                                                  | Description                                                                                   |
+| ------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| <a id="b"></a> `b?` | `number`                                              | Blur the image using this sigma value. Only applies to image files                            |
+| <a id="f"></a> `f?` | [`GetFileMetadataHeadersF`](#getfilemetadataheadersf) | Output format for image files. Use 'auto' for content negotiation based on Accept header      |
+| <a id="h"></a> `h?` | `number`                                              | Maximum height to resize image to while maintaining aspect ratio. Only applies to image files |
+| <a id="q"></a> `q?` | `number`                                              | Image quality (1-100). Only applies to JPEG, WebP and PNG files                               |
+| <a id="w"></a> `w?` | `number`                                              | Maximum width to resize image to while maintaining aspect ratio. Only applies to image files  |
 
 ---
 
@@ -208,13 +233,13 @@ type GetFileParams = object;
 
 #### Properties
 
-| Property              | Type                      | Description                                                                                   |
-| --------------------- | ------------------------- | --------------------------------------------------------------------------------------------- |
-| <a id="b-1"></a> `b?` | `number`                  | Blur the image using this sigma value. Only applies to image files                            |
-| <a id="f-1"></a> `f?` | [`GetFileF`](#getfilef-1) | Output format for image files. Use 'auto' for content negotiation based on Accept header      |
-| <a id="h-1"></a> `h?` | `number`                  | Maximum height to resize image to while maintaining aspect ratio. Only applies to image files |
-| <a id="q-1"></a> `q?` | `number`                  | Image quality (1-100). Only applies to JPEG, WebP and PNG files                               |
-| <a id="w-1"></a> `w?` | `number`                  | Maximum width to resize image to while maintaining aspect ratio. Only applies to image files  |
+| Property              | Type                    | Description                                                                                   |
+| --------------------- | ----------------------- | --------------------------------------------------------------------------------------------- |
+| <a id="b-1"></a> `b?` | `number`                | Blur the image using this sigma value. Only applies to image files                            |
+| <a id="f-1"></a> `f?` | [`GetFileF`](#getfilef) | Output format for image files. Use 'auto' for content negotiation based on Accept header      |
+| <a id="h-1"></a> `h?` | `number`                | Maximum height to resize image to while maintaining aspect ratio. Only applies to image files |
+| <a id="q-1"></a> `q?` | `number`                | Image quality (1-100). Only applies to JPEG, WebP and PNG files                               |
+| <a id="w-1"></a> `w?` | `number`                | Maximum width to resize image to while maintaining aspect ratio. Only applies to image files  |
 
 ---
 
@@ -307,44 +332,6 @@ type UploadFilesBody = object;
 | <a id="file-1"></a> `file[]?`         | `Blob`[]                                      | Array of files to upload.                                                                  |
 | <a id="metadata-4"></a> `metadata[]?` | [`UploadFileMetadata`](#uploadfilemetadata)[] | Optional custom metadata for each uploaded file. Must match the order of the file[] array. |
 
-## Variables
-
-### GetFileF
-
-```ts
-GetFileF: object;
-```
-
-#### Type declaration
-
-| Name                     | Type     | Default value |
-| ------------------------ | -------- | ------------- |
-| <a id="auto"></a> `auto` | `"auto"` | `"auto"`      |
-| <a id="avif"></a> `avif` | `"avif"` | `"avif"`      |
-| <a id="jpeg"></a> `jpeg` | `"jpeg"` | `"jpeg"`      |
-| <a id="png"></a> `png`   | `"png"`  | `"png"`       |
-| <a id="same"></a> `same` | `"same"` | `"same"`      |
-| <a id="webp"></a> `webp` | `"webp"` | `"webp"`      |
-
----
-
-### GetFileMetadataHeadersF
-
-```ts
-GetFileMetadataHeadersF: object;
-```
-
-#### Type declaration
-
-| Name                       | Type     | Default value |
-| -------------------------- | -------- | ------------- |
-| <a id="auto-1"></a> `auto` | `"auto"` | `"auto"`      |
-| <a id="avif-1"></a> `avif` | `"avif"` | `"avif"`      |
-| <a id="jpeg-1"></a> `jpeg` | `"jpeg"` | `"jpeg"`      |
-| <a id="png-1"></a> `png`   | `"png"`  | `"png"`       |
-| <a id="same-1"></a> `same` | `"same"` | `"same"`      |
-| <a id="webp-1"></a> `webp` | `"webp"` | `"webp"`      |
-
 ## Functions
 
 ### createAPIClient()
@@ -353,7 +340,7 @@ GetFileMetadataHeadersF: object;
 function createAPIClient(
   baseURL: string,
   chainFunctions: ChainFunction[],
-): object;
+): StorageClient;
 ```
 
 #### Parameters
@@ -365,14 +352,4 @@ function createAPIClient(
 
 #### Returns
 
-| Name                       | Type                                                                                                                                                                                               |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `baseURL`                  | `string`                                                                                                                                                                                           |
-| `deleteFile()`             | (`id`: `string`, `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;                                                                                    |
-| `getFile()`                | (`id`: `string`, `params?`: [`GetFileParams`](#getfileparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`Blob`&gt;&gt;                                      |
-| `getFileMetadataHeaders()` | (`id`: `string`, `params?`: [`GetFileMetadataHeadersParams`](#getfilemetadataheadersparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;        |
-| `getOpenAPISpec()`         | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetOpenAPISpec200`](#getopenapispec200)&gt;&gt;                                                                 |
-| `getVersion()`             | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`VersionInformation`](#versioninformation)&gt;&gt;                                                               |
-| `pushChainFunction()`      | (`chainFunction`: `ChainFunction`) => `void`                                                                                                                                                       |
-| `replaceFile()`            | (`id`: `string`, `replaceFileBody`: [`ReplaceFileBody`](#replacefilebody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`FileMetadata`](#filemetadata)&gt;&gt; |
-| `uploadFiles()`            | (`uploadFilesBody`: [`UploadFilesBody`](#uploadfilesbody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;             |
+[`StorageClient`](#storageclient)

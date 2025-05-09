@@ -7,6 +7,7 @@
  */
 import { createEnhancedFetch } from "../fetch";
 import type { ChainFunction } from "../fetch";
+import type { AuthClient } from "./interface";
 
 /**
  * JSON Web Key Set for verifying JWT signatures
@@ -77,38 +78,31 @@ export interface CreatePATResponse {
  * Error code identifying the specific application error
  */
 export type ErrorResponseError =
-  (typeof ErrorResponseError)[keyof typeof ErrorResponseError];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const ErrorResponseError = {
-  "default-role-must-be-in-allowed-roles":
-    "default-role-must-be-in-allowed-roles",
-  "disabled-endpoint": "disabled-endpoint",
-  "disabled-user": "disabled-user",
-  "email-already-in-use": "email-already-in-use",
-  "email-already-verified": "email-already-verified",
-  "forbidden-anonymous": "forbidden-anonymous",
-  "internal-server-error": "internal-server-error",
-  "invalid-email-password": "invalid-email-password",
-  "invalid-request": "invalid-request",
-  "locale-not-allowed": "locale-not-allowed",
-  "password-too-short": "password-too-short",
-  "password-in-hibp-database": "password-in-hibp-database",
-  "redirectTo-not-allowed": "redirectTo-not-allowed",
-  "role-not-allowed": "role-not-allowed",
-  "signup-disabled": "signup-disabled",
-  "unverified-user": "unverified-user",
-  "user-not-anonymous": "user-not-anonymous",
-  "invalid-pat": "invalid-pat",
-  "invalid-refresh-token": "invalid-refresh-token",
-  "invalid-ticket": "invalid-ticket",
-  "disabled-mfa-totp": "disabled-mfa-totp",
-  "no-totp-secret": "no-totp-secret",
-  "invalid-totp": "invalid-totp",
-  "mfa-type-not-found": "mfa-type-not-found",
-  "totp-already-active": "totp-already-active",
-} as const;
-
+  | "default-role-must-be-in-allowed-roles"
+  | "disabled-endpoint"
+  | "disabled-user"
+  | "email-already-in-use"
+  | "email-already-verified"
+  | "forbidden-anonymous"
+  | "internal-server-error"
+  | "invalid-email-password"
+  | "invalid-request"
+  | "locale-not-allowed"
+  | "password-too-short"
+  | "password-in-hibp-database"
+  | "redirectTo-not-allowed"
+  | "role-not-allowed"
+  | "signup-disabled"
+  | "unverified-user"
+  | "user-not-anonymous"
+  | "invalid-pat"
+  | "invalid-refresh-token"
+  | "invalid-ticket"
+  | "disabled-mfa-totp"
+  | "no-totp-secret"
+  | "invalid-totp"
+  | "mfa-type-not-found"
+  | "totp-already-active";
 /**
  * Standardized error response
  */
@@ -225,14 +219,8 @@ export interface User {
  * Which sign-in method to use
  */
 export type UserDeanonymizeRequestSignInMethod =
-  (typeof UserDeanonymizeRequestSignInMethod)[keyof typeof UserDeanonymizeRequestSignInMethod];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const UserDeanonymizeRequestSignInMethod = {
-  "email-password": "email-password",
-  passwordless: "passwordless",
-} as const;
-
+  | "email-password"
+  | "passwordless";
 export interface UserDeanonymizeRequest {
   /** Which sign-in method to use */
   signInMethod: UserDeanonymizeRequestSignInMethod;
@@ -284,13 +272,7 @@ export interface UserPasswordRequest {
   ticket?: string;
 }
 
-export type OKResponse = (typeof OKResponse)[keyof typeof OKResponse];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const OKResponse = {
-  OK: "OK",
-} as const;
-
+export type OKResponse = "OK";
 export interface OptionsRedirectTo {
   redirectTo?: string;
 }
@@ -446,14 +428,7 @@ export interface SignInMfaTotpRequest {
   otp: string;
 }
 
-export type Provider = (typeof Provider)[keyof typeof Provider];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const Provider = {
-  apple: "apple",
-  google: "google",
-} as const;
-
+export type Provider = "apple" | "google";
 export interface LinkIdTokenRequest {
   provider: Provider;
   /** Apple ID token */
@@ -465,15 +440,7 @@ export interface LinkIdTokenRequest {
 /**
  * Type of MFA to activate. Use empty string to disable MFA.
  */
-export type UserMfaRequestActiveMfaType =
-  (typeof UserMfaRequestActiveMfaType)[keyof typeof UserMfaRequestActiveMfaType];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const UserMfaRequestActiveMfaType = {
-  totp: "totp",
-  "": "",
-} as const;
-
+export type UserMfaRequestActiveMfaType = "totp" | "";
 /**
  * Request to activate or deactivate multi-factor authentication
  */
@@ -503,16 +470,10 @@ export type TicketQueryParameter = string;
  * Type of the ticket
  */
 export type TicketTypeQueryParameter =
-  (typeof TicketTypeQueryParameter)[keyof typeof TicketTypeQueryParameter];
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const TicketTypeQueryParameter = {
-  emailVerify: "emailVerify",
-  emailConfirmChange: "emailConfirmChange",
-  signinPasswordless: "signinPasswordless",
-  passwordReset: "passwordReset",
-} as const;
-
+  | "emailVerify"
+  | "emailConfirmChange"
+  | "signinPasswordless"
+  | "passwordReset";
 /**
  * Target URL for the redirect
  */
@@ -532,7 +493,7 @@ export type FetchResponse<T> = {
 export const createAPIClient = (
   baseURL: string,
   chainFunctions: ChainFunction[] = [],
-) => {
+): AuthClient => {
   let fetch = createEnhancedFetch(chainFunctions);
 
   const pushChainFunction = (chainFunction: ChainFunction) => {

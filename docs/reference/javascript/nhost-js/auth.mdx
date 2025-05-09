@@ -277,6 +277,30 @@ Sets the session in memory
 
 ## Interfaces
 
+### AuthClient
+
+Authentication client interface providing methods for user sign-in, sign-up, and session management
+
+#### Properties
+
+| Property                                                       | Type                                                                                                                                                                                                                                              | Description                                                                                      |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| <a id="baseurl"></a> `baseURL`                                 | `string`                                                                                                                                                                                                                                          | Base URL for the authentication service                                                          |
+| <a id="changeusermfa"></a> `changeUserMfa`                     | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;                                                                                                          | Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication |
+| <a id="changeusermfaverify"></a> `changeUserMfaVerify`         | (`userMfaRequest`: [`UserMfaRequest`](#usermfarequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                            | Activate or deactivate multi-factor authentication for the authenticated user                    |
+| <a id="getversion"></a> `getVersion`                           | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;                                                                                                                        | Retrieve version information about the authentication service                                    |
+| <a id="healthcheckget"></a> `healthCheckGet`                   | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                                                                                   | Verify if the authentication service is operational using GET method                             |
+| <a id="healthcheckhead"></a> `healthCheckHead`                 | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;                                                                                                                                                   | Verify if the authentication service is operational using HEAD method                            |
+| <a id="pushchainfunction"></a> `pushChainFunction`             | (`chainFunction`: `ChainFunction`) => `void`                                                                                                                                                                                                      | Add a middleware function to the request chain                                                   |
+| <a id="refreshtoken"></a> `refreshToken`                       | (`refreshTokenRequest`: [`RefreshTokenRequest`](#refreshtokenrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;                                                              | Generate a new JWT access token using a valid refresh token                                      |
+| <a id="signinemailpassword"></a> `signInEmailPassword`         | (`signInEmailPasswordRequest`: [`SignInEmailPasswordRequest`](#signinemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt; | Authenticate a user with their email and password                                                |
+| <a id="signinpasswordlessemail"></a> `signInPasswordlessEmail` | (`signInPasswordlessEmailRequest`: [`SignInPasswordlessEmailRequest`](#signinpasswordlessemailrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                            | Initiate passwordless authentication by sending a magic link to the user's email                 |
+| <a id="signinverifymfatotp"></a> `signInVerifyMfaTotp`         | (`signInMfaTotpRequest`: [`SignInMfaTotpRequest`](#signinmfatotprequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;                                             | Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP)      |
+| <a id="signout"></a> `signOut`                                 | (`signOutSchema`: [`SignOutSchema`](#signoutschema), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                               | Sign out the current user                                                                        |
+| <a id="signupemailpassword"></a> `signUpEmailPassword`         | (`signUpEmailPasswordRequest`: [`SignUpEmailPasswordRequest`](#signupemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;                           | Register a new user account with email and password                                              |
+
+---
+
 ### CreatePATRequest
 
 #### Properties
@@ -307,7 +331,7 @@ Standardized error response
 
 | Property                       | Type                                          | Description                                           |
 | ------------------------------ | --------------------------------------------- | ----------------------------------------------------- |
-| <a id="error"></a> `error`     | [`ErrorResponseError`](#errorresponseerror-2) | Error code identifying the specific application error |
+| <a id="error"></a> `error`     | [`ErrorResponseError`](#errorresponseerror-1) | Error code identifying the specific application error |
 | <a id="message"></a> `message` | `string`                                      | Human-friendly error message                          |
 | <a id="status"></a> `status`   | `number`                                      | HTTP status error code                                |
 
@@ -350,7 +374,7 @@ JSON Web Key Set for verifying JWT signatures
 | -------------------------------- | ------------------------- | --------------------------------- |
 | <a id="idtoken"></a> `idToken`   | `string`                  | Apple ID token                    |
 | <a id="nonce"></a> `nonce?`      | `string`                  | Nonce used during sign in process |
-| <a id="provider"></a> `provider` | [`Provider`](#provider-2) | -                                 |
+| <a id="provider"></a> `provider` | [`Provider`](#provider-1) | -                                 |
 
 ---
 
@@ -382,9 +406,9 @@ Request to refresh an access token
 
 #### Properties
 
-| Property                                 | Type     | Description                                                                                                                        |
-| ---------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| <a id="refreshtoken"></a> `refreshToken` | `string` | Refresh token used to generate a new access token **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b |
+| Property                                   | Type     | Description                                                                                                                        |
+| ------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| <a id="refreshtoken-1"></a> `refreshToken` | `string` | Refresh token used to generate a new access token **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b |
 
 ---
 
@@ -398,7 +422,7 @@ User authentication session containing tokens and user information
 | -------------------------------------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | <a id="accesstoken"></a> `accessToken`                   | `string`          | JWT token for authenticating API requests                                                                               |
 | <a id="accesstokenexpiresin"></a> `accessTokenExpiresIn` | `number`          | Expiration time of the access token in seconds                                                                          |
-| <a id="refreshtoken-1"></a> `refreshToken`               | `string`          | Token used to refresh the access token **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b |
+| <a id="refreshtoken-2"></a> `refreshToken`               | `string`          | Token used to refresh the access token **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b |
 | <a id="refreshtokenid"></a> `refreshTokenId`             | `string`          | Identifier for the refresh token **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b       |
 | <a id="user"></a> `user?`                                | [`User`](#user-1) | Information about the authenticated user                                                                                |
 
@@ -475,7 +499,7 @@ Response for email-password authentication that may include a session or MFA cha
 | <a id="idtoken-1"></a> `idToken`   | `string`                          | Apple ID token                    |
 | <a id="nonce-1"></a> `nonce?`      | `string`                          | Nonce used during sign in process |
 | <a id="options"></a> `options?`    | [`SignUpOptions`](#signupoptions) | -                                 |
-| <a id="provider-3"></a> `provider` | [`Provider`](#provider-2)         | -                                 |
+| <a id="provider-2"></a> `provider` | [`Provider`](#provider-1)         | -                                 |
 
 ---
 
@@ -587,7 +611,7 @@ Response for email-password authentication that may include a session or MFA cha
 | Property                                   | Type      | Description                           |
 | ------------------------------------------ | --------- | ------------------------------------- |
 | <a id="all"></a> `all?`                    | `boolean` | Sign out from all connected devices   |
-| <a id="refreshtoken-2"></a> `refreshToken` | `string`  | Refresh token for the current session |
+| <a id="refreshtoken-3"></a> `refreshToken` | `string`  | Refresh token for the current session |
 
 ---
 
@@ -758,7 +782,7 @@ User profile and account information
 | <a id="email-9"></a> `email`              | `string`                                                                      | A valid email                                                         |
 | <a id="options-6"></a> `options?`         | [`SignUpOptions`](#signupoptions)                                             | -                                                                     |
 | <a id="password-2"></a> `password?`       | `string`                                                                      | A password of minimum 3 characters **Min Length** 3 **Max Length** 50 |
-| <a id="signinmethod"></a> `signInMethod`  | [`UserDeanonymizeRequestSignInMethod`](#userdeanonymizerequestsigninmethod-2) | Which sign-in method to use                                           |
+| <a id="signinmethod"></a> `signInMethod`  | [`UserDeanonymizeRequestSignInMethod`](#userdeanonymizerequestsigninmethod-1) | Which sign-in method to use                                           |
 
 ---
 
@@ -792,7 +816,7 @@ Request to activate or deactivate multi-factor authentication
 
 | Property                                    | Type                                                            | Description                                                      |
 | ------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
-| <a id="activemfatype"></a> `activeMfaType?` | [`UserMfaRequestActiveMfaType`](#usermfarequestactivemfatype-3) | Type of MFA to activate. Use empty string to disable MFA.        |
+| <a id="activemfatype"></a> `activeMfaType?` | [`UserMfaRequestActiveMfaType`](#usermfarequestactivemfatype-1) | Type of MFA to activate. Use empty string to disable MFA.        |
 | <a id="code"></a> `code`                    | `string`                                                        | Verification code from the authenticator app when activating MFA |
 
 ---
@@ -837,7 +861,31 @@ type CreatePATRequestMetadata = object;
 
 ```ts
 type ErrorResponseError =
-  (typeof ErrorResponseError)[keyof typeof ErrorResponseError];
+  | "default-role-must-be-in-allowed-roles"
+  | "disabled-endpoint"
+  | "disabled-user"
+  | "email-already-in-use"
+  | "email-already-verified"
+  | "forbidden-anonymous"
+  | "internal-server-error"
+  | "invalid-email-password"
+  | "invalid-request"
+  | "locale-not-allowed"
+  | "password-too-short"
+  | "password-in-hibp-database"
+  | "redirectTo-not-allowed"
+  | "role-not-allowed"
+  | "signup-disabled"
+  | "unverified-user"
+  | "user-not-anonymous"
+  | "invalid-pat"
+  | "invalid-refresh-token"
+  | "invalid-ticket"
+  | "disabled-mfa-totp"
+  | "no-totp-secret"
+  | "invalid-totp"
+  | "mfa-type-not-found"
+  | "totp-already-active";
 ```
 
 Error code identifying the specific application error
@@ -883,7 +931,7 @@ type GetVersion200 = object;
 ### OKResponse
 
 ```ts
-type OKResponse = (typeof OKResponse)[keyof typeof OKResponse];
+type OKResponse = "OK";
 ```
 
 ---
@@ -891,7 +939,7 @@ type OKResponse = (typeof OKResponse)[keyof typeof OKResponse];
 ### Provider
 
 ```ts
-type Provider = (typeof Provider)[keyof typeof Provider];
+type Provider = "apple" | "google";
 ```
 
 ---
@@ -999,7 +1047,10 @@ Ticket
 
 ```ts
 type TicketTypeQueryParameter =
-  (typeof TicketTypeQueryParameter)[keyof typeof TicketTypeQueryParameter];
+  | "emailVerify"
+  | "emailConfirmChange"
+  | "signinPasswordless"
+  | "passwordReset";
 ```
 
 Type of the ticket
@@ -1009,8 +1060,7 @@ Type of the ticket
 ### UserDeanonymizeRequestSignInMethod
 
 ```ts
-type UserDeanonymizeRequestSignInMethod =
-  (typeof UserDeanonymizeRequestSignInMethod)[keyof typeof UserDeanonymizeRequestSignInMethod];
+type UserDeanonymizeRequestSignInMethod = "email-password" | "passwordless";
 ```
 
 Which sign-in method to use
@@ -1036,8 +1086,7 @@ Custom metadata associated with the user
 ### UserMfaRequestActiveMfaType
 
 ```ts
-type UserMfaRequestActiveMfaType =
-  (typeof UserMfaRequestActiveMfaType)[keyof typeof UserMfaRequestActiveMfaType];
+type UserMfaRequestActiveMfaType = "totp" | "";
 ```
 
 Type of MFA to activate. Use empty string to disable MFA.
@@ -1052,120 +1101,6 @@ const DEFAULT_SESSION_KEY: "nhostSession" = "nhostSession";
 
 Default storage key used for storing the Nhost session
 
----
-
-### ErrorResponseError
-
-```ts
-ErrorResponseError: object;
-```
-
-#### Type declaration
-
-| Name                                                                                       | Type                                      | Default value                             |
-| ------------------------------------------------------------------------------------------ | ----------------------------------------- | ----------------------------------------- |
-| <a id="default-role-must-be-in-allowed-roles"></a> `default-role-must-be-in-allowed-roles` | `"default-role-must-be-in-allowed-roles"` | `"default-role-must-be-in-allowed-roles"` |
-| <a id="disabled-endpoint"></a> `disabled-endpoint`                                         | `"disabled-endpoint"`                     | `"disabled-endpoint"`                     |
-| <a id="disabled-mfa-totp"></a> `disabled-mfa-totp`                                         | `"disabled-mfa-totp"`                     | `"disabled-mfa-totp"`                     |
-| <a id="disabled-user"></a> `disabled-user`                                                 | `"disabled-user"`                         | `"disabled-user"`                         |
-| <a id="email-already-in-use"></a> `email-already-in-use`                                   | `"email-already-in-use"`                  | `"email-already-in-use"`                  |
-| <a id="email-already-verified"></a> `email-already-verified`                               | `"email-already-verified"`                | `"email-already-verified"`                |
-| <a id="forbidden-anonymous"></a> `forbidden-anonymous`                                     | `"forbidden-anonymous"`                   | `"forbidden-anonymous"`                   |
-| <a id="internal-server-error"></a> `internal-server-error`                                 | `"internal-server-error"`                 | `"internal-server-error"`                 |
-| <a id="invalid-email-password"></a> `invalid-email-password`                               | `"invalid-email-password"`                | `"invalid-email-password"`                |
-| <a id="invalid-pat"></a> `invalid-pat`                                                     | `"invalid-pat"`                           | `"invalid-pat"`                           |
-| <a id="invalid-refresh-token"></a> `invalid-refresh-token`                                 | `"invalid-refresh-token"`                 | `"invalid-refresh-token"`                 |
-| <a id="invalid-request"></a> `invalid-request`                                             | `"invalid-request"`                       | `"invalid-request"`                       |
-| <a id="invalid-ticket"></a> `invalid-ticket`                                               | `"invalid-ticket"`                        | `"invalid-ticket"`                        |
-| <a id="invalid-totp"></a> `invalid-totp`                                                   | `"invalid-totp"`                          | `"invalid-totp"`                          |
-| <a id="locale-not-allowed"></a> `locale-not-allowed`                                       | `"locale-not-allowed"`                    | `"locale-not-allowed"`                    |
-| <a id="mfa-type-not-found"></a> `mfa-type-not-found`                                       | `"mfa-type-not-found"`                    | `"mfa-type-not-found"`                    |
-| <a id="no-totp-secret"></a> `no-totp-secret`                                               | `"no-totp-secret"`                        | `"no-totp-secret"`                        |
-| <a id="password-in-hibp-database"></a> `password-in-hibp-database`                         | `"password-in-hibp-database"`             | `"password-in-hibp-database"`             |
-| <a id="password-too-short"></a> `password-too-short`                                       | `"password-too-short"`                    | `"password-too-short"`                    |
-| <a id="redirectto-not-allowed"></a> `redirectTo-not-allowed`                               | `"redirectTo-not-allowed"`                | `"redirectTo-not-allowed"`                |
-| <a id="role-not-allowed"></a> `role-not-allowed`                                           | `"role-not-allowed"`                      | `"role-not-allowed"`                      |
-| <a id="signup-disabled"></a> `signup-disabled`                                             | `"signup-disabled"`                       | `"signup-disabled"`                       |
-| <a id="totp-already-active"></a> `totp-already-active`                                     | `"totp-already-active"`                   | `"totp-already-active"`                   |
-| <a id="unverified-user"></a> `unverified-user`                                             | `"unverified-user"`                       | `"unverified-user"`                       |
-| <a id="user-not-anonymous"></a> `user-not-anonymous`                                       | `"user-not-anonymous"`                    | `"user-not-anonymous"`                    |
-
----
-
-### OKResponse
-
-```ts
-OKResponse: object;
-```
-
-#### Type declaration
-
-| Name                 | Type   | Default value |
-| -------------------- | ------ | ------------- |
-| <a id="ok"></a> `OK` | `"OK"` | `"OK"`        |
-
----
-
-### Provider
-
-```ts
-Provider: object;
-```
-
-#### Type declaration
-
-| Name                         | Type       | Default value |
-| ---------------------------- | ---------- | ------------- |
-| <a id="apple"></a> `apple`   | `"apple"`  | `"apple"`     |
-| <a id="google"></a> `google` | `"google"` | `"google"`    |
-
----
-
-### TicketTypeQueryParameter
-
-```ts
-TicketTypeQueryParameter: object;
-```
-
-#### Type declaration
-
-| Name                                                 | Type                   | Default value          |
-| ---------------------------------------------------- | ---------------------- | ---------------------- |
-| <a id="emailconfirmchange"></a> `emailConfirmChange` | `"emailConfirmChange"` | `"emailConfirmChange"` |
-| <a id="emailverify"></a> `emailVerify`               | `"emailVerify"`        | `"emailVerify"`        |
-| <a id="passwordreset"></a> `passwordReset`           | `"passwordReset"`      | `"passwordReset"`      |
-| <a id="signinpasswordless"></a> `signinPasswordless` | `"signinPasswordless"` | `"signinPasswordless"` |
-
----
-
-### UserDeanonymizeRequestSignInMethod
-
-```ts
-UserDeanonymizeRequestSignInMethod: object;
-```
-
-#### Type declaration
-
-| Name                                         | Type               | Default value      |
-| -------------------------------------------- | ------------------ | ------------------ |
-| <a id="email-password"></a> `email-password` | `"email-password"` | `"email-password"` |
-| <a id="passwordless"></a> `passwordless`     | `"passwordless"`   | `"passwordless"`   |
-
----
-
-### UserMfaRequestActiveMfaType
-
-```ts
-UserMfaRequestActiveMfaType: object;
-```
-
-#### Type declaration
-
-| Name                     | Type     | Default value |
-| ------------------------ | -------- | ------------- |
-| ``                       | `""`     | `""`          |
-| <a id="totp"></a> `totp` | `"totp"` | `"totp"`      |
-
 ## Functions
 
 ### createAPIClient()
@@ -1174,7 +1109,7 @@ UserMfaRequestActiveMfaType: object;
 function createAPIClient(
   baseURL: string,
   chainFunctions: ChainFunction[],
-): object;
+): AuthClient;
 ```
 
 #### Parameters
@@ -1186,21 +1121,7 @@ function createAPIClient(
 
 #### Returns
 
-| Name                        | Type                                                                                                                                                                                                                                              |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `baseURL`                   | `string`                                                                                                                                                                                                                                          |
-| `changeUserMfa()`           | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;                                                                                                          |
-| `changeUserMfaVerify()`     | (`userMfaRequest`: [`UserMfaRequest`](#usermfarequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                            |
-| `getVersion()`              | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;                                                                                                                        |
-| `healthCheckGet()`          | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                                                                                   |
-| `healthCheckHead()`         | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;                                                                                                                                                   |
-| `pushChainFunction()`       | (`chainFunction`: `ChainFunction`) => `void`                                                                                                                                                                                                      |
-| `refreshToken()`            | (`refreshTokenRequest`: [`RefreshTokenRequest`](#refreshtokenrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;                                                              |
-| `signInEmailPassword()`     | (`signInEmailPasswordRequest`: [`SignInEmailPasswordRequest`](#signinemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt; |
-| `signInPasswordlessEmail()` | (`signInPasswordlessEmailRequest`: [`SignInPasswordlessEmailRequest`](#signinpasswordlessemailrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                            |
-| `signInVerifyMfaTotp()`     | (`signInMfaTotpRequest`: [`SignInMfaTotpRequest`](#signinmfatotprequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;                                             |
-| `signOut()`                 | (`signOutSchema`: [`SignOutSchema`](#signoutschema), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                               |
-| `signUpEmailPassword()`     | (`signUpEmailPasswordRequest`: [`SignUpEmailPasswordRequest`](#signupemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;                           |
+[`AuthClient`](#authclient)
 
 ---
 
@@ -1208,7 +1129,7 @@ function createAPIClient(
 
 ```ts
 function createSessionRefreshMiddleware(
-  authClient: object,
+  authClient: AuthClient,
   storage: StorageInterface,
   options?: SessionRefreshOptions,
 ): ChainFunction;
@@ -1227,24 +1148,11 @@ doesn't need to manually refresh tokens.
 
 #### Parameters
 
-| Parameter                             | Type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Description                                        |
-| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `authClient`                          | \{ `baseURL`: `string`; `changeUserMfa`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;; `changeUserMfaVerify`: (`userMfaRequest`: [`UserMfaRequest`](#usermfarequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;; `getVersion`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;; `healthCheckGet`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;; `healthCheckHead`: (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;; `pushChainFunction`: (`chainFunction`: `ChainFunction`) => `void`; `refreshToken`: (`refreshTokenRequest`: [`RefreshTokenRequest`](#refreshtokenrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;; `signInEmailPassword`: (`signInEmailPasswordRequest`: [`SignInEmailPasswordRequest`](#signinemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt;; `signInPasswordlessEmail`: (`signInPasswordlessEmailRequest`: [`SignInPasswordlessEmailRequest`](#signinpasswordlessemailrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;; `signInVerifyMfaTotp`: (`signInMfaTotpRequest`: [`SignInMfaTotpRequest`](#signinmfatotprequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;; `signOut`: (`signOutSchema`: [`SignOutSchema`](#signoutschema), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;; `signUpEmailPassword`: (`signUpEmailPasswordRequest`: [`SignUpEmailPasswordRequest`](#signupemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;; \} | Auth API client for token refresh operations       |
-| `authClient.baseURL`                  | `string`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | -                                                  |
-| `authClient.changeUserMfa`            | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | -                                                  |
-| `authClient.changeUserMfaVerify?`     | (`userMfaRequest`: [`UserMfaRequest`](#usermfarequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | -                                                  |
-| `authClient.getVersion?`              | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | -                                                  |
-| `authClient.healthCheckGet?`          | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | -                                                  |
-| `authClient.healthCheckHead?`         | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | -                                                  |
-| `authClient.pushChainFunction?`       | (`chainFunction`: `ChainFunction`) => `void`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | -                                                  |
-| `authClient.refreshToken?`            | (`refreshTokenRequest`: [`RefreshTokenRequest`](#refreshtokenrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | -                                                  |
-| `authClient.signInEmailPassword?`     | (`signInEmailPasswordRequest`: [`SignInEmailPasswordRequest`](#signinemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | -                                                  |
-| `authClient.signInPasswordlessEmail?` | (`signInPasswordlessEmailRequest`: [`SignInPasswordlessEmailRequest`](#signinpasswordlessemailrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | -                                                  |
-| `authClient.signInVerifyMfaTotp?`     | (`signInMfaTotpRequest`: [`SignInMfaTotpRequest`](#signinmfatotprequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | -                                                  |
-| `authClient.signOut?`                 | (`signOutSchema`: [`SignOutSchema`](#signoutschema), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | -                                                  |
-| `authClient.signUpEmailPassword?`     | (`signUpEmailPasswordRequest`: [`SignUpEmailPasswordRequest`](#signupemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | -                                                  |
-| `storage?`                            | [`StorageInterface`](#storageinterface)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Storage implementation for persisting session data |
-| `options?`                            | [`SessionRefreshOptions`](#sessionrefreshoptions)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Configuration options for token refresh behavior   |
+| Parameter    | Type                                              | Description                                        |
+| ------------ | ------------------------------------------------- | -------------------------------------------------- |
+| `authClient` | [`AuthClient`](#authclient)                       | Auth API client for token refresh operations       |
+| `storage`    | [`StorageInterface`](#storageinterface)           | Storage implementation for persisting session data |
+| `options?`   | [`SessionRefreshOptions`](#sessionrefreshoptions) | Configuration options for token refresh behavior   |
 
 #### Returns
 

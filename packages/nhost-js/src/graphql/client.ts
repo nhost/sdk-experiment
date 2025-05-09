@@ -65,6 +65,39 @@ export interface FetchResponse<T = any> {
 }
 
 /**
+ * GraphQL client interface providing methods for executing queries and mutations
+ */
+export interface GraphQLClient {
+  /**
+   * Execute a GraphQL query operation
+   *
+   * Queries are used to fetch data and should not modify any data on the server.
+   *
+   * @param request - GraphQL request object containing query and optional variables
+   * @param options - Additional fetch options to apply to the request
+   * @returns Promise with the GraphQL response and metadata
+   */
+  query: (
+    request: GraphQLRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<GraphQLResponse>>;
+
+  /**
+   * Execute a GraphQL mutation operation
+   *
+   * Mutations are used to modify data on the server.
+   *
+   * @param request - GraphQL request object containing mutation and optional variables
+   * @param options - Additional fetch options to apply to the request
+   * @returns Promise with the GraphQL response and metadata
+   */
+  mutation: (
+    request: GraphQLRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<GraphQLResponse>>;
+}
+
+/**
  * Creates a GraphQL API client for interacting with a GraphQL endpoint.
  *
  * This client provides methods for executing queries and mutations against
@@ -107,15 +140,7 @@ export const createAPIClient = (
 ) => {
   const enhancedFetch = createEnhancedFetch(chainFunctions);
 
-  /**
-   * Execute a GraphQL operation (query or mutation)
-   *
-   * This is an internal function used by both query and mutation methods.
-   *
-   * @param request - GraphQL request object containing query and optional variables
-   * @param options - Additional fetch options to apply to the request
-   * @returns Promise with the GraphQL response and metadata
-   */
+
   const executeOperation = async (
     request: GraphQLRequest,
     options?: RequestInit,
@@ -139,31 +164,7 @@ export const createAPIClient = (
     };
   };
 
-  /**
-   * Execute a GraphQL query operation
-   *
-   * Queries are used to fetch data and should not modify any data on the server.
-   *
-   * @example
-   * ```typescript
-   * const response = await graphqlClient.query({
-   *   query: `
-   *     query GetUser($id: uuid!) {
-   *       users_by_pk(id: $id) {
-   *         id
-   *         displayName
-   *         email
-   *       }
-   *     }
-   *   `,
-   *   variables: { id: "123e4567-e89b-12d3-a456-426614174000" }
-   * });
-   * ```
-   *
-   * @param request - GraphQL request object containing query and optional variables
-   * @param options - Additional fetch options to apply to the request
-   * @returns Promise with the GraphQL response and metadata
-   */
+
   const query = (
     request: GraphQLRequest,
     options?: RequestInit,
@@ -171,34 +172,7 @@ export const createAPIClient = (
     return executeOperation(request, options);
   };
 
-  /**
-   * Execute a GraphQL mutation operation
-   *
-   * Mutations are used to modify data on the server.
-   *
-   * @example
-   * ```typescript
-   * const response = await graphqlClient.mutation({
-   *   query: `
-   *     mutation UpdateUser($id: uuid!, $data: users_set_input!) {
-   *       update_users_by_pk(pk_columns: {id: $id}, _set: $data) {
-   *         id
-   *         displayName
-   *         updatedAt
-   *       }
-   *     }
-   *   `,
-   *   variables: {
-   *     id: "123e4567-e89b-12d3-a456-426614174000",
-   *     data: { displayName: "New Name" }
-   *   }
-   * });
-   * ```
-   *
-   * @param request - GraphQL request object containing mutation and optional variables
-   * @param options - Additional fetch options to apply to the request
-   * @returns Promise with the GraphQL response and metadata
-   */
+
   const mutation = (
     request: GraphQLRequest,
     options?: RequestInit,
@@ -209,5 +183,5 @@ export const createAPIClient = (
   return {
     query,
     mutation,
-  };
+  } as GraphQLClient;
 };

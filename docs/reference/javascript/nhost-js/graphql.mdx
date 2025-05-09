@@ -30,6 +30,19 @@ Response wrapper for GraphQL operations with additional metadata.
 
 ---
 
+### GraphQLClient
+
+GraphQL client interface providing methods for executing queries and mutations
+
+#### Properties
+
+| Property                         | Type                                                                                                                                                                                        | Description                                                                                                    |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| <a id="mutation"></a> `mutation` | (`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt; | Execute a GraphQL mutation operation Mutations are used to modify data on the server.                          |
+| <a id="query"></a> `query`       | (`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt; | Execute a GraphQL query operation Queries are used to fetch data and should not modify any data on the server. |
+
+---
+
 ### GraphQLError
 
 Represents a GraphQL error returned from the server.
@@ -54,7 +67,7 @@ GraphQL request object used for queries and mutations.
 | Property                                    | Type                                    | Description                                  |
 | ------------------------------------------- | --------------------------------------- | -------------------------------------------- |
 | <a id="operationname"></a> `operationName?` | `string`                                | Optional name of the operation to execute    |
-| <a id="query"></a> `query`                  | `string`                                | The GraphQL query or mutation string         |
+| <a id="query-1"></a> `query`                | `string`                                | The GraphQL query or mutation string         |
 | <a id="variables"></a> `variables?`         | [`GraphQLVariables`](#graphqlvariables) | Optional variables for parameterized queries |
 
 ---
@@ -97,7 +110,7 @@ Key-value pairs of variable names and their values.
 function createAPIClient(
   baseURL: string,
   chainFunctions: ChainFunction[],
-): object;
+): GraphQLClient;
 ```
 
 Creates a GraphQL API client for interacting with a GraphQL endpoint.
@@ -115,12 +128,9 @@ error handling, and other cross-cutting concerns.
 
 #### Returns
 
-GraphQL client with query and mutation methods
+[`GraphQLClient`](#graphqlclient)
 
-| Name         | Type                                                                                                                                                                                        |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `mutation()` | (`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt; |
-| `query()`    | (`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt; |
+GraphQL client with query and mutation methods
 
 #### Example
 

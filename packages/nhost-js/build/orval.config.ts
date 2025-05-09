@@ -34,6 +34,9 @@ export default defineConfig({
     output: {
       target: "../src/auth/client.ts",
       client: createClient,
+      override: {
+        enumGenerationType: "union",
+      },
     },
     hooks: {
       afterAllFilesWrite: {
@@ -49,6 +52,7 @@ export default defineConfig({
       target: "../src/storage/client.ts",
       client: createClient,
       override: {
+        enumGenerationType: "union",
         operations: {
           getFile: {
             transformer: (options: GeneratorVerbOptions) => {
