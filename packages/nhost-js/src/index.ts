@@ -41,7 +41,7 @@
  *
  * console.log(data);
  *
- * const resp = await nhostStorage.uploadFiles({
+ * const resp = await nhost.storage.uploadFiles({
  *   "file[]": [
  *     new Blob(["test1"], { type: "text/plain" }),
  *     new Blob(["test2 is larger"], { type: "text/plain" }),
