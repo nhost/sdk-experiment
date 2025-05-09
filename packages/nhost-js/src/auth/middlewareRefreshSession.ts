@@ -83,7 +83,7 @@ function decodeTokenPayload(base64Payload: string): any {
 /**
  * Configuration options for the session refresh middleware
  */
-export interface SessionRefreshOptions {
+export type SessionRefreshOptions = {
   /**
    * Number of seconds before token expiration when a refresh should be triggered.
    * Default is 60 seconds (1 minute).

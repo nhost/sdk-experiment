@@ -13,15 +13,15 @@ import type { Client } from "./interface";
 /**
  * Contains version information about the storage service.
  */
-export interface VersionInformation {
+export type VersionInformation = {
   /** The version number of the storage service build. */
   buildVersion?: string;
-}
+};
 
 /**
  * Basic information about a file in storage.
  */
-export interface FileSummary {
+export type FileSummary = {
   /** Unique identifier for the file. */
   id?: string;
   /** Name of the file including extension. */
@@ -30,7 +30,7 @@ export interface FileSummary {
   bucketId?: string;
   /** Whether the file has been successfully uploaded. */
   isUploaded?: boolean;
-}
+};
 
 /**
  * Custom metadata associated with the file.
@@ -40,7 +40,7 @@ export type FileMetadataMetadata = { [key: string]: unknown };
 /**
  * Comprehensive metadata information about a file in storage.
  */
-export interface FileMetadata {
+export type FileMetadata = {
   /** Unique identifier for the file. */
   id?: string;
   /** Name of the file including extension. */
@@ -63,7 +63,7 @@ export interface FileMetadata {
   uploadedByUserId?: string;
   /** Custom metadata associated with the file. */
   metadata?: FileMetadataMetadata;
-}
+};
 
 /**
  * Custom metadata to associate with the file.
@@ -73,14 +73,14 @@ export type UploadFileMetadataMetadata = { [key: string]: unknown };
 /**
  * Metadata provided when uploading a new file.
  */
-export interface UploadFileMetadata {
+export type UploadFileMetadata = {
   /** Optional custom ID for the file. If not provided, a UUID will be generated. */
   id?: string;
   /** Name to assign to the file. If not provided, the original filename will be used. */
   name?: string;
   /** Custom metadata to associate with the file. */
   metadata?: UploadFileMetadataMetadata;
-}
+};
 
 /**
  * Updated custom metadata to associate with the file.
@@ -90,22 +90,22 @@ export type UpdateFileMetadataMetadata = { [key: string]: unknown };
 /**
  * Metadata that can be updated for an existing file.
  */
-export interface UpdateFileMetadata {
+export type UpdateFileMetadata = {
   /** New name to assign to the file. */
   name?: string;
   /** Updated custom metadata to associate with the file. */
   metadata?: UpdateFileMetadataMetadata;
-}
+};
 
 /**
  * Contains a presigned URL for direct file operations.
  */
-export interface PresignedURLResponse {
+export type PresignedURLResponse = {
   /** The presigned URL for file operations. */
   url?: string;
   /** The time in seconds until the URL expires. */
   expiration?: number;
-}
+};
 
 /**
  * Error details.
@@ -118,10 +118,10 @@ export type ErrorError = {
 /**
  * Error information returned by the API.
  */
-export interface Error {
+export type Error = {
   /** Error details. */
   error?: ErrorError;
-}
+};
 
 export type GetOpenAPISpec200 = { [key: string]: unknown };
 

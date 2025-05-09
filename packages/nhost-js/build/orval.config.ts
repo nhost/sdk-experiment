@@ -44,6 +44,7 @@ export default defineConfig({
       client: createClient,
       override: {
         enumGenerationType: "union",
+        useTypeOverInterfaces: true,
       },
     },
     hooks: {
@@ -61,6 +62,7 @@ export default defineConfig({
       client: createClient,
       override: {
         enumGenerationType: "union",
+        useTypeOverInterfaces: true,
         operations: {
           getFile: {
             transformer: (options: GeneratorVerbOptions) => {

@@ -162,7 +162,7 @@ export class NhostClient {
     auth: ReturnType<typeof createAuthClient>,
     storage: ReturnType<typeof createStorageClient>,
     graphql: ReturnType<typeof createGraphQLClient>,
-    sessionStorage: SessionStorageInterface
+    sessionStorage: SessionStorageInterface,
   ) {
     this.auth = auth;
     this.storage = storage;
@@ -239,8 +239,18 @@ export function createClient(options: NhostClientOptions = {}): NhostClient {
 
   // Determine base URLs for each service
   const authBaseUrl = generateServiceUrl("auth", subdomain, region, authUrl);
-  const storageBaseUrl = generateServiceUrl("storage", subdomain, region, storageUrl);
-  const graphqlBaseUrl = generateServiceUrl("graphql", subdomain, region, graphqlUrl);
+  const storageBaseUrl = generateServiceUrl(
+    "storage",
+    subdomain,
+    region,
+    storageUrl,
+  );
+  const graphqlBaseUrl = generateServiceUrl(
+    "graphql",
+    subdomain,
+    region,
+    graphqlUrl,
+  );
 
   // Create auth client
   const auth = createAuthClient(authBaseUrl);
