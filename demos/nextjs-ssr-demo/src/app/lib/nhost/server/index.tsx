@@ -1,5 +1,5 @@
-import { createClient, DEFAULT_SESSION_KEY } from "nhost-js";
-import { type Session } from "nhost-js/auth";
+import { createClient, DEFAULT_SESSION_KEY } from "@nhost/nhost-js";
+import { type Session } from "@nhost/nhost-js/auth";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 

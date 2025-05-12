@@ -12,8 +12,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@nhost/nhost-js": "workspace:*",
     "next": "15.3.1",
-    "nhost-js": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
