@@ -1,0 +1,127 @@
+This is the main module to interact with Nhost's GraphQL service.
+Typically you would use this modula via the main [Nhost client](main#createclient)
+but you can also use it directly if you have a specific use case.
+
+## Interfaces
+
+### Client
+
+GraphQL client interface providing methods for executing queries and mutations
+
+#### Properties
+
+| Property                         | Type                                                                                                                                                                                        | Description                                                                                                    |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| <a id="mutation"></a> `mutation` | (`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt; | Execute a GraphQL mutation operation Mutations are used to modify data on the server.                          |
+| <a id="query"></a> `query`       | (`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt; | Execute a GraphQL query operation Queries are used to fetch data and should not modify any data on the server. |
+
+---
+
+### FetchResponse&lt;T&gt;
+
+Response wrapper for GraphQL operations with additional metadata.
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| -------------- | ------------ |
+| `T`            | `any`        |
+
+#### Properties
+
+| Property                       | Type      | Description                      |
+| ------------------------------ | --------- | -------------------------------- |
+| <a id="body"></a> `body`       | `T`       | The parsed response body         |
+| <a id="headers"></a> `headers` | `Headers` | HTTP headers from the response   |
+| <a id="status"></a> `status`   | `number`  | HTTP status code of the response |
+
+---
+
+### GraphQLError
+
+Represents a GraphQL error returned from the server.
+
+#### Properties
+
+| Property                              | Type       | Description                                                         |
+| ------------------------------------- | ---------- | ------------------------------------------------------------------- |
+| <a id="extensions"></a> `extensions?` | `any`      | Additional error information specific to the GraphQL implementation |
+| <a id="locations"></a> `locations?`   | `object`[] | Source locations in the GraphQL document where the error occurred   |
+| <a id="message"></a> `message`        | `string`   | Error message                                                       |
+| <a id="path"></a> `path?`             | `string`[] | Path in the query where the error occurred                          |
+
+---
+
+### GraphQLRequest
+
+GraphQL request object used for queries and mutations.
+
+#### Properties
+
+| Property                                    | Type                                    | Description                                  |
+| ------------------------------------------- | --------------------------------------- | -------------------------------------------- |
+| <a id="operationname"></a> `operationName?` | `string`                                | Optional name of the operation to execute    |
+| <a id="query-1"></a> `query`                | `string`                                | The GraphQL query or mutation string         |
+| <a id="variables"></a> `variables?`         | [`GraphQLVariables`](#graphqlvariables) | Optional variables for parameterized queries |
+
+---
+
+### GraphQLResponse&lt;T&gt;
+
+Standard GraphQL response format as defined by the GraphQL specification.
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| -------------- | ------------ |
+| `T`            | `any`        |
+
+#### Properties
+
+| Property                      | Type                              | Description                                                           |
+| ----------------------------- | --------------------------------- | --------------------------------------------------------------------- |
+| <a id="data"></a> `data?`     | `T`                               | The data returned from successful execution                           |
+| <a id="errors"></a> `errors?` | [`GraphQLError`](#graphqlerror)[] | Array of errors if execution was unsuccessful or partially successful |
+
+---
+
+### GraphQLVariables
+
+Variables object for GraphQL operations.
+Key-value pairs of variable names and their values.
+
+#### Indexable
+
+```ts
+[key: string]: any
+```
+
+## Functions
+
+### createAPIClient()
+
+```ts
+function createAPIClient(
+  baseURL: string,
+  chainFunctions: ChainFunction[],
+): Client;
+```
+
+Creates a GraphQL API client for interacting with a GraphQL endpoint.
+
+This client provides methods for executing queries and mutations against
+a GraphQL API, with support for middleware functions to handle authentication,
+error handling, and other cross-cutting concerns.
+
+#### Parameters
+
+| Parameter        | Type                                         | Default value | Description                                       |
+| ---------------- | -------------------------------------------- | ------------- | ------------------------------------------------- |
+| `baseURL`        | `string`                                     | `undefined`   | Base URL for the GraphQL endpoint                 |
+| `chainFunctions` | [`ChainFunction`](fetch#chainfunction)[] | `[]`          | Array of middleware functions for the fetch chain |
+
+#### Returns
+
+[`Client`](#client)
+
+GraphQL client with query and mutation methods

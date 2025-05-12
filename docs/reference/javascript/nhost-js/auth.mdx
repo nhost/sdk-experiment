@@ -1,0 +1,776 @@
+This is the main module to interact with Nhost's Auth service.
+Typically you would use this modula via the main [Nhost client](main#createclient)
+but you can also use it directly if you have a specific use case.
+
+## Interfaces
+
+### Client
+
+Authentication client interface providing methods for user sign-in, sign-up, and session management
+
+#### Properties
+
+| Property                                                       | Type                                                                                                                                                                                                                                              | Description                                                                                      |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| <a id="baseurl"></a> `baseURL`                                 | `string`                                                                                                                                                                                                                                          | Base URL for the authentication service                                                          |
+| <a id="changeusermfa"></a> `changeUserMfa`                     | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;                                                                                                          | Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication |
+| <a id="changeusermfaverify"></a> `changeUserMfaVerify`         | (`userMfaRequest`: [`UserMfaRequest`](#usermfarequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                            | Activate or deactivate multi-factor authentication for the authenticated user                    |
+| <a id="getversion"></a> `getVersion`                           | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;                                                                                                                        | Retrieve version information about the authentication service                                    |
+| <a id="healthcheckget"></a> `healthCheckGet`                   | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                                                                                   | Verify if the authentication service is operational using GET method                             |
+| <a id="healthcheckhead"></a> `healthCheckHead`                 | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;                                                                                                                                                   | Verify if the authentication service is operational using HEAD method                            |
+| <a id="pushchainfunction"></a> `pushChainFunction`             | (`chainFunction`: [`ChainFunction`](fetch#chainfunction)) => `void`                                                                                                                                                                           | Add a middleware function to the request chain                                                   |
+| <a id="refreshtoken"></a> `refreshToken`                       | (`refreshTokenRequest`: [`RefreshTokenRequest`](#refreshtokenrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;                                                              | Generate a new JWT access token using a valid refresh token                                      |
+| <a id="signinemailpassword"></a> `signInEmailPassword`         | (`signInEmailPasswordRequest`: [`SignInEmailPasswordRequest`](#signinemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt; | Authenticate a user with their email and password                                                |
+| <a id="signinpasswordlessemail"></a> `signInPasswordlessEmail` | (`signInPasswordlessEmailRequest`: [`SignInPasswordlessEmailRequest`](#signinpasswordlessemailrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                            | Initiate passwordless authentication by sending a magic link to the user's email                 |
+| <a id="signinverifymfatotp"></a> `signInVerifyMfaTotp`         | (`signInMfaTotpRequest`: [`SignInMfaTotpRequest`](#signinmfatotprequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;                                             | Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP)      |
+| <a id="signout"></a> `signOut`                                 | (`signOutSchema`: [`SignOutSchema`](#signoutschema), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;                                                                                               | Sign out the current user                                                                        |
+| <a id="signupemailpassword"></a> `signUpEmailPassword`         | (`signUpEmailPasswordRequest`: [`SignUpEmailPasswordRequest`](#signupemailpasswordrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;                           | Register a new user account with email and password                                              |
+
+---
+
+### CreatePATRequest
+
+#### Properties
+
+| Property                           | Type                                                      | Description                |
+| ---------------------------------- | --------------------------------------------------------- | -------------------------- |
+| <a id="expiresat"></a> `expiresAt` | `string`                                                  | Expiration date of the PAT |
+| <a id="metadata"></a> `metadata?`  | [`CreatePATRequestMetadata`](#createpatrequestmetadata-1) | -                          |
+
+---
+
+### CreatePATResponse
+
+#### Properties
+
+| Property                                               | Type     | Description                                                                                    |
+| ------------------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------- |
+| <a id="id"></a> `id`                                   | `string` | ID of the PAT **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b |
+| <a id="personalaccesstoken"></a> `personalAccessToken` | `string` | PAT **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b           |
+
+---
+
+### ErrorResponse
+
+Standardized error response
+
+#### Properties
+
+| Property                       | Type                                          | Description                                           |
+| ------------------------------ | --------------------------------------------- | ----------------------------------------------------- |
+| <a id="error"></a> `error`     | [`ErrorResponseError`](#errorresponseerror-1) | Error code identifying the specific application error |
+| <a id="message"></a> `message` | `string`                                      | Human-friendly error message                          |
+| <a id="status"></a> `status`   | `number`                                      | HTTP status error code                                |
+
+---
+
+### Jwk
+
+JSON Web Key for JWT verification
+
+#### Properties
+
+| Property               | Type     | Description                  |
+| ---------------------- | -------- | ---------------------------- |
+| <a id="alg"></a> `alg` | `string` | Algorithm used with this key |
+| <a id="e"></a> `e`     | `string` | RSA public exponent          |
+| <a id="kid"></a> `kid` | `string` | Key ID                       |
+| <a id="kty"></a> `kty` | `string` | Key type                     |
+| <a id="n"></a> `n`     | `string` | RSA modulus                  |
+| <a id="use"></a> `use` | `string` | Key usage                    |
+
+---
+
+### JWKSet
+
+JSON Web Key Set for verifying JWT signatures
+
+#### Properties
+
+| Property                 | Type            | Description          |
+| ------------------------ | --------------- | -------------------- |
+| <a id="keys"></a> `keys` | [`Jwk`](#jwk)[] | Array of public keys |
+
+---
+
+### LinkIdTokenRequest
+
+#### Properties
+
+| Property                         | Type                      | Description                       |
+| -------------------------------- | ------------------------- | --------------------------------- |
+| <a id="idtoken"></a> `idToken`   | `string`                  | Apple ID token                    |
+| <a id="nonce"></a> `nonce?`      | `string`                  | Nonce used during sign in process |
+| <a id="provider"></a> `provider` | [`Provider`](#provider-1) | -                                 |
+
+---
+
+### MFAChallengePayload
+
+Challenge payload for multi-factor authentication
+
+#### Properties
+
+| Property                     | Type     | Description                                     |
+| ---------------------------- | -------- | ----------------------------------------------- |
+| <a id="ticket"></a> `ticket` | `string` | Ticket to use when completing the MFA challenge |
+
+---
+
+### OptionsRedirectTo
+
+#### Properties
+
+| Property                              | Type     |
+| ------------------------------------- | -------- |
+| <a id="redirectto"></a> `redirectTo?` | `string` |
+
+---
+
+### RefreshTokenRequest
+
+Request to refresh an access token
+
+#### Properties
+
+| Property                                   | Type     | Description                                                                                                                        |
+| ------------------------------------------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| <a id="refreshtoken-1"></a> `refreshToken` | `string` | Refresh token used to generate a new access token **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b |
+
+---
+
+### Session
+
+User authentication session containing tokens and user information
+
+#### Properties
+
+| Property                                                 | Type              | Description                                                                                                             |
+| -------------------------------------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| <a id="accesstoken"></a> `accessToken`                   | `string`          | JWT token for authenticating API requests                                                                               |
+| <a id="accesstokenexpiresin"></a> `accessTokenExpiresIn` | `number`          | Expiration time of the access token in seconds                                                                          |
+| <a id="refreshtoken-2"></a> `refreshToken`               | `string`          | Token used to refresh the access token **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b |
+| <a id="refreshtokenid"></a> `refreshTokenId`             | `string`          | Identifier for the refresh token **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b       |
+| <a id="user"></a> `user?`                                | [`User`](#user-1) | Information about the authenticated user                                                                                |
+
+---
+
+### SessionPayload
+
+Container for session information
+
+#### Properties
+
+| Property                          | Type                  | Description                                                          |
+| --------------------------------- | --------------------- | -------------------------------------------------------------------- |
+| <a id="session-1"></a> `session?` | [`Session`](#session) | User session data. Null if authentication requires additional steps. |
+
+---
+
+### SigninAnonymousRequest
+
+#### Properties
+
+| Property                                | Type                                                                  | Description                                               |
+| --------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------- |
+| <a id="displayname"></a> `displayName?` | `string`                                                              | -                                                         |
+| <a id="locale"></a> `locale?`           | `string`                                                              | A two-characters locale **Min Length** 2 **Max Length** 2 |
+| <a id="metadata-1"></a> `metadata?`     | [`SigninAnonymousRequestMetadata`](#signinanonymousrequestmetadata-1) | -                                                         |
+
+---
+
+### SignInEmailPasswordRequest
+
+Request to authenticate using email and password
+
+#### Properties
+
+| Property                         | Type     | Description                                        |
+| -------------------------------- | -------- | -------------------------------------------------- |
+| <a id="email"></a> `email`       | `string` | User's email address                               |
+| <a id="password"></a> `password` | `string` | User's password **Min Length** 3 **Max Length** 50 |
+
+---
+
+### SignInEmailPasswordResponse
+
+Response for email-password authentication that may include a session or MFA challenge
+
+#### Properties
+
+| Property                          | Type                                          | Description                                                                       |
+| --------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------- |
+| <a id="mfa"></a> `mfa?`           | [`MFAChallengePayload`](#mfachallengepayload) | MFA challenge if two-factor authentication is required                            |
+| <a id="session-2"></a> `session?` | [`Session`](#session)                         | User session if authentication was successful. Null if MFA challenge is required. |
+
+---
+
+### SignInIdTokenRequest
+
+#### Properties
+
+| Property                           | Type                              | Description                       |
+| ---------------------------------- | --------------------------------- | --------------------------------- |
+| <a id="idtoken-1"></a> `idToken`   | `string`                          | Apple ID token                    |
+| <a id="nonce-1"></a> `nonce?`      | `string`                          | Nonce used during sign in process |
+| <a id="options"></a> `options?`    | [`SignUpOptions`](#signupoptions) | -                                 |
+| <a id="provider-2"></a> `provider` | [`Provider`](#provider-1)         | -                                 |
+
+---
+
+### SignInMfaTotpRequest
+
+#### Properties
+
+| Property                       | Type     | Description                      |
+| ------------------------------ | -------- | -------------------------------- |
+| <a id="otp"></a> `otp`         | `string` | One time password                |
+| <a id="ticket-1"></a> `ticket` | `string` | Ticket **Pattern** ^mfaTotp:.\*$ |
+
+---
+
+### SignInOTPEmailRequest
+
+#### Properties
+
+| Property                          | Type                              | Description   |
+| --------------------------------- | --------------------------------- | ------------- |
+| <a id="email-1"></a> `email`      | `string`                          | A valid email |
+| <a id="options-1"></a> `options?` | [`SignUpOptions`](#signupoptions) | -             |
+
+---
+
+### SignInOTPEmailVerifyRequest
+
+#### Properties
+
+| Property                     | Type     | Description       |
+| ---------------------------- | -------- | ----------------- |
+| <a id="email-2"></a> `email` | `string` | A valid email     |
+| <a id="otp-1"></a> `otp`     | `string` | One time password |
+
+---
+
+### SignInOTPEmailVerifyResponse
+
+#### Properties
+
+| Property                          | Type                  |
+| --------------------------------- | --------------------- |
+| <a id="session-3"></a> `session?` | [`Session`](#session) |
+
+---
+
+### SignInPasswordlessEmailRequest
+
+#### Properties
+
+| Property                          | Type                              | Description   |
+| --------------------------------- | --------------------------------- | ------------- |
+| <a id="email-3"></a> `email`      | `string`                          | A valid email |
+| <a id="options-2"></a> `options?` | [`SignUpOptions`](#signupoptions) | -             |
+
+---
+
+### SignInPATRequest
+
+#### Properties
+
+| Property                                                 | Type     | Description                                                                          |
+| -------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------ |
+| <a id="personalaccesstoken-1"></a> `personalAccessToken` | `string` | PAT **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b |
+
+---
+
+### SignInWebauthnRequest
+
+#### Properties
+
+| Property                      | Type     | Description   |
+| ----------------------------- | -------- | ------------- |
+| <a id="email-4"></a> `email?` | `string` | A valid email |
+
+---
+
+### SignInWebauthnResponse
+
+#### Indexable
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignInWebauthnVerifyRequest
+
+#### Indexable
+
+```ts
+[key: string]: unknown
+```
+
+#### Properties
+
+| Property                             | Type                                                                                | Description                                              |
+| ------------------------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| <a id="credential"></a> `credential` | [`SignInWebauthnVerifyRequestCredential`](#signinwebauthnverifyrequestcredential-1) | -                                                        |
+| <a id="email-5"></a> ~~`email?`~~    | `string`                                                                            | A valid email. Deprecated, no longer used **Deprecated** |
+
+---
+
+### SignOutSchema
+
+#### Properties
+
+| Property                                   | Type      | Description                           |
+| ------------------------------------------ | --------- | ------------------------------------- |
+| <a id="all"></a> `all?`                    | `boolean` | Sign out from all connected devices   |
+| <a id="refreshtoken-3"></a> `refreshToken` | `string`  | Refresh token for the current session |
+
+---
+
+### SignUpEmailPasswordRequest
+
+Request to register a new user with email and password
+
+#### Properties
+
+| Property                           | Type                              | Description                                                          |
+| ---------------------------------- | --------------------------------- | -------------------------------------------------------------------- |
+| <a id="email-6"></a> `email`       | `string`                          | Email address for the new user account                               |
+| <a id="options-3"></a> `options?`  | [`SignUpOptions`](#signupoptions) | Optional configuration for the new user account                      |
+| <a id="password-1"></a> `password` | `string`                          | Password for the new user account **Min Length** 3 **Max Length** 50 |
+
+---
+
+### SignUpOptions
+
+#### Properties
+
+| Property                                  | Type                                                | Description                                               |
+| ----------------------------------------- | --------------------------------------------------- | --------------------------------------------------------- |
+| <a id="allowedroles"></a> `allowedRoles?` | `string`[]                                          | -                                                         |
+| <a id="defaultrole"></a> `defaultRole?`   | `string`                                            | -                                                         |
+| <a id="displayname-1"></a> `displayName?` | `string`                                            | **Max Length** 32 **Pattern** ^[\p{L}\p{N}\p{S} ,.'-]+$   |
+| <a id="locale-1"></a> `locale?`           | `string`                                            | A two-characters locale **Min Length** 2 **Max Length** 2 |
+| <a id="metadata-2"></a> `metadata?`       | [`SignUpOptionsMetadata`](#signupoptionsmetadata-1) | -                                                         |
+| <a id="redirectto-1"></a> `redirectTo?`   | `string`                                            | -                                                         |
+
+---
+
+### SignUpWebauthnRequest
+
+#### Properties
+
+| Property                          | Type                              | Description   |
+| --------------------------------- | --------------------------------- | ------------- |
+| <a id="email-7"></a> `email`      | `string`                          | A valid email |
+| <a id="options-4"></a> `options?` | [`SignUpOptions`](#signupoptions) | -             |
+
+---
+
+### SignUpWebauthnResponse
+
+#### Indexable
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignUpWebauthnVerifyRequest
+
+#### Indexable
+
+```ts
+[key: string]: unknown
+```
+
+#### Properties
+
+| Property                                | Type                                                                                |
+| --------------------------------------- | ----------------------------------------------------------------------------------- |
+| <a id="credential-1"></a> `credential?` | [`SignUpWebauthnVerifyRequestCredential`](#signupwebauthnverifyrequestcredential-1) |
+| <a id="options-5"></a> `options?`       | [`SignUpWebauthnVerifyRequestOptions`](#signupwebauthnverifyrequestoptions-1)       |
+
+---
+
+### TotpGenerateResponse
+
+Response containing TOTP setup information for MFA
+
+#### Properties
+
+| Property                             | Type     | Description                                                 |
+| ------------------------------------ | -------- | ----------------------------------------------------------- |
+| <a id="imageurl"></a> `imageUrl`     | `string` | URL to QR code image for scanning with an authenticator app |
+| <a id="totpsecret"></a> `totpSecret` | `string` | TOTP secret key for manual setup with an authenticator app  |
+
+---
+
+### User
+
+User profile and account information
+
+#### Properties
+
+| Property                                               | Type                              | Description                                                                                                     |
+| ------------------------------------------------------ | --------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| <a id="avatarurl"></a> `avatarUrl`                     | `string`                          | URL to the user's profile picture                                                                               |
+| <a id="createdat"></a> `createdAt`                     | `string`                          | Timestamp when the user account was created                                                                     |
+| <a id="defaultrole-1"></a> `defaultRole`               | `string`                          | Default authorization role for the user                                                                         |
+| <a id="displayname-2"></a> `displayName`               | `string`                          | User's display name                                                                                             |
+| <a id="email-8"></a> `email?`                          | `string`                          | User's email address                                                                                            |
+| <a id="emailverified"></a> `emailVerified`             | `boolean`                         | Whether the user's email has been verified                                                                      |
+| <a id="id-1"></a> `id`                                 | `string`                          | Unique identifier for the user **Pattern** \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b |
+| <a id="isanonymous"></a> `isAnonymous`                 | `boolean`                         | Whether this is an anonymous user account                                                                       |
+| <a id="locale-2"></a> `locale`                         | `string`                          | User's preferred locale (language code) **Min Length** 2 **Max Length** 2                                       |
+| <a id="metadata-3"></a> `metadata`                     | [`UserMetadata`](#usermetadata-1) | Custom metadata associated with the user                                                                        |
+| <a id="phonenumber"></a> `phoneNumber?`                | `string`                          | User's phone number                                                                                             |
+| <a id="phonenumberverified"></a> `phoneNumberVerified` | `boolean`                         | Whether the user's phone number has been verified                                                               |
+| <a id="roles"></a> `roles`                             | `string`[]                        | List of roles assigned to the user                                                                              |
+
+---
+
+### UserDeanonymizeRequest
+
+#### Properties
+
+| Property                                  | Type                                                                          | Description                                                           |
+| ----------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| <a id="connection"></a> ~~`connection?`~~ | `string`                                                                      | Deprecated, will be ignored **Deprecated**                            |
+| <a id="email-9"></a> `email`              | `string`                                                                      | A valid email                                                         |
+| <a id="options-6"></a> `options?`         | [`SignUpOptions`](#signupoptions)                                             | -                                                                     |
+| <a id="password-2"></a> `password?`       | `string`                                                                      | A password of minimum 3 characters **Min Length** 3 **Max Length** 50 |
+| <a id="signinmethod"></a> `signInMethod`  | [`UserDeanonymizeRequestSignInMethod`](#userdeanonymizerequestsigninmethod-1) | Which sign-in method to use                                           |
+
+---
+
+### UserEmailChangeRequest
+
+#### Properties
+
+| Property                          | Type                                      | Description   |
+| --------------------------------- | ----------------------------------------- | ------------- |
+| <a id="newemail"></a> `newEmail`  | `string`                                  | A valid email |
+| <a id="options-7"></a> `options?` | [`OptionsRedirectTo`](#optionsredirectto) | -             |
+
+---
+
+### UserEmailSendVerificationEmailRequest
+
+#### Properties
+
+| Property                          | Type                                      | Description   |
+| --------------------------------- | ----------------------------------------- | ------------- |
+| <a id="email-10"></a> `email`     | `string`                                  | A valid email |
+| <a id="options-8"></a> `options?` | [`OptionsRedirectTo`](#optionsredirectto) | -             |
+
+---
+
+### UserMfaRequest
+
+Request to activate or deactivate multi-factor authentication
+
+#### Properties
+
+| Property                                    | Type                                                            | Description                                                      |
+| ------------------------------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
+| <a id="activemfatype"></a> `activeMfaType?` | [`UserMfaRequestActiveMfaType`](#usermfarequestactivemfatype-1) | Type of MFA to activate. Use empty string to disable MFA.        |
+| <a id="code"></a> `code`                    | `string`                                                        | Verification code from the authenticator app when activating MFA |
+
+---
+
+### UserPasswordRequest
+
+#### Properties
+
+| Property                               | Type     | Description                                                                                              |
+| -------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------- |
+| <a id="newpassword"></a> `newPassword` | `string` | A password of minimum 3 characters **Min Length** 3 **Max Length** 50                                    |
+| <a id="ticket-2"></a> `ticket?`        | `string` | Ticket to reset the password, required if the user is not authenticated **Pattern** ^passwordReset\:.\*$ |
+
+---
+
+### UserPasswordResetRequest
+
+#### Properties
+
+| Property                          | Type                                      | Description   |
+| --------------------------------- | ----------------------------------------- | ------------- |
+| <a id="email-11"></a> `email`     | `string`                                  | A valid email |
+| <a id="options-9"></a> `options?` | [`OptionsRedirectTo`](#optionsredirectto) | -             |
+
+## Type Aliases
+
+### CreatePATRequestMetadata
+
+```ts
+type CreatePATRequestMetadata = object;
+```
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### ErrorResponseError
+
+```ts
+type ErrorResponseError =
+  | "default-role-must-be-in-allowed-roles"
+  | "disabled-endpoint"
+  | "disabled-user"
+  | "email-already-in-use"
+  | "email-already-verified"
+  | "forbidden-anonymous"
+  | "internal-server-error"
+  | "invalid-email-password"
+  | "invalid-request"
+  | "locale-not-allowed"
+  | "password-too-short"
+  | "password-in-hibp-database"
+  | "redirectTo-not-allowed"
+  | "role-not-allowed"
+  | "signup-disabled"
+  | "unverified-user"
+  | "user-not-anonymous"
+  | "invalid-pat"
+  | "invalid-refresh-token"
+  | "invalid-ticket"
+  | "disabled-mfa-totp"
+  | "no-totp-secret"
+  | "invalid-totp"
+  | "mfa-type-not-found"
+  | "totp-already-active";
+```
+
+Error code identifying the specific application error
+
+---
+
+### FetchResponse&lt;T&gt;
+
+```ts
+type FetchResponse<T> = object;
+```
+
+#### Type Parameters
+
+| Type Parameter |
+| -------------- |
+| `T`            |
+
+#### Properties
+
+| Property                       | Type                               |
+| ------------------------------ | ---------------------------------- |
+| <a id="body"></a> `body`       | `T`                                |
+| <a id="headers"></a> `headers` | `Record`&lt;`string`, `string`&gt; |
+| <a id="status-1"></a> `status` | `number`                           |
+
+---
+
+### GetVersion200
+
+```ts
+type GetVersion200 = object;
+```
+
+#### Properties
+
+| Property                       | Type     | Description                               |
+| ------------------------------ | -------- | ----------------------------------------- |
+| <a id="version"></a> `version` | `string` | The version of the authentication service |
+
+---
+
+### OKResponse
+
+```ts
+type OKResponse = "OK";
+```
+
+---
+
+### Provider
+
+```ts
+type Provider = "apple" | "google";
+```
+
+---
+
+### RedirectToQueryParameter
+
+```ts
+type RedirectToQueryParameter = string;
+```
+
+Target URL for the redirect
+
+---
+
+### SigninAnonymousRequestMetadata
+
+```ts
+type SigninAnonymousRequestMetadata = object;
+```
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignInWebauthnVerifyRequestCredential
+
+```ts
+type SignInWebauthnVerifyRequestCredential = object;
+```
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignUpOptionsMetadata
+
+```ts
+type SignUpOptionsMetadata = object;
+```
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignUpWebauthnVerifyRequestCredential
+
+```ts
+type SignUpWebauthnVerifyRequestCredential = object;
+```
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### SignUpWebauthnVerifyRequestOptions
+
+```ts
+type SignUpWebauthnVerifyRequestOptions = SignUpOptions &
+  SignUpWebauthnVerifyRequestOptionsAllOf;
+```
+
+---
+
+### SignUpWebauthnVerifyRequestOptionsAllOf
+
+```ts
+type SignUpWebauthnVerifyRequestOptionsAllOf = object;
+```
+
+#### Properties
+
+| Property                          | Type     |
+| --------------------------------- | -------- |
+| <a id="nickname"></a> `nickname?` | `string` |
+
+---
+
+### TicketQueryParameter
+
+```ts
+type TicketQueryParameter = string;
+```
+
+Ticket
+
+---
+
+### TicketTypeQueryParameter
+
+```ts
+type TicketTypeQueryParameter =
+  | "emailVerify"
+  | "emailConfirmChange"
+  | "signinPasswordless"
+  | "passwordReset";
+```
+
+Type of the ticket
+
+---
+
+### UserDeanonymizeRequestSignInMethod
+
+```ts
+type UserDeanonymizeRequestSignInMethod = "email-password" | "passwordless";
+```
+
+Which sign-in method to use
+
+---
+
+### UserMetadata
+
+```ts
+type UserMetadata = object;
+```
+
+Custom metadata associated with the user
+
+#### Index Signature
+
+```ts
+[key: string]: unknown
+```
+
+---
+
+### UserMfaRequestActiveMfaType
+
+```ts
+type UserMfaRequestActiveMfaType = "totp" | "";
+```
+
+Type of MFA to activate. Use empty string to disable MFA.
+
+## Functions
+
+### createAPIClient()
+
+```ts
+function createAPIClient(
+  baseURL: string,
+  chainFunctions: ChainFunction[],
+): Client;
+```
+
+#### Parameters
+
+| Parameter        | Type                                         | Default value |
+| ---------------- | -------------------------------------------- | ------------- |
+| `baseURL`        | `string`                                     | `undefined`   |
+| `chainFunctions` | [`ChainFunction`](fetch#chainfunction)[] | `[]`          |
+
+#### Returns
+
+[`Client`](#client)

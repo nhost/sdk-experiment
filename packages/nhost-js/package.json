@@ -1,0 +1,104 @@
+{
+  "name": "nhost-js",
+  "version": "1.0.0",
+  "description": "Nhost JavaScript SDK",
+  "main": "./dist/nhost-js.cjs.js",
+  "module": "./dist/nhost-js.es.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/nhost-js.es.js",
+      "require": "./dist/nhost-js.cjs.js"
+    },
+    "./auth": {
+      "types": "./dist/src/auth/index.d.ts",
+      "import": "./dist/nhost-js/auth.es.js",
+      "require": "./dist/nhost-js/auth.cjs.js"
+    },
+    "./storage": {
+      "types": "./dist/src/storage/index.d.ts",
+      "import": "./dist/nhost-js/storage.es.js",
+      "require": "./dist/nhost-js/storage.cjs.js"
+    },
+    "./graphql": {
+      "types": "./dist/src/graphql/index.d.ts",
+      "import": "./dist/nhost-js/graphql.es.js",
+      "require": "./dist/nhost-js/graphql.cjs.js"
+    },
+    "./fetch": {
+      "types": "./dist/src/fetch/index.d.ts",
+      "import": "./dist/nhost-js/fetch.es.js",
+      "require": "./dist/nhost-js/fetch.cjs.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "auth": [
+        "dist/src/auth/index.d.ts"
+      ],
+      "storage": [
+        "dist/src/storage/index.d.ts"
+      ],
+      "graphql": [
+        "dist/src/graphql/index.d.ts"
+      ],
+      "fetch": [
+        "dist/src/fetch/index.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "jest",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "build:types": "tsc -p tsconfig.json",
+    "build:js": "vite build --config vite.config.ts && vite build --config vite.umd.config.ts",
+    "build": "rm -rf dist && pnpm build:types && pnpm build:js",
+    "generate": "orval --config build/orval.config.ts",
+    "prepublishOnly": "pnpm build",
+    "lint": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit",
+    "docs:markdown": "./typedoc.sh"
+  },
+  "keywords": [
+    "nhost",
+    "sdk",
+    "api",
+    "javascript",
+    "typescript"
+  ],
+  "author": "Nhost",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhost/nhost.git"
+  },
+  "homepage": "https://nhost.io",
+  "bugs": {
+    "url": "https://github.com/nhost/nhost/issues"
+  },
+  "packageManager": "pnpm@10.9.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@types/node": "^22.15.17",
+    "@types/rollup-plugin-peer-deps-external": "^2.2.5",
+    "jest": "^29.7.0",
+    "orval": "7.9.0",
+    "prettier": "^3.5.3",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "terser": "^5.39.0",
+    "ts-jest": "^29.3.2",
+    "typedoc": "^0.28.4",
+    "typedoc-plugin-markdown": "^4.6.3",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.3"
+  },
+  "sideEffects": false
+}

@@ -1,0 +1,82 @@
+# Nhost JavaScript SDK
+
+The Nhost JavaScript SDK provides a client-side interface to interact with Nhost services, including authentication, storage, and GraphQL operations.
+
+## Installation
+
+```bash
+# npm
+npm install nhost-js
+
+# yarn
+yarn add nhost-js
+
+# pnpm
+pnpm add nhost-js
+```
+
+## Quick Start
+
+```typescript
+import { createClient } from "nhost-js";
+
+// Initialize the Nhost client
+const nhost = createClient({
+  subdomain: "your-project",
+  region: "eu-central-1",
+});
+
+// Use authentication features
+async function signIn() {
+  const response = await nhost.auth.signInEmailPassword({
+    email: "user@example.com",
+    password: "password123",
+  });
+
+  if (response.body.session) {
+    console.log("Signed in successfully!");
+  }
+}
+
+// Use GraphQL features
+async function fetchUsers() {
+  const response = await nhost.graphql.query({
+    query: `
+      query GetUsers {
+        users {
+          id
+          displayName
+          email
+        }
+      }
+    `,
+  });
+
+  return response.body.data.users;
+}
+
+// Use storage features
+async function uploadFile(file) {
+  const response = await nhost.storage.uploadFiles({
+    "file[]": [file],
+  });
+
+  return response.body.processedFiles[0];
+}
+```
+
+## Modules
+
+The Nhost SDK consists of several modules:
+
+- **Auth**: User authentication and session management
+- **Storage**: File upload, download, and management
+- **GraphQL**: Executing queries and mutations against your Hasura GraphQL API
+
+## Documentation
+
+For detailed documentation and API reference, see the [Nhost Documentation](https://docs.nhost.io).
+
+## License
+
+MIT

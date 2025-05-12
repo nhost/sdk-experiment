@@ -1,0 +1,397 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Documentation",
+  "integrations": {
+    "segment": {
+      "key": "kD6QfDOMGR2IoJ9D1U1H5Q9X7AEjoVfN"
+    }
+  },
+  "colors": {
+    "primary": "#3787ff",
+    "light": "#569aff",
+    "dark": "#1874ff"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+          "tab": "Welcome",
+          "pages": [
+            "welcome"
+          ]
+      },
+      {
+        "tab": "Getting Started",
+        "pages": [
+          {
+            "group": "Welcome",
+            "icon": "house",
+            "pages": ["/getting-started/overview" ]
+          },
+          {
+            "group": "Quickstart",
+            "icon": "house",
+            "pages": [
+              "/getting-started/quickstart/react",
+              "/getting-started/quickstart/nextjs",
+              "/getting-started/quickstart/vue",
+              "/getting-started/quickstart/sveltekit",
+              "/getting-started/quickstart/reactnative"
+            ]
+          },
+          {
+            "group": "Tutorials",
+            "icon": "book",
+            "pages": [
+              "/getting-started/tutorials/react",
+              "/getting-started/tutorials/nextjs",
+              "/getting-started/tutorials/vue"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Products",
+        "dropdowns": [
+          {
+            "dropdown": "Overview",
+            "icon": "eye",
+            "pages": [
+              "/products/overview"
+            ]
+          },
+          {
+            "dropdown": "Auth",
+            "icon": "lock",
+            "pages": [
+              "/products/auth/overview",
+              "/products/auth/users",
+              "/products/auth/client_and_redirect_urls",
+              "/products/auth/jwt",
+              "/products/auth/email-templates",
+              "/products/auth/gravatar",
+              {
+                "group": "Sign In Methods",
+                "pages": [
+                  {
+                    "group": "Social Providers",
+                    "icon": "at",
+                    "pages": [
+                      "products/auth/social/sign-in-apple",
+                      "products/auth/social/sign-in-azuread",
+                      "products/auth/social/sign-in-discord",
+                      "products/auth/social/sign-in-facebook",
+                      "products/auth/social/sign-in-github",
+                      "products/auth/social/sign-in-google",
+                      "products/auth/social/sign-in-linkedin",
+                      "products/auth/social/sign-in-spotify",
+                      "products/auth/social/sign-in-twitch",
+                      "products/auth/social/sign-in-workos"
+                    ]
+                  },
+                  "/products/auth/social-connect",
+                  "/products/auth/sign-in-email-password",
+                  "/products/auth/sign-in-otp",
+                  "/products/auth/sign-in-magic-link",
+                  "/products/auth/sign-in-sms-otp",
+                  "/products/auth/webauthn",
+                  "/products/auth/idtokens"
+                ]
+              },
+              {
+                "group": "Security",
+                "icon": "shield",
+                "pages": [
+
+                  "/products/auth/elevated-permissions",
+                  "/products/auth/bot-protection",
+                  "/products/auth/custom-jwts",
+                  "/products/auth/restricting_emails_and_domains"
+                ]
+              }
+            ]
+          },
+          {
+            "dropdown": "Database",
+            "icon":"database",
+            "pages":[
+              "/products/database/overview",
+              "/products/database/configuring-postgres",
+              "/products/database/backups",
+              "/products/database/access",
+              "/products/database/extensions",
+              "/products/database/performance",
+              "/products/database/upgrade-major"
+            ]
+          },
+          {
+            "dropdown": "Functions",
+            "icon":"lambda",
+            "pages":[
+              "/products/functions/overview",
+              "/products/functions/getting-started",
+              "/products/functions/runtimes"
+            ]
+          },
+          {
+            "dropdown": "GraphQL",
+            "icon":"webhook",
+            "pages":[
+              "/products/graphql/overview",
+              "/products/graphql/configuring-hasura",
+              "/products/graphql/permissions",
+              "/products/graphql/advanced-features"
+            ]
+          },
+          {
+            "dropdown": "Storage",
+            "icon":"warehouse",
+            "pages":[
+              "/products/storage/overview",
+              "/products/storage/cdn",
+              "/products/storage/antivirus"
+            ]
+          },
+          {
+            "dropdown": "AI",
+            "icon":"robot",
+            "pages":[
+              "/products/ai/overview",
+              "/products/ai/enabling-service",
+              "/products/ai/local-development",
+              "/products/ai/auto-embeddings",
+              "/products/ai/assistants",
+              "/products/ai/dev-assistant"
+            ]
+          },
+          {
+            "dropdown": "Run",
+            "icon":"play",
+            "pages":[
+              "/products/run/overview",
+              "/products/run/getting-started",
+              "/products/run/configuration",
+              "/products/run/networking",
+              "/products/run/health-checks",
+              "/products/run/resources",
+              "/products/run/registry",
+              "/products/run/local-development",
+              "/products/run/configuration-overlays",
+              "/products/run/cli-deployments"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Platform",
+        "dropdowns": [
+          {
+            "dropdown": "Overview",
+            "icon": "eye",
+            "pages": [
+              "/platform/overview"
+            ]
+          },
+          {
+            "dropdown": "Cloud",
+            "icon": "cloud",
+            "pages": [
+              "/platform/cloud/overview",
+              "platform/cloud/subdomain",
+              "platform/cloud/compute-resources",
+              "platform/cloud/service-replicas",
+              "platform/cloud/metrics",
+              "platform/cloud/environment-variables",
+              "platform/cloud/secrets",
+              "platform/cloud/git",
+              "platform/cloud/custom-domains",
+              "platform/cloud/rate-limits",
+              "platform/cloud/tls",
+              "platform/cloud/billing"
+            ]
+          },
+          {
+            "dropdown": "Local Development",
+            "icon": "terminal",
+            "pages": [
+              "/platform/cli/overview",
+              "/platform/cli/local-development",
+              "/platform/cli/subdomain",
+              "/platform/cli/migrate-config",
+              "/platform/cli/multiple-projects",
+              "/platform/cli/configuration-overlays",
+              "/platform/cli/seeds"
+            ]
+          },
+          {
+              "dropdown": "Self-Hosting",
+              "icon": "server",
+              "pages": [
+                "/platform/self-hosting/overview",
+                "/platform/self-hosting/community",
+                "/platform/self-hosting/support",
+                "/platform/self-hosting/dedicated"
+              ]
+          }
+        ]
+      },
+      {
+        "tab":"Reference",
+            "icon":"bolt",
+            "pages":[
+              "/reference/overview",
+              {
+                "group": "Backend Services",
+                "pages": [
+                {
+                  "group": "Authentication",
+                  "icon": "user-check",
+                  "pages": [
+                    "reference/auth/get-.well-known-jwks.json",
+                    "reference/auth/post-elevate-webauthn",
+                    "reference/auth/post-elevate-webauthn-verify",
+                    "reference/auth/get-healthz",
+                    "reference/auth/head-healthz",
+                    "reference/auth/post-link-idtoken",
+                    "reference/auth/get-mfa-totp-generate",
+                    "reference/auth/post-pat",
+                    "reference/auth/post-signin-anonymous",
+                    "reference/auth/post-signin-email-password",
+                    "reference/auth/post-signin-idtoken",
+                    "reference/auth/post-signin-mfa-totp",
+                    "reference/auth/post-signin-otp-email",
+                    "reference/auth/post-signin-otp-email-verify",
+                    "reference/auth/post-signin-passwordless-email",
+                    "reference/auth/post-signin-passwordless-sms",
+                    "reference/auth/post-signin-passwordless-sms-otp",
+                    "reference/auth/post-signin-pat",
+                    "reference/auth/get-signin-provider-{provider}",
+                    "reference/auth/get-signin-provider-{provider}-callback",
+                    "reference/auth/post-signin-webauthn",
+                    "reference/auth/post-signin-webauthn-verify",
+                    "reference/auth/post-signout",
+                    "reference/auth/post-signup-email-password",
+                    "reference/auth/post-signup-webauthn",
+                    "reference/auth/post-signup-webauthn-verify",
+                    "reference/auth/post-token",
+                    "reference/auth/post-token-verify",
+                    "reference/auth/get-user",
+                    "reference/auth/post-user-deanonymize",
+                    "reference/auth/post-user-email-change",
+                    "reference/auth/post-user-email-send-verification-email",
+                    "reference/auth/post-user-mfa",
+                    "reference/auth/post-user-password",
+                    "reference/auth/post-user-password-reset",
+                    "reference/auth/post-user-provider-tokens",
+                    "reference/auth/post-user-webauthn-add",
+                    "reference/auth/post-user-webauthn-verify",
+                    "reference/auth/get-verify",
+                    "reference/auth/get-version"
+                ]
+              },
+              {
+                "group": "Storage",
+                "icon": "warehouse",
+                "pages": [
+                  "reference/storage/upload-file",
+                  "reference/storage/replace-file",
+                  "reference/storage/delete-file",
+                  "reference/storage/download-file",
+                  "reference/storage/download-file-metadata",
+                  "reference/storage/presigned-url",
+                  "reference/storage/get-file-content"
+                ]
+              },
+              {
+                "group": "AI",
+                "icon":"robot",
+                "pages": [
+                  "reference/graphql/ai/overview",
+                  {
+                    "group": "Query",
+                    "pages": [
+                      "reference/graphql/ai/query/assistant",
+                      "reference/graphql/ai/query/assistants",
+                      "reference/graphql/ai/query/session",
+                      "reference/graphql/ai/query/sessionMessages",
+                      "reference/graphql/ai/query/sessions"
+                    ]
+                  },
+                  {
+                    "group": "Mutation",
+                    "pages": [
+                      "reference/graphql/ai/mutation/insertAssistant",
+                      "reference/graphql/ai/mutation/updateAssistant",
+                      "reference/graphql/ai/mutation/deleteAssistant",
+                      "reference/graphql/ai/mutation/startSession",
+                      "reference/graphql/ai/mutation/deleteSession",
+                      "reference/graphql/ai/mutation/sendMessage",
+                      "reference/graphql/ai/mutation/startDevSession",
+                      "reference/graphql/ai/mutation/sendDevMessage"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Client Libraries",
+            "pages": [
+              {
+                "group": "Javascript",
+                "icon":"js",
+                "pages": [
+                  {
+                    "group": "nhost-js",
+                    "pages": [
+                      "reference/javascript/nhost-js/main",
+                      "reference/javascript/nhost-js/auth",
+                      "reference/javascript/nhost-js/graphql",
+                      "reference/javascript/nhost-js/storage",
+                      "reference/javascript/nhost-js/fetch"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "group": "CLI",
+            "pages": [
+              "reference/cli/commands"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Blog",
+        "href":"https://nhost.io/blog"
+      }
+    ]
+  },
+  "logo": {
+    "light": "/images/logo/light.svg",
+    "dark": "/images/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "https://app.nhost.io/support"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://app.nhost.io"
+    }
+  },
+  "footer": {
+    "socials": {
+      "twitter": "https://twitter.com/nhost",
+      "github": "https://github.com/nhost",
+      "linkedin": "https://www.linkedin.com/company/nhost"
+    }
+  }
+}
