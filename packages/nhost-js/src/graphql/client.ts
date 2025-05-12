@@ -77,21 +77,7 @@ export interface Client {
    * @param options - Additional fetch options to apply to the request
    * @returns Promise with the GraphQL response and metadata
    */
-  query: (
-    request: GraphQLRequest,
-    options?: RequestInit,
-  ) => Promise<FetchResponse<GraphQLResponse>>;
-
-  /**
-   * Execute a GraphQL mutation operation
-   *
-   * Mutations are used to modify data on the server.
-   *
-   * @param request - GraphQL request object containing mutation and optional variables
-   * @param options - Additional fetch options to apply to the request
-   * @returns Promise with the GraphQL response and metadata
-   */
-  mutation: (
+  post: (
     request: GraphQLRequest,
     options?: RequestInit,
   ) => Promise<FetchResponse<GraphQLResponse>>;
@@ -130,21 +116,20 @@ export const createAPIClient = (
     const body = await response.text();
     const data: GraphQLResponse = body ? JSON.parse(body) : {};
 
-    return {
+    const resp = {
       body: data,
       status: response.status,
       headers: response.headers,
     };
+
+    if (data.errors) {
+      throw resp;
+    }
+
+    return resp;
   };
 
-  const query = (
-    request: GraphQLRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<GraphQLResponse>> => {
-    return executeOperation(request, options);
-  };
-
-  const mutation = (
+  const post = (
     request: GraphQLRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse>> => {
@@ -152,7 +137,6 @@ export const createAPIClient = (
   };
 
   return {
-    query,
-    mutation,
+    post,
   } as Client;
 };

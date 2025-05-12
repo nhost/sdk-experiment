@@ -1,7 +1,5 @@
 import { createClient } from "../index";
 
-// Configure axios for testing
-
 describe("Nhost - Sign Up with Email and Password and upload file", () => {
   const nhost = createClient({
     subdomain: "local",
@@ -78,7 +76,7 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
     expect(session?.user?.defaultRole).toBeDefined();
     expect(session?.user?.roles).toBeDefined();
 
-    const files = await nhost.graphql.query({
+    const files = await nhost.graphql.post({
       query: `
           query GetFiles {
             files {

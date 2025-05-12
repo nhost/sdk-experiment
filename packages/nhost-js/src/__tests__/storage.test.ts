@@ -12,8 +12,6 @@ import {
   type Error,
 } from "../storage";
 
-// Configure axios for testing
-
 describe("Test Storage API", () => {
   const nhostAuth = createAuthClient("https://local.auth.local.nhost.run/v1");
 
@@ -130,43 +128,6 @@ describe("Test Storage API", () => {
           },
         ],
       });
-    } catch (error) {
-      const err = error as FetchResponse<Error>;
-
-      expect(err).toBeDefined();
-      expect(err.status).toBe(400);
-      expect(err.body).toBeDefined();
-      expect(err.body.error?.message).toBe(
-        "file[] not found in Multipart form",
-      );
-      expect(err.headers["content-length"]).toBe("58");
-      expect(err.headers["content-type"]).toBe(
-        "application/json; charset=utf-8",
-      );
-      expect(err.headers["date"]).toBeDefined();
-    }
-  });
-
-  it("upload fails", async () => {
-    try {
-      const resp = await nhostStorage.uploadFiles({
-        "bucket-id": "default",
-        "metadata[]": [
-          {
-            id: uuid1,
-            name: "test1",
-            metadata: { key1: "value1" },
-          },
-          {
-            id: uuid2,
-            name: "test2",
-            metadata: { key2: "value2" },
-          },
-        ],
-      });
-      if (resp.status !== 200) {
-        // handle error
-      }
     } catch (error) {
       const err = error as FetchResponse<Error>;
 

@@ -69,7 +69,7 @@ test("mainExample", async () => {
   //   }
   // }
 
-  const graphResp = await nhost.graphql.query({
+  const graphResp = await nhost.graphql.post({
     query: `
      query {
        files {

@@ -125,8 +125,22 @@ select_permissions:
     permission:
       columns:
         - active_mfa_type
+        - display_name
+        - email
         - id
+        - metadata
       filter:
         id:
           _eq: X-Hasura-User-Id
+    comment: ""
+update_permissions:
+  - role: user
+    permission:
+      columns:
+        - display_name
+        - metadata
+      filter:
+        id:
+          _eq: X-Hasura-User-Id
+      check: null
     comment: ""

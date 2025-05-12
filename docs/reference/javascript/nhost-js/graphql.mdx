@@ -10,10 +10,9 @@ GraphQL client interface providing methods for executing queries and mutations
 
 #### Properties
 
-| Property                         | Type                                                                                                                                                                                        | Description                                                                                                    |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| <a id="mutation"></a> `mutation` | (`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt; | Execute a GraphQL mutation operation Mutations are used to modify data on the server.                          |
-| <a id="query"></a> `query`       | (`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt; | Execute a GraphQL query operation Queries are used to fetch data and should not modify any data on the server. |
+| Property                 | Type                                                                                                                                                                                        | Description                                                                                                    |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| <a id="post"></a> `post` | (`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt; | Execute a GraphQL query operation Queries are used to fetch data and should not modify any data on the server. |
 
 ---
 
@@ -61,7 +60,7 @@ GraphQL request object used for queries and mutations.
 | Property                                    | Type                                    | Description                                  |
 | ------------------------------------------- | --------------------------------------- | -------------------------------------------- |
 | <a id="operationname"></a> `operationName?` | `string`                                | Optional name of the operation to execute    |
-| <a id="query-1"></a> `query`                | `string`                                | The GraphQL query or mutation string         |
+| <a id="query"></a> `query`                  | `string`                                | The GraphQL query or mutation string         |
 | <a id="variables"></a> `variables?`         | [`GraphQLVariables`](#graphqlvariables) | Optional variables for parameterized queries |
 
 ---
