@@ -4,7 +4,7 @@ import MfaVerificationForm from "./MfaVerificationForm";
 
 export default async function MfaVerification({ searchParams }: any) {
   // Extract ticket and error from URL
-  const params = await searchParams
+  const params = await searchParams;
   const ticket = params.ticket as string | undefined;
   const error = params.error as string | undefined;
 

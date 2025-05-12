@@ -25,7 +25,8 @@ export async function createNhostClient(): Promise<
     region: process.env["NHOST_REGION"] || "local",
     subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
     disableAutoRefreshToken: true, // this is important to avoid issues with session refresh
-    storage: { // storage compatible with Next.js server components
+    storage: {
+      // storage compatible with Next.js server components
       get: (): Session | null => {
         const s = cookieStore.get(key)?.value || null;
         if (!s) {
@@ -63,7 +64,8 @@ export async function handleNhostMiddleware(
   const nhost = createClient({
     region: process.env["NHOST_REGION"] || "local",
     subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
-    storage: { // storage compatible with Next.js middleware
+    storage: {
+      // storage compatible with Next.js middleware
       get: (): Session | null => {
         const raw = request.cookies.get(key)?.value || null;
         if (!raw) {

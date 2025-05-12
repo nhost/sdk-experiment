@@ -6,7 +6,7 @@ import { sendMagicLink } from "./actions";
 
 export default async function SignUp({ searchParams }: any) {
   // Extract error and magic link status from URL
-  const params = await searchParams
+  const params = await searchParams;
   const error = params?.error as string | undefined;
   const magicLinkSent = params?.magic === "success";
 

@@ -8,11 +8,14 @@ To run the demo locally:
 
 1. Clone this repository
 2. Start the Nhost backend:
+
 ```bash
 cd backend
 nhost up
 ```
+
 3. Start the Next.js application:
+
 ```bash
 cd demos/nextjs-ssr-demo
 pnpm install
@@ -45,6 +48,7 @@ The special integration code needed to handle server + client components and the
 The key differences in the implementation:
 
 - **Client Components**
+
   - Uses `CookieStorage` for persistent session management
   - Enables client-side operations like file uploads and MFA configuration
 
@@ -66,6 +70,7 @@ A key aspect of this integration is how the session is persisted across server a
 ### Middleware for Route Protection
 
 The middleware (`src/middleware.ts`) is used to protect routes and handle refreshing the tokens. It handles:
+
 - Route protection for authenticated pages
 - Session token refreshing
 - Redirecting unauthenticated users to the sign-in page
@@ -80,6 +85,7 @@ All authentication steps are performed server-side and rely on the vanilla nhost
 - Magic Link authentication
 
 You can find all the relevant code in the folders:
+
 - `src/app/signin/` - Sign in methods
 - `src/app/signup/` - Sign up methods
 - `src/app/verify/` - Route to verify the magic link. We use a route because server components are not allowed to write cookies. Alternatively, this could be done on a client component as those are allowed to write cookies, but we wanted to keep the sign-in flow as server components for demonstration purposes.
@@ -94,6 +100,7 @@ There are two peculiarities with the profile page:
 2. The MFA configuration is done using a client component to provide interactivity.
 
 You can find all the relevant code in the folder:
+
 - `src/app/profile/`
 
 ### GraphQL Integration
@@ -112,6 +119,7 @@ Some details about the page:
 4. To avoid re-fetching the list of files on every interaction, we push/remove the file to/from the list of files in the client component. This is done using a custom hook that uses the `useState` and `useEffect` hooks to manage the state of the files.
 
 You can find the code for the `/upload` page in the folder:
+
 - `src/app/upload/`
 
 ### Layout and Navigation
@@ -126,6 +134,7 @@ To make sure the navigation is always up to date, every server component that ch
 ## Development Tooling
 
 This demo uses:
+
 - Next.js 15 with App Router
 - Turbopack for faster development experience (via `--turbopack` flag)
 - TypeScript for type safety
