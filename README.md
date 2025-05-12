@@ -58,6 +58,17 @@ We want to involve the community in the development of the SDKs. This will ensur
 - `/docs`: This folder contains Nhost's documentation. This is the the same as https://docs.nhost.io but modified for the new SDK and with guides on how to leverage the to build various workflows. The README contains instructions on how to run the documentation locally and which documents are new and need to be reviewed.
 - `/packages`: This folder contains the SDKs. Each SDK is in its own folder and contains a README file with details and instructions.
 
+## To Do
+
+- [ ] Next.js SSR example
+  - [ ] Add at least one example using a social provider
+  - [ ] Integrate with functions
+  - [ ] Integrate with GraphQL codegen
+- [ ] React example
+- [ ] Svelte example
+- [ ] Vue example
+- [ ] React Native example
+
 ## Contributing
 
 The best way to contribute is by providing feedback and attempting to build something with the SDKs, specially if you feel you have a use-case not covered in the examples. Feel free to open a new issue or a discussion to share your thoughts and ideas.
