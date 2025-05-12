@@ -54,6 +54,7 @@ export const extractTokenExpiration = (token: string): number => {
  * @param base64Payload - Base64-encoded payload
  * @returns Decoded payload as an object
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function decodeTokenPayload(base64Payload: string): any {
   try {
     let jsonPayload: string;

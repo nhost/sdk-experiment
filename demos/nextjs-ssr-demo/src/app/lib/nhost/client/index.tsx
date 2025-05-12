@@ -1,6 +1,6 @@
 "use client";
 
-import { createClient, CookieStorage } from "nhost-js";
+import { createClient, CookieStorage } from "@nhost/nhost-js";
 
 /**
  * Creates an Nhost client for use in client components.

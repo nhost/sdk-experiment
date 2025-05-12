@@ -3,7 +3,6 @@ import { createEnhancedFetch, type ChainFunction } from "../index";
 // Mock the global fetch function
 const mockFetch = jest.fn();
 
-// @ts-ignore - Mock doesn't need to implement all fetch properties
 global.fetch = mockFetch;
 
 describe("Enhanced Fetch", () => {
@@ -165,8 +164,8 @@ describe("Enhanced Fetch", () => {
   });
 
   test("errors in middleware should propagate", async () => {
-    const errorMiddleware: ChainFunction = (_next) => {
-      return async (_url, _options = {}) => {
+    const errorMiddleware: ChainFunction = () => {
+      return async () => {
         throw new Error("Middleware error");
       };
     };
@@ -187,7 +186,7 @@ describe("Enhanced Fetch", () => {
       return async (url, options = {}) => {
         try {
           return await next(url, options);
-        } catch (error) {
+        } catch {
           // Return a fallback response
           return new Response(
             JSON.stringify({ error: "Handled error", fallback: true }),
