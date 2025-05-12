@@ -2,8 +2,6 @@ import { createClient } from "../";
 import { type FetchResponse, type Error } from "../storage";
 
 test("error handling for storage", async () => {
-  //@ts-ignore
-
   const subdomain = "local";
   const region = "local";
 

@@ -58,7 +58,7 @@ export class LocalStorage implements SessionStorageInterface {
     try {
       const value = window.localStorage.getItem(this.storageKey);
       return value ? (JSON.parse(value) as Session) : null;
-    } catch (e) {
+    } catch {
       this.remove();
       return null;
     }
@@ -153,7 +153,7 @@ export class CookieStorage implements SessionStorageInterface {
       if (name === this.cookieName) {
         try {
           return JSON.parse(decodeURIComponent(value || "")) as Session;
-        } catch (e) {
+        } catch {
           this.remove();
           return null;
         }
@@ -202,9 +202,9 @@ export const detectStorage = (): SessionStorageInterface => {
       localStorage.setItem("__test", "__test");
       localStorage.removeItem("__test");
       return new LocalStorage();
-    } catch (e) {
+    } catch {
       console.warn(
-        "localStorage is not available, using in-memory storage instead",
+        `localStorage is not available, using in-memory storage instead`,
       );
     }
   }

@@ -13,7 +13,7 @@ import type { ChainFunction } from "../fetch";
  * Key-value pairs of variable names and their values.
  */
 export interface GraphQLVariables {
-  [key: string]: any;
+  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -39,12 +39,13 @@ export interface GraphQLError {
   /** Path in the query where the error occurred */
   path?: string[];
   /** Additional error information specific to the GraphQL implementation */
-  extensions?: any;
+  extensions?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
  * Standard GraphQL response format as defined by the GraphQL specification.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface GraphQLResponse<T = any> {
   /** The data returned from successful execution */
   data?: T;
@@ -55,6 +56,7 @@ export interface GraphQLResponse<T = any> {
 /**
  * Response wrapper for GraphQL operations with additional metadata.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface FetchResponse<T = any> {
   /** The parsed response body */
   body: T;

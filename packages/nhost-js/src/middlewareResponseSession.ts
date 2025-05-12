@@ -34,6 +34,7 @@ export const createSessionResponseMiddleware = (
    * @param data - Response data to extract session from
    * @returns Session object if found, null otherwise
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sessionExtractor = function (body: any): Session | null {
     // Look for session in common response patterns
     const session =

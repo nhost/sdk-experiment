@@ -2,8 +2,6 @@ import { createClient } from "../";
 import type { FetchResponse, GraphQLResponse } from "../graphql";
 
 test("error handling for graphql", async () => {
-  //@ts-ignore
-
   const subdomain = "local";
   const region = "local";
 
