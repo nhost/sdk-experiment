@@ -79,7 +79,7 @@ console.log(JSON.stringify(uplFilesResp, null, 2));
 //   }
 // }
 
-const graphResp = await nhost.graphql.query({
+const graphResp = await nhost.graphql.post({
   query: `
    query {
      files {
@@ -112,6 +112,136 @@ console.log(JSON.stringify(graphResp, null, 2));
 //   "status": 200,
 //   "headers": {}
 // }
+```
+
+## Error handling
+
+The SDK will throw errors on most operations if the request returns a non-2xx status code or
+if the request fails entirely (i.e., due to network errors). A continuation you can see
+how you can handle errors thrown by the SDK.
+
+### Auth
+
+```ts
+// Needs the following imports:
+//
+// import {
+//   type FetchResponse,
+//   type ErrorResponse,
+// } from "@nhost/nhost-js/auth";
+//
+const nhost = createClient({
+  subdomain: subdomain,
+  region: region,
+});
+try {
+  await nhost.auth.signInEmailPassword({
+    email,
+    password,
+  });
+
+  expect(true).toBe(false); // This should not be reached
+} catch (error) {
+  const err = error as FetchResponse<ErrorResponse>;
+  console.log("Error:", err);
+  // Error: {
+  //   body: {
+  //     error: 'invalid-email-password',
+  //     message: 'Incorrect email or password',
+  //     status: 401
+  //   },
+  //   status: 401,
+  //   headers: {
+  //     'content-length': '88',
+  //     'content-type': 'application/json',
+  //     date: 'Mon, 12 May 2025 08:08:28 GMT'
+  //   }
+  // }
+
+  // error handling...
+```
+
+### Storage
+
+```ts
+// Needs the following imports:
+//
+// import {
+//   type FetchResponse,
+//   type Error,
+// } from "@nhost/nhost-js/storage";
+//
+const nhost = createClient({
+  subdomain: subdomain,
+  region: region,
+});
+try {
+  await nhost.storage.uploadFiles({
+    "file[]": [new File(["test1"], "file-1", { type: "text/plain" })],
+  });
+
+  expect(true).toBe(false); // This should not be reached
+} catch (error) {
+  const err = error as FetchResponse<Error>;
+  console.log("Error:", err);
+  // Error: {
+  //   body: { error: { message: 'you are not authorized' } },
+  //   status: 403,
+  //   headers: {
+  //     'content-length': '46',
+  //     'content-type': 'application/json; charset=utf-8',
+  //     date: 'Mon, 12 May 2025 08:18:52 GMT'
+  //   }
+  // }
+
+  // error handling...
+```
+
+### GraphQL
+
+```ts
+// Needs the following imports:
+//
+// import {
+//   type FetchResponse,
+//   type GraphQLResponse,
+// } from "@nhost/nhost-js/graphql";
+//
+const nhost = createClient({
+  subdomain: subdomain,
+  region: region,
+});
+
+try {
+  await nhost.graphql.post({
+    query: `
+      query GetRestrictedObject {
+        restrictedObject {
+          restrictedField
+        }
+      }
+    `,
+  });
+} catch (error) {
+  const response = error as FetchResponse<GraphQLResponse>;
+
+  console.log("Error:", JSON.stringify(response, null, 2));
+  // Error: {
+  //   "body": {
+  //     "errors": [
+  //       {
+  //         "message": "field 'restrictedObject' not found in type: 'query_root'",
+  //         "extensions": {
+  //           "path": "$.selectionSet.restrictedObject",
+  //           "code": "validation-failed"
+  //         }
+  //       }
+  //     ]
+  //   },
+  //   "status": 200,
+  //   "headers": {}
+  // }
+}
 ```
 
 ## Classes
@@ -493,14 +623,15 @@ Configuration options for creating an Nhost client
 
 #### Properties
 
-| Property                              | Type                                                  | Description                                                                                                                                                  |
-| ------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| <a id="authurl"></a> `authUrl?`       | `string`                                              | Complete base URL for the auth service (overrides subdomain/region)                                                                                          |
-| <a id="graphqlurl"></a> `graphqlUrl?` | `string`                                              | Complete base URL for the GraphQL service (overrides subdomain/region)                                                                                       |
-| <a id="region"></a> `region?`         | `string`                                              | Nhost region (e.g., 'eu-central-1'). Used to construct the base URL for services for the Nhost cloud.                                                        |
-| <a id="storage-1"></a> `storage?`     | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation to use for session persistence. If not provided, the SDK will default to localStorage in the browser or memory in other environments. |
-| <a id="storageurl"></a> `storageUrl?` | `string`                                              | Complete base URL for the storage service (overrides subdomain/region)                                                                                       |
-| <a id="subdomain"></a> `subdomain?`   | `string`                                              | Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for services for the Nhost cloud.                                                 |
+| Property                                                        | Type                                                  | Description                                                                                                                                                  |
+| --------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| <a id="authurl"></a> `authUrl?`                                 | `string`                                              | Complete base URL for the auth service (overrides subdomain/region)                                                                                          |
+| <a id="disableautorefreshtoken"></a> `disableAutoRefreshToken?` | `boolean`                                             | Disable automatic session refresh. If set to true, the SDK will not attempt to refresh                                                                       |
+| <a id="graphqlurl"></a> `graphqlUrl?`                           | `string`                                              | Complete base URL for the GraphQL service (overrides subdomain/region)                                                                                       |
+| <a id="region"></a> `region?`                                   | `string`                                              | Nhost region (e.g., 'eu-central-1'). Used to construct the base URL for services for the Nhost cloud.                                                        |
+| <a id="storage-1"></a> `storage?`                               | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation to use for session persistence. If not provided, the SDK will default to localStorage in the browser or memory in other environments. |
+| <a id="storageurl"></a> `storageUrl?`                           | `string`                                              | Complete base URL for the storage service (overrides subdomain/region)                                                                                       |
+| <a id="subdomain"></a> `subdomain?`                             | `string`                                              | Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for services for the Nhost cloud.                                                 |
 
 ---
 
@@ -583,6 +714,38 @@ Default storage key used for storing the Nhost session
 
 ## Functions
 
+### createAttachAccessTokenMiddleware()
+
+```ts
+function createAttachAccessTokenMiddleware(
+  storage: SessionStorageInterface,
+): ChainFunction;
+```
+
+Creates a fetch middleware that adds the Authorization header with the current access token.
+
+This middleware:
+
+1. Gets the current session from storage
+2. Adds the authorization header with the access token to outgoing requests
+
+This middleware should be used after the refresh middleware in the chain to
+ensure the most recent token is used.
+
+#### Parameters
+
+| Parameter | Type                                                  | Description                                        |
+| --------- | ----------------------------------------------------- | -------------------------------------------------- |
+| `storage` | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation for retrieving session data |
+
+#### Returns
+
+[`ChainFunction`](fetch#chainfunction)
+
+A middleware function that adds Authorization headers
+
+---
+
 ### createClient()
 
 ```ts
@@ -629,7 +792,6 @@ This middleware:
 
 1. Checks if the current token is about to expire
 2. If so, uses the refresh token to obtain a new access token
-3. Adds the current access token to outgoing requests
 
 The middleware handles token refresh transparently, so the application
 doesn't need to manually refresh tokens.

@@ -21,7 +21,7 @@ export default async function UploadPage() {
 
   try {
     // @ts-ignore - GraphQL client exists but TypeScript might not know about it
-    const response = await nhost.graphql.query({
+    const response = await nhost.graphql.post({
       query: `
         query GetFiles {
           files {

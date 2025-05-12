@@ -58,6 +58,7 @@
     "build:types": "tsc -p tsconfig.json",
     "build:js": "vite build --config vite.config.ts && vite build --config vite.umd.config.ts",
     "build": "rm -rf dist && pnpm build:types && pnpm build:js",
+    "build:all": "pnpm generate && pnpm build && pnpm docs:markdown",
     "generate": "orval --config build/orval.config.ts",
     "prepublishOnly": "pnpm build",
     "lint": "eslint src --ext .ts,.tsx",
@@ -87,6 +88,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^16.0.1",
+    "@types/jest": "^29.5.14",
     "@types/node": "^22.15.17",
     "@types/rollup-plugin-peer-deps-external": "^2.2.5",
     "jest": "^29.7.0",

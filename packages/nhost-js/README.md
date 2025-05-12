@@ -40,7 +40,7 @@ async function signIn() {
 
 // Use GraphQL features
 async function fetchUsers() {
-  const response = await nhost.graphql.query({
+  const response = await nhost.graphql.post({
     query: `
       query GetUsers {
         users {

@@ -18,6 +18,24 @@
  *
  * {@includeCode ./__tests__/docstrings.test.ts#mainExample}
  *
+ * ## Error handling
+ *
+ * The SDK will throw errors on most operations if the request returns a non-2xx status code or
+ * if the request fails entirely (i.e., due to network errors). A continuation you can see
+ * how you can handle errors thrown by the SDK.
+ *
+ * ### Auth
+ *
+ * {@includeCode ./__tests__/docstrings-auth.test.ts#errorHandling}
+ *
+ * ### Storage
+ *
+ * {@includeCode ./__tests__/docstrings-storage.test.ts#errorHandling}
+ *
+ * ### GraphQL
+ *
+ * {@includeCode ./__tests__/docstrings-graphql.test.ts#errorHandling}
+ *
  * @packageDocumentation
  */
 
@@ -213,7 +231,9 @@ export class NhostClient {
     }
   }
 
-  async _refreshSession(marginSeconds: number = 60): Promise<Session | null> {
+  private async _refreshSession(
+    marginSeconds: number = 60,
+  ): Promise<Session | null> {
     const session = this.sessionStorage.get();
     if (!session) {
       return null;
@@ -251,6 +271,23 @@ export class NhostClient {
   async clearSession(): Promise<void> {
     this.sessionStorage.remove();
   }
+}
+
+function getMiddlewareChain(
+  auth: ReturnType<typeof createAuthClient>,
+  storage: SessionStorageInterface,
+  autoRefresh: boolean,
+) {
+  const mwChain = [
+    createSessionResponseMiddleware(storage),
+    createAttachAccessTokenMiddleware(storage),
+  ];
+  if (autoRefresh) {
+    // we need to process this one first to make sure any following middlewares
+    // run after the session has been refreshed
+    mwChain.unshift(createSessionRefreshMiddleware(auth, storage));
+  }
+  return mwChain;
 }
 
 /**
@@ -295,16 +332,7 @@ export function createClient(options: NhostClientOptions = {}): NhostClient {
   // Create auth client
   const auth = createAuthClient(authBaseUrl);
 
-  // Setup middleware
-  const mwChain = [
-    createSessionResponseMiddleware(storage),
-    createAttachAccessTokenMiddleware(storage),
-  ];
-  if (!disableAutoRefreshToken) {
-    // we need to process this one first to make sure any following middlewares
-    // run after the session has been refreshed
-    mwChain.unshift(createSessionRefreshMiddleware(auth, storage));
-  }
+  const mwChain = getMiddlewareChain(auth, storage, !disableAutoRefreshToken);
 
   for (const mw of mwChain) {
     auth.pushChainFunction(mw);
