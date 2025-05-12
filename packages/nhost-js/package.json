@@ -1,5 +1,5 @@
 {
-  "name": "nhost-js",
+  "name": "@nhost/nhost-js",
   "version": "5.0.0-beta.1",
   "description": "Nhost JavaScript SDK",
   "main": "./dist/nhost-js.cjs.js",
