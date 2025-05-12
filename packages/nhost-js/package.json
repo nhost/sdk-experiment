@@ -65,7 +65,6 @@
     "build:all": "pnpm generate && pnpm build && pnpm docs:markdown",
     "generate": "orval --config build/orval.config.ts",
     "prepublishOnly": "pnpm build:all && pnpm test:all",
-    "publish": "pnpm publish --tag beta",
     "docs:markdown": "./typedoc.sh"
   },
   "keywords": [
