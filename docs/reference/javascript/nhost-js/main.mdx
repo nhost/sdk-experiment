@@ -223,9 +223,9 @@ try {
     `,
   });
 } catch (error) {
-  const response = error as FetchResponse<GraphQLResponse>;
+  const resp = error as FetchResponse<GraphQLResponse>;
 
-  console.log("Error:", JSON.stringify(response, null, 2));
+  console.log("Error:", JSON.stringify(resp, null, 2));
   // Error: {
   //   "body": {
   //     "errors": [
@@ -241,7 +241,8 @@ try {
   //   "status": 200,
   //   "headers": {}
   // }
-}
+  //
+  // error handling...
 ```
 
 ## Classes
