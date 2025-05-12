@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createServerNhostClient } from "../nhost/ssr";
+import { createNhostClient } from "../nhost/server";
 
 /**
  * Revalidates the specified path after authentication state changes
@@ -20,7 +20,7 @@ export async function revalidateAfterAuthChange(path: string = "/") {
  */
 export async function signOut() {
   // Get the server Nhost client
-  const nhost = await createServerNhostClient();
+  const nhost = await createNhostClient();
   const session = nhost.getUserSession();
 
   if (session) {

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createServerNhostClient } from "../lib/nhost/ssr";
+import { createNhostClient } from "../lib/nhost/server";
 
 /**
  * Signs up a user with email and password
@@ -18,7 +18,7 @@ export async function signUp(formData: FormData) {
 
   try {
     // Get the server Nhost client
-    const nhost = await createServerNhostClient();
+    const nhost = await createNhostClient();
 
     // Sign up with email and password
     const response = await nhost.auth.signUpEmailPassword({
@@ -64,7 +64,7 @@ export async function sendMagicLink(formData: FormData) {
       process.env["NEXT_PUBLIC_APP_URL"] || "http://localhost:3000";
 
     // Get the server Nhost client
-    const nhost = await createServerNhostClient();
+    const nhost = await createNhostClient();
 
     // Send magic link
     const response = await nhost.auth.signInPasswordlessEmail({

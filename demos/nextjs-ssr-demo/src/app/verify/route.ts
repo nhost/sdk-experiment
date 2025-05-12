@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerNhostClient } from "../lib/nhost/ssr";
+import { createNhostClient } from "../lib/nhost/server";
 
 export async function GET(request: NextRequest) {
   const refreshToken = request.nextUrl.searchParams.get("refreshToken");
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const nhost = await createServerNhostClient();
+    const nhost = await createNhostClient();
 
     if (nhost.getUserSession()) {
       return NextResponse.redirect(

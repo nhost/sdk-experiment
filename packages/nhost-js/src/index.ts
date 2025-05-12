@@ -21,17 +21,36 @@
  * @packageDocumentation
  */
 
-import { createAPIClient as createAuthClient } from "./auth";
+import {
+  createAPIClient as createAuthClient,
+  type Session,
+  type FetchResponse,
+  type ErrorResponse,
+} from "./auth";
 import { createAPIClient as createStorageClient } from "./storage";
 import { createAPIClient as createGraphQLClient } from "./graphql";
 import { type SessionStorageInterface, detectStorage } from "./sessionStorage";
-import type { Session } from "./auth";
-import { createSessionRefreshMiddleware } from "./middlewareRefreshSession";
+import {
+  extractTokenExpiration,
+  createSessionRefreshMiddleware,
+} from "./middlewareRefreshSession";
+import { createAttachAccessTokenMiddleware } from "./middlewareAttachToken";
 import { createSessionResponseMiddleware } from "./middlewareResponseSession";
 
-export * from "./sessionStorage";
-export * from "./middlewareRefreshSession";
-export * from "./middlewareResponseSession";
+export {
+  type SessionStorageInterface,
+  DEFAULT_SESSION_KEY,
+  LocalStorage,
+  MemoryStorage,
+  CookieStorage,
+} from "./sessionStorage";
+
+export {
+  type SessionRefreshOptions,
+  createSessionRefreshMiddleware,
+} from "./middlewareRefreshSession";
+export { createAttachAccessTokenMiddleware } from "./middlewareAttachToken";
+export { createSessionResponseMiddleware } from "./middlewareResponseSession";
 
 /**
  * Generates a base URL for a Nhost service based on configuration
@@ -95,6 +114,11 @@ export interface NhostClientOptions {
    * default to localStorage in the browser or memory in other environments.
    */
   storage?: SessionStorageInterface;
+
+  /**
+   * Disable automatic session refresh. If set to true, the SDK will not attempt to refresh
+   */
+  disableAutoRefreshToken?: boolean;
 }
 
 /**
@@ -163,24 +187,62 @@ export class NhostClient {
 
   /**
    * Refresh the session using the current refresh token
-   * in the storage and update the storage with the new session
+   * in the storage and update the storage with the new session.
+   * @param marginSeconds - The number of seconds before the token expiration to refresh the session. If the token is still valid for this duration, it will not be refreshed. Set to 0 to force the refresh.
    *
-   * @returns The new session or null if refresh fails
-   * @throws Error if no session exists in storage
+   * @returns The new session or null if there is currently no session or if refresh fails
    */
-  async refreshSession(): Promise<Session | null> {
+  async refreshSession(marginSeconds: number = 60): Promise<Session | null> {
+    try {
+      return await this._refreshSession(marginSeconds);
+    } catch (error) {
+      try {
+        // we retry the refresh token in case of transient error
+        // or race conditions
+        console.warn("error refreshing session, retrying:", error);
+        return await this._refreshSession(marginSeconds);
+      } catch (error) {
+        const errResponse = error as FetchResponse<ErrorResponse>;
+        if (errResponse?.status === 401) {
+          // this probably means the refresh token is invalid
+          console.error("session probably expired");
+          this.sessionStorage.remove();
+        }
+        return null;
+      }
+    }
+  }
+
+  async _refreshSession(marginSeconds: number = 60): Promise<Session | null> {
     const session = this.sessionStorage.get();
     if (!session) {
-      throw new Error("No session found");
+      return null;
     }
 
-    const response = await this.auth.refreshToken({
-      refreshToken: session.refreshToken,
-    });
+    const tokenExpiresAt = extractTokenExpiration(session?.accessToken || "");
+    const currentTime = Date.now();
+    const sessionExpired = tokenExpiresAt < currentTime;
+    if (tokenExpiresAt - currentTime > marginSeconds * 1000) {
+      return session; // No need to refresh
+    }
 
-    this.sessionStorage.set(response.body);
+    try {
+      const response = await this.auth.refreshToken({
+        refreshToken: session.refreshToken,
+      });
+      this.sessionStorage.set(response.body);
 
-    return response.body;
+      return response.body;
+    } catch (error) {
+      if (!sessionExpired) {
+        // If the session is not expired, we can still use the current session
+        // so there is no need to error for now
+        return session;
+      }
+
+      // we throw the error so the caller can handle it
+      throw error;
+    }
   }
 
   /**
@@ -212,6 +274,7 @@ export function createClient(options: NhostClientOptions = {}): NhostClient {
     storageUrl,
     graphqlUrl,
     storage = detectStorage(),
+    disableAutoRefreshToken = false,
   } = options;
 
   // Determine base URLs for each service
@@ -233,13 +296,23 @@ export function createClient(options: NhostClientOptions = {}): NhostClient {
   const auth = createAuthClient(authBaseUrl);
 
   // Setup middleware
-  const refreshToken = createSessionRefreshMiddleware(auth, storage);
-  auth.pushChainFunction(refreshToken);
-  auth.pushChainFunction(createSessionResponseMiddleware(storage));
+  const mwChain = [
+    createSessionResponseMiddleware(storage),
+    createAttachAccessTokenMiddleware(storage),
+  ];
+  if (!disableAutoRefreshToken) {
+    // we need to process this one first to make sure any following middlewares
+    // run after the session has been refreshed
+    mwChain.unshift(createSessionRefreshMiddleware(auth, storage));
+  }
 
-  // Create storage and graphql clients with the refresh middleware
-  const storageClient = createStorageClient(storageBaseUrl, [refreshToken]);
-  const graphqlClient = createGraphQLClient(graphqlBaseUrl, [refreshToken]);
+  for (const mw of mwChain) {
+    auth.pushChainFunction(mw);
+  }
+
+  // Create storage and graphql clients with the refresh and attach token middlewares
+  const storageClient = createStorageClient(storageBaseUrl, mwChain);
+  const graphqlClient = createGraphQLClient(graphqlBaseUrl, mwChain);
 
   // Return an initialized NhostClient
   return new NhostClient(auth, storageClient, graphqlClient, storage);

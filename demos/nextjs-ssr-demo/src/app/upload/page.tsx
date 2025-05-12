@@ -1,4 +1,4 @@
-import { createServerNhostClient } from "../lib/nhost/ssr";
+import { createNhostClient } from "../lib/nhost/server";
 import UploadClient from "./client";
 
 // Define the File type based on the GraphQL schema
@@ -13,7 +13,7 @@ export interface StorageFile {
 
 export default async function UploadPage() {
   // Create the server client with async cookie access
-  const nhost = await createServerNhostClient();
+  const nhost = await createNhostClient();
 
   // Fetch files on the server
   let files: StorageFile[] = [];

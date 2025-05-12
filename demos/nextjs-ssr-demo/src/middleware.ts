@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { handleNhostMiddleware } from "./app/lib/nhost/ssr";
+import { handleNhostMiddleware } from "./app/lib/nhost/server";
 
 // Define public routes that don't require authentication
 const publicRoutes = ["/signin", "/signup", "/verify"];
@@ -7,8 +7,6 @@ const publicRoutes = ["/signin", "/signup", "/verify"];
 export async function middleware(request: NextRequest) {
   // Create a response that we'll modify as needed
   const response = NextResponse.next();
-
-  const session = await handleNhostMiddleware(request, response);
 
   // Get the current path
   const path = request.nextUrl.pathname;
@@ -23,10 +21,8 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // Check for public assets and API routes that shouldn't be protected
-  if (path.startsWith("/_next") || path.startsWith("/api/") || path === "/") {
-    return response;
-  }
+  // this is the only Nhost specific code in this middleware
+  const session = await handleNhostMiddleware(request, response);
 
   // If no session and not a public route, redirect to signin
   if (!session) {

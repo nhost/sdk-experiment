@@ -1,9 +1,9 @@
-import { createServerNhostClient } from "../lib/nhost/ssr";
+import { createNhostClient } from "../lib/nhost/server";
 import SignOutButton from "./SignOutButton";
 import ActiveLink from "./ActiveLink";
 
 export default async function Navigation() {
-  const nhost = await createServerNhostClient();
+  const nhost = await createNhostClient();
   const session = nhost.getUserSession();
 
   return (

@@ -6,8 +6,9 @@ import { sendMagicLink } from "./actions";
 
 export default async function SignIn({ searchParams }: any) {
   // Extract error and magic link status from URL
-  const error = searchParams?.error as string | undefined;
-  const magicLinkSent = searchParams?.magic === "success";
+  const params = await searchParams
+  const error = params?.error as string | undefined;
+  const magicLinkSent = params?.magic === "success";
 
   return (
     <div className="flex flex-col items-center justify-center">

@@ -97,7 +97,6 @@ export type SessionRefreshOptions = {
  * This middleware:
  * 1. Checks if the current token is about to expire
  * 2. If so, uses the refresh token to obtain a new access token
- * 3. Adds the current access token to outgoing requests
  *
  * The middleware handles token refresh transparently, so the application
  * doesn't need to manually refresh tokens.
@@ -162,11 +161,8 @@ export const createSessionRefreshMiddleware = (
           }
         }
 
-        // Add authorization header
-        const newOptions = addAuthorizationHeader(options, currentSession);
-
         // Continue with the fetch chain
-        return next(url, newOptions);
+        return next(url, options);
       } catch (error) {
         console.error("Error in token refresh chain:", error);
         // Continue with the request even if token refresh fails
@@ -245,28 +241,4 @@ function isTokenExpiringSoon(
 ): boolean {
   const currentTime = Date.now();
   return expiresAt - currentTime < marginSeconds * 1000;
-}
-
-/**
- * Adds the Authorization header with the access token to the request options
- *
- * @param options - Original request options
- * @param session - Current session containing the access token
- * @returns Modified request options with Authorization header
- */
-function addAuthorizationHeader(
-  options: RequestInit,
-  session: Session | null,
-): RequestInit {
-  if (!session?.accessToken) {
-    return options;
-  }
-
-  const headers = new Headers(options.headers || {});
-  headers.set("Authorization", `Bearer ${session.accessToken}`);
-
-  return {
-    ...options,
-    headers,
-  };
 }

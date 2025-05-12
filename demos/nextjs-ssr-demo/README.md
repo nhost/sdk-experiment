@@ -1,71 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## nextjs-ssr-demo
+
+This project is a demonstration of how to integrate Nhost with Next.js, showcasing server-side rendering (SSR) capabilities and authentication flows. It includes features like file uploads, session management, middleware for route protection, and client-side interactions for interactive components.
 
 ## Getting Started
 
-First, run the development server:
+To run the demo locally you need to clone this repo and then run the following commands:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+cd backend
+nhost up
+cd ../demos/nextjs-ssr-demo
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
 ## Nhost Integration
 
-This project demonstrates how to use Nhost with Next.js in a server-side rendering (SSR) setup:
+This project demonstrates how to use Nhost with Next.js in a server-side rendering (SSR) setup.
 
-### Session Management
+### Server and Client Components
 
-- **Profile Page**: The profile page (`src/app/profile/page.tsx`) retrieves the user session on the server using `createServerNhostClient()`, which extracts session data from cookies and initializes an authenticated Nhost client.
+Most of the application is built using server components, which allows for better performance and SEO. Most of the code is just either generic Next.js code or vanilla Nhost code, the only "special code" needed to handle the server + client components and the Next.js middleware can be found under:
 
-### File Storage
-
-- **Server-Side Usage**: The upload page (`src/app/upload/page.tsx`) fetches files on the server using the Nhost GraphQL API, demonstrating how to make authenticated GraphQL queries from server components.
-
-- **Client-Side Usage**: The client component (`src/app/upload/client.tsx`) handles file uploads, viewing, and deletion using the Nhost Storage API through the `useNhost` hook.
-
-### Authentication Flow
-
-- The `NhostProvider` component manages authentication state, session syncing across tabs, and provides sign-out functionality.
-- Cookie-based storage ensures a seamless authentication experience with server-side support.
+- `src/app/lib/nhost/client/index.tsx` - This file exports:
+  - `createNhostClient` initializes an Nhost client using CookieStorage to be used in client components.
+- `src/app/lib/nhost/server/index.tsx` - This file exports:
+  - `createNhostClient` initializes an Nhost client using CookieStorage to be used in server components.
+  - `handleNhostMiddleware` handles the initialization of an Nhost client that can be used in Next.js middleware and refreshes the session if needed.
 
 ### Middleware
 
-- The application uses Next.js middleware (`src/middleware.ts`) to protect routes and handle authentication.
-- The middleware:
-  - Creates an Nhost client with a specialized middleware cookie storage
-  - Checks if the current route requires authentication
-  - Redirects unauthenticated users to the sign-in page
-  - Refreshes tokens automatically when they're about to expire
+We use a middleware to protect routes and handle refreshing the tokens:
 
-### Server-Side Rendered Navigation
+- `src/middleware.ts`
 
-The application demonstrates how to implement server-side rendered navigation that updates correctly with authentication state changes:
+### Authentication
 
-- **Server Component**: The main `Navigation` component (`src/app/components/Navigation.tsx`) is a server component that retrieves the authentication state using `createServerNhostClient()`. This allows it to render different navigation options based on authentication status directly from the server.
+All authentication steps are performed server side and rely on the vanilla nhost-js SDK. No special code or considerations are needed for this. Currently the following mechanisms for authentication are supported:
 
-- **Client Components**: Interactive elements like the sign-out button are implemented as client components (`NavigationClient.tsx`).
+- Email and Password with optional MFA
+- Magic Link
 
-- **Server Actions**: The application uses server actions (`src/app/lib/actions.ts`) to bridge client and server states. When authentication state changes (sign in, sign up, or sign out), the `revalidateAfterAuthChange` server action is called to refresh server components.
+You can find all the relevant code in the folders:
+- `src/app/signin/` - Sign in methods
+- `src/app/signup/` - Sign up methods
+- `src/app/verify/` -  Route to verify the magic link. We use a route because server components are not allowed to write cookies. Alternatively this could be done on a client component as those are allowed to write cookies but we wanted to keep the sign in flow as server components for demonstration purposes.
 
-- **Authentication State Synchronization**: This architecture ensures that:
-  - Navigation renders initially on the server for better performance and SEO
-  - Authentication state changes are synchronized using the `revalidatePath` function
-  - The navigation UI updates immediately after sign in/out actions
+### Profile
 
-This pattern demonstrates an efficient hybrid approach that leverages:
+The profile page is a server component that fetches the session data from the persisted session cookie. In addition, the profile page allows users to configure their MFA.
 
-1. Server components for data fetching and initial rendering
-2. Client components for interactivity
-3. Server actions for managing server-side state updates
+There are two peculiarities with the profile page:
+
+1. The session is read on the server from the cookie so the profile can be rendered server-side.
+2. The MFA configuration is done using a client component to provide interactivity.
+
+You can find all the relevant code in the folders:
+
+- `src/app/profile/`
+
+### File Storage
+
+The application demonstrates how to use Nhost's file storage capabilities. While the `/upload` page is fully pre-rendered server-side, all interactions in this page are handled by client components. This allows the user to upload/download files directly to the storage service.
+
+Some details about the page:
+
+1. The page is fully rendered server-side, including the list of files, which are retrieved using GraphQL.
+2. All the storage interactions (uploading, downloading, deleting) are handled by client components.
+3. The download is done by using authenticated requests. This requires a bit of post-processing as we need to fetch the file with the SDK and then create a blob URL to download the file but it is much more efficient than presigned URLs as we can leverage the CDN for caching.
+4. To avoid re-fetching the list of files on every interaction, we push/remove the file to/from the list of files in the client component. This is done using a custom hook that uses the `useState` and `useEffect` hooks to manage the state of the files.
+
+You can find the code for the `/upload` page in the following folder:
+
+- `src/app/upload`
 
 ### Layout and Navigation
 
-- **Root Layout**: The app uses a root layout (`src/app/layout.tsx`) that wraps all pages with the `NhostProvider`, making authentication state available throughout the application.
-- **Composable Navigation**: The architecture splits navigation into server and client components, maintaining a clean separation of concerns while preserving server-side rendering benefits.
+The layout is a server component that will render different content depending on the authentication state of the user:
 
-This architecture demonstrates an effective hybrid approach, with initial data loading on the server and subsequent user interactions handled on the client.
+- If the user is authenticated, the layout will render the navigation bar with the profile and upload links.
+- If the user is not authenticated, the layout will render the sign in and sign up links.
+
+To make sure the navigation is always up to date, every server component that changes the authentication state will call `revalidateAfterAuthChange` to revalidate the layout. This is done using the `revalidatePath` function from Next.js.

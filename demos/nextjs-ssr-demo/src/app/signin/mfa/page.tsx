@@ -1,14 +1,15 @@
-import { createServerNhostClient } from "../../lib/nhost/ssr";
+import { createNhostClient } from "../../lib/nhost/server";
 import { redirect } from "next/navigation";
 import MfaVerificationForm from "./MfaVerificationForm";
 
 export default async function MfaVerification({ searchParams }: any) {
   // Extract ticket and error from URL
-  const ticket = searchParams?.ticket as string | undefined;
-  const error = searchParams?.error as string | undefined;
+  const params = await searchParams
+  const ticket = params.ticket as string | undefined;
+  const error = params.error as string | undefined;
 
   // Check if user is already authenticated
-  const nhost = await createServerNhostClient();
+  const nhost = await createNhostClient();
   const session = nhost.getUserSession();
 
   // If user is already authenticated, redirect to profile

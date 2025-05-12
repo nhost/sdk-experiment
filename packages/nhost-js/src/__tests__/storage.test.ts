@@ -1,9 +1,10 @@
 import {
   createAPIClient as createAuthClient,
   type SessionPayload,
-  MemoryStorage,
-  createSessionRefreshMiddleware,
 } from "../auth";
+import { MemoryStorage } from "../sessionStorage";
+import { createSessionRefreshMiddleware } from "../middlewareRefreshSession";
+import { createAttachAccessTokenMiddleware } from "../middlewareAttachToken";
 import {
   createAPIClient as createStorageClient,
   type UploadFiles201,
@@ -20,7 +21,10 @@ describe("Test Storage API", () => {
 
   const nhostStorage = createStorageClient(
     "https://local.storage.local.nhost.run/v1",
-    [createSessionRefreshMiddleware(nhostAuth, storage)],
+    [
+      createSessionRefreshMiddleware(nhostAuth, storage),
+      createAttachAccessTokenMiddleware(storage),
+    ],
   );
 
   it("should sign up a user with email and password", async () => {

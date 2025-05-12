@@ -1,9 +1,9 @@
-import { createServerNhostClient } from "../lib/nhost/ssr";
+import { createNhostClient } from "../lib/nhost/server";
 import MFASettings from "./mfa-settings";
 
 export default async function Profile() {
   // Create the client with async cookie access
-  const nhost = await createServerNhostClient();
+  const nhost = await createNhostClient();
   const session = nhost.getUserSession();
 
   // Determine if MFA is enabled for the user by querying the activeMfaType

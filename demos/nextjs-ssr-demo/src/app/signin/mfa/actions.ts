@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createServerNhostClient } from "../../lib/nhost/ssr";
+import { createNhostClient } from "../../lib/nhost/server";
 
 /**
  * Verifies MFA code for sign in
@@ -18,7 +18,7 @@ export async function verifyMfa(formData: FormData): Promise<void> {
 
   try {
     // Get the server Nhost client
-    const nhost = await createServerNhostClient();
+    const nhost = await createNhostClient();
 
     // Verify MFA code
     const response = await nhost.auth.signInVerifyMfaTotp({
@@ -63,7 +63,7 @@ export async function sendMagicLink(formData: FormData): Promise<void> {
       process.env["NEXT_PUBLIC_APP_URL"] || "http://localhost:3000";
 
     // Get the server Nhost client
-    const nhost = await createServerNhostClient();
+    const nhost = await createNhostClient();
 
     // Send magic link
     const response = await nhost.auth.signInPasswordlessEmail({

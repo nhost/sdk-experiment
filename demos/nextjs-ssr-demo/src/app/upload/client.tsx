@@ -2,7 +2,7 @@
 
 import { useState, useRef, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { createClientNhostClient } from "../lib/nhost/client";
+import { createNhostClient } from "../lib/nhost/client";
 import { formatFileSize } from "../lib/utils";
 import { StorageFile } from "./page";
 
@@ -15,7 +15,7 @@ export default function UploadClient({
   initialFiles,
   serverError,
 }: UploadClientProps) {
-  const nhost = createClientNhostClient();
+  const nhost = createNhostClient();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 

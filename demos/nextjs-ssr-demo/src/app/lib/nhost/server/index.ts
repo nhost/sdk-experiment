@@ -1,35 +1,37 @@
-import { createClient } from "nhost-js";
-import { extractTokenExpiration, type Session } from "nhost-js/auth";
+import { createClient, DEFAULT_SESSION_KEY } from "nhost-js";
+import { type Session } from "nhost-js/auth";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
+const key = DEFAULT_SESSION_KEY;
+
 /**
- * Creates an authenticated Nhost client for server-side usage.
+ * Creates an Nhost client for use in server components.
  *
- * This function is specifically designed to be used in server components or API routes.
- * It retrieves authentication credentials from cookies and initializes an Nhost client
- * with those credentials, allowing server-side code to make authenticated requests
- * on behalf of the user.
+ * We rely on the vanilla createClient method from the Nhost JS SDK and a SessionStorage
+ * customized to be able to retrieve the session from cookies in Next.js server components.
  *
- * @returns {Promise<ReturnType<typeof createClient>>} An authenticated Nhost client instance
+ * IMPORTANT!!! We need to disable the auto-refresh token feature as we are handling it in
+ * the middleware and server components are not allowed to write to cookies. Any session
+ * refreshed in a server component will not be persisted and might lead to issues with the session.
+ *
  */
-export async function createServerNhostClient(): Promise<
+export async function createNhostClient(): Promise<
   ReturnType<typeof createClient>
 > {
   const cookieStore = await cookies();
 
-  const key = "nhostSession";
-
   const nhost = createClient({
     region: process.env["NHOST_REGION"] || "local",
     subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
-    storage: {
+    disableAutoRefreshToken: true, // this is important to avoid issues with session refresh
+    storage: { // storage compatible with Next.js server components
       get: (): Session | null => {
-        const raw = cookieStore.get(key)?.value || null;
-        if (!raw) {
+        const s = cookieStore.get(key)?.value || null;
+        if (!s) {
           return null;
         }
-        const session: Session = JSON.parse(raw);
+        const session: Session = JSON.parse(s);
         return session;
       },
       set: (value: Session) => {
@@ -48,23 +50,20 @@ export async function createServerNhostClient(): Promise<
  * Middleware function to handle Nhost authentication and session management.
  *
  * This function is designed to be used in Next.js middleware to manage user sessions
- * and refresh tokens. It checks for the presence of a refresh token in the request URL,
- * exchanges it for a new session if necessary, and manages the session expiration.
+ * and refresh tokens. Refreshing the session needs to be done in the middleware
+ * to ensure that the session is always up-to-date an accessible by both server and client components.
  *
  * @param {NextRequest} request - The incoming Next.js request object
  * @param {NextResponse} response - The outgoing Next.js response object
- * @returns {Promise<unknown>} The user session or undefined
  */
 export async function handleNhostMiddleware(
   request: NextRequest,
   response: NextResponse<unknown>,
 ): Promise<Session | null> {
-  const key = "nhostSession";
-
   const nhost = createClient({
     region: process.env["NHOST_REGION"] || "local",
     subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
-    storage: {
+    storage: { // storage compatible with Next.js middleware
       get: (): Session | null => {
         const raw = request.cookies.get(key)?.value || null;
         if (!raw) {
@@ -90,17 +89,7 @@ export async function handleNhostMiddleware(
     },
   });
 
-  // Get the session from the storage
-  const session = nhost.getUserSession();
-
-  if (session?.accessToken) {
-    const tokenExpiresAt = extractTokenExpiration(session?.accessToken || "");
-    const currentTime = Date.now();
-    if (tokenExpiresAt - currentTime < 60 * 1000) {
-      await nhost.refreshSession();
-      return nhost.getUserSession();
-    }
-  }
-
-  return session;
+  // we only want to refresh the session if  the token will
+  // expire in the next 60 seconds
+  return await nhost.refreshSession(60);
 }
