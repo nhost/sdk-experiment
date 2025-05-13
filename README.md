@@ -62,7 +62,7 @@ We want to involve the community in the development of the SDKs. This will ensur
 
 - [x] Add instructions on how to use the vanilla JS SDK, error handling, etc.
 - [x] Next.js SSR example
-- [ ] Integrate with functions
+- [x] Integrate with functions
 - [ ] Integrate with GraphQL codegen
 - [ ] React example
 - [ ] Svelte example
