@@ -931,7 +931,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<JWKSet>;
 
     if (!res.ok) {
@@ -967,7 +967,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<CreatePATResponse>;
 
     if (!res.ok) {
@@ -1003,7 +1003,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<SessionPayload>;
 
     if (!res.ok) {
@@ -1039,7 +1039,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<OKResponse>;
 
     if (!res.ok) {
@@ -1075,7 +1075,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<SignInOTPEmailVerifyResponse>;
 
     if (!res.ok) {
@@ -1111,7 +1111,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<SessionPayload>;
 
     if (!res.ok) {
@@ -1147,7 +1147,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<SessionPayload>;
 
     if (!res.ok) {
@@ -1183,7 +1183,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<OKResponse>;
 
     if (!res.ok) {
@@ -1219,7 +1219,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<OKResponse>;
 
     if (!res.ok) {
@@ -1255,7 +1255,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<OKResponse>;
 
     if (!res.ok) {
@@ -1291,7 +1291,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<OKResponse>;
 
     if (!res.ok) {
@@ -1327,7 +1327,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<OKResponse>;
 
     if (!res.ok) {
@@ -1363,7 +1363,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<OKResponse>;
 
     if (!res.ok) {
@@ -1397,7 +1397,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<void>;
 
     if (!res.ok) {
