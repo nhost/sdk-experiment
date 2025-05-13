@@ -485,6 +485,22 @@ export type GetVersion200 = {
   version: string;
 };
 
+export type VerifyTicketParams = {
+  /**
+   * Ticket
+   */
+  ticket: TicketQueryParameter;
+  /**
+   * Type of the ticket. Deprecated, no longer used
+   * @deprecated
+   */
+  type?: TicketTypeQueryParameter;
+  /**
+   * Target URL for the redirect
+   */
+  redirectTo: RedirectToQueryParameter;
+};
+
 export type FetchResponse<T> = {
   body: T;
   status: number;
@@ -896,6 +912,520 @@ export const createAPIClient = (
     return baseURL + `/mfa/totp/generate`;
   };
 
+  /**
+   * @summary Get public keys for JWT verification in JWK Set format
+   */
+  const getJWKs = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<JWKSet>> => {
+    const res = await fetch(getGetJWKsUrl(), {
+      ...options,
+      method: "GET",
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: JWKSet = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<JWKSet>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getGetJWKsUrl = () => {
+    return baseURL + `/.well-known/jwks.json`;
+  };
+
+  /**
+   * @summary Create a Personal Access Token (PAT)
+   */
+  const createPAT = async (
+    createPATRequest: CreatePATRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<CreatePATResponse>> => {
+    const res = await fetch(getCreatePATUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(createPATRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: CreatePATResponse = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<CreatePATResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getCreatePATUrl = () => {
+    return baseURL + `/pat`;
+  };
+
+  /**
+   * @summary Sign in anonymously
+   */
+  const signInAnonymous = async (
+    signinAnonymousRequest?: SigninAnonymousRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const res = await fetch(getSignInAnonymousUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(signinAnonymousRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getSignInAnonymousUrl = () => {
+    return baseURL + `/signin/anonymous`;
+  };
+
+  /**
+   * @summary Sign in with a one time password sent to user's email. If the user doesn't exist, it will be created. The options object is optional and can be used to configure the user's when signing up a new user. It is ignored if the user already exists.
+   */
+  const signInOTPEmail = async (
+    signInOTPEmailRequest: SignInOTPEmailRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>> => {
+    const res = await fetch(getSignInOTPEmailUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(signInOTPEmailRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: OKResponse = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<OKResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getSignInOTPEmailUrl = () => {
+    return baseURL + `/signin/otp/email`;
+  };
+
+  /**
+   * @summary Verify OTP and return a session if validation is successful
+   */
+  const verifySignInOTPEmail = async (
+    signInOTPEmailVerifyRequest: SignInOTPEmailVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SignInOTPEmailVerifyResponse>> => {
+    const res = await fetch(getVerifySignInOTPEmailUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(signInOTPEmailVerifyRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SignInOTPEmailVerifyResponse = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SignInOTPEmailVerifyResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getVerifySignInOTPEmailUrl = () => {
+    return baseURL + `/signin/otp/email/verify`;
+  };
+
+  /**
+   * @summary Sign in with Personal Access Token (PAT)
+   */
+  const signInPAT = async (
+    signInPATRequest: SignInPATRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const res = await fetch(getSignInPATUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(signInPATRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getSignInPATUrl = () => {
+    return baseURL + `/signin/pat`;
+  };
+
+  /**
+   * @summary Sign in with in an id token
+   */
+  const signInIdToken = async (
+    signInIdTokenRequest: SignInIdTokenRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const res = await fetch(getSignInIdTokenUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(signInIdTokenRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getSignInIdTokenUrl = () => {
+    return baseURL + `/signin/idtoken`;
+  };
+
+  /**
+   * @summary Link a user account with the provider's account using an id token
+   */
+  const linkIdToken = async (
+    linkIdTokenRequest: LinkIdTokenRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>> => {
+    const res = await fetch(getLinkIdTokenUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(linkIdTokenRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: OKResponse = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<OKResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getLinkIdTokenUrl = () => {
+    return baseURL + `/link/idtoken`;
+  };
+
+  /**
+   * @summary Deanonymize an anonymous user in adding missing email or email+password, depending on the chosen authentication method. Will send a confirmation email if the server is configured to do so
+   */
+  const deanonymizeUser = async (
+    userDeanonymizeRequest: UserDeanonymizeRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>> => {
+    const res = await fetch(getDeanonymizeUserUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(userDeanonymizeRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: OKResponse = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<OKResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getDeanonymizeUserUrl = () => {
+    return baseURL + `/user/deanonymize`;
+  };
+
+  /**
+   * @summary Change user email
+   */
+  const changeUserEmail = async (
+    userEmailChangeRequest: UserEmailChangeRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>> => {
+    const res = await fetch(getChangeUserEmailUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(userEmailChangeRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: OKResponse = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<OKResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getChangeUserEmailUrl = () => {
+    return baseURL + `/user/email/change`;
+  };
+
+  /**
+   * @summary Send verification email
+   */
+  const sendVerificationEmail = async (
+    userEmailSendVerificationEmailRequest: UserEmailSendVerificationEmailRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>> => {
+    const res = await fetch(getSendVerificationEmailUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(userEmailSendVerificationEmailRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: OKResponse = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<OKResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getSendVerificationEmailUrl = () => {
+    return baseURL + `/user/email/send-verification-email`;
+  };
+
+  /**
+   * @summary Change user password. The user must be authenticated or provide a ticket
+   */
+  const changeUserPassword = async (
+    userPasswordRequest: UserPasswordRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>> => {
+    const res = await fetch(getChangeUserPasswordUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(userPasswordRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: OKResponse = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<OKResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getChangeUserPasswordUrl = () => {
+    return baseURL + `/user/password`;
+  };
+
+  /**
+   * @summary Request a password reset. An email with a verification link will be sent to the user's address
+   */
+  const sendPasswordResetEmail = async (
+    userPasswordResetRequest: UserPasswordResetRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>> => {
+    const res = await fetch(getSendPasswordResetEmailUrl(), {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(userPasswordResetRequest),
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: OKResponse = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<OKResponse>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getSendPasswordResetEmailUrl = () => {
+    return baseURL + `/user/password/reset`;
+  };
+
+  /**
+   * @summary Verify tickets created by email verification, email passwordless authentication (magic link), or password reset
+   */
+  const verifyTicket = async (
+    params: VerifyTicketParams,
+    options?: RequestInit,
+  ): Promise<FetchResponse<void>> => {
+    const res = await fetch(getVerifyTicketUrl(params), {
+      ...options,
+      method: "GET",
+    });
+
+    const body = [204, 205, 304, 412].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: void = body ? JSON.parse(body) : {};
+
+    const response = {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<void>;
+
+    if (!res.ok) {
+      throw response;
+    }
+
+    return response;
+  };
+
+  const getVerifyTicketUrl = (params: VerifyTicketParams) => {
+    const normalizedParams = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value !== undefined) {
+        normalizedParams.append(
+          key,
+          value === null ? "null" : value.toString(),
+        );
+      }
+    });
+
+    const stringifiedParams = normalizedParams.toString();
+
+    return stringifiedParams.length > 0
+      ? baseURL + `/verify?${stringifiedParams}`
+      : baseURL + `/verify`;
+  };
+
   return {
     healthCheckHead,
     healthCheckGet,
@@ -908,6 +1438,20 @@ export const createAPIClient = (
     signUpEmailPassword,
     changeUserMfaVerify,
     changeUserMfa,
+    getJWKs,
+    createPAT,
+    signInAnonymous,
+    signInOTPEmail,
+    verifySignInOTPEmail,
+    signInPAT,
+    signInIdToken,
+    linkIdToken,
+    deanonymizeUser,
+    changeUserEmail,
+    sendVerificationEmail,
+    changeUserPassword,
+    sendPasswordResetEmail,
+    verifyTicket,
     pushChainFunction,
     baseURL,
   };

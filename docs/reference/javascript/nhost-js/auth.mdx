@@ -18,6 +18,28 @@ baseURL: string;
 
 Base URL for the authentication service
 
+##### changeUserEmail()
+
+```ts
+changeUserEmail: (
+  userEmailChangeRequest: UserEmailChangeRequest,
+  options?: RequestInit,
+) => Promise<FetchResponse<"OK">>;
+```
+
+Change user email
+
+###### Parameters
+
+| Parameter                | Type                                                |
+| ------------------------ | --------------------------------------------------- |
+| `userEmailChangeRequest` | [`UserEmailChangeRequest`](#useremailchangerequest) |
+| `options?`               | `RequestInit`                                       |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
 ##### changeUserMfa()
 
 ```ts
@@ -56,6 +78,88 @@ Activate or deactivate multi-factor authentication for the authenticated user
 ###### Returns
 
 `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+##### changeUserPassword()
+
+```ts
+changeUserPassword: (
+  userPasswordRequest: UserPasswordRequest,
+  options?: RequestInit,
+) => Promise<FetchResponse<"OK">>;
+```
+
+Change user password
+
+###### Parameters
+
+| Parameter             | Type                                          |
+| --------------------- | --------------------------------------------- |
+| `userPasswordRequest` | [`UserPasswordRequest`](#userpasswordrequest) |
+| `options?`            | `RequestInit`                                 |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+##### createPAT()
+
+```ts
+createPAT: (createPATRequest: CreatePATRequest, options?: RequestInit) =>
+  Promise<FetchResponse<CreatePATResponse>>;
+```
+
+Create a Personal Access Token (PAT)
+
+###### Parameters
+
+| Parameter          | Type                                    |
+| ------------------ | --------------------------------------- |
+| `createPATRequest` | [`CreatePATRequest`](#createpatrequest) |
+| `options?`         | `RequestInit`                           |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`CreatePATResponse`](#createpatresponse)&gt;&gt;
+
+##### deanonymizeUser()
+
+```ts
+deanonymizeUser: (
+  userDeanonymizeRequest: UserDeanonymizeRequest,
+  options?: RequestInit,
+) => Promise<FetchResponse<"OK">>;
+```
+
+Deanonymize an anonymous user by adding missing email or email+password
+
+###### Parameters
+
+| Parameter                | Type                                                |
+| ------------------------ | --------------------------------------------------- |
+| `userDeanonymizeRequest` | [`UserDeanonymizeRequest`](#userdeanonymizerequest) |
+| `options?`               | `RequestInit`                                       |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+##### getJWKs()
+
+```ts
+getJWKs: (options?: RequestInit) => Promise<FetchResponse<JWKSet>>;
+```
+
+Get public keys for JWT verification in JWK Set format
+
+###### Parameters
+
+| Parameter  | Type          |
+| ---------- | ------------- |
+| `options?` | `RequestInit` |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`JWKSet`](#jwkset)&gt;&gt;
 
 ##### getVersion()
 
@@ -111,6 +215,26 @@ Verify if the authentication service is operational using HEAD method
 
 `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
 
+##### linkIdToken()
+
+```ts
+linkIdToken: (linkIdTokenRequest: LinkIdTokenRequest, options?: RequestInit) =>
+  Promise<FetchResponse<"OK">>;
+```
+
+Link a user account with the provider's account using an id token
+
+###### Parameters
+
+| Parameter            | Type                                        |
+| -------------------- | ------------------------------------------- |
+| `linkIdTokenRequest` | [`LinkIdTokenRequest`](#linkidtokenrequest) |
+| `options?`           | `RequestInit`                               |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
 ##### pushChainFunction()
 
 ```ts
@@ -151,6 +275,72 @@ Generate a new JWT access token using a valid refresh token
 
 `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;
 
+##### sendPasswordResetEmail()
+
+```ts
+sendPasswordResetEmail: (
+  userPasswordResetRequest: UserPasswordResetRequest,
+  options?: RequestInit,
+) => Promise<FetchResponse<"OK">>;
+```
+
+Request a password reset
+
+###### Parameters
+
+| Parameter                  | Type                                                    |
+| -------------------------- | ------------------------------------------------------- |
+| `userPasswordResetRequest` | [`UserPasswordResetRequest`](#userpasswordresetrequest) |
+| `options?`                 | `RequestInit`                                           |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+##### sendVerificationEmail()
+
+```ts
+sendVerificationEmail: (
+  userEmailSendVerificationEmailRequest: UserEmailSendVerificationEmailRequest,
+  options?: RequestInit,
+) => Promise<FetchResponse<"OK">>;
+```
+
+Send verification email
+
+###### Parameters
+
+| Parameter                               | Type                                                                              |
+| --------------------------------------- | --------------------------------------------------------------------------------- |
+| `userEmailSendVerificationEmailRequest` | [`UserEmailSendVerificationEmailRequest`](#useremailsendverificationemailrequest) |
+| `options?`                              | `RequestInit`                                                                     |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+##### signInAnonymous()
+
+```ts
+signInAnonymous: (
+  signinAnonymousRequest?: SigninAnonymousRequest,
+  options?: RequestInit,
+) => Promise<FetchResponse<SessionPayload>>;
+```
+
+Sign in anonymously
+
+###### Parameters
+
+| Parameter                 | Type                                                |
+| ------------------------- | --------------------------------------------------- |
+| `signinAnonymousRequest?` | [`SigninAnonymousRequest`](#signinanonymousrequest) |
+| `options?`                | `RequestInit`                                       |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
 ##### signInEmailPassword()
 
 ```ts
@@ -173,6 +363,50 @@ Authenticate a user with their email and password
 
 `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt;
 
+##### signInIdToken()
+
+```ts
+signInIdToken: (
+  signInIdTokenRequest: SignInIdTokenRequest,
+  options?: RequestInit,
+) => Promise<FetchResponse<SessionPayload>>;
+```
+
+Sign in with an id token
+
+###### Parameters
+
+| Parameter              | Type                                            |
+| ---------------------- | ----------------------------------------------- |
+| `signInIdTokenRequest` | [`SignInIdTokenRequest`](#signinidtokenrequest) |
+| `options?`             | `RequestInit`                                   |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
+##### signInOTPEmail()
+
+```ts
+signInOTPEmail: (
+  signInOTPEmailRequest: SignInOTPEmailRequest,
+  options?: RequestInit,
+) => Promise<FetchResponse<"OK">>;
+```
+
+Sign in with a one time password sent to user's email
+
+###### Parameters
+
+| Parameter               | Type                                              |
+| ----------------------- | ------------------------------------------------- |
+| `signInOTPEmailRequest` | [`SignInOTPEmailRequest`](#signinotpemailrequest) |
+| `options?`              | `RequestInit`                                     |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
 ##### signInPasswordlessEmail()
 
 ```ts
@@ -194,6 +428,26 @@ Initiate passwordless authentication by sending a magic link to the user's email
 ###### Returns
 
 `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+##### signInPAT()
+
+```ts
+signInPAT: (signInPATRequest: SignInPATRequest, options?: RequestInit) =>
+  Promise<FetchResponse<SessionPayload>>;
+```
+
+Sign in with Personal Access Token (PAT)
+
+###### Parameters
+
+| Parameter          | Type                                    |
+| ------------------ | --------------------------------------- |
+| `signInPATRequest` | [`SignInPATRequest`](#signinpatrequest) |
+| `options?`         | `RequestInit`                           |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### signInVerifyMfaTotp()
 
@@ -258,6 +512,48 @@ Register a new user account with email and password
 ###### Returns
 
 `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
+##### verifySignInOTPEmail()
+
+```ts
+verifySignInOTPEmail: (
+  signInOTPEmailVerifyRequest: SignInOTPEmailVerifyRequest,
+  options?: RequestInit,
+) => Promise<FetchResponse<SignInOTPEmailVerifyResponse>>;
+```
+
+Verify OTP and return a session if validation is successful
+
+###### Parameters
+
+| Parameter                     | Type                                                          |
+| ----------------------------- | ------------------------------------------------------------- |
+| `signInOTPEmailVerifyRequest` | [`SignInOTPEmailVerifyRequest`](#signinotpemailverifyrequest) |
+| `options?`                    | `RequestInit`                                                 |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInOTPEmailVerifyResponse`](#signinotpemailverifyresponse)&gt;&gt;
+
+##### verifyTicket()
+
+```ts
+verifyTicket: (params: VerifyTicketParams, options?: RequestInit) =>
+  Promise<FetchResponse<void>>;
+```
+
+Verify tickets created by email verification, magic link, or password reset
+
+###### Parameters
+
+| Parameter  | Type                                        |
+| ---------- | ------------------------------------------- |
+| `params`   | [`VerifyTicketParams`](#verifyticketparams) |
+| `options?` | `RequestInit`                               |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
 
 ---
 
@@ -1600,6 +1896,22 @@ type UserMfaRequestActiveMfaType = "totp" | "";
 ```
 
 Type of MFA to activate. Use empty string to disable MFA.
+
+---
+
+### VerifyTicketParams
+
+```ts
+type VerifyTicketParams = object;
+```
+
+#### Properties
+
+| Property                               | Type                                                    | Description                                                   |
+| -------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------- |
+| <a id="redirectto-2"></a> `redirectTo` | [`RedirectToQueryParameter`](#redirecttoqueryparameter) | Target URL for the redirect                                   |
+| <a id="ticket-3"></a> `ticket`         | [`TicketQueryParameter`](#ticketqueryparameter)         | Ticket                                                        |
+| <a id="type"></a> ~~`type?`~~          | [`TicketTypeQueryParameter`](#tickettypequeryparameter) | Type of the ticket. Deprecated, no longer used **Deprecated** |
 
 ## Functions
 

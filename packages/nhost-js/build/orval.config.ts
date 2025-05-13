@@ -44,6 +44,26 @@ export default defineConfig({
       client: createClient,
       override: {
         enumGenerationType: "union",
+        operations: {
+          verifyTicket: {
+            transformer: (options: GeneratorVerbOptions) => {
+              options.response.types.success = [
+                {
+                  contentType: "",
+                  hasReadonlyProps: false,
+                  imports: [],
+                  isEnum: false,
+                  isRef: false,
+                  key: "default",
+                  schemas: [],
+                  type: "unknown",
+                  value: "void",
+                },
+              ];
+              return options;
+            },
+          },
+        },
       },
     },
     hooks: {

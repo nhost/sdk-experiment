@@ -1,18 +1,34 @@
 import type {
+  CreatePATRequest,
+  CreatePATResponse,
   FetchResponse,
-  OKResponse,
   GetVersion200,
-  SignInEmailPasswordRequest,
-  SignInEmailPasswordResponse,
-  SignInMfaTotpRequest,
-  SignInPasswordlessEmailRequest,
+  JWKSet,
+  LinkIdTokenRequest,
+  OKResponse,
   RefreshTokenRequest,
   Session,
   SessionPayload,
+  SignInEmailPasswordRequest,
+  SignInEmailPasswordResponse,
+  SignInIdTokenRequest,
+  SignInMfaTotpRequest,
+  SignInOTPEmailRequest,
+  SignInOTPEmailVerifyRequest,
+  SignInOTPEmailVerifyResponse,
+  SignInPATRequest,
+  SignInPasswordlessEmailRequest,
   SignOutSchema,
   SignUpEmailPasswordRequest,
+  SigninAnonymousRequest,
   TotpGenerateResponse,
+  UserDeanonymizeRequest,
+  UserEmailChangeRequest,
+  UserEmailSendVerificationEmailRequest,
   UserMfaRequest,
+  UserPasswordResetRequest,
+  UserPasswordRequest,
+  VerifyTicketParams,
 } from "./client";
 
 import type { ChainFunction } from "../fetch";
@@ -120,4 +136,127 @@ export interface Client {
   changeUserMfa: (
     options?: RequestInit,
   ) => Promise<FetchResponse<TotpGenerateResponse>>;
+
+  /**
+   * Get public keys for JWT verification in JWK Set format
+   * @summary Get JWKs
+   */
+  getJWKs: (options?: RequestInit) => Promise<FetchResponse<JWKSet>>;
+
+  /**
+   * Create a Personal Access Token (PAT)
+   * @summary Create PAT
+   */
+  createPAT: (
+    createPATRequest: CreatePATRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<CreatePATResponse>>;
+
+  /**
+   * Sign in anonymously
+   * @summary Anonymous sign-in
+   */
+  signInAnonymous: (
+    signinAnonymousRequest?: SigninAnonymousRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<SessionPayload>>;
+
+  /**
+   * Sign in with a one time password sent to user's email
+   * @summary OTP email sign-in
+   */
+  signInOTPEmail: (
+    signInOTPEmailRequest: SignInOTPEmailRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<OKResponse>>;
+
+  /**
+   * Verify OTP and return a session if validation is successful
+   * @summary Verify OTP email
+   */
+  verifySignInOTPEmail: (
+    signInOTPEmailVerifyRequest: SignInOTPEmailVerifyRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<SignInOTPEmailVerifyResponse>>;
+
+  /**
+   * Sign in with Personal Access Token (PAT)
+   * @summary PAT sign-in
+   */
+  signInPAT: (
+    signInPATRequest: SignInPATRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<SessionPayload>>;
+
+  /**
+   * Sign in with an id token
+   * @summary Id token sign-in
+   */
+  signInIdToken: (
+    signInIdTokenRequest: SignInIdTokenRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<SessionPayload>>;
+
+  /**
+   * Link a user account with the provider's account using an id token
+   * @summary Link account with id token
+   */
+  linkIdToken: (
+    linkIdTokenRequest: LinkIdTokenRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<OKResponse>>;
+
+  /**
+   * Deanonymize an anonymous user by adding missing email or email+password
+   * @summary Deanonymize user
+   */
+  deanonymizeUser: (
+    userDeanonymizeRequest: UserDeanonymizeRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<OKResponse>>;
+
+  /**
+   * Change user email
+   * @summary Update email
+   */
+  changeUserEmail: (
+    userEmailChangeRequest: UserEmailChangeRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<OKResponse>>;
+
+  /**
+   * Send verification email
+   * @summary Send verification email
+   */
+  sendVerificationEmail: (
+    userEmailSendVerificationEmailRequest: UserEmailSendVerificationEmailRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<OKResponse>>;
+
+  /**
+   * Change user password
+   * @summary Update password
+   */
+  changeUserPassword: (
+    userPasswordRequest: UserPasswordRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<OKResponse>>;
+
+  /**
+   * Request a password reset
+   * @summary Send password reset email
+   */
+  sendPasswordResetEmail: (
+    userPasswordResetRequest: UserPasswordResetRequest,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<OKResponse>>;
+
+  /**
+   * Verify tickets created by email verification, magic link, or password reset
+   * @summary Verify ticket
+   */
+  verifyTicket: (
+    params: VerifyTicketParams,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<void>>;
 }
