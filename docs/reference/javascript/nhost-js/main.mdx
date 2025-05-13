@@ -675,16 +675,70 @@ Configuration options for creating an Nhost client
 
 #### Properties
 
-| Property                                                        | Type                                                  | Description                                                                                                                                                  |
-| --------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| <a id="authurl"></a> `authUrl?`                                 | `string`                                              | Complete base URL for the auth service (overrides subdomain/region)                                                                                          |
-| <a id="disableautorefreshtoken"></a> `disableAutoRefreshToken?` | `boolean`                                             | Disable automatic session refresh. If set to true, the SDK will not attempt to refresh                                                                       |
-| <a id="functionsurl"></a> `functionsUrl?`                       | `string`                                              | Complete base URL for the functions service (overrides subdomain/region)                                                                                     |
-| <a id="graphqlurl"></a> `graphqlUrl?`                           | `string`                                              | Complete base URL for the GraphQL service (overrides subdomain/region)                                                                                       |
-| <a id="region"></a> `region?`                                   | `string`                                              | Nhost region (e.g., 'eu-central-1'). Used to construct the base URL for services for the Nhost cloud.                                                        |
-| <a id="storage-1"></a> `storage?`                               | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation to use for session persistence. If not provided, the SDK will default to localStorage in the browser or memory in other environments. |
-| <a id="storageurl"></a> `storageUrl?`                           | `string`                                              | Complete base URL for the storage service (overrides subdomain/region)                                                                                       |
-| <a id="subdomain"></a> `subdomain?`                             | `string`                                              | Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for services for the Nhost cloud.                                                 |
+##### authUrl?
+
+```ts
+optional authUrl: string;
+```
+
+Complete base URL for the auth service (overrides subdomain/region)
+
+##### disableAutoRefreshToken?
+
+```ts
+optional disableAutoRefreshToken: boolean;
+```
+
+Disable automatic session refresh. If set to true, the SDK will not attempt to refresh
+
+##### functionsUrl?
+
+```ts
+optional functionsUrl: string;
+```
+
+Complete base URL for the functions service (overrides subdomain/region)
+
+##### graphqlUrl?
+
+```ts
+optional graphqlUrl: string;
+```
+
+Complete base URL for the GraphQL service (overrides subdomain/region)
+
+##### region?
+
+```ts
+optional region: string;
+```
+
+Nhost region (e.g., 'eu-central-1'). Used to construct the base URL for services for the Nhost cloud.
+
+##### storage?
+
+```ts
+optional storage: SessionStorageInterface;
+```
+
+Storage implementation to use for session persistence. If not provided, the SDK will
+default to localStorage in the browser or memory in other environments.
+
+##### storageUrl?
+
+```ts
+optional storageUrl: string;
+```
+
+Complete base URL for the storage service (overrides subdomain/region)
+
+##### subdomain?
+
+```ts
+optional subdomain: string;
+```
+
+Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for services for the Nhost cloud.
 
 ---
 

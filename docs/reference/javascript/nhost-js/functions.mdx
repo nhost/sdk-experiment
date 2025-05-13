@@ -10,9 +10,31 @@ Functions client interface providing methods for executing serverless function c
 
 #### Properties
 
-| Property                   | Type                                                                                                             | Description                                |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| <a id="fetch"></a> `fetch` | (`path`: `string`, `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`any`&gt;&gt; | Execute a request to a serverless function |
+##### fetch()
+
+```ts
+fetch: (path: string, options?: RequestInit) => Promise<FetchResponse<any>>;
+```
+
+Execute a request to a serverless function
+The response body will be automatically parsed based on the content type into the following types:
+
+- Object if the response is application/json
+- string text string if the response is text/\*
+- Blob if the response is any other type
+
+###### Parameters
+
+| Parameter  | Type          | Description                                      |
+| ---------- | ------------- | ------------------------------------------------ |
+| `path`     | `string`      | The path to the serverless function              |
+| `options?` | `RequestInit` | Additional fetch options to apply to the request |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`any`&gt;&gt;
+
+Promise with the function response and metadata.
 
 ---
 
@@ -28,11 +50,29 @@ Response wrapper for function calls with additional metadata.
 
 #### Properties
 
-| Property                       | Type      | Description                      |
-| ------------------------------ | --------- | -------------------------------- |
-| <a id="body"></a> `body`       | `T`       | The parsed response body         |
-| <a id="headers"></a> `headers` | `Headers` | HTTP headers from the response   |
-| <a id="status"></a> `status`   | `number`  | HTTP status code of the response |
+##### body
+
+```ts
+body: T;
+```
+
+The parsed response body
+
+##### headers
+
+```ts
+headers: Headers;
+```
+
+HTTP headers from the response
+
+##### status
+
+```ts
+status: number;
+```
+
+HTTP status code of the response
 
 ## Functions
 

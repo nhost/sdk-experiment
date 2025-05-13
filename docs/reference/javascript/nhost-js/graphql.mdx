@@ -10,9 +10,29 @@ GraphQL client interface providing methods for executing queries and mutations
 
 #### Properties
 
-| Property                 | Type                                                                                                                                                                                        | Description                                                                                                    |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| <a id="post"></a> `post` | (`request`: [`GraphQLRequest`](#graphqlrequest), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt; | Execute a GraphQL query operation Queries are used to fetch data and should not modify any data on the server. |
+##### post()
+
+```ts
+post: (request: GraphQLRequest, options?: RequestInit) =>
+  Promise<FetchResponse<GraphQLResponse<any>>>;
+```
+
+Execute a GraphQL query operation
+
+Queries are used to fetch data and should not modify any data on the server.
+
+###### Parameters
+
+| Parameter  | Type                                | Description                                                    |
+| ---------- | ----------------------------------- | -------------------------------------------------------------- |
+| `request`  | [`GraphQLRequest`](#graphqlrequest) | GraphQL request object containing query and optional variables |
+| `options?` | `RequestInit`                       | Additional fetch options to apply to the request               |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt;
+
+Promise with the GraphQL response and metadata
 
 ---
 
@@ -28,11 +48,29 @@ Response wrapper for GraphQL operations with additional metadata.
 
 #### Properties
 
-| Property                       | Type      | Description                      |
-| ------------------------------ | --------- | -------------------------------- |
-| <a id="body"></a> `body`       | `T`       | The parsed response body         |
-| <a id="headers"></a> `headers` | `Headers` | HTTP headers from the response   |
-| <a id="status"></a> `status`   | `number`  | HTTP status code of the response |
+##### body
+
+```ts
+body: T;
+```
+
+The parsed response body
+
+##### headers
+
+```ts
+headers: Headers;
+```
+
+HTTP headers from the response
+
+##### status
+
+```ts
+status: number;
+```
+
+HTTP status code of the response
 
 ---
 
@@ -42,12 +80,42 @@ Represents a GraphQL error returned from the server.
 
 #### Properties
 
-| Property                              | Type       | Description                                                         |
-| ------------------------------------- | ---------- | ------------------------------------------------------------------- |
-| <a id="extensions"></a> `extensions?` | `any`      | Additional error information specific to the GraphQL implementation |
-| <a id="locations"></a> `locations?`   | `object`[] | Source locations in the GraphQL document where the error occurred   |
-| <a id="message"></a> `message`        | `string`   | Error message                                                       |
-| <a id="path"></a> `path?`             | `string`[] | Path in the query where the error occurred                          |
+##### extensions?
+
+```ts
+optional extensions: any;
+```
+
+Additional error information specific to the GraphQL implementation
+
+##### locations?
+
+```ts
+optional locations: object[];
+```
+
+Source locations in the GraphQL document where the error occurred
+
+| Name     | Type     |
+| -------- | -------- |
+| `column` | `number` |
+| `line`   | `number` |
+
+##### message
+
+```ts
+message: string;
+```
+
+Error message
+
+##### path?
+
+```ts
+optional path: string[];
+```
+
+Path in the query where the error occurred
 
 ---
 
@@ -57,11 +125,29 @@ GraphQL request object used for queries and mutations.
 
 #### Properties
 
-| Property                                    | Type                                    | Description                                  |
-| ------------------------------------------- | --------------------------------------- | -------------------------------------------- |
-| <a id="operationname"></a> `operationName?` | `string`                                | Optional name of the operation to execute    |
-| <a id="query"></a> `query`                  | `string`                                | The GraphQL query or mutation string         |
-| <a id="variables"></a> `variables?`         | [`GraphQLVariables`](#graphqlvariables) | Optional variables for parameterized queries |
+##### operationName?
+
+```ts
+optional operationName: string;
+```
+
+Optional name of the operation to execute
+
+##### query
+
+```ts
+query: string;
+```
+
+The GraphQL query or mutation string
+
+##### variables?
+
+```ts
+optional variables: GraphQLVariables;
+```
+
+Optional variables for parameterized queries
 
 ---
 
@@ -77,10 +163,21 @@ Standard GraphQL response format as defined by the GraphQL specification.
 
 #### Properties
 
-| Property                      | Type                              | Description                                                           |
-| ----------------------------- | --------------------------------- | --------------------------------------------------------------------- |
-| <a id="data"></a> `data?`     | `T`                               | The data returned from successful execution                           |
-| <a id="errors"></a> `errors?` | [`GraphQLError`](#graphqlerror)[] | Array of errors if execution was unsuccessful or partially successful |
+##### data?
+
+```ts
+optional data: T;
+```
+
+The data returned from successful execution
+
+##### errors?
+
+```ts
+optional errors: GraphQLError[];
+```
+
+Array of errors if execution was unsuccessful or partially successful
 
 ---
 

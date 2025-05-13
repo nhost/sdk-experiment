@@ -10,17 +10,177 @@ Storage client interface providing methods for file operations
 
 #### Properties
 
-| Property                                                     | Type                                                                                                                                                                                               | Description                                                       |
-| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| <a id="baseurl"></a> `baseURL`                               | `string`                                                                                                                                                                                           | Base URL for the storage service                                  |
-| <a id="deletefile"></a> `deleteFile`                         | (`id`: `string`, `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;                                                                                    | Delete a file                                                     |
-| <a id="getfile"></a> `getFile`                               | (`id`: `string`, `params?`: [`GetFileParams`](#getfileparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`Blob`&gt;&gt;                                      | Download a file                                                   |
-| <a id="getfilemetadataheaders"></a> `getFileMetadataHeaders` | (`id`: `string`, `params?`: [`GetFileMetadataHeadersParams`](#getfilemetadataheadersparams), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;        | Retrieve file metadata using HTTP HEAD method                     |
-| <a id="getopenapispec"></a> `getOpenAPISpec`                 | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetOpenAPISpec200`](#getopenapispec200)&gt;&gt;                                                                 | Returns the OpenAPI schema definition for this API                |
-| <a id="getversion"></a> `getVersion`                         | (`options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`VersionInformation`](#versioninformation)&gt;&gt;                                                               | Retrieves build and version information about the storage service |
-| <a id="pushchainfunction"></a> `pushChainFunction`           | (`chainFunction`: [`ChainFunction`](fetch#chainfunction)) => `void`                                                                                                                            | Add a middleware function to the request chain                    |
-| <a id="replacefile"></a> `replaceFile`                       | (`id`: `string`, `replaceFileBody`: [`ReplaceFileBody`](#replacefilebody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`FileMetadata`](#filemetadata)&gt;&gt; | Replace an existing file                                          |
-| <a id="uploadfiles"></a> `uploadFiles`                       | (`uploadFilesBody`: [`UploadFilesBody`](#uploadfilesbody), `options?`: `RequestInit`) => `Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;             | Upload one or more files to storage                               |
+##### baseURL
+
+```ts
+baseURL: string;
+```
+
+Base URL for the storage service
+
+##### deleteFile()
+
+```ts
+deleteFile: (id: string, options?: RequestInit) => Promise<FetchResponse<void>>;
+```
+
+Delete a file
+
+###### Parameters
+
+| Parameter  | Type          |
+| ---------- | ------------- |
+| `id`       | `string`      |
+| `options?` | `RequestInit` |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
+
+##### getFile()
+
+```ts
+getFile: (id: string, params?: GetFileParams, options?: RequestInit) =>
+  Promise<FetchResponse<Blob>>;
+```
+
+Download a file
+
+###### Parameters
+
+| Parameter  | Type                              |
+| ---------- | --------------------------------- |
+| `id`       | `string`                          |
+| `params?`  | [`GetFileParams`](#getfileparams) |
+| `options?` | `RequestInit`                     |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`Blob`&gt;&gt;
+
+##### getFileMetadataHeaders()
+
+```ts
+getFileMetadataHeaders: (
+  id: string,
+  params?: GetFileMetadataHeadersParams,
+  options?: RequestInit,
+) => Promise<FetchResponse<void>>;
+```
+
+Retrieve file metadata using HTTP HEAD method
+
+###### Parameters
+
+| Parameter  | Type                                                            |
+| ---------- | --------------------------------------------------------------- |
+| `id`       | `string`                                                        |
+| `params?`  | [`GetFileMetadataHeadersParams`](#getfilemetadataheadersparams) |
+| `options?` | `RequestInit`                                                   |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
+
+##### getOpenAPISpec()
+
+```ts
+getOpenAPISpec: (options?: RequestInit) =>
+  Promise<FetchResponse<GetOpenAPISpec200>>;
+```
+
+Returns the OpenAPI schema definition for this API
+
+###### Parameters
+
+| Parameter  | Type          |
+| ---------- | ------------- |
+| `options?` | `RequestInit` |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetOpenAPISpec200`](#getopenapispec200)&gt;&gt;
+
+##### getVersion()
+
+```ts
+getVersion: (options?: RequestInit) =>
+  Promise<FetchResponse<VersionInformation>>;
+```
+
+Retrieves build and version information about the storage service
+
+###### Parameters
+
+| Parameter  | Type          |
+| ---------- | ------------- |
+| `options?` | `RequestInit` |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`VersionInformation`](#versioninformation)&gt;&gt;
+
+##### pushChainFunction()
+
+```ts
+pushChainFunction: (chainFunction: ChainFunction) => void;
+```
+
+Add a middleware function to the request chain
+
+###### Parameters
+
+| Parameter       | Type                                       | Description                |
+| --------------- | ------------------------------------------ | -------------------------- |
+| `chainFunction` | [`ChainFunction`](fetch#chainfunction) | Middleware function to add |
+
+###### Returns
+
+`void`
+
+##### replaceFile()
+
+```ts
+replaceFile: (
+  id: string,
+  replaceFileBody: ReplaceFileBody,
+  options?: RequestInit,
+) => Promise<FetchResponse<FileMetadata>>;
+```
+
+Replace an existing file
+
+###### Parameters
+
+| Parameter         | Type                                  |
+| ----------------- | ------------------------------------- |
+| `id`              | `string`                              |
+| `replaceFileBody` | [`ReplaceFileBody`](#replacefilebody) |
+| `options?`        | `RequestInit`                         |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`FileMetadata`](#filemetadata)&gt;&gt;
+
+##### uploadFiles()
+
+```ts
+uploadFiles: (uploadFilesBody: UploadFilesBody, options?: RequestInit) =>
+  Promise<FetchResponse<UploadFiles201>>;
+```
+
+Upload one or more files to storage
+
+###### Parameters
+
+| Parameter         | Type                                  |
+| ----------------- | ------------------------------------- |
+| `uploadFilesBody` | [`UploadFilesBody`](#uploadfilesbody) |
+| `options?`        | `RequestInit`                         |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;
 
 ---
 
@@ -30,9 +190,13 @@ Error information returned by the API.
 
 #### Properties
 
-| Property                      | Type                          | Description    |
-| ----------------------------- | ----------------------------- | -------------- |
-| <a id="error-1"></a> `error?` | [`ErrorError`](#errorerror-1) | Error details. |
+##### error?
+
+```ts
+optional error: ErrorError;
+```
+
+Error details.
 
 ---
 
@@ -42,19 +206,93 @@ Comprehensive metadata information about a file in storage.
 
 #### Properties
 
-| Property                                          | Type                                              | Description                                      |
-| ------------------------------------------------- | ------------------------------------------------- | ------------------------------------------------ |
-| <a id="bucketid"></a> `bucketId?`                 | `string`                                          | ID of the bucket containing the file.            |
-| <a id="createdat"></a> `createdAt?`               | `string`                                          | Timestamp when the file was created.             |
-| <a id="etag"></a> `etag?`                         | `string`                                          | Entity tag for cache validation.                 |
-| <a id="id"></a> `id?`                             | `string`                                          | Unique identifier for the file.                  |
-| <a id="isuploaded"></a> `isUploaded?`             | `boolean`                                         | Whether the file has been successfully uploaded. |
-| <a id="metadata"></a> `metadata?`                 | [`FileMetadataMetadata`](#filemetadatametadata-1) | Custom metadata associated with the file.        |
-| <a id="mimetype"></a> `mimeType?`                 | `string`                                          | MIME type of the file.                           |
-| <a id="name"></a> `name?`                         | `string`                                          | Name of the file including extension.            |
-| <a id="size"></a> `size?`                         | `number`                                          | Size of the file in bytes.                       |
-| <a id="updatedat"></a> `updatedAt?`               | `string`                                          | Timestamp when the file was last updated.        |
-| <a id="uploadedbyuserid"></a> `uploadedByUserId?` | `string`                                          | ID of the user who uploaded the file.            |
+##### bucketId?
+
+```ts
+optional bucketId: string;
+```
+
+ID of the bucket containing the file.
+
+##### createdAt?
+
+```ts
+optional createdAt: string;
+```
+
+Timestamp when the file was created.
+
+##### etag?
+
+```ts
+optional etag: string;
+```
+
+Entity tag for cache validation.
+
+##### id?
+
+```ts
+optional id: string;
+```
+
+Unique identifier for the file.
+
+##### isUploaded?
+
+```ts
+optional isUploaded: boolean;
+```
+
+Whether the file has been successfully uploaded.
+
+##### metadata?
+
+```ts
+optional metadata: FileMetadataMetadata;
+```
+
+Custom metadata associated with the file.
+
+##### mimeType?
+
+```ts
+optional mimeType: string;
+```
+
+MIME type of the file.
+
+##### name?
+
+```ts
+optional name: string;
+```
+
+Name of the file including extension.
+
+##### size?
+
+```ts
+optional size: number;
+```
+
+Size of the file in bytes.
+
+##### updatedAt?
+
+```ts
+optional updatedAt: string;
+```
+
+Timestamp when the file was last updated.
+
+##### uploadedByUserId?
+
+```ts
+optional uploadedByUserId: string;
+```
+
+ID of the user who uploaded the file.
 
 ---
 
@@ -64,12 +302,37 @@ Basic information about a file in storage.
 
 #### Properties
 
-| Property                                | Type      | Description                                      |
-| --------------------------------------- | --------- | ------------------------------------------------ |
-| <a id="bucketid-1"></a> `bucketId?`     | `string`  | ID of the bucket containing the file.            |
-| <a id="id-1"></a> `id?`                 | `string`  | Unique identifier for the file.                  |
-| <a id="isuploaded-1"></a> `isUploaded?` | `boolean` | Whether the file has been successfully uploaded. |
-| <a id="name-1"></a> `name?`             | `string`  | Name of the file including extension.            |
+##### bucketId?
+
+```ts
+optional bucketId: string;
+```
+
+ID of the bucket containing the file.
+
+##### id?
+
+```ts
+optional id: string;
+```
+
+Unique identifier for the file.
+
+##### isUploaded?
+
+```ts
+optional isUploaded: boolean;
+```
+
+Whether the file has been successfully uploaded.
+
+##### name?
+
+```ts
+optional name: string;
+```
+
+Name of the file including extension.
 
 ---
 
@@ -79,10 +342,21 @@ Contains a presigned URL for direct file operations.
 
 #### Properties
 
-| Property                              | Type     | Description                                |
-| ------------------------------------- | -------- | ------------------------------------------ |
-| <a id="expiration"></a> `expiration?` | `number` | The time in seconds until the URL expires. |
-| <a id="url"></a> `url?`               | `string` | The presigned URL for file operations.     |
+##### expiration?
+
+```ts
+optional expiration: number;
+```
+
+The time in seconds until the URL expires.
+
+##### url?
+
+```ts
+optional url: string;
+```
+
+The presigned URL for file operations.
 
 ---
 
@@ -92,10 +366,21 @@ Metadata that can be updated for an existing file.
 
 #### Properties
 
-| Property                            | Type                                                          | Description                                         |
-| ----------------------------------- | ------------------------------------------------------------- | --------------------------------------------------- |
-| <a id="metadata-2"></a> `metadata?` | [`UpdateFileMetadataMetadata`](#updatefilemetadatametadata-1) | Updated custom metadata to associate with the file. |
-| <a id="name-2"></a> `name?`         | `string`                                                      | New name to assign to the file.                     |
+##### metadata?
+
+```ts
+optional metadata: UpdateFileMetadataMetadata;
+```
+
+Updated custom metadata to associate with the file.
+
+##### name?
+
+```ts
+optional name: string;
+```
+
+New name to assign to the file.
 
 ---
 
@@ -105,11 +390,29 @@ Metadata provided when uploading a new file.
 
 #### Properties
 
-| Property                            | Type                                                          | Description                                                                      |
-| ----------------------------------- | ------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| <a id="id-2"></a> `id?`             | `string`                                                      | Optional custom ID for the file. If not provided, a UUID will be generated.      |
-| <a id="metadata-3"></a> `metadata?` | [`UploadFileMetadataMetadata`](#uploadfilemetadatametadata-1) | Custom metadata to associate with the file.                                      |
-| <a id="name-3"></a> `name?`         | `string`                                                      | Name to assign to the file. If not provided, the original filename will be used. |
+##### id?
+
+```ts
+optional id: string;
+```
+
+Optional custom ID for the file. If not provided, a UUID will be generated.
+
+##### metadata?
+
+```ts
+optional metadata: UploadFileMetadataMetadata;
+```
+
+Custom metadata to associate with the file.
+
+##### name?
+
+```ts
+optional name: string;
+```
+
+Name to assign to the file. If not provided, the original filename will be used.
 
 ---
 
@@ -119,9 +422,13 @@ Contains version information about the storage service.
 
 #### Properties
 
-| Property                                  | Type     | Description                                      |
-| ----------------------------------------- | -------- | ------------------------------------------------ |
-| <a id="buildversion"></a> `buildVersion?` | `string` | The version number of the storage service build. |
+##### buildVersion?
+
+```ts
+optional buildVersion: string;
+```
+
+The version number of the storage service build.
 
 ## Type Aliases
 

@@ -27,11 +27,14 @@ export interface FetchResponse<T = any> {
 export interface Client {
   /**
    * Execute a request to a serverless function
+   * The response body will be automatically parsed based on the content type into the following types:
+   *   - Object if the response is application/json
+   *   - string text string if the response is text/*
+   *   - Blob if the response is any other type
    *
    * @param path - The path to the serverless function
    * @param options - Additional fetch options to apply to the request
-   * @returns Promise with the function response and metadata
-   */
+   * @returns Promise with the function response and metadata.    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fetch: (path: string, options?: RequestInit) => Promise<FetchResponse<any>>;
 }
