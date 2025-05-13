@@ -203,7 +203,7 @@ export type ReplaceFileBody = {
 export type FetchResponse<T> = {
   body: T;
   status: number;
-  headers: Record<string, string>;
+  headers: Headers;
 };
 
 export const createAPIClient = (
@@ -237,7 +237,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<GetOpenAPISpec200>;
 
     if (!res.ok) {
@@ -271,7 +271,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<VersionInformation>;
 
     if (!res.ok) {
@@ -322,7 +322,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<UploadFiles201>;
 
     if (!res.ok) {
@@ -358,7 +358,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<void>;
 
     if (!res.ok) {
@@ -409,7 +409,7 @@ export const createAPIClient = (
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<Blob>;
 
     if (!res.ok) {
@@ -475,7 +475,7 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<FileMetadata>;
 
     if (!res.ok) {
@@ -510,7 +510,7 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     const response = {
       body: payload,
       status: res.status,
-      headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+      headers: res.headers,
     } as FetchResponse<void>;
 
     if (!res.ok) {

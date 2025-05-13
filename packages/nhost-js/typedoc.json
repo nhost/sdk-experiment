@@ -4,6 +4,7 @@
     "src/index.ts",
     "src/auth/index.ts",
     "src/storage/index.ts",
+    "src/functions/index.ts",
     "src/graphql/index.ts",
     "src/fetch/index.ts"
   ],
@@ -41,7 +42,7 @@
   "expandParameters": true,
   "indexFormat": "table",
   "parametersFormat": "table",
-  "interfacePropertiesFormat": "table",
+  "interfacePropertiesFormat": "list",
   "classPropertiesFormat": "table",
   "typeAliasPropertiesFormat": "table",
   "enumMembersFormat": "table",

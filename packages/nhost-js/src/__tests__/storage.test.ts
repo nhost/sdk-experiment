@@ -25,7 +25,7 @@ describe("Test Storage API", () => {
     ],
   );
 
-  it("should sign up a user with email and password", async () => {
+  beforeAll(async () => {
     const response = await nhostAuth.signUpEmailPassword({
       email: `test-${Date.now()}@example.com`,
       password: "password123",
@@ -137,11 +137,11 @@ describe("Test Storage API", () => {
       expect(err.body.error?.message).toBe(
         "file[] not found in Multipart form",
       );
-      expect(err.headers["content-length"]).toBe("58");
-      expect(err.headers["content-type"]).toBe(
+      expect(err.headers.get("content-length")).toBe("58");
+      expect(err.headers.get("content-type")).toBe(
         "application/json; charset=utf-8",
       );
-      expect(err.headers["date"]).toBeDefined();
+      expect(err.headers.get("date")).toBeDefined();
     }
   });
 
@@ -151,16 +151,16 @@ describe("Test Storage API", () => {
     const resp = await nhostStorage.getFileMetadataHeaders(uuid1);
 
     expect(resp.status).toBe(200);
-    expect(resp.headers["content-type"]).toBe("text/plain");
-    expect(resp.headers["etag"]).toBeDefined();
-    expect(resp.headers["last-modified"]).toBeDefined();
-    expect(resp.headers["surrogate-key"]).toBeDefined();
-    expect(resp.headers["cache-control"]).toBe("max-age=3600");
-    expect(resp.headers["surrogate-control"]).toBe("max-age=604800");
-    expect(resp.headers["content-length"]).toBe("5");
-    expect(resp.headers["date"]).toBeDefined();
+    expect(resp.headers.get("content-type")).toBe("text/plain");
+    expect(resp.headers.get("etag")).toBeDefined();
+    expect(resp.headers.get("last-modified")).toBeDefined();
+    expect(resp.headers.get("surrogate-key")).toBeDefined();
+    expect(resp.headers.get("cache-control")).toBe("max-age=3600");
+    expect(resp.headers.get("surrogate-control")).toBe("max-age=604800");
+    expect(resp.headers.get("content-length")).toBe("5");
+    expect(resp.headers.get("date")).toBeDefined();
 
-    etag = resp.headers["etag"];
+    etag = resp.headers.get("etag") || "";
   });
 
   it("should get file metadata headers with If-None-Match matches", async () => {
@@ -180,10 +180,10 @@ describe("Test Storage API", () => {
       expect(err).toBeDefined();
       expect(err.status).toBe(304);
       expect(err.headers).toBeDefined();
-      expect(err.headers["etag"]).toBe(etag);
-      expect(err.headers["cache-control"]).toBe("max-age=3600");
-      expect(err.headers["surrogate-control"]).toBe("max-age=604800");
-      expect(err.headers["date"]).toBeDefined();
+      expect(err.headers.get("etag")).toBe(etag);
+      expect(err.headers.get("cache-control")).toBe("max-age=3600");
+      expect(err.headers.get("surrogate-control")).toBe("max-age=604800");
+      expect(err.headers.get("date")).toBeDefined();
     }
   });
 
@@ -199,14 +199,14 @@ describe("Test Storage API", () => {
     );
     expect(resp.status).toBe(200);
     expect(resp.headers).toBeDefined();
-    expect(resp.headers["content-type"]).toBe("text/plain");
-    expect(resp.headers["etag"]).toBeDefined();
-    expect(resp.headers["last-modified"]).toBeDefined();
-    expect(resp.headers["surrogate-key"]).toBeDefined();
-    expect(resp.headers["cache-control"]).toBe("max-age=3600");
-    expect(resp.headers["surrogate-control"]).toBe("max-age=604800");
-    expect(resp.headers["content-length"]).toBe("5");
-    expect(resp.headers["date"]).toBeDefined();
+    expect(resp.headers.get("content-type")).toBe("text/plain");
+    expect(resp.headers.get("etag")).toBeDefined();
+    expect(resp.headers.get("last-modified")).toBeDefined();
+    expect(resp.headers.get("surrogate-key")).toBeDefined();
+    expect(resp.headers.get("cache-control")).toBe("max-age=3600");
+    expect(resp.headers.get("surrogate-control")).toBe("max-age=604800");
+    expect(resp.headers.get("content-length")).toBe("5");
+    expect(resp.headers.get("date")).toBeDefined();
   });
 
   it("should get file", async () => {
@@ -214,14 +214,14 @@ describe("Test Storage API", () => {
     expect(resp.status).toBe(200);
     expect(resp.body).toBeDefined();
     expect(resp.headers).toBeDefined();
-    expect(resp.headers["content-type"]).toBe("text/plain");
-    expect(resp.headers["etag"]).toBeDefined();
-    expect(resp.headers["last-modified"]).toBeDefined();
-    expect(resp.headers["surrogate-key"]).toBeDefined();
-    expect(resp.headers["cache-control"]).toBe("max-age=3600");
-    expect(resp.headers["surrogate-control"]).toBe("max-age=604800");
-    expect(resp.headers["content-length"]).toBe("5");
-    expect(resp.headers["date"]).toBeDefined();
+    expect(resp.headers.get("content-type")).toBe("text/plain");
+    expect(resp.headers.get("etag")).toBeDefined();
+    expect(resp.headers.get("last-modified")).toBeDefined();
+    expect(resp.headers.get("surrogate-key")).toBeDefined();
+    expect(resp.headers.get("cache-control")).toBe("max-age=3600");
+    expect(resp.headers.get("surrogate-control")).toBe("max-age=604800");
+    expect(resp.headers.get("content-length")).toBe("5");
+    expect(resp.headers.get("date")).toBeDefined();
     expect(await resp.body.text()).toBe("test1");
   });
 
@@ -242,10 +242,10 @@ describe("Test Storage API", () => {
       expect(err.status).toBe(304);
       expect(err.body).toBeDefined();
       expect(err.headers).toBeDefined();
-      expect(err.headers["etag"]).toBe(etag);
-      expect(err.headers["cache-control"]).toBe("max-age=3600");
-      expect(err.headers["surrogate-control"]).toBe("max-age=604800");
-      expect(err.headers["date"]).toBeDefined();
+      expect(err.headers.get("etag")).toBe(etag);
+      expect(err.headers.get("cache-control")).toBe("max-age=3600");
+      expect(err.headers.get("surrogate-control")).toBe("max-age=604800");
+      expect(err.headers.get("date")).toBeDefined();
     }
   });
 

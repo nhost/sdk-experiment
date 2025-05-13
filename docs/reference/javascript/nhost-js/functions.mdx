@@ -1,0 +1,105 @@
+This is the main module to interact with Nhost's Functions service.
+Typically you would use this modula via the main [Nhost client](main#createclient)
+but you can also use it directly if you have a specific use case.
+
+## Interfaces
+
+### Client
+
+Functions client interface providing methods for executing serverless function calls
+
+#### Properties
+
+##### fetch()
+
+```ts
+fetch: (path: string, options?: RequestInit) => Promise<FetchResponse<any>>;
+```
+
+Execute a request to a serverless function
+The response body will be automatically parsed based on the content type into the following types:
+
+- Object if the response is application/json
+- string text string if the response is text/\*
+- Blob if the response is any other type
+
+###### Parameters
+
+| Parameter  | Type          | Description                                      |
+| ---------- | ------------- | ------------------------------------------------ |
+| `path`     | `string`      | The path to the serverless function              |
+| `options?` | `RequestInit` | Additional fetch options to apply to the request |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`any`&gt;&gt;
+
+Promise with the function response and metadata.
+
+---
+
+### FetchResponse&lt;T&gt;
+
+Response wrapper for function calls with additional metadata.
+
+#### Type Parameters
+
+| Type Parameter | Default type |
+| -------------- | ------------ |
+| `T`            | `any`        |
+
+#### Properties
+
+##### body
+
+```ts
+body: T;
+```
+
+The parsed response body
+
+##### headers
+
+```ts
+headers: Headers;
+```
+
+HTTP headers from the response
+
+##### status
+
+```ts
+status: number;
+```
+
+HTTP status code of the response
+
+## Functions
+
+### createAPIClient()
+
+```ts
+function createAPIClient(
+  baseURL: string,
+  chainFunctions: ChainFunction[],
+): Client;
+```
+
+Creates a Functions API client for interacting with serverless functions.
+
+This client provides methods for executing requests against serverless functions,
+with support for middleware functions to handle authentication, error handling,
+and other cross-cutting concerns.
+
+#### Parameters
+
+| Parameter        | Type                                         | Default value | Description                                       |
+| ---------------- | -------------------------------------------- | ------------- | ------------------------------------------------- |
+| `baseURL`        | `string`                                     | `undefined`   | Base URL for the functions endpoint               |
+| `chainFunctions` | [`ChainFunction`](fetch#chainfunction)[] | `[]`          | Array of middleware functions for the fetch chain |
+
+#### Returns
+
+[`Client`](#client)
+
+Functions client with fetch method

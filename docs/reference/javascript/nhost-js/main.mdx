@@ -245,6 +245,54 @@ try {
   // error handling...
 ```
 
+### Functions
+
+```ts
+// Needs the following imports:
+//
+// import { FetchResponse } from "../functions";
+//
+
+const nhost = createClient({
+  subdomain: subdomain,
+  region: region,
+});
+
+try {
+  await nhost.functions.fetch("/crash", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+} catch (error) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resp = error as FetchResponse<any>;
+  console.log("Error:", resp);
+  // Error: {
+  //   status: 500,
+  //   body: '<!DOCTYPE html>\n' +
+  //     '<html lang="en">\n' +
+  //     '<head>\n' +
+  //     '<meta charset="utf-8">\n' +
+  //     '<title>Error</title>\n' +
+  //     '</head>\n' +
+  //     '<body>\n' +
+  //     '<pre>Error: This is an unhandled error<br> &nbsp; &nbsp;at default (/opt/project/functions/crash.ts:4:11)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/usr/local/lib/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:144:13)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)</pre>\n' +
+  //     '</body>\n' +
+  //     '</html>\n',
+  //   headers: Headers {
+  //     'content-length': '1056',
+  //     'content-security-policy': "default-src 'none'",
+  //     'content-type': 'text/html; charset=utf-8',
+  //     date: 'Tue, 13 May 2025 11:20:04 GMT',
+  //     'x-content-type-options': 'nosniff'
+  //   }
+  // }
+  //
+  // error handling...
+```
+
 ## Classes
 
 ### CookieStorage
@@ -528,6 +576,7 @@ new NhostClient(
    auth: Client,
    storage: Client,
    graphql: Client,
+   functions: Client,
    sessionStorage: SessionStorageInterface): NhostClient;
 ```
 
@@ -541,6 +590,7 @@ For typical usage, use [createClient](#createclient) instead.
 | `auth`           | [`Client`](auth#client)                           | Authentication client                          |
 | `storage`        | [`Client`](storage#client)                        | Storage client                                 |
 | `graphql`        | [`Client`](graphql#client)                        | GraphQL client                                 |
+| `functions`      | [`Client`](functions#client)                      | Functions client                               |
 | `sessionStorage` | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation for session persistence |
 
 ###### Returns
@@ -552,6 +602,7 @@ For typical usage, use [createClient](#createclient) instead.
 | Property                                     | Type                                                  | Description                                                                                   |
 | -------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | <a id="auth"></a> `auth`                     | [`Client`](auth#client)                           | Authentication client providing methods for user sign-in, sign-up, and session management     |
+| <a id="functions"></a> `functions`           | [`Client`](functions#client)                      | Functions client providing methods for invoking serverless functions                          |
 | <a id="graphql"></a> `graphql`               | [`Client`](graphql#client)                        | GraphQL client providing methods for executing GraphQL operations against your Hasura backend |
 | <a id="sessionstorage"></a> `sessionStorage` | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation used for persisting session information                                |
 | <a id="storage"></a> `storage`               | [`Client`](storage#client)                        | Storage client providing methods for file operations (upload, download, delete)               |
@@ -624,15 +675,70 @@ Configuration options for creating an Nhost client
 
 #### Properties
 
-| Property                                                        | Type                                                  | Description                                                                                                                                                  |
-| --------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| <a id="authurl"></a> `authUrl?`                                 | `string`                                              | Complete base URL for the auth service (overrides subdomain/region)                                                                                          |
-| <a id="disableautorefreshtoken"></a> `disableAutoRefreshToken?` | `boolean`                                             | Disable automatic session refresh. If set to true, the SDK will not attempt to refresh                                                                       |
-| <a id="graphqlurl"></a> `graphqlUrl?`                           | `string`                                              | Complete base URL for the GraphQL service (overrides subdomain/region)                                                                                       |
-| <a id="region"></a> `region?`                                   | `string`                                              | Nhost region (e.g., 'eu-central-1'). Used to construct the base URL for services for the Nhost cloud.                                                        |
-| <a id="storage-1"></a> `storage?`                               | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation to use for session persistence. If not provided, the SDK will default to localStorage in the browser or memory in other environments. |
-| <a id="storageurl"></a> `storageUrl?`                           | `string`                                              | Complete base URL for the storage service (overrides subdomain/region)                                                                                       |
-| <a id="subdomain"></a> `subdomain?`                             | `string`                                              | Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for services for the Nhost cloud.                                                 |
+##### authUrl?
+
+```ts
+optional authUrl: string;
+```
+
+Complete base URL for the auth service (overrides subdomain/region)
+
+##### disableAutoRefreshToken?
+
+```ts
+optional disableAutoRefreshToken: boolean;
+```
+
+Disable automatic session refresh. If set to true, the SDK will not attempt to refresh
+
+##### functionsUrl?
+
+```ts
+optional functionsUrl: string;
+```
+
+Complete base URL for the functions service (overrides subdomain/region)
+
+##### graphqlUrl?
+
+```ts
+optional graphqlUrl: string;
+```
+
+Complete base URL for the GraphQL service (overrides subdomain/region)
+
+##### region?
+
+```ts
+optional region: string;
+```
+
+Nhost region (e.g., 'eu-central-1'). Used to construct the base URL for services for the Nhost cloud.
+
+##### storage?
+
+```ts
+optional storage: SessionStorageInterface;
+```
+
+Storage implementation to use for session persistence. If not provided, the SDK will
+default to localStorage in the browser or memory in other environments.
+
+##### storageUrl?
+
+```ts
+optional storageUrl: string;
+```
+
+Complete base URL for the storage service (overrides subdomain/region)
+
+##### subdomain?
+
+```ts
+optional subdomain: string;
+```
+
+Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for services for the Nhost cloud.
 
 ---
 
@@ -762,6 +868,7 @@ This helper method instantiates a fully configured Nhost client by:
 - Setting up the necessary middleware for automatic session management:
   - Automatically attaching the authorization token to requests
   - Refreshing the session when it expires
+  - Applying session tokens to function calls
 
 #### Parameters
 

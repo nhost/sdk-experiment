@@ -5,3 +5,6 @@ packages:
 
 onlyBuiltDependencies:
   - sharp
+
+overrides:
+  rollup@<2.79.2: '>=2.79.2'

@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.15.17"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
