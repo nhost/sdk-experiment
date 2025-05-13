@@ -21,6 +21,11 @@
       "import": "./dist/nhost-js/storage.es.js",
       "require": "./dist/nhost-js/storage.cjs.js"
     },
+    "./functions": {
+      "types": "./dist/src/functions/index.d.ts",
+      "import": "./dist/nhost-js/functions.es.js",
+      "require": "./dist/nhost-js/functions.cjs.js"
+    },
     "./graphql": {
       "types": "./dist/src/graphql/index.d.ts",
       "import": "./dist/nhost-js/graphql.es.js",
@@ -40,6 +45,9 @@
       "storage": [
         "dist/src/storage/index.d.ts"
       ],
+      "functions": [
+        "dist/src/functions/index.d.ts"
+      ],
       "graphql": [
         "dist/src/graphql/index.d.ts"
       ],
@@ -58,7 +66,7 @@
     "test:lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "test:typecheck": "tsc --noEmit",
-    "test:all": "pnpm test && pnpm test:format && pnpm test:lint && pnpm test:typecheck",
+    "test:all": "pnpm audit && pnpm test && pnpm test:format && pnpm test:lint && pnpm test:typecheck",
     "build:types": "tsc -p tsconfig.json",
     "build:js": "vite build --config vite.config.ts && vite build --config vite.umd.config.ts",
     "build": "rm -rf dist && pnpm build:types && pnpm build:js",

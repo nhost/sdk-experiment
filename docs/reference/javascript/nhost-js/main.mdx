@@ -245,6 +245,57 @@ try {
   // error handling...
 ```
 
+### Functions
+
+```ts
+// Needs the following imports:
+//
+// import {
+//   type FetchResponse,
+//   type GraphQLResponse,
+// } from "@nhost/nhost-js/graphql";
+//
+// const nhost = createClient({
+//   subdomain: subdomain,
+//   region: region,
+// });
+
+const nhostFunctions = createAPIClient(
+  "https://local.functions.local.nhost.run/v1",
+);
+
+try {
+  await nhostFunctions.fetch("/crash", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+    },
+  });
+} catch (error) {
+  const resp = error as FetchResponse<any>;
+  console.log(1, error);
+  console.log(2, resp);
+
+  console.log("Error:", JSON.stringify(resp, null, 2));
+  // Error: {
+  //   "body": {
+  //     "errors": [
+  //       {
+  //         "message": "field 'restrictedObject' not found in type: 'query_root'",
+  //         "extensions": {
+  //           "path": "$.selectionSet.restrictedObject",
+  //           "code": "validation-failed"
+  //         }
+  //       }
+  //     ]
+  //   },
+  //   "status": 200,
+  //   "headers": {}
+  // }
+  //
+  // error handling...
+```
+
 ## Classes
 
 ### CookieStorage
@@ -528,6 +579,7 @@ new NhostClient(
    auth: Client,
    storage: Client,
    graphql: Client,
+   functions: Client,
    sessionStorage: SessionStorageInterface): NhostClient;
 ```
 
@@ -541,6 +593,7 @@ For typical usage, use [createClient](#createclient) instead.
 | `auth`           | [`Client`](auth#client)                           | Authentication client                          |
 | `storage`        | [`Client`](storage#client)                        | Storage client                                 |
 | `graphql`        | [`Client`](graphql#client)                        | GraphQL client                                 |
+| `functions`      | [`Client`](functions#client)                      | Functions client                               |
 | `sessionStorage` | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation for session persistence |
 
 ###### Returns
@@ -552,6 +605,7 @@ For typical usage, use [createClient](#createclient) instead.
 | Property                                     | Type                                                  | Description                                                                                   |
 | -------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | <a id="auth"></a> `auth`                     | [`Client`](auth#client)                           | Authentication client providing methods for user sign-in, sign-up, and session management     |
+| <a id="functions"></a> `functions`           | [`Client`](functions#client)                      | Functions client providing methods for invoking serverless functions                          |
 | <a id="graphql"></a> `graphql`               | [`Client`](graphql#client)                        | GraphQL client providing methods for executing GraphQL operations against your Hasura backend |
 | <a id="sessionstorage"></a> `sessionStorage` | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation used for persisting session information                                |
 | <a id="storage"></a> `storage`               | [`Client`](storage#client)                        | Storage client providing methods for file operations (upload, download, delete)               |
@@ -628,6 +682,7 @@ Configuration options for creating an Nhost client
 | --------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | <a id="authurl"></a> `authUrl?`                                 | `string`                                              | Complete base URL for the auth service (overrides subdomain/region)                                                                                          |
 | <a id="disableautorefreshtoken"></a> `disableAutoRefreshToken?` | `boolean`                                             | Disable automatic session refresh. If set to true, the SDK will not attempt to refresh                                                                       |
+| <a id="functionsurl"></a> `functionsUrl?`                       | `string`                                              | Complete base URL for the functions service (overrides subdomain/region)                                                                                     |
 | <a id="graphqlurl"></a> `graphqlUrl?`                           | `string`                                              | Complete base URL for the GraphQL service (overrides subdomain/region)                                                                                       |
 | <a id="region"></a> `region?`                                   | `string`                                              | Nhost region (e.g., 'eu-central-1'). Used to construct the base URL for services for the Nhost cloud.                                                        |
 | <a id="storage-1"></a> `storage?`                               | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation to use for session persistence. If not provided, the SDK will default to localStorage in the browser or memory in other environments. |
@@ -762,6 +817,7 @@ This helper method instantiates a fully configured Nhost client by:
 - Setting up the necessary middleware for automatic session management:
   - Automatically attaching the authorization token to requests
   - Refreshing the session when it expires
+  - Applying session tokens to function calls
 
 #### Parameters
 

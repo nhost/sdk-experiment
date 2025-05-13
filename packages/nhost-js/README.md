@@ -6,7 +6,7 @@ The Nhost JavaScript SDK provides a client-side interface to interact with Nhost
 
 ```bash
 # npm
-pnpm install @nhost/nhost-js@beta
+npm install @nhost/nhost-js@beta
 
 # yarn
 yarn add @nhost/nhost-js@beta
@@ -18,7 +18,7 @@ pnpm add @nhost/nhost-js@beta
 ## Quick Start
 
 ```typescript
-import { createClient } from "nhost-js";
+import { createClient } from "@nhost/nhost-js";
 
 // Initialize the Nhost client
 const nhost = createClient({
@@ -27,42 +27,47 @@ const nhost = createClient({
 });
 
 // Use authentication features
-async function signIn() {
-  const response = await nhost.auth.signInEmailPassword({
-    email: "user@example.com",
-    password: "password123",
-  });
+const response = await nhost.auth.signInEmailPassword({
+  email: "user@example.com",
+  password: "password123",
+});
 
-  if (response.body.session) {
-    console.log("Signed in successfully!");
-  }
+if (response.body.session) {
+  console.log("Signed in successfully!");
 }
 
 // Use GraphQL features
-async function fetchUsers() {
-  const response = await nhost.graphql.post({
-    query: `
-      query GetUsers {
-        users {
-          id
-          displayName
-          email
-        }
+const response = await nhost.graphql.post({
+  query: `
+    query GetUsers {
+      users {
+        id
+        displayName
+        email
       }
-    `,
-  });
+    }
+  `,
+});
 
-  return response.body.data.users;
-}
+return response.body.data.users;
 
 // Use storage features
-async function uploadFile(file) {
-  const response = await nhost.storage.uploadFiles({
-    "file[]": [file],
-  });
+const response = await nhost.storage.uploadFiles({
+  "file[]": [file],
+});
 
-  return response.body.processedFiles[0];
-}
+return response.body.processedFiles[0];
+
+// call a serverless function
+const response = await nhost.functions.fetch("/echo", {
+  method: "POST",
+  body: JSON.stringify({
+    message: "Hello, world!",
+  }),
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 ```
 
 ## Modules
@@ -72,6 +77,7 @@ The Nhost SDK consists of several modules:
 - **Auth**: User authentication and session management
 - **Storage**: File upload, download, and management
 - **GraphQL**: Executing queries and mutations against your Hasura GraphQL API
+- **Functions**: Invoking serverless functions
 
 ## Documentation
 

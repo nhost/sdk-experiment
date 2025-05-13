@@ -226,7 +226,7 @@ ${
   const response = ${
     override.fetch.includeHttpResponseReturnType
       ? `{ body: payload, status: res.status,
-          headers: Object.fromEntries(Array.from((res.headers as any).entries())),
+          headers: res.headers,
       } as FetchResponse<${responseTypeName}>
 
     if (!res.ok) {
@@ -291,7 +291,7 @@ export const generateFetchHeader: ClientHeaderBuilder = ({
       export type FetchResponse<T> = {
           body: T;
           status: number;
-          headers: Record<string, string>;
+          headers: Headers;
       };
 
       export const createAPIClient = (
