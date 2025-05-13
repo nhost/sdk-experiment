@@ -245,401 +245,325 @@ paths:
               schema:
                 $ref: "#/components/schemas/TotpGenerateResponse"
 
-  # /.well-known/jwks.json:
-  #   get:
-  #     summary: Get public keys for JWT verification in JWK Set format
-  #     tags:
-  #       - keys
-  #     responses:
-  #       '200':
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/JWKSet'
-  #         description: >-
-  #           The public keys in JWK Set format
+  /.well-known/jwks.json:
+    get:
+      summary: Get public keys for JWT verification in JWK Set format
+      operationId: getJWKs
+      tags:
+        - keys
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JWKSet"
+          description: >-
+            The public keys in JWK Set format
 
-  # /pat:
-  #   post:
-  #     summary: Create a Personal Access Token (PAT)
-  #     tags:
-  #       - pat
-  #     security:
-  #       - BearerAuthElevated: []
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/CreatePATRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/CreatePATResponse'
-  #         description: >-
-  #           Successfully created a Personal Access Token
+  /pat:
+    post:
+      summary: Create a Personal Access Token (PAT)
+      operationId: createPAT
+      tags:
+        - pat
+      security:
+        - BearerAuthElevated: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePATRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatePATResponse"
+          description: >-
+            Successfully created a Personal Access Token
 
-  # /signin/anonymous:
-  #   post:
-  #     summary: Sign in anonymously
-  #     tags:
-  #       - signin
-  #       - anonymous
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/SigninAnonymousRequest'
-  #       required: false
-  #     responses:
-  #       '200':
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/SessionPayload'
-  #         description: >-
-  #           Successfully signed in
+  /signin/anonymous:
+    post:
+      summary: Sign in anonymously
+      operationId: signInAnonymous
+      tags:
+        - signin
+        - anonymous
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SigninAnonymousRequest"
+        required: false
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionPayload"
+          description: >-
+            Successfully signed in
 
-  # /signin/otp/email:
-  #   post:
-  #     summary: >-
-  #       Sign in with a one time password sent to user's email. If the user doesn't exist, it will
-  #       be created. The options object is optional and can be used to configure the user's when
-  #       signing up a new user. It is ignored if the user already exists.
-  #     tags:
-  #       - signin
-  #       - signup
-  #       - otp
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/SignInOTPEmailRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         description: >-
-  #           OTP sent to user's email successfully
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/OKResponse'
+  /signin/otp/email:
+    post:
+      summary: >-
+        Sign in with a one time password sent to user's email. If the user doesn't exist, it will
+        be created. The options object is optional and can be used to configure the user's when
+        signing up a new user. It is ignored if the user already exists.
+      operationId: signInOTPEmail
+      tags:
+        - signin
+        - signup
+        - otp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInOTPEmailRequest"
+        required: true
+      responses:
+        "200":
+          description: >-
+            OTP sent to user's email successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OKResponse"
 
-  # /signin/otp/email/verify:
-  #   post:
-  #     summary: >-
-  #       Verify OTP and return a session if validation is successful
-  #     tags:
-  #       - signin
-  #       - signup
-  #       - otp
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/SignInOTPEmailVerifyRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         description: >-
-  #           Magic link sent to user's email successfully
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/SignInOTPEmailVerifyResponse'
+  /signin/otp/email/verify:
+    post:
+      summary: >-
+        Verify OTP and return a session if validation is successful
+      operationId: verifySignInOTPEmail
+      tags:
+        - signin
+        - signup
+        - otp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInOTPEmailVerifyRequest"
+        required: true
+      responses:
+        "200":
+          description: >-
+            Magic link sent to user's email successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInOTPEmailVerifyResponse"
 
-  # /signin/pat:
-  #   post:
-  #     summary: >-
-  #       Sign in with Personal Access Token (PAT)
-  #     tags:
-  #       - signin
-  #       - pat
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/SignInPATRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         description: >-
-  #           Successfully signed in
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/SessionPayload'
+  /signin/pat:
+    post:
+      summary: >-
+        Sign in with Personal Access Token (PAT)
+      operationId: signInPAT
+      tags:
+        - signin
+        - pat
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInPATRequest"
+        required: true
+      responses:
+        "200":
+          description: >-
+            Successfully signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionPayload"
 
-  # /signin/idtoken:
-  #   post:
-  #     summary: Sign in with in an id token
-  #     tags:
-  #       - signin
-  #       - idtoken
-  #       - apple
-  #       - google
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/SignInIdTokenRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         description: >-
-  #           Successfully signed in
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/SessionPayload'
+  /signin/idtoken:
+    post:
+      summary: Sign in with in an id token
+      operationId: signInIdToken
+      tags:
+        - signin
+        - idtoken
+        - apple
+        - google
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInIdTokenRequest"
+        required: true
+      responses:
+        "200":
+          description: >-
+            Successfully signed in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionPayload"
 
-  # /signin/webauthn:
-  #   post:
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/SignInWebauthnRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/SignInWebauthnResponse'
-  #         description: >-
-  #           Challenge sent
+  /link/idtoken:
+    post:
+      summary: Link a user account with the provider's account using an id token
+      operationId: linkIdToken
+      tags:
+        - link
+        - idtoken
+      security:
+        - BearerAuthElevated: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LinkIdTokenRequest"
+        required: true
+      responses:
+        "200":
+          description: >-
+            Identity linked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OKResponse"
 
-  #     summary: Signin with webauthn
-  #     tags:
-  #       - signin
-  #       - webauthn
+  /user/deanonymize:
+    post:
+      summary: >-
+        Deanonymize an anonymous user in adding missing email or email+password, depending on the chosen authentication method. Will send a confirmation email if the server is configured to do so
+      operationId: deanonymizeUser
+      tags:
+        - anonymous
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDeanonymizeRequest"
+        required: true
+      responses:
+        "200":
+          description: >-
+            User deanonymized successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OKResponse"
 
-  # /signin/webauthn/verify:
-  #   post:
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/SignInWebauthnVerifyRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/SessionPayload'
-  #         description: >-
-  #           Sign in successful
+  /user/email/change:
+    post:
+      summary: Change user email
+      operationId: changeUserEmail
+      tags:
+        - user
+        - email
+      security:
+        - BearerAuthElevated: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserEmailChangeRequest"
+        required: true
+      responses:
+        "200":
+          description: >-
+            Email change requested. An email with a verification link has been sent to the new address
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OKResponse"
 
-  #     summary: Verify webauthn signin
-  #     tags:
-  #       - signin
-  #       - webauthn
-  #       - verify
+  /user/email/send-verification-email:
+    post:
+      summary: Send verification email
+      operationId: sendVerificationEmail
+      tags:
+        - user
+        - email
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserEmailSendVerificationEmailRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OKResponse"
+          description: >-
+            Email verification email sent successfully
 
-  # /signup/webauthn:
-  #   post:
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/SignUpWebauthnRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/SignUpWebauthnResponse'
-  #         description: >-
-  #           Challenge sent
+  /user/password:
+    post:
+      summary: >-
+        Change user password. The user must be authenticated or provide a ticket
+      operationId: changeUserPassword
+      tags:
+        - user
+        - password
+      security:
+        - BearerAuthElevated: []
+        - {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserPasswordRequest"
+        required: true
+      responses:
+        "200":
+          description: >-
+            Password changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OKResponse"
 
-  #     summary: Signup with webauthn
-  #     tags:
-  #       - signup
-  #       - webauthn
+  /user/password/reset:
+    post:
+      summary: >-
+        Request a password reset. An email with a verification link will be sent to the user's address
+      operationId: sendPasswordResetEmail
+      tags:
+        - user
+        - password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserPasswordResetRequest"
+        required: true
+      responses:
+        "200":
+          description: >-
+            Password reset requested
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OKResponse"
 
-  # /signup/webauthn/verify:
-  #   post:
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/SignUpWebauthnVerifyRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/SessionPayload'
-  #         description: >-
-  #           Sign up successful
-
-  #     summary: Verify webauthn signup
-  #     tags:
-  #       - signup
-  #       - webauthn
-  #       - verify
-
-  # /link/idtoken:
-  #   post:
-  #     summary: Link a user account with the provider's account using an id token
-  #     tags:
-  #       - link
-  #       - idtoken
-  #     security:
-  #       - BearerAuthElevated: []
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/LinkIdTokenRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         description: >-
-  #           Identity linked successfully
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/OKResponse'
-
-  # /user/deanonymize:
-  #   post:
-  #     summary: >-
-  #       Deanonymize an anonymous user in adding missing email or email+password, depending on the chosen authentication method. Will send a confirmation email if the server is configured to do so
-  #     tags:
-  #       - anonymous
-  #     security:
-  #       - BearerAuth: []
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/UserDeanonymizeRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         description: >-
-  #           User deanonymized successfully
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/OKResponse'
-
-  # /user/email/change:
-  #   post:
-  #     summary: Change user email
-  #     tags:
-  #       - user
-  #       - email
-  #     security:
-  #       - BearerAuthElevated: []
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/UserEmailChangeRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         description: >-
-  #           Email change requested. An email with a verification link has been sent to the new address
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/OKResponse'
-
-  # /user/email/send-verification-email:
-  #   post:
-  #     summary: Send email verification email
-  #     tags:
-  #       - user
-  #       - email
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/UserEmailSendVerificationEmailRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/OKResponse'
-  #         description: >-
-  #           Email verification email sent successfully
-
-  # /user/password:
-  #   post:
-  #     summary: >-
-  #       Change user password. The user must be authenticated or provide a ticket
-  #     tags:
-  #       - user
-  #       - password
-  #     security:
-  #       - BearerAuthElevated: []
-  #       - {}
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/UserPasswordRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         description: >-
-  #           Password changed successfully
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/OKResponse'
-
-  # /user/password/reset:
-  #   post:
-  #     summary: >-
-  #       Request a password reset. An email with a verification link will be sent to the user's address
-  #     tags:
-  #       - user
-  #       - password
-  #     requestBody:
-  #       content:
-  #         application/json:
-  #           schema:
-  #             $ref: '#/components/schemas/UserPasswordResetRequest'
-  #       required: true
-  #     responses:
-  #       '200':
-  #         description: >-
-  #           Password reset requested
-  #         content:
-  #           application/json:
-  #             schema:
-  #               $ref: '#/components/schemas/OKResponse'
-
-  # /verify:
-  #   get:
-  #     summary: >-
-  #       Verify tickets created by email verification, email passwordless authentication (magic link),
-  #       or password reset
-  #     tags:
-  #       - verify
-  #     parameters:
-  #       - $ref: '#/components/parameters/TicketQuery'
-  #       - $ref: '#/components/parameters/TicketTypeQuery'
-  #       - $ref: '#/components/parameters/RedirectToQuery'
-  #     responses:
-  #       302:
-  #         description: Redirect response
-  #         headers:
-  #           Location:
-  #             $ref: '#/components/headers/RedirectLocation'
-  #         content: {}
+  /verify:
+    get:
+      summary: >-
+        Verify tickets created by email verification, email passwordless authentication (magic link),
+        or password reset
+      operationId: verifyTicket
+      tags:
+        - verify
+      parameters:
+        - $ref: "#/components/parameters/TicketQuery"
+        - $ref: "#/components/parameters/TicketTypeQuery"
+        - $ref: "#/components/parameters/RedirectToQuery"
+      responses:
+        302:
+          description: Redirect response
+          headers:
+            Location:
+              $ref: "#/components/headers/RedirectLocation"
+          content: {}
 
 components:
   securitySchemes:

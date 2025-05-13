@@ -1601,6 +1601,22 @@ type UserMfaRequestActiveMfaType = "totp" | "";
 
 Type of MFA to activate. Use empty string to disable MFA.
 
+---
+
+### VerifyTicketParams
+
+```ts
+type VerifyTicketParams = object;
+```
+
+#### Properties
+
+| Property                               | Type                                                    | Description                                                   |
+| -------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------- |
+| <a id="redirectto-2"></a> `redirectTo` | [`RedirectToQueryParameter`](#redirecttoqueryparameter) | Target URL for the redirect                                   |
+| <a id="ticket-3"></a> `ticket`         | [`TicketQueryParameter`](#ticketqueryparameter)         | Ticket                                                        |
+| <a id="type"></a> ~~`type?`~~          | [`TicketTypeQueryParameter`](#tickettypequeryparameter) | Type of the ticket. Deprecated, no longer used **Deprecated** |
+
 ## Functions
 
 ### createAPIClient()
