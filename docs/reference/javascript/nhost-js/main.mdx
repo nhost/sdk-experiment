@@ -250,47 +250,44 @@ try {
 ```ts
 // Needs the following imports:
 //
-// import {
-//   type FetchResponse,
-//   type GraphQLResponse,
-// } from "@nhost/nhost-js/graphql";
+// import { FetchResponse } from "../functions";
 //
-// const nhost = createClient({
-//   subdomain: subdomain,
-//   region: region,
-// });
 
-const nhostFunctions = createAPIClient(
-  "https://local.functions.local.nhost.run/v1",
-);
+const nhost = createClient({
+  subdomain: subdomain,
+  region: region,
+});
 
 try {
-  await nhostFunctions.fetch("/crash", {
+  await nhost.functions.fetch("/crash", {
     method: "POST",
     headers: {
       Accept: "application/json",
     },
   });
 } catch (error) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const resp = error as FetchResponse<any>;
-  console.log(1, error);
-  console.log(2, resp);
-
-  console.log("Error:", JSON.stringify(resp, null, 2));
+  console.log("Error:", resp);
   // Error: {
-  //   "body": {
-  //     "errors": [
-  //       {
-  //         "message": "field 'restrictedObject' not found in type: 'query_root'",
-  //         "extensions": {
-  //           "path": "$.selectionSet.restrictedObject",
-  //           "code": "validation-failed"
-  //         }
-  //       }
-  //     ]
-  //   },
-  //   "status": 200,
-  //   "headers": {}
+  //   status: 500,
+  //   body: '<!DOCTYPE html>\n' +
+  //     '<html lang="en">\n' +
+  //     '<head>\n' +
+  //     '<meta charset="utf-8">\n' +
+  //     '<title>Error</title>\n' +
+  //     '</head>\n' +
+  //     '<body>\n' +
+  //     '<pre>Error: This is an unhandled error<br> &nbsp; &nbsp;at default (/opt/project/functions/crash.ts:4:11)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/usr/local/lib/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:144:13)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)</pre>\n' +
+  //     '</body>\n' +
+  //     '</html>\n',
+  //   headers: Headers {
+  //     'content-length': '1056',
+  //     'content-security-policy': "default-src 'none'",
+  //     'content-type': 'text/html; charset=utf-8',
+  //     date: 'Tue, 13 May 2025 11:20:04 GMT',
+  //     'x-content-type-options': 'nosniff'
+  //   }
   // }
   //
   // error handling...
