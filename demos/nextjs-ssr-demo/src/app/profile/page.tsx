@@ -1,5 +1,6 @@
 import { createNhostClient } from "../lib/nhost/server";
 import MFASettings from "./mfa-settings";
+import ChangePassword from "./change-password";
 
 export default async function Profile() {
   // Create the client with async cookie access
@@ -101,6 +102,9 @@ export default async function Profile() {
 
       {/* MFA Settings Component */}
       <MFASettings initialMfaEnabled={isMfaEnabled} />
+
+      {/* Change Password Component */}
+      <ChangePassword />
     </div>
   );
 }

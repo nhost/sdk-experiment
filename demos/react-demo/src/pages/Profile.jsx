@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth/AuthProvider';
 import { nhost } from '../lib/nhost/client';
 import MFASettings from '../components/MFASettings';
+import ChangePassword from '../components/ChangePassword';
 
 export default function Profile() {
   const { user, session, isAuthenticated, isLoading } = useAuth();
@@ -132,6 +133,8 @@ export default function Profile() {
 
 
       <MFASettings key={`mfa-settings-${isMfaEnabled}`} initialMfaEnabled={isMfaEnabled} />
+
+      <ChangePassword />
     </div>
   );
 }

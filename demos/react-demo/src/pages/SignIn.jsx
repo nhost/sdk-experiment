@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import TabForm from "../components/TabForm";
 import MagicLinkForm from "../components/MagicLinkForm";
@@ -6,7 +6,7 @@ import { useAuth } from "../lib/auth/AuthProvider";
 import { nhost } from "../lib/nhost/client";
 
 export default function SignIn() {
-  const { signIn, isAuthenticated } = useAuth();
+  const { signIn, isAuthenticated, user, session } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -16,16 +16,14 @@ export default function SignIn() {
   const [error, setError] = useState(searchParams.get("error") || null);
 
   const magicLinkSent = searchParams.get("magic") === "success";
-
-  // If already authenticated, redirect to profile
-  // Don't redirect immediately if this is part of an auth flow (coming from verification)
   const isVerifying = searchParams.has("fromVerify");
 
-  if (isAuthenticated && !isVerifying && !isLoading) {
-    setTimeout(() => {
+  // Use useEffect for navigation after authentication is confirmed
+  useEffect(() => {
+    if (isAuthenticated && !isVerifying) {
       navigate("/profile");
-    }, 0);
-  }
+    }
+  }, [isAuthenticated, isVerifying, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,14 +31,11 @@ export default function SignIn() {
     setError(null);
 
     try {
-      const response = await nhost.auth.signInEmailPassword({
-        email,
-        password,
-      });
+      // Use the signIn function from auth context
+      const response = await signIn(email, password);
 
       // Check if MFA is required
       if (response.body?.mfa) {
-        // Redirect to MFA verification page with the ticket
         navigate(`/signin/mfa?ticket=${response.body.mfa.ticket}`);
         return;
       }

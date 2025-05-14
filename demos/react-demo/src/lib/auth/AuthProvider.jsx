@@ -20,34 +20,52 @@ export function AuthProvider({ children }) {
     setSession(currentSession);
     setIsAuthenticated(!!currentSession);
 
-    // Create a function to check auth status periodically
+    // Create a function to check auth status
     // Since the SDK doesn't provide an event-based API in this version
     const checkAuthStatus = () => {
       const currentSession = nhost.getUserSession();
-      setUser(currentSession?.user || null);
-      setSession(currentSession);
-      setIsAuthenticated(!!currentSession);
+      const sessionStr = JSON.stringify(currentSession);
+      const prevSessionStr = JSON.stringify(session);
+
+      // Only update if the session has changed
+      if (sessionStr !== prevSessionStr) {
+        setUser(currentSession?.user || null);
+        setSession(currentSession);
+        setIsAuthenticated(!!currentSession);
+      }
+
       setIsLoading(false);
     };
 
-    // Set up initial interval to check auth status
-    const intervalId = setInterval(checkAuthStatus, 2000);
+    // Check immediately and then set up interval
+    checkAuthStatus();
 
-    // Set loading to false after initial check
-    setIsLoading(false);
+    // Set up interval to check auth status - shorter interval for better UX
+    const intervalId = setInterval(checkAuthStatus, 1000);
 
     // Clean up interval on unmount
     return () => {
       clearInterval(intervalId);
     };
-  }, []);
+  }, []); // Remove the session dependency to avoid the dependency cycle
 
   // Authentication methods
   const signIn = async (email, password) => {
-    return await nhost.auth.signInEmailPassword({
+    const response = await nhost.auth.signInEmailPassword({
       email,
       password,
     });
+
+    // If sign-in successful, update the auth state immediately
+    if (response.body?.session) {
+      // Update state with the new session
+      const currentSession = response.body.session;
+      setUser(currentSession?.user || null);
+      setSession(currentSession);
+      setIsAuthenticated(true);
+    }
+
+    return response;
   };
 
   const signUp = async (email, password, options = {}) => {
@@ -59,18 +77,17 @@ export function AuthProvider({ children }) {
   };
 
   const signOut = async () => {
-    try {
-      // Get the current session for the refresh token
-      const session = nhost.getUserSession();
-      if (session) {
-        await nhost.auth.signOut({
-          refreshToken: session.refreshToken,
-        });
-        await nhost.clearSession();
-      }
-    } catch (error) {
-      console.error("Error signing out:", error);
-      throw error;
+    // Get the current session for the refresh token
+    const session = nhost.getUserSession();
+    if (session) {
+      await nhost.auth.signOut({
+        refreshToken: session.refreshToken,
+      });
+
+      // Clear state immediately after sign out
+      setUser(null);
+      setSession(null);
+      setIsAuthenticated(false);
     }
   };
 

@@ -311,23 +311,20 @@ sessions between client and server environments.
 ##### Constructor
 
 ```ts
-new CookieStorage(
-   cookieName: string,
-   expirationDays: number,
-   secure: boolean,
-   sameSite: "strict" | "lax" | "none"): CookieStorage;
+new CookieStorage(options?: object): CookieStorage;
 ```
 
 Creates a new CookieStorage instance
 
 ###### Parameters
 
-| Parameter        | Type                              | Default value         | Description                                                     |
-| ---------------- | --------------------------------- | --------------------- | --------------------------------------------------------------- |
-| `cookieName`     | `string`                          | `DEFAULT_SESSION_KEY` | Name of the cookie to use (defaults to "nhostSession")          |
-| `expirationDays` | `number`                          | `30`                  | Number of days until the cookie expires (defaults to 30)        |
-| `secure`         | `boolean`                         | `true`                | Whether to set the Secure flag on the cookie (defaults to true) |
-| `sameSite`       | `"strict"` \| `"lax"` \| `"none"` | `"lax"`               | SameSite policy for the cookie (defaults to "lax")              |
+| Parameter                 | Type                                                                                                                              | Description                                                     |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `options?`                | \{ `cookieName?`: `string`; `expirationDays?`: `number`; `sameSite?`: `"strict"` \| `"lax"` \| `"none"`; `secure?`: `boolean`; \} | Configuration options                                           |
+| `options.cookieName?`     | `string`                                                                                                                          | Name of the cookie to use (defaults to "nhostSession")          |
+| `options.expirationDays?` | `number`                                                                                                                          | Number of days until the cookie expires (defaults to 30)        |
+| `options.sameSite?`       | `"strict"` \| `"lax"` \| `"none"`                                                                                                 | SameSite policy for the cookie (defaults to "lax")              |
+| `options.secure?`         | `boolean`                                                                                                                         | Whether to set the Secure flag on the cookie (defaults to true) |
 
 ###### Returns
 
@@ -407,16 +404,17 @@ Persists the session across page reloads and browser restarts.
 ##### Constructor
 
 ```ts
-new LocalStorage(storageKey: string): LocalStorage;
+new LocalStorage(options?: object): LocalStorage;
 ```
 
 Creates a new LocalStorage instance
 
 ###### Parameters
 
-| Parameter    | Type     | Default value         | Description                                                 |
-| ------------ | -------- | --------------------- | ----------------------------------------------------------- |
-| `storageKey` | `string` | `DEFAULT_SESSION_KEY` | The key to use in localStorage (defaults to "nhostSession") |
+| Parameter             | Type                           | Description                                                 |
+| --------------------- | ------------------------------ | ----------------------------------------------------------- |
+| `options?`            | \{ `storageKey?`: `string`; \} | Configuration options                                       |
+| `options.storageKey?` | `string`                       | The key to use in localStorage (defaults to "nhostSession") |
 
 ###### Returns
 

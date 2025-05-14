@@ -44,10 +44,11 @@ export class LocalStorage implements SessionStorageInterface {
 
   /**
    * Creates a new LocalStorage instance
-   * @param storageKey - The key to use in localStorage (defaults to "nhostSession")
+   * @param options - Configuration options
+   * @param options.storageKey - The key to use in localStorage (defaults to "nhostSession")
    */
-  constructor(storageKey = DEFAULT_SESSION_KEY) {
-    this.storageKey = storageKey;
+  constructor(options?: { storageKey?: string }) {
+    this.storageKey = options?.storageKey || DEFAULT_SESSION_KEY;
   }
 
   /**
@@ -125,21 +126,22 @@ export class CookieStorage implements SessionStorageInterface {
 
   /**
    * Creates a new CookieStorage instance
-   * @param cookieName - Name of the cookie to use (defaults to "nhostSession")
-   * @param expirationDays - Number of days until the cookie expires (defaults to 30)
-   * @param secure - Whether to set the Secure flag on the cookie (defaults to true)
-   * @param sameSite - SameSite policy for the cookie (defaults to "lax")
+   * @param options - Configuration options
+   * @param options.cookieName - Name of the cookie to use (defaults to "nhostSession")
+   * @param options.expirationDays - Number of days until the cookie expires (defaults to 30)
+   * @param options.secure - Whether to set the Secure flag on the cookie (defaults to true)
+   * @param options.sameSite - SameSite policy for the cookie (defaults to "lax")
    */
-  constructor(
-    cookieName = DEFAULT_SESSION_KEY,
-    expirationDays = 30,
-    secure = true,
-    sameSite: "strict" | "lax" | "none" = "lax",
-  ) {
-    this.cookieName = cookieName;
-    this.expirationDays = expirationDays;
-    this.secure = secure;
-    this.sameSite = sameSite;
+  constructor(options?: {
+    cookieName?: string;
+    expirationDays?: number;
+    secure?: boolean;
+    sameSite?: "strict" | "lax" | "none";
+  }) {
+    this.cookieName = options?.cookieName || DEFAULT_SESSION_KEY;
+    this.expirationDays = options?.expirationDays ?? 30;
+    this.secure = options?.secure ?? true;
+    this.sameSite = options?.sameSite || "lax";
   }
 
   /**
@@ -182,7 +184,7 @@ export class CookieStorage implements SessionStorageInterface {
    * Removes the session cookie
    */
   remove(): void {
-    document.cookie = `${this.cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; ${this.secure ? "secure; " : ""}SameSite=${this.sameSite}`;
+    document.cookie = `${this.cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; ${this.secure ? "secure; " : ""}SameSite=${this.sameSite}`;
   }
 }
 

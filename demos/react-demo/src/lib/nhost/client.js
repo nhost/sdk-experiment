@@ -1,4 +1,4 @@
-import { createClient } from "@nhost/nhost-js";
+import { createClient, CookieStorage } from "@nhost/nhost-js";
 
 /**
  * This imports the SDK from the local workspace in packages/nhost-js
@@ -9,4 +9,7 @@ import { createClient } from "@nhost/nhost-js";
 export const nhost = createClient({
   region: import.meta.env.VITE_NHOST_REGION || "local",
   subdomain: import.meta.env.VITE_NHOST_SUBDOMAIN || "local",
+  storage: new CookieStorage({
+    secure: import.meta.env.VITE_ENV === "production",
+  }),
 });

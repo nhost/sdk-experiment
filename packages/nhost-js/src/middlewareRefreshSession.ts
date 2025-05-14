@@ -196,6 +196,7 @@ async function refreshToken(
     }
     return null;
   } catch (error) {
+    storage.remove();
     console.error("Error refreshing token:", error);
     return null;
   }
