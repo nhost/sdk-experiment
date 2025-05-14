@@ -13,12 +13,15 @@ export default async function Profile() {
     try {
       const response = await nhost.graphql.post({
         query: `
-          query GetUserMfaStatus {
-            user(id: "${session.user.id}") {
+          query GetUserMfaStatus($userId: uuid!) {
+            user(id: $userId) {
               activeMfaType
             }
           }
         `,
+        variables: {
+          userId: session.user.id
+        }
       });
 
       // MFA is enabled if activeMfaType is "totp"

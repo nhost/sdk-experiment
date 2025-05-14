@@ -51,16 +51,10 @@ export function AuthProvider({ children }) {
   };
 
   const signUp = async (email, password, options = {}) => {
-    // Make sure the redirectTo URL is properly set for email verification
-    const signUpOptions = {
-      ...options,
-      redirectTo: `${window.location.origin}/verify`
-    };
-    
-    return await nhost.auth.signUpEmailPassword({
+    return nhost.auth.signUpEmailPassword({
       email,
       password,
-      options: signUpOptions,
+      options,
     });
   };
 
@@ -81,12 +75,10 @@ export function AuthProvider({ children }) {
   };
 
   const sendMagicLink = async (email, options = {}) => {
-    // Using a different redirect approach for passwordless email that appends
-    // the refreshToken as a query parameter for our verification page
     return await nhost.auth.signInPasswordlessEmail({
       email,
       options: {
-        redirectTo: `${window.location.origin}/verify`,
+        redirectTo: window.location.origin + "/verify",
         ...options,
       },
     });

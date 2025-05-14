@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { nhost } from '../lib/nhost/client';
 
 export default function MFASettings({ initialMfaEnabled }) {
@@ -6,6 +6,13 @@ export default function MFASettings({ initialMfaEnabled }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  
+  // Update internal state when prop changes
+  useEffect(() => {
+    if (initialMfaEnabled !== isMfaEnabled) {
+      setIsMfaEnabled(initialMfaEnabled);
+    }
+  }, [initialMfaEnabled]);
 
   // MFA setup states
   const [isSettingUpMfa, setIsSettingUpMfa] = useState(false);

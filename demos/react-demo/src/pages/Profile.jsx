@@ -16,16 +16,32 @@ export default function Profile() {
       
       try {
         setIsLoadingMfa(true);
-        const response = await nhost.graphql.request(`
-          query GetUserMfaStatus {
-            user(id: "${user.id}") {
-              activeMfaType
+        // Correctly structure GraphQL query with parameters
+        const response = await nhost.graphql.post({
+          query: `
+            query GetUserMfaStatus($userId: uuid!) {
+              user(id: $userId) {
+                activeMfaType
+              }
             }
+          `,
+          variables: {
+            userId: user.id
           }
-        `);
+        });
 
-        const userData = response.data;
-        setIsMfaEnabled(userData?.user?.activeMfaType === "totp");
+        // Check if there are any errors in the response
+        if (response.body.errors && response.body.errors.length > 0) {
+          console.error("Error fetching MFA status:", response.body.errors);
+          return;
+        }
+
+        const userData = response.body?.data;
+        const activeMfaType = userData?.user?.activeMfaType;
+        const newMfaEnabled = activeMfaType === "totp";
+        
+        // Update the state
+        setIsMfaEnabled(newMfaEnabled);
       } catch (err) {
         console.error("Failed to query MFA status:", err);
       } finally {
@@ -74,12 +90,12 @@ export default function Profile() {
           <div className="profile-item">
             <strong>User ID:</strong>
             <span
-              className="ml-2"
-              style={{
-                fontFamily: "monospace",
-                fontSize: "0.875rem",
-              }}
-            >
+                    className="ml-2"
+                    style={{
+                      fontFamily: "var(--font-geist-mono)",
+                      fontSize: "0.875rem",
+                    }}
+                  >
               {user?.id || "Not available"}
             </span>
           </div>
@@ -114,7 +130,8 @@ export default function Profile() {
         </pre>
       </div>
 
-      <MFASettings initialMfaEnabled={isMfaEnabled} />
+
+      <MFASettings key={`mfa-settings-${isMfaEnabled}`} initialMfaEnabled={isMfaEnabled} />
     </div>
   );
 }

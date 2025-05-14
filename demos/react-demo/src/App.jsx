@@ -1,3 +1,4 @@
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './lib/auth/AuthProvider';
 import Navigation from './components/Navigation';
@@ -7,6 +8,8 @@ import SignUp from './pages/SignUp';
 import Profile from './pages/Profile';
 import Upload from './pages/Upload';
 import Verify from './pages/Verify';
+
+const MfaVerification = lazy(() => import('./pages/signin/mfa'));
 
 function App() {
   return (
@@ -18,6 +21,11 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/signin" element={<SignIn />} />
+              <Route path="/signin/mfa" element={
+                <Suspense fallback={<div className="loading-container">Loading...</div>}>
+                  <MfaVerification />
+                </Suspense>
+              } />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/upload" element={<Upload />} />
