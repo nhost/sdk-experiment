@@ -1,35 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './lib/auth/AuthProvider';
+import Navigation from './components/Navigation';
+import Home from './pages/Home';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+import Profile from './pages/Profile';
+import Upload from './pages/Upload';
+import Verify from './pages/Verify';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <AuthProvider>
+      <Router>
+        <div className="flex-col min-h-screen">
+          <Navigation />
+          <main className="max-w-2xl mx-auto p-6 w-full">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/upload" element={<Upload />} />
+              <Route path="/verify" element={<Verify />} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </main>
+          <footer>
+            <p className="text-sm text-center" style={{ color: "var(--text-muted)" }}>
+              © {new Date().getFullYear()} Nhost Demo
+            </p>
+          </footer>
+        </div>
+      </Router>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
