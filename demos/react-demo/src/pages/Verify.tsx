@@ -70,7 +70,7 @@ const Verify = (): JSX.Element => {
     return () => {
       isMounted = false;
     };
-  }, [location.search, navigate]);
+  }, [location.search, navigate, nhost.auth]);
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -92,7 +92,7 @@ const Verify = (): JSX.Element => {
               <p className="mb-4 text-green-500 font-bold">
                 ✓ Successfully verified!
               </p>
-              <p>You'll be redirected to your profile page shortly...</p>
+              <p>You&aposll be redirected to your profile page shortly...</p>
             </div>
           )}
 

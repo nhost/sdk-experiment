@@ -5,7 +5,7 @@ import MagicLinkForm from "../components/MagicLinkForm";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-export default function SignUp(): JSX.Element {
+const SignUp= (): JSX.Element => {
   const { nhost, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -44,7 +44,7 @@ export default function SignUp(): JSX.Element {
         // Verification email sent
         navigate("/verify");
       }
-    } catch (err: any) {
+    } catch (err) {
       const error = err as FetchResponse<ErrorResponse>;
       setError(error.body.message || "An error occurred");
     } finally {
@@ -124,3 +124,5 @@ export default function SignUp(): JSX.Element {
     </div>
   );
 }
+
+export default SignUp;

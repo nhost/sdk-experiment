@@ -3,12 +3,12 @@ import { useAuth } from "../lib/nhost/AuthProvider";
 import { formatFileSize } from "../lib/utils";
 import { FileMetadata } from "@nhost/nhost-js/storage";
 
-interface DeleteStatus {
+interface IDeleteStatus {
   message: string;
   isError: boolean;
 }
 
-export default function Upload(): JSX.Element {
+const Upload = (): JSX.Element => {
   const { isAuthenticated, nhost } = useAuth();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -19,7 +19,7 @@ export default function Upload(): JSX.Element {
   const [files, setFiles] = useState<FileMetadata[]>([]);
   const [viewingFile, setViewingFile] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
-  const [deleteStatus, setDeleteStatus] = useState<DeleteStatus | null>(null);
+  const [deleteStatus, setDeleteStatus] = useState<IDeleteStatus | null>(null);
 
   // Fetch existing files when component mounts
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function Upload(): JSX.Element {
       }
 
       setFiles(response.body.data.files);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error fetching files:", err);
       setError("Failed to load files. Please try refreshing the page.");
     } finally {
@@ -69,7 +69,7 @@ export default function Upload(): JSX.Element {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       if (file) {
-        setSelectedFile(file as any);
+        setSelectedFile(file);
         setError(null);
         setUploadResult(null);
       }
@@ -114,7 +114,7 @@ export default function Upload(): JSX.Element {
       setTimeout(() => {
         setUploadResult(null);
       }, 3000);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Failed to upload file");
     } finally {
       setUploading(false);
@@ -175,7 +175,7 @@ export default function Upload(): JSX.Element {
           newWindow.document.close();
         }
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(`Failed to view file: ${err.message}`);
       console.error("Error viewing file:", err);
     } finally {
@@ -215,7 +215,7 @@ export default function Upload(): JSX.Element {
       setTimeout(() => {
         setDeleteStatus(null);
       }, 3000);
-    } catch (err: any) {
+    } catch (err) {
       // Show error message
       setDeleteStatus({
         message: `Failed to delete ${fileName}: ${err.message}`,
@@ -420,3 +420,5 @@ export default function Upload(): JSX.Element {
     </div>
   );
 }
+
+export default Upload;

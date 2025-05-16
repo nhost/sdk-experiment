@@ -3,12 +3,12 @@ import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../../lib/nhost/AuthProvider";
 import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-interface VerificationResponse {
+interface IVerificationResponse {
   success?: boolean;
   error?: string;
 }
 
-export default function MfaVerification(): JSX.Element {
+const MfaVerification = (): JSX.Element => {
   // Extract ticket from URL search params
   const location = useLocation();
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ export default function MfaVerification(): JSX.Element {
   const verifyMfa = async (
     ticket: string,
     otp: string,
-  ): Promise<VerificationResponse> => {
+  ): Promise<IVerificationResponse> => {
     try {
       // We already imported nhost client at the top of the file
 
@@ -72,7 +72,7 @@ export default function MfaVerification(): JSX.Element {
       }
 
       return { error: "Failed to verify MFA code" };
-    } catch (err: any) {
+    } catch (err) {
       const error = err as FetchResponse<ErrorResponse>;
       return { error: error.body.message || "Failed to verify code" };
     }
@@ -127,3 +127,5 @@ export default function MfaVerification(): JSX.Element {
     </div>
   );
 }
+
+export default MfaVerification;
