@@ -4,21 +4,15 @@ import MFASettings from "../components/MFASettings";
 import ChangePassword from "../components/ChangePassword";
 import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-interface MfaStatusResponse {
-  body: {
+interface IMfaStatusResponse {
     data?: {
       user?: {
         activeMfaType: string | null;
       };
     };
-    errors?: Array<{
-      message: string;
-      [key: string]: any;
-    }>;
-  };
 }
 
-export default function Profile(): JSX.Element {
+const Profile = (): JSX.Element => {
   const { nhost, user, session, isAuthenticated } = useAuth();
   const [isMfaEnabled, setIsMfaEnabled] = useState<boolean>(false);
 
@@ -29,7 +23,7 @@ export default function Profile(): JSX.Element {
 
       try {
         // Correctly structure GraphQL query with parameters
-        const response: MfaStatusResponse = await nhost.graphql.post({
+        const response: FetchResponse<IMfaStatusResponse> = await nhost.graphql.post({
           query: `
             query GetUserMfaStatus($userId: uuid!) {
               user(id: $userId) {
@@ -60,7 +54,7 @@ export default function Profile(): JSX.Element {
     if (isAuthenticated && user?.id) {
       fetchMfaStatus();
     }
-  }, [user, isAuthenticated]);
+  }, [user, isAuthenticated, nhost.graphql]);
 
   // ProtectedRoute component now handles authentication check
   // We can just focus on the component logic here
@@ -122,10 +116,12 @@ export default function Profile(): JSX.Element {
 
       <MFASettings
         key={`mfa-settings-${isMfaEnabled}`}
-        initialMfaEnabled={isMfaEnabled}
+        isInitialMfaEnabled={isMfaEnabled}
       />
 
       <ChangePassword />
     </div>
   );
-}
+};
+
+export default Profile;

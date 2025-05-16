@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { JSX } from "react";
 
-export default function Navigation(): JSX.Element {
+const Navigation = (): JSX.Element => {
   const { isAuthenticated, nhost, session } = useAuth();
   const location = useLocation();
 
@@ -82,4 +82,6 @@ export default function Navigation(): JSX.Element {
       </div>
     </nav>
   );
-}
+};
+
+export default Navigation;

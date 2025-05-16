@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-export default function Verify(): JSX.Element {
+const Verify = (): JSX.Element => {
   const location = useLocation();
   const navigate = useNavigate();
   const [status, setStatus] = useState<"verifying" | "success" | "error">(
@@ -51,7 +51,7 @@ export default function Verify(): JSX.Element {
         setTimeout(() => {
           if (isMounted) navigate("/profile");
         }, 1500);
-      } catch (err: any) {
+      } catch (err) {
         const error = err as FetchResponse<ErrorResponse>;
         if (!isMounted) return;
 
@@ -114,4 +114,6 @@ export default function Verify(): JSX.Element {
       </div>
     </div>
   );
-}
+};
+
+export default Verify;

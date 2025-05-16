@@ -10,7 +10,7 @@ import { createClient, NhostClient } from "@nhost/nhost-js";
 import { Session } from "@nhost/nhost-js/auth";
 import { EventEmitterStorage } from "./EventEmitterStorage";
 
-interface AuthContextType {
+interface IAuthContextType {
   user: Session["user"] | null;
   session: Session | null;
   isAuthenticated: boolean;
@@ -19,13 +19,13 @@ interface AuthContextType {
 }
 
 // Create context for authentication state and nhost client
-const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<IAuthContextType | null>(null);
 
-interface AuthProviderProps {
+interface IAuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
+export const AuthProvider = ({ children }: IAuthProviderProps) => {
   const [user, setUser] = useState<Session["user"] | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, [nhost, isAuthenticated]);
 
   // Context value with nhost client directly exposed
-  const value: AuthContextType = {
+  const value: IAuthContextType = {
     user,
     session,
     isAuthenticated,
@@ -98,7 +98,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 };
 
 // Custom hook to use the auth context
-export const useAuth = (): AuthContextType => {
+export const useAuth = (): IAuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");

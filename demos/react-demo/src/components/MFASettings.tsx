@@ -2,14 +2,15 @@ import { useState, useEffect, JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-interface MFASettingsProps {
-  initialMfaEnabled: boolean;
+interface IMFASettingsProps {
+  isInitialMfaEnabled: boolean;
 }
 
-export default function MFASettings({
-  initialMfaEnabled,
-}: MFASettingsProps): JSX.Element {
-  const [isMfaEnabled, setIsMfaEnabled] = useState<boolean>(initialMfaEnabled);
+const MFASettings = ({
+  isInitialMfaEnabled,
+}: IMFASettingsProps): JSX.Element => {
+  const [isMfaEnabled, setIsMfaEnabled] =
+    useState<boolean>(isInitialMfaEnabled);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -17,10 +18,10 @@ export default function MFASettings({
 
   // Update internal state when prop changes
   useEffect(() => {
-    if (initialMfaEnabled !== isMfaEnabled) {
-      setIsMfaEnabled(initialMfaEnabled);
+    if (isInitialMfaEnabled !== isMfaEnabled) {
+      setIsMfaEnabled(isInitialMfaEnabled);
     }
-  }, [initialMfaEnabled, isMfaEnabled]);
+  }, [isInitialMfaEnabled, isMfaEnabled]);
 
   // MFA setup states
   const [isSettingUpMfa, setIsSettingUpMfa] = useState<boolean>(false);
@@ -276,4 +277,6 @@ export default function MFASettings({
       )}
     </div>
   );
-}
+};
+
+export default MFASettings;

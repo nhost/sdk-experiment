@@ -2,7 +2,7 @@ import { JSX } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../lib/nhost/AuthProvider";
 
-export default function Home(): JSX.Element {
+const Home = (): JSX.Element => {
   const { isAuthenticated, isLoading } = useAuth();
 
   // If authentication is still loading, show a loading state
@@ -21,4 +21,6 @@ export default function Home(): JSX.Element {
 
   // If not authenticated, redirect to signin page
   return <Navigate to="/signin" />;
-}
+};
+
+export default Home;

@@ -1,14 +1,14 @@
 import { type ReactNode, useState, JSX } from "react";
 
-interface TabFormProps {
+interface ITabFormProps {
   passwordTabContent: ReactNode;
   magicTabContent: ReactNode;
 }
 
-export default function TabForm({
+const TabForm = ({
   passwordTabContent,
   magicTabContent,
-}: TabFormProps): JSX.Element {
+}: ITabFormProps): JSX.Element => {
   const [activeTab, setActiveTab] = useState<"password" | "magic">("password");
 
   return (
@@ -33,4 +33,6 @@ export default function TabForm({
       </div>
     </div>
   );
-}
+};
+
+export default TabForm;

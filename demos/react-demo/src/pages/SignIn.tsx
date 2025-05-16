@@ -5,7 +5,7 @@ import MagicLinkForm from "../components/MagicLinkForm";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-export default function SignIn(): JSX.Element {
+const SignIn = (): JSX.Element => {
   const { nhost, isAuthenticated } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ export default function SignIn(): JSX.Element {
       } else {
         setError("Failed to sign in");
       }
-    } catch (err: any) {
+    } catch (err) {
       const error = err as FetchResponse<ErrorResponse>;
       setError(error.body.message || "An error occurred");
     } finally {
@@ -128,4 +128,6 @@ export default function SignIn(): JSX.Element {
       </div>
     </div>
   );
-}
+};
+
+export default SignIn;

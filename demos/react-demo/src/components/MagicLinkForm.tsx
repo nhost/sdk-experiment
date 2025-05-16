@@ -2,13 +2,13 @@ import React, { JSX, useState } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-interface MagicLinkFormProps {
+interface IMagicLinkFormProps {
   buttonLabel?: string;
 }
 
-export default function MagicLinkForm({
+const MagicLinkForm = ({
   buttonLabel = "Send Magic Link",
-}: MagicLinkFormProps): JSX.Element {
+}: IMagicLinkFormProps): JSX.Element => {
   const [email, setEmail] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
@@ -72,4 +72,6 @@ export default function MagicLinkForm({
       </button>
     </form>
   );
-}
+};
+
+export default MagicLinkForm;

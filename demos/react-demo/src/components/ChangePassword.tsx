@@ -2,7 +2,7 @@ import { useState, JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-export default function ChangePassword(): JSX.Element {
+const ChangePassword = (): JSX.Element => {
   const [newPassword, setNewPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -108,4 +108,6 @@ export default function ChangePassword(): JSX.Element {
       </form>
     </div>
   );
-}
+};
+
+export default ChangePassword;
