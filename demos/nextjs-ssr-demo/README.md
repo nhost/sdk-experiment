@@ -98,6 +98,7 @@ There are two peculiarities with the profile page:
 
 1. The session is read on the server from the cookie so the profile can be rendered server-side.
 2. The MFA configuration is done using a client component to provide interactivity.
+3. Similarly, changing the password is done client-side.
 
 You can find all the relevant code in the folder:
 
