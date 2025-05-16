@@ -6,6 +6,12 @@
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.9.0",
+  "scripts": {
+    "build": "pnpm --recursive --filter \"./packages/**\" --filter \"./demos/**\" run build",
+    "test": "pnpm --recursive --filter \"./packages/**\" --filter \"./demos/**\" run test",
+    "test:audit": "pnpm audit",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\""
+  },
   "devDependencies": {
     "@eslint/js": "9.26.0",
     "@eslint/json": "^0.12.0",

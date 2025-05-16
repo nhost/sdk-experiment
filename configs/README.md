@@ -5,6 +5,7 @@ This directory contains standardized configurations for various tools and framew
 ## Available Configurations
 
 - [**TypeScript (`/tsconfig`)**](./tsconfig/README.md): Centralized TypeScript configurations for different project types
+
   - Standard base configuration with strict type checking
   - Specialized configurations for libraries, frontend apps, and Node.js
   - Documented usage patterns and extension points

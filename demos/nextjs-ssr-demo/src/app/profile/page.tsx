@@ -21,8 +21,8 @@ export default async function Profile() {
           }
         `,
         variables: {
-          userId: session.user.id
-        }
+          userId: session.user.id,
+        },
       });
 
       // MFA is enabled if activeMfaType is "totp"

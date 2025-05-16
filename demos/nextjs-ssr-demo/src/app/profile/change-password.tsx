@@ -9,36 +9,36 @@ export default function ChangePassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  
+
   // Create the client for the component
   const nhost = createNhostClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Reset states
     setError("");
     setSuccess(false);
-    
+
     // Validate passwords
     if (newPassword.length < 3) {
       setError("Password must be at least 3 characters long");
       return;
     }
-    
+
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       // Use the changeUserPassword method from the SDK
       const response = await nhost.auth.changeUserPassword({
-        newPassword
+        newPassword,
       });
-      
+
       if (response.body.error) {
         setError(response.body.error.message || "Failed to change password");
       } else {
@@ -52,26 +52,25 @@ export default function ChangePassword() {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="glass-card p-8 mb-6">
       <h3 className="text-xl mb-4">Change Password</h3>
-      
+
       {success && (
         <div className="alert alert-success mb-4">
           Password changed successfully!
         </div>
       )}
-      
-      {error && (
-        <div className="alert alert-error mb-4">
-          {error}
-        </div>
-      )}
-      
+
+      {error && <div className="alert alert-error mb-4">{error}</div>}
+
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label htmlFor="new-password" className="block text-sm font-medium mb-1">
+          <label
+            htmlFor="new-password"
+            className="block text-sm font-medium mb-1"
+          >
             New Password
           </label>
           <input
@@ -85,9 +84,12 @@ export default function ChangePassword() {
             disabled={isLoading}
           />
         </div>
-        
+
         <div className="mb-6">
-          <label htmlFor="confirm-password" className="block text-sm font-medium mb-1">
+          <label
+            htmlFor="confirm-password"
+            className="block text-sm font-medium mb-1"
+          >
             Confirm Password
           </label>
           <input
@@ -100,7 +102,7 @@ export default function ChangePassword() {
             disabled={isLoading}
           />
         </div>
-        
+
         <button
           type="submit"
           disabled={isLoading}
