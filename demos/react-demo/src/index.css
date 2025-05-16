@@ -16,7 +16,9 @@
   --text-secondary: #d1d5db;
   --text-muted: #9ca3af;
   --border-color: rgba(31, 41, 55, 0.7);
-  --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-geist-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
 }
 
 * {
@@ -28,7 +30,10 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
   line-height: 1.6;
   min-height: 100vh;
 }

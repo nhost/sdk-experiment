@@ -1,46 +1,52 @@
-import { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import TabForm from '../components/TabForm';
-import MagicLinkForm from '../components/MagicLinkForm';
-import { useAuth } from '../lib/auth/AuthProvider';
+import { useState, JSX } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import TabForm from "../components/TabForm";
+import MagicLinkForm from "../components/MagicLinkForm";
+import { useAuth } from "../lib/nhost/AuthProvider";
+import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-export default function SignUp() {
-  const { signUp, isAuthenticated } = useAuth();
+export default function SignUp(): JSX.Element {
+  const { nhost, isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [displayName, setDisplayName] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   // If already authenticated, redirect to profile
   if (isAuthenticated) {
     return <Navigate to="/profile" />;
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await signUp(email, password, { 
-        displayName,
-        redirectTo: window.location.origin + '/verify'
+      const response = await nhost.auth.signUpEmailPassword({
+        email,
+        password,
+        options: {
+          displayName,
+          redirectTo: window.location.origin + "/verify",
+        },
       });
-      
-      if (response.error) {
-        setError(response.error.message || 'Failed to sign up');
-      } else if (response.body) {
+
+      if (response.body) {
         // Successfully signed up and automatically signed in
-        navigate('/profile');
+        navigate("/profile");
       } else {
         // Verification email sent
-        navigate('/verify');
+        navigate("/verify");
       }
-    } catch (err) {
-      setError(err.message || 'An error occurred');
+    } catch (err: any) {
+      const error = err as FetchResponse<ErrorResponse>;
+      setError(error.body.message || "An error occurred");
     } finally {
       setIsLoading(false);
     }
@@ -58,8 +64,8 @@ export default function SignUp() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label htmlFor="displayName">Display Name</label>
-                <input 
-                  id="displayName" 
+                <input
+                  id="displayName"
                   type="text"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
@@ -68,49 +74,43 @@ export default function SignUp() {
 
               <div>
                 <label htmlFor="email">Email</label>
-                <input 
-                  id="email" 
+                <input
+                  id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required 
+                  required
                 />
               </div>
 
               <div>
                 <label htmlFor="password">Password</label>
-                <input 
-                  id="password" 
-                  type="password" 
+                <input
+                  id="password"
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required 
+                  required
                 />
                 <p className="text-xs mt-1 text-gray-400">
                   Password must be at least 8 characters long
                 </p>
               </div>
 
-              {error && (
-                <div className="alert alert-error">
-                  {error}
-                </div>
-              )}
+              {error && <div className="alert alert-error">{error}</div>}
 
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn btn-primary w-full"
                 disabled={isLoading}
               >
-                {isLoading ? 'Signing Up...' : 'Sign Up'}
+                {isLoading ? "Signing Up..." : "Sign Up"}
               </button>
             </form>
           }
           magicTabContent={
             <div>
-              <MagicLinkForm
-                buttonLabel="Sign up with Magic Link"
-              />
+              <MagicLinkForm buttonLabel="Sign up with Magic Link" />
             </div>
           }
         />

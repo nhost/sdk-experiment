@@ -1,31 +1,40 @@
-import { useState, useEffect } from 'react';
-import { nhost } from '../lib/nhost/client';
+import { useState, useEffect, JSX } from "react";
+import { useAuth } from "../lib/nhost/AuthProvider";
+import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-export default function MFASettings({ initialMfaEnabled }) {
-  const [isMfaEnabled, setIsMfaEnabled] = useState(initialMfaEnabled);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  
+interface MFASettingsProps {
+  initialMfaEnabled: boolean;
+}
+
+export default function MFASettings({
+  initialMfaEnabled,
+}: MFASettingsProps): JSX.Element {
+  const [isMfaEnabled, setIsMfaEnabled] = useState<boolean>(initialMfaEnabled);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const { nhost } = useAuth();
+
   // Update internal state when prop changes
   useEffect(() => {
     if (initialMfaEnabled !== isMfaEnabled) {
       setIsMfaEnabled(initialMfaEnabled);
     }
-  }, [initialMfaEnabled]);
+  }, [initialMfaEnabled, isMfaEnabled]);
 
   // MFA setup states
-  const [isSettingUpMfa, setIsSettingUpMfa] = useState(false);
-  const [totpSecret, setTotpSecret] = useState("");
-  const [qrCodeUrl, setQrCodeUrl] = useState("");
-  const [verificationCode, setVerificationCode] = useState("");
+  const [isSettingUpMfa, setIsSettingUpMfa] = useState<boolean>(false);
+  const [totpSecret, setTotpSecret] = useState<string>("");
+  const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
+  const [verificationCode, setVerificationCode] = useState<string>("");
 
   // Disabling MFA states
-  const [isDisablingMfa, setIsDisablingMfa] = useState(false);
-  const [disableVerificationCode, setDisableVerificationCode] = useState("");
+  const [isDisablingMfa, setIsDisablingMfa] = useState<boolean>(false);
+  const [disableVerificationCode, setDisableVerificationCode] =
+    useState<string>("");
 
   // Begin MFA setup process
-  const handleEnableMfa = async () => {
+  const handleEnableMfa = async (): Promise<void> => {
     setIsLoading(true);
     setError(null);
     setSuccess(null);
@@ -33,22 +42,19 @@ export default function MFASettings({ initialMfaEnabled }) {
     try {
       // Generate TOTP secret
       const response = await nhost.auth.changeUserMfa();
-
-      if (response.body) {
-        setTotpSecret(response.body.totpSecret);
-        setQrCodeUrl(response.body.imageUrl);
-        setIsSettingUpMfa(true);
-      }
+      setTotpSecret(response.body.totpSecret);
+      setQrCodeUrl(response.body.imageUrl);
+      setIsSettingUpMfa(true);
     } catch (err) {
-      console.error("Error generating TOTP secret:", err);
-      setError("Failed to generate TOTP secret. Please try again.");
+      const error = err as FetchResponse<ErrorResponse>;
+      setError(error.body.message || "An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
   // Verify TOTP and enable MFA
-  const handleVerifyTotp = async () => {
+  const handleVerifyTotp = async (): Promise<void> => {
     if (!verificationCode) {
       setError("Please enter the verification code");
       return;
@@ -60,35 +66,31 @@ export default function MFASettings({ initialMfaEnabled }) {
 
     try {
       // Verify and activate MFA
-      const response = await nhost.auth.changeUserMfaVerify({
+      await nhost.auth.changeUserMfaVerify({
         activeMfaType: "totp",
         code: verificationCode,
       });
 
-      if (response.body) {
-        setIsMfaEnabled(true);
-        setIsSettingUpMfa(false);
-        setSuccess("MFA has been successfully enabled.");
-      }
+      setIsMfaEnabled(true);
+      setIsSettingUpMfa(false);
+      setSuccess("MFA has been successfully enabled.");
     } catch (err) {
-      console.error("Error verifying TOTP:", err);
-      setError(
-        "Failed to verify code. Please make sure you entered the correct code from your authenticator app."
-      );
+      const error = err as FetchResponse<ErrorResponse>;
+      setError(error.body.message || "An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
   // Show disable MFA confirmation
-  const handleShowDisableMfa = () => {
+  const handleShowDisableMfa = (): void => {
     setIsDisablingMfa(true);
     setError(null);
     setSuccess(null);
   };
 
   // Disable MFA
-  const handleDisableMfa = async () => {
+  const handleDisableMfa = async (): Promise<void> => {
     if (!disableVerificationCode) {
       setError("Please enter your verification code to confirm");
       return;
@@ -100,29 +102,25 @@ export default function MFASettings({ initialMfaEnabled }) {
 
     try {
       // Disable MFA by setting activeMfaType to empty string
-      const response = await nhost.auth.changeUserMfaVerify({
+      await nhost.auth.changeUserMfaVerify({
         activeMfaType: "",
         code: disableVerificationCode,
       });
 
-      if (response.body) {
-        setIsMfaEnabled(false);
-        setIsDisablingMfa(false);
-        setDisableVerificationCode("");
-        setSuccess("MFA has been successfully disabled.");
-      }
+      setIsMfaEnabled(false);
+      setIsDisablingMfa(false);
+      setDisableVerificationCode("");
+      setSuccess("MFA has been successfully disabled.");
     } catch (err) {
-      console.error("Error disabling MFA:", err);
-      setError(
-        "Failed to disable MFA. Please make sure you entered the correct verification code."
-      );
+      const error = err as FetchResponse<ErrorResponse>;
+      setError(error.body.message || "An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
   // Cancel MFA setup
-  const handleCancelMfaSetup = () => {
+  const handleCancelMfaSetup = (): void => {
     setIsSettingUpMfa(false);
     setTotpSecret("");
     setQrCodeUrl("");
@@ -130,7 +128,7 @@ export default function MFASettings({ initialMfaEnabled }) {
   };
 
   // Cancel MFA disable
-  const handleCancelMfaDisable = () => {
+  const handleCancelMfaDisable = (): void => {
     setIsDisablingMfa(false);
     setDisableVerificationCode("");
     setError(null);
@@ -154,10 +152,10 @@ export default function MFASettings({ initialMfaEnabled }) {
           {qrCodeUrl && (
             <div className="flex justify-center my-4">
               <div className="p-2 bg-white rounded-md">
-                <img 
-                  src={qrCodeUrl} 
-                  alt="TOTP QR Code" 
-                  width="200" 
+                <img
+                  src={qrCodeUrl}
+                  alt="TOTP QR Code"
+                  width="200"
                   height="200"
                 />
               </div>

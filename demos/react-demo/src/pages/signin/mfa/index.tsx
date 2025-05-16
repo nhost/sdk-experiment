@@ -1,57 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../../../lib/auth/AuthProvider';
-import { nhost } from '../../../lib/nhost/client';
+import React, { useState, useEffect, JSX } from "react";
+import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../../../lib/nhost/AuthProvider";
+import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-export default function MfaVerification() {
+interface VerificationResponse {
+  success?: boolean;
+  error?: string;
+}
+
+export default function MfaVerification(): JSX.Element {
   // Extract ticket from URL search params
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
-  const ticket = searchParams.get('ticket');
-  const initialError = searchParams.get('error');
+  const ticket = searchParams.get("ticket");
+  const initialError = searchParams.get("error");
 
-  const { isAuthenticated } = useAuth();
-  const [otp, setOtp] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(initialError);
+  const { isAuthenticated, nhost } = useAuth();
+  const [otp, setOtp] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(initialError);
 
   // Use effect to handle redirects
   useEffect(() => {
     // If user is already authenticated, redirect to profile
     if (isAuthenticated) {
-      navigate('/profile', { replace: true });
+      navigate("/profile", { replace: true });
     }
 
     // If no ticket is provided, redirect to sign in
     if (!ticket) {
-      navigate('/signin', { replace: true });
+      navigate("/signin", { replace: true });
     }
   }, [isAuthenticated, ticket, navigate]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await verifyMfa(ticket, otp);
-      
-      if (response.error) {
-        setError(response.error);
-      } else {
-        // Successfully verified MFA, navigate to profile
-        navigate('/profile', { replace: true });
-      }
+      await verifyMfa(ticket as string, otp);
+      navigate("/profile", { replace: true });
     } catch (err) {
-      setError(err.message || 'An error occurred during verification');
+      const error = err as FetchResponse<ErrorResponse>;
+      setError(error.body.message || "An error occurred during verification");
     } finally {
       setIsLoading(false);
     }
   };
 
   // Function to verify MFA code
-  const verifyMfa = async (ticket, otp) => {
+  const verifyMfa = async (
+    ticket: string,
+    otp: string,
+  ): Promise<VerificationResponse> => {
     try {
       // We already imported nhost client at the top of the file
 
@@ -66,10 +71,10 @@ export default function MfaVerification() {
         return { success: true };
       }
 
-      return { error: 'Failed to verify MFA code' };
-    } catch (error) {
-      console.error('MFA verification error:', error);
-      return { error: error.message || 'Failed to verify code' };
+      return { error: "Failed to verify MFA code" };
+    } catch (err: any) {
+      const error = err as FetchResponse<ErrorResponse>;
+      return { error: error.body.message || "Failed to verify code" };
     }
   };
 
@@ -101,19 +106,15 @@ export default function MfaVerification() {
               />
             </div>
 
-            {error && (
-              <div className="alert alert-error">
-                {error}
-              </div>
-            )}
+            {error && <div className="alert alert-error">{error}</div>}
 
             <div className="flex space-x-3">
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="btn btn-primary"
                 disabled={isLoading}
               >
-                {isLoading ? 'Verifying...' : 'Verify'}
+                {isLoading ? "Verifying..." : "Verify"}
               </button>
 
               <Link to="/signin" className="btn btn-secondary">

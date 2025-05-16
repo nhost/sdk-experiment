@@ -1,21 +1,25 @@
-import { useState, useEffect, useRef } from "react";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../lib/auth/AuthProvider";
-import { nhost } from "../lib/nhost/client";
+import { useState, useEffect, useRef, JSX } from "react";
+import { useAuth } from "../lib/nhost/AuthProvider";
 import { formatFileSize } from "../lib/utils";
+import { FileMetadata } from "@nhost/nhost-js/storage";
 
-export default function Upload() {
-  const { isAuthenticated, isLoading } = useAuth();
-  const fileInputRef = useRef(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploadResult, setUploadResult] = useState(null);
-  const [isFetching, setIsFetching] = useState(true);
-  const [error, setError] = useState(null);
-  const [files, setFiles] = useState([]);
-  const [viewingFile, setViewingFile] = useState(null);
-  const [deleting, setDeleting] = useState(null);
-  const [deleteStatus, setDeleteStatus] = useState(null);
+interface DeleteStatus {
+  message: string;
+  isError: boolean;
+}
+
+export default function Upload(): JSX.Element {
+  const { isAuthenticated, nhost } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState<boolean>(false);
+  const [uploadResult, setUploadResult] = useState<FileMetadata | null>(null);
+  const [isFetching, setIsFetching] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [files, setFiles] = useState<FileMetadata[]>([]);
+  const [viewingFile, setViewingFile] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [deleteStatus, setDeleteStatus] = useState<DeleteStatus | null>(null);
 
   // Fetch existing files when component mounts
   useEffect(() => {
@@ -24,7 +28,7 @@ export default function Upload() {
     }
   }, [isAuthenticated]);
 
-  const fetchFiles = async () => {
+  const fetchFiles = async (): Promise<void> => {
     setIsFetching(true);
     setError(null);
 
@@ -50,7 +54,7 @@ export default function Upload() {
       }
 
       setFiles(response.body.data.files);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error fetching files:", err);
       setError("Failed to load files. Please try refreshing the page.");
     } finally {
@@ -58,31 +62,21 @@ export default function Upload() {
     }
   };
 
-  // If not authenticated or still loading, show appropriate UI
-  if (isLoading) {
-    return (
-      <div className="loading-container">
-        <p>Loading...</p>
-      </div>
-    );
-  }
+  // ProtectedRoute component now handles authentication check
+  // We can just focus on the component logic here
 
-  if (!isAuthenticated) {
-    return <Navigate to="/signin" />;
-  }
-
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       if (file) {
-        setSelectedFile(file);
+        setSelectedFile(file as any);
         setError(null);
         setUploadResult(null);
       }
     }
   };
 
-  const handleUpload = async () => {
+  const handleUpload = async (): Promise<void> => {
     if (!selectedFile) {
       setError("Please select a file to upload");
       return;
@@ -100,6 +94,9 @@ export default function Upload() {
 
       // Get the processed file data
       const uploadedFile = response.body.processedFiles?.[0];
+      if (uploadedFile == undefined) {
+        throw new Error("Failed to upload file");
+      }
       setUploadResult(uploadedFile);
 
       // Reset form
@@ -108,25 +105,7 @@ export default function Upload() {
         fileInputRef.current.value = "";
       }
 
-      // Update the local files list with the new file if we have the data
-      if (
-        uploadedFile &&
-        uploadedFile.id &&
-        uploadedFile.name &&
-        uploadedFile.size &&
-        uploadedFile.mimeType
-      ) {
-        const newFile = {
-          id: uploadedFile.id,
-          name: uploadedFile.name,
-          size: uploadedFile.size,
-          mimeType: uploadedFile.mimeType,
-          bucketId: "default",
-          uploadedByUserId: "", // This will be refreshed from server
-        };
-
-        setFiles((prevFiles) => [newFile, ...prevFiles]);
-      }
+      setFiles((prevFiles) => [uploadedFile, ...prevFiles]);
 
       // Refresh file list
       await fetchFiles();
@@ -135,7 +114,7 @@ export default function Upload() {
       setTimeout(() => {
         setUploadResult(null);
       }, 3000);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message || "Failed to upload file");
     } finally {
       setUploading(false);
@@ -143,7 +122,11 @@ export default function Upload() {
   };
 
   // Function to handle viewing a file with proper authorization
-  const handleViewFile = async (fileId, fileName, mimeType) => {
+  const handleViewFile = async (
+    fileId: string,
+    fileName: string,
+    mimeType: string,
+  ): Promise<void> => {
     setViewingFile(fileId);
 
     try {
@@ -192,7 +175,7 @@ export default function Upload() {
           newWindow.document.close();
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       setError(`Failed to view file: ${err.message}`);
       console.error("Error viewing file:", err);
     } finally {
@@ -201,7 +184,7 @@ export default function Upload() {
   };
 
   // Function to handle deleting a file
-  const handleDeleteFile = async (fileId) => {
+  const handleDeleteFile = async (fileId: string): Promise<void> => {
     if (!fileId || deleting) return;
 
     setDeleting(fileId);
@@ -232,7 +215,7 @@ export default function Upload() {
       setTimeout(() => {
         setDeleteStatus(null);
       }, 3000);
-    } catch (err) {
+    } catch (err: any) {
       // Show error message
       setDeleteStatus({
         message: `Failed to delete ${fileName}: ${err.message}`,
@@ -351,12 +334,16 @@ export default function Upload() {
                   <tr key={file.id}>
                     <td>{file.name}</td>
                     <td>{file.mimeType}</td>
-                    <td>{formatFileSize(file.size)}</td>
+                    <td>{formatFileSize(file.size || 0)}</td>
                     <td>
                       <div className="table-actions">
                         <button
                           onClick={() =>
-                            handleViewFile(file.id, file.name, file.mimeType)
+                            handleViewFile(
+                              file.id || "unknown",
+                              file.name || "unknown",
+                              file.mimeType || "unknown",
+                            )
                           }
                           disabled={viewingFile === file.id}
                           className="action-icon action-icon-view"
@@ -389,7 +376,7 @@ export default function Upload() {
                           )}
                         </button>
                         <button
-                          onClick={() => handleDeleteFile(file.id)}
+                          onClick={() => handleDeleteFile(file.id || "unknown")}
                           disabled={deleting === file.id}
                           className="action-icon action-icon-delete"
                           title="Delete File"

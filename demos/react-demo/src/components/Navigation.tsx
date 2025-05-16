@@ -1,14 +1,14 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../lib/auth/AuthProvider';
+import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../lib/nhost/AuthProvider";
+import { JSX } from "react";
 
-export default function Navigation() {
-  const { isAuthenticated, signOut } = useAuth();
+export default function Navigation(): JSX.Element {
+  const { isAuthenticated, nhost, session } = useAuth();
   const location = useLocation();
-  
+
   // Helper function to determine if a link is active
-  const isActive = (path) => {
-    return location.pathname === path ? 'active' : '';
+  const isActive = (path: string): string => {
+    return location.pathname === path ? "active" : "";
   };
 
   return (
@@ -19,19 +19,31 @@ export default function Navigation() {
           <div className="navbar-links">
             {isAuthenticated ? (
               <>
-                <Link to="/profile" className={`nav-link ${isActive('/profile')}`}>
+                <Link
+                  to="/profile"
+                  className={`nav-link ${isActive("/profile")}`}
+                >
                   Profile
                 </Link>
-                <Link to="/upload" className={`nav-link ${isActive('/upload')}`}>
+                <Link
+                  to="/upload"
+                  className={`nav-link ${isActive("/upload")}`}
+                >
                   Upload
                 </Link>
               </>
             ) : (
               <>
-                <Link to="/signin" className={`nav-link ${isActive('/signin')}`}>
+                <Link
+                  to="/signin"
+                  className={`nav-link ${isActive("/signin")}`}
+                >
                   Sign In
                 </Link>
-                <Link to="/signup" className={`nav-link ${isActive('/signup')}`}>
+                <Link
+                  to="/signup"
+                  className={`nav-link ${isActive("/signup")}`}
+                >
                   Sign Up
                 </Link>
               </>
@@ -41,7 +53,17 @@ export default function Navigation() {
 
         {isAuthenticated && (
           <div>
-            <button onClick={signOut} className="icon-button" title="Sign Out">
+            <button
+              onClick={async () => {
+                if (session) {
+                  await nhost.auth.signOut({
+                    refreshToken: session.refreshToken,
+                  });
+                }
+              }}
+              className="icon-button"
+              title="Sign Out"
+            >
               <svg
                 viewBox="0 0 24 24"
                 fill="none"

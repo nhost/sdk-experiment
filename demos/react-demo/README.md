@@ -1,79 +1,65 @@
-# Nhost React Demo
+# React Demo with Nhost SDK
 
-This is a client-side React implementation of the Nhost SDK demo, built with Vite and React. It demonstrates how to use the Nhost SDK for authentication, file storage, and GraphQL in a client-side application.
+This demo application showcases how to use the Nhost SDK with React.
 
 ## Features
 
-- User authentication (sign up, sign in, sign out)
-- Email verification
-- Magic link authentication
-- Multi-factor authentication status display
-- File upload and management
-- Profile information display
-- Session management
-
-## Prerequisites
-
-- Node.js (v18 or higher)
-- pnpm
-- A running Nhost backend (local or hosted)
-
-## Getting Started
-
-1. First, make sure you have the Nhost backend running. If you're using a local backend, you can start it by following the instructions in the `/backend` directory.
-
-2. Create a `.env.local` file in the root of this project with the following variables:
-
-```
-VITE_NHOST_REGION=your-region
-VITE_NHOST_SUBDOMAIN=your-subdomain
-```
-
-Replace `your-region` and `your-subdomain` with your Nhost project's region and subdomain. If you're running locally, use `local` for both values.
-
-3. Install dependencies:
-
-```bash
-pnpm install
-```
-
-4. Start the development server:
-
-```bash
-pnpm dev
-```
-
-5. Open [http://localhost:5173](http://localhost:5173) in your browser to see the application.
+- Authentication (Sign up, Sign in, Sign out)
+- Protected routes with centralized authentication checks
+- Multi-factor Authentication (MFA) with TOTP
+- File uploads and management
+- User profile management
+- Password change functionality
 
 ## Project Structure
 
-- `/src/components`: Reusable React components
-- `/src/pages`: Page components corresponding to routes
-- `/src/lib/auth`: Authentication-related utilities
-- `/src/lib/nhost`: Nhost client configuration
-- `/src/assets`: Static assets
+- `/src/components` - Reusable UI components
+- `/src/lib/nhost` - Nhost SDK configuration and hooks
+- `/src/pages` - Application pages/routes
+- `/src/utils` - Utility functions
 
-## Key Implementation Details
+## Authentication Flow
 
-- The application uses React Router v6 for routing
-- Authentication state is managed through the `AuthProvider` context
-- The Nhost SDK is initialized once in `src/lib/nhost/client.js`
-- File uploads use Nhost's Storage API
-- User profile data is fetched via GraphQL
+The application uses the `AuthProvider` from `/src/lib/nhost/AuthProvider.tsx` to manage authentication state and provide the Nhost client to all components.
 
-## Comparison with SSR Demo
+### Protected Routes
 
-This demo is a client-side implementation of the functionality provided by the SSR (Server-Side Rendering) demo in `nextjs-ssr-demo`. The key differences are:
+The application uses a `ProtectedRoute` component (in `/src/components/ProtectedRoute.tsx`) as a layout route to handle authentication checks in a centralized way. This component:
 
-1. All data fetching and authentication happens in the browser
-2. No server-side rendering or middleware
-3. Uses React Router instead of Next.js App Router
-4. Session state is managed entirely client-side
+1. Checks if the user is authenticated
+2. Shows a loading state when authentication status is being determined
+3. Redirects to the sign-in page if not authenticated
+4. Renders the child routes using React Router's `Outlet` component
 
-## Customizing
+Usage in `App.tsx`:
 
-You can modify the theme by editing the CSS variables in `src/index.css`. The UI uses a simple CSS approach without any UI framework dependencies.
+```tsx
+<Route element={<ProtectedRoute />}>
+  <Route path="/profile" element={<Profile />} />
+  <Route path="/upload" element={<Upload />} />
+  <Route path="/verify" element={<Verify />} />
+</Route>
+```
 
-## License
+This approach leverages React Router's layout routes feature to apply authentication protection to multiple routes without repeating code. It eliminates the need to add authentication checks in each protected page component.
 
-This project is part of the Nhost SDK examples and is subject to the license terms in the root directory.
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies:
+   ```
+   pnpm install
+   ```
+3. Configure your Nhost environment variables in `.env` file
+4. Start the development server:
+   ```
+   pnpm dev
+   ```
+
+## Environment Variables
+
+The application requires the following environment variables:
+
+- `VITE_NHOST_REGION` - Your Nhost region (e.g., "eu-central-1")
+- `VITE_NHOST_SUBDOMAIN` - Your Nhost subdomain
+- `VITE_ENV` - Environment (e.g., "development", "production")

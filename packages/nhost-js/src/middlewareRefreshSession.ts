@@ -6,7 +6,7 @@
  * without requiring manual token refresh by the application.
  */
 
-import type { Client, Session } from "./auth";
+import type { Client, ErrorResponse, FetchResponse, Session } from "./auth";
 import { type SessionStorageInterface } from "./sessionStorage";
 import { type ChainFunction, type FetchFunction } from "./fetch";
 
@@ -188,16 +188,13 @@ async function refreshToken(
 ): Promise<Session | null> {
   try {
     const refreshResponse = await authClient.refreshToken({ refreshToken });
-
-    if (refreshResponse.status === 200) {
-      const session = refreshResponse.body;
-      storage.set(session);
-      return session;
-    }
-    return null;
+    storage.set(refreshResponse.body);
+    return refreshResponse.body;
   } catch (error) {
-    storage.remove();
-    console.error("Error refreshing token:", error);
+    const err = error as FetchResponse<ErrorResponse>;
+    if (err.status === 401) {
+      storage.remove();
+    }
     return null;
   }
 }
@@ -242,5 +239,9 @@ function isTokenExpiringSoon(
   marginSeconds: number,
 ): boolean {
   const currentTime = Date.now();
+  console.log(`token epires in ${(expiresAt - currentTime) / 1000} seconds`);
+  console.log(
+    `is token expiring soon? ${(expiresAt - currentTime) / 1000 < marginSeconds}`,
+  );
   return expiresAt - currentTime < marginSeconds * 1000;
 }

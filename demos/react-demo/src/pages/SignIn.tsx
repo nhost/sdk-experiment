@@ -1,19 +1,21 @@
-import { useState, useEffect } from "react";
-import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect, JSX } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import TabForm from "../components/TabForm";
 import MagicLinkForm from "../components/MagicLinkForm";
-import { useAuth } from "../lib/auth/AuthProvider";
-import { nhost } from "../lib/nhost/client";
+import { useAuth } from "../lib/nhost/AuthProvider";
+import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
-export default function SignIn() {
-  const { signIn, isAuthenticated, user, session } = useAuth();
+export default function SignIn(): JSX.Element {
+  const { nhost, isAuthenticated } = useAuth();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(searchParams.get("error") || null);
+  const [error, setError] = useState<string | null>(
+    searchParams.get("error") || null,
+  );
 
   const magicLinkSent = searchParams.get("magic") === "success";
   const isVerifying = searchParams.has("fromVerify");
@@ -25,24 +27,21 @@ export default function SignIn() {
     }
   }, [isAuthenticated, isVerifying, navigate]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
     try {
       // Use the signIn function from auth context
-      const response = await signIn(email, password);
+      const response = await nhost.auth.signInEmailPassword({
+        email,
+        password,
+      });
 
       // Check if MFA is required
       if (response.body?.mfa) {
         navigate(`/signin/mfa?ticket=${response.body.mfa.ticket}`);
-        return;
-      }
-
-      // Check for errors in the response
-      if (response.error) {
-        setError(response.error.message || "Failed to sign in");
         return;
       }
 
@@ -52,8 +51,9 @@ export default function SignIn() {
       } else {
         setError("Failed to sign in");
       }
-    } catch (err) {
-      setError(err.message || "An error occurred");
+    } catch (err: any) {
+      const error = err as FetchResponse<ErrorResponse>;
+      setError(error.body.message || "An error occurred");
     } finally {
       setIsLoading(false);
     }

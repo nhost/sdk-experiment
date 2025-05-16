@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    // Environment setup & latest features
     "lib": ["dom", "dom.iterable", "esnext"],
-    "target": "ES2017",
+    "target": "ES2022",
     "module": "esnext",
     "jsx": "preserve",
 
@@ -19,11 +18,11 @@
     "strict": true,
     "skipLibCheck": true,
     "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
     "noUncheckedIndexedAccess": true,
 
     // Relaxed for library code
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": true,
 
     "plugins": [
