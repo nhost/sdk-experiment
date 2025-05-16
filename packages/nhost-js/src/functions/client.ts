@@ -5,8 +5,7 @@
  * against Nhost serverless functions.
  */
 
-import { createEnhancedFetch } from "../fetch";
-import type { ChainFunction } from "../fetch";
+import { createEnhancedFetch, type ChainFunction } from "../fetch";
 
 /**
  * Response wrapper for function calls with additional metadata.
@@ -53,7 +52,7 @@ export interface Client {
 export const createAPIClient = (
   baseURL: string,
   chainFunctions: ChainFunction[] = [],
-) => {
+): Client => {
   const enhancedFetch = createEnhancedFetch(chainFunctions);
 
   /**
@@ -87,7 +86,7 @@ export const createAPIClient = (
     // Create response payload with status, body and headers
     const payload = {
       status: resp.status,
-      body: body,
+      body,
       headers: resp.headers,
     };
 

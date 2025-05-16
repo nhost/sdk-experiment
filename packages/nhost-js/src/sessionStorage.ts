@@ -5,7 +5,7 @@
  * across page reloads and browser sessions.
  */
 
-import { type Session } from "./auth";
+import type { Session } from "./auth";
 
 /**
  * Session storage interface for session persistence.

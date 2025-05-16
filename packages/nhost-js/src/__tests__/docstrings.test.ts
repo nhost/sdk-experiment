@@ -9,8 +9,8 @@ test("mainExample", async () => {
 
   //#region mainExample
   const nhost = createClient({
-    subdomain: subdomain,
-    region: region,
+    subdomain,
+    region,
   });
 
   // Sign in with email/password

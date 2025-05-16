@@ -7,8 +7,8 @@
  */
 
 import type { Client, ErrorResponse, FetchResponse, Session } from "./auth";
-import { type SessionStorageInterface } from "./sessionStorage";
-import { type ChainFunction, type FetchFunction } from "./fetch";
+import type { SessionStorageInterface } from "./sessionStorage";
+import type { ChainFunction, FetchFunction } from "./fetch";
 
 /**
  * Extracts the expiration time from a JWT token
@@ -20,7 +20,6 @@ export const extractTokenExpiration = (token: string): number => {
     // JWT tokens are in the format header.payload.signature
     const parts = token.split(".");
     if (parts.length !== 3) {
-      console.warn("Token does not have three parts");
       return 0;
     }
 
@@ -28,7 +27,6 @@ export const extractTokenExpiration = (token: string): number => {
     // Use a non-null assertion or check explicitly
     const payloadPart = parts[1];
     if (!payloadPart) {
-      console.warn("Payload part is empty");
       return 0;
     }
 
@@ -40,11 +38,9 @@ export const extractTokenExpiration = (token: string): number => {
       // exp claim is in seconds, convert to milliseconds
       return payload.exp * 1000;
     } else {
-      console.warn("No exp claim found in token");
       return 0;
     }
-  } catch (error) {
-    console.warn("Failed to extract token expiration:", error);
+  } catch {
     return 0;
   }
 };
@@ -56,29 +52,24 @@ export const extractTokenExpiration = (token: string): number => {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function decodeTokenPayload(base64Payload: string): any {
-  try {
-    let jsonPayload: string;
+  let jsonPayload: string;
 
-    if (typeof window !== "undefined") {
-      // Browser environment
-      jsonPayload = decodeURIComponent(
-        window
-          .atob(base64Payload)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join(""),
-      );
-    } else {
-      // Node.js environment
-      const buffer = Buffer.from(base64Payload, "base64");
-      jsonPayload = buffer.toString("utf8");
-    }
-
-    return JSON.parse(jsonPayload);
-  } catch (e) {
-    console.warn("Error decoding token payload:", e);
-    throw e;
+  if (typeof window !== "undefined") {
+    // Browser environment
+    jsonPayload = decodeURIComponent(
+      window
+        .atob(base64Payload)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(""),
+    );
+  } else {
+    // Node.js environment
+    const buffer = Buffer.from(base64Payload, "base64");
+    jsonPayload = buffer.toString("utf8");
   }
+
+  return JSON.parse(jsonPayload);
 }
 
 /**
@@ -119,11 +110,8 @@ export const createSessionRefreshMiddleware = (
   let tokenExpiresAt = 0;
 
   // Create and return the chain function
-  return (next: FetchFunction): FetchFunction => {
-    return async (
-      url: string,
-      options: RequestInit = {},
-    ): Promise<Response> => {
+  return (next: FetchFunction): FetchFunction =>
+    async (url: string, options: RequestInit = {}): Promise<Response> => {
       // Skip token handling for certain requests
       if (shouldSkipTokenHandling(url, options, authClient.baseURL)) {
         return next(url, options);
@@ -164,13 +152,11 @@ export const createSessionRefreshMiddleware = (
 
         // Continue with the fetch chain
         return next(url, options);
-      } catch (error) {
-        console.error("Error in token refresh chain:", error);
+      } catch {
         // Continue with the request even if token refresh fails
         return next(url, options);
       }
     };
-  };
 };
 
 /**
@@ -239,9 +225,5 @@ function isTokenExpiringSoon(
   marginSeconds: number,
 ): boolean {
   const currentTime = Date.now();
-  console.log(`token epires in ${(expiresAt - currentTime) / 1000} seconds`);
-  console.log(
-    `is token expiring soon? ${(expiresAt - currentTime) / 1000 < marginSeconds}`,
-  );
   return expiresAt - currentTime < marginSeconds * 1000;
 }

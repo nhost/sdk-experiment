@@ -14,8 +14,8 @@ test("error handling for storage", async () => {
   // } from "@nhost/nhost-js/storage";
   //
   const nhost = createClient({
-    subdomain: subdomain,
-    region: region,
+    subdomain,
+    region,
   });
   try {
     await nhost.storage.uploadFiles({

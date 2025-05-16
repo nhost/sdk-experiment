@@ -14,8 +14,8 @@ test("error handling for graphql", async () => {
   // } from "@nhost/nhost-js/graphql";
   //
   const nhost = createClient({
-    subdomain: subdomain,
-    region: region,
+    subdomain,
+    region,
   });
 
   try {

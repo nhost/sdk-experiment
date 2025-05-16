@@ -70,6 +70,7 @@ import {
 } from "./middlewareRefreshSession";
 import { createAttachAccessTokenMiddleware } from "./middlewareAttachToken";
 import { createSessionResponseMiddleware } from "./middlewareResponseSession";
+import type { ChainFunction } from "./fetch";
 
 export {
   type SessionStorageInterface,
@@ -306,7 +307,7 @@ function getMiddlewareChain(
   auth: AuthClient,
   storage: SessionStorageInterface,
   autoRefresh: boolean,
-) {
+): Array<ChainFunction> {
   const mwChain = [
     createSessionResponseMiddleware(storage),
     createAttachAccessTokenMiddleware(storage),

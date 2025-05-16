@@ -6,9 +6,9 @@
  * that new sessions are properly stored after sign-in operations.
  */
 
-import { type Session } from "./auth";
-import { type SessionStorageInterface } from "./sessionStorage";
-import { type ChainFunction } from "./fetch";
+import type { Session } from "./auth";
+import type { SessionStorageInterface } from "./sessionStorage";
+import type { ChainFunction } from "./fetch";
 
 /**
  * Creates a fetch middleware that automatically extracts and stores session data from API responses.
@@ -37,20 +37,19 @@ export const createSessionResponseMiddleware = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sessionExtractor = function (body: any): Session | null {
     // Look for session in common response patterns
-    const session =
+    return (
       // Pattern: { session: {...} }
       (body?.session as Session) ||
       // Pattern: { data: { session: {...} } }
       (body?.data?.session as Session) ||
       // Pattern: { accessToken, refreshToken, ... } where data itself is the session
       (body?.accessToken && body?.refreshToken && (body as Session)) ||
-      null;
-
-    return session;
+      null
+    );
   };
 
-  return (next: (url: string, options?: RequestInit) => Promise<Response>) => {
-    return async (url: string, options?: RequestInit) => {
+  return (next: (url: string, options?: RequestInit) => Promise<Response>) =>
+    async (url: string, options?: RequestInit) => {
       // Call the next middleware in the chain
       const response = await next(url, options);
 
@@ -91,5 +90,4 @@ export const createSessionResponseMiddleware = (
       // Return the original response
       return response;
     };
-  };
 };

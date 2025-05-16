@@ -17,8 +17,8 @@ test("error handling for auth", async () => {
   // } from "@nhost/nhost-js/auth";
   //
   const nhost = createClient({
-    subdomain: subdomain,
-    region: region,
+    subdomain,
+    region,
   });
   try {
     await nhost.auth.signInEmailPassword({

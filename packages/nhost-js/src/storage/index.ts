@@ -8,4 +8,4 @@
  */
 
 export * from "./client";
-export * from "./interface";
+export type * from "./interface";

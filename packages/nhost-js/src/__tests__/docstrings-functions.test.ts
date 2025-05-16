@@ -12,8 +12,8 @@ test("error handling for graphql", async () => {
   //
 
   const nhost = createClient({
-    subdomain: subdomain,
-    region: region,
+    subdomain,
+    region,
   });
 
   try {
@@ -24,7 +24,6 @@ test("error handling for graphql", async () => {
       },
     });
   } catch (error) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const resp = error as FetchResponse<any>;
     console.log("Error:", resp);
     // Error: {

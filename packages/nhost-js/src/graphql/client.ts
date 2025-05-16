@@ -5,8 +5,7 @@
  * a Hasura GraphQL API.
  */
 
-import { createEnhancedFetch } from "../fetch";
-import type { ChainFunction } from "../fetch";
+import { createEnhancedFetch, type ChainFunction } from "../fetch";
 
 /**
  * Variables object for GraphQL operations.
@@ -99,7 +98,7 @@ export interface Client {
 export const createAPIClient = (
   baseURL: string,
   chainFunctions: ChainFunction[] = [],
-) => {
+): Client => {
   const enhancedFetch = createEnhancedFetch(chainFunctions);
 
   const executeOperation = async (
@@ -134,9 +133,8 @@ export const createAPIClient = (
   const post = (
     request: GraphQLRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<GraphQLResponse>> => {
-    return executeOperation(request, options);
-  };
+  ): Promise<FetchResponse<GraphQLResponse>> =>
+    executeOperation(request, options);
 
   return {
     post,

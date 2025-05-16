@@ -16,7 +16,7 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
     // Create request payload with unique email
     const signUpRequest: SignUpEmailPasswordRequest = {
       email: uniqueEmail,
-      password: password,
+      password,
       options: {
         displayName: "Test User",
         locale: "en",
@@ -42,7 +42,7 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
     // Make an actual API call
     const response = await nhostAuth.signInEmailPassword({
       email: uniqueEmail,
-      password: password,
+      password,
     });
 
     // Verify structure of response

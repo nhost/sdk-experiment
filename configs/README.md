@@ -9,6 +9,12 @@ This directory contains standardized configurations for various tools and framew
   - Specialized configurations for libraries, frontend apps, and Node.js
   - Documented usage patterns and extension points
 
+- [**ESLint (`/eslint`)**](./eslint/README.md): Modern ESLint configurations using flat config system
+  - Strict TypeScript and JavaScript linting rules
+  - Specialized configurations for React and Next.js projects
+  - Easy to extend from any project with `eslint.config.mjs` files
+  - Customizable for project-specific needs
+
 ## Using the Configurations
 
 Each configuration directory contains a README with specific instructions on how to use the configurations in your projects.

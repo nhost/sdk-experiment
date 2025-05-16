@@ -148,7 +148,6 @@ describe("Test Storage API", () => {
       });
       expect(true).toBe(false);
     } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const resp = err as FetchResponse<any>;
       expect(resp.status).toBe(500);
       expect(resp.headers.get("content-type")).toBe("text/html; charset=utf-8");
