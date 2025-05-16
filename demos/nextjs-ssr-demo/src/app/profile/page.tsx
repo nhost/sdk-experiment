@@ -1,5 +1,6 @@
 import { createNhostClient } from "../lib/nhost/server";
 import MFASettings from "./mfa-settings";
+import ChangePassword from "./change-password";
 
 export default async function Profile() {
   // Create the client with async cookie access
@@ -13,12 +14,15 @@ export default async function Profile() {
     try {
       const response = await nhost.graphql.post({
         query: `
-          query GetUserMfaStatus {
-            user(id: "${session.user.id}") {
+          query GetUserMfaStatus($userId: uuid!) {
+            user(id: $userId) {
               activeMfaType
             }
           }
         `,
+        variables: {
+          userId: session.user.id
+        }
       });
 
       // MFA is enabled if activeMfaType is "totp"
@@ -98,6 +102,9 @@ export default async function Profile() {
 
       {/* MFA Settings Component */}
       <MFASettings initialMfaEnabled={isMfaEnabled} />
+
+      {/* Change Password Component */}
+      <ChangePassword />
     </div>
   );
 }

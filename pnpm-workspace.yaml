@@ -8,3 +8,4 @@ onlyBuiltDependencies:
 
 overrides:
   rollup@<2.79.2: '>=2.79.2'
+  esbuild@<=0.24.2: '>=0.25.0'
