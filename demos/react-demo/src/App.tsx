@@ -60,6 +60,6 @@ const App = (): JSX.Element => {
       </Router>
     </AuthProvider>
   );
-}
+};
 
 export default App;

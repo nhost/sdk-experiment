@@ -16,10 +16,8 @@
   "navigation": {
     "tabs": [
       {
-          "tab": "Welcome",
-          "pages": [
-            "welcome"
-          ]
+        "tab": "Welcome",
+        "pages": ["welcome"]
       },
       {
         "tab": "Getting Started",
@@ -27,7 +25,7 @@
           {
             "group": "Welcome",
             "icon": "house",
-            "pages": ["/getting-started/overview" ]
+            "pages": ["/getting-started/overview"]
           },
           {
             "group": "Quickstart",
@@ -57,9 +55,7 @@
           {
             "dropdown": "Overview",
             "icon": "eye",
-            "pages": [
-              "/products/overview"
-            ]
+            "pages": ["/products/overview"]
           },
           {
             "dropdown": "Auth",
@@ -103,7 +99,6 @@
                 "group": "Security",
                 "icon": "shield",
                 "pages": [
-
                   "/products/auth/elevated-permissions",
                   "/products/auth/bot-protection",
                   "/products/auth/custom-jwts",
@@ -114,8 +109,8 @@
           },
           {
             "dropdown": "Database",
-            "icon":"database",
-            "pages":[
+            "icon": "database",
+            "pages": [
               "/products/database/overview",
               "/products/database/configuring-postgres",
               "/products/database/backups",
@@ -127,8 +122,8 @@
           },
           {
             "dropdown": "Functions",
-            "icon":"lambda",
-            "pages":[
+            "icon": "lambda",
+            "pages": [
               "/products/functions/overview",
               "/products/functions/getting-started",
               "/products/functions/runtimes"
@@ -136,8 +131,8 @@
           },
           {
             "dropdown": "GraphQL",
-            "icon":"webhook",
-            "pages":[
+            "icon": "webhook",
+            "pages": [
               "/products/graphql/overview",
               "/products/graphql/configuring-hasura",
               "/products/graphql/permissions",
@@ -146,8 +141,8 @@
           },
           {
             "dropdown": "Storage",
-            "icon":"warehouse",
-            "pages":[
+            "icon": "warehouse",
+            "pages": [
               "/products/storage/overview",
               "/products/storage/cdn",
               "/products/storage/antivirus"
@@ -155,8 +150,8 @@
           },
           {
             "dropdown": "AI",
-            "icon":"robot",
-            "pages":[
+            "icon": "robot",
+            "pages": [
               "/products/ai/overview",
               "/products/ai/enabling-service",
               "/products/ai/local-development",
@@ -167,8 +162,8 @@
           },
           {
             "dropdown": "Run",
-            "icon":"play",
-            "pages":[
+            "icon": "play",
+            "pages": [
               "/products/run/overview",
               "/products/run/getting-started",
               "/products/run/configuration",
@@ -189,9 +184,7 @@
           {
             "dropdown": "Overview",
             "icon": "eye",
-            "pages": [
-              "/platform/overview"
-            ]
+            "pages": ["/platform/overview"]
           },
           {
             "dropdown": "Cloud",
@@ -225,69 +218,69 @@
             ]
           },
           {
-              "dropdown": "Self-Hosting",
-              "icon": "server",
-              "pages": [
-                "/platform/self-hosting/overview",
-                "/platform/self-hosting/community",
-                "/platform/self-hosting/support",
-                "/platform/self-hosting/dedicated"
-              ]
+            "dropdown": "Self-Hosting",
+            "icon": "server",
+            "pages": [
+              "/platform/self-hosting/overview",
+              "/platform/self-hosting/community",
+              "/platform/self-hosting/support",
+              "/platform/self-hosting/dedicated"
+            ]
           }
         ]
       },
       {
-        "tab":"Reference",
-            "icon":"bolt",
-            "pages":[
-              "/reference/overview",
+        "tab": "Reference",
+        "icon": "bolt",
+        "pages": [
+          "/reference/overview",
+          {
+            "group": "Backend Services",
+            "pages": [
               {
-                "group": "Backend Services",
+                "group": "Authentication",
+                "icon": "user-check",
                 "pages": [
-                {
-                  "group": "Authentication",
-                  "icon": "user-check",
-                  "pages": [
-                    "reference/auth/get-.well-known-jwks.json",
-                    "reference/auth/post-elevate-webauthn",
-                    "reference/auth/post-elevate-webauthn-verify",
-                    "reference/auth/get-healthz",
-                    "reference/auth/head-healthz",
-                    "reference/auth/post-link-idtoken",
-                    "reference/auth/get-mfa-totp-generate",
-                    "reference/auth/post-pat",
-                    "reference/auth/post-signin-anonymous",
-                    "reference/auth/post-signin-email-password",
-                    "reference/auth/post-signin-idtoken",
-                    "reference/auth/post-signin-mfa-totp",
-                    "reference/auth/post-signin-otp-email",
-                    "reference/auth/post-signin-otp-email-verify",
-                    "reference/auth/post-signin-passwordless-email",
-                    "reference/auth/post-signin-passwordless-sms",
-                    "reference/auth/post-signin-passwordless-sms-otp",
-                    "reference/auth/post-signin-pat",
-                    "reference/auth/get-signin-provider-{provider}",
-                    "reference/auth/get-signin-provider-{provider}-callback",
-                    "reference/auth/post-signin-webauthn",
-                    "reference/auth/post-signin-webauthn-verify",
-                    "reference/auth/post-signout",
-                    "reference/auth/post-signup-email-password",
-                    "reference/auth/post-signup-webauthn",
-                    "reference/auth/post-signup-webauthn-verify",
-                    "reference/auth/post-token",
-                    "reference/auth/post-token-verify",
-                    "reference/auth/get-user",
-                    "reference/auth/post-user-deanonymize",
-                    "reference/auth/post-user-email-change",
-                    "reference/auth/post-user-email-send-verification-email",
-                    "reference/auth/post-user-mfa",
-                    "reference/auth/post-user-password",
-                    "reference/auth/post-user-password-reset",
-                    "reference/auth/post-user-provider-tokens",
-                    "reference/auth/post-user-webauthn-add",
-                    "reference/auth/post-user-webauthn-verify",
-                    "reference/auth/get-verify",
-                    "reference/auth/get-version"
+                  "reference/auth/get-.well-known-jwks.json",
+                  "reference/auth/post-elevate-webauthn",
+                  "reference/auth/post-elevate-webauthn-verify",
+                  "reference/auth/get-healthz",
+                  "reference/auth/head-healthz",
+                  "reference/auth/post-link-idtoken",
+                  "reference/auth/get-mfa-totp-generate",
+                  "reference/auth/post-pat",
+                  "reference/auth/post-signin-anonymous",
+                  "reference/auth/post-signin-email-password",
+                  "reference/auth/post-signin-idtoken",
+                  "reference/auth/post-signin-mfa-totp",
+                  "reference/auth/post-signin-otp-email",
+                  "reference/auth/post-signin-otp-email-verify",
+                  "reference/auth/post-signin-passwordless-email",
+                  "reference/auth/post-signin-passwordless-sms",
+                  "reference/auth/post-signin-passwordless-sms-otp",
+                  "reference/auth/post-signin-pat",
+                  "reference/auth/get-signin-provider-{provider}",
+                  "reference/auth/get-signin-provider-{provider}-callback",
+                  "reference/auth/post-signin-webauthn",
+                  "reference/auth/post-signin-webauthn-verify",
+                  "reference/auth/post-signout",
+                  "reference/auth/post-signup-email-password",
+                  "reference/auth/post-signup-webauthn",
+                  "reference/auth/post-signup-webauthn-verify",
+                  "reference/auth/post-token",
+                  "reference/auth/post-token-verify",
+                  "reference/auth/get-user",
+                  "reference/auth/post-user-deanonymize",
+                  "reference/auth/post-user-email-change",
+                  "reference/auth/post-user-email-send-verification-email",
+                  "reference/auth/post-user-mfa",
+                  "reference/auth/post-user-password",
+                  "reference/auth/post-user-password-reset",
+                  "reference/auth/post-user-provider-tokens",
+                  "reference/auth/post-user-webauthn-add",
+                  "reference/auth/post-user-webauthn-verify",
+                  "reference/auth/get-verify",
+                  "reference/auth/get-version"
                 ]
               },
               {
@@ -305,7 +298,7 @@
               },
               {
                 "group": "AI",
-                "icon":"robot",
+                "icon": "robot",
                 "pages": [
                   "reference/graphql/ai/overview",
                   {
@@ -340,7 +333,7 @@
             "pages": [
               {
                 "group": "Javascript",
-                "icon":"js",
+                "icon": "js",
                 "pages": [
                   {
                     "group": "nhost-js",
@@ -359,15 +352,13 @@
           },
           {
             "group": "CLI",
-            "pages": [
-              "reference/cli/commands"
-            ]
+            "pages": ["reference/cli/commands"]
           }
         ]
       },
       {
         "tab": "Blog",
-        "href":"https://nhost.io/blog"
+        "href": "https://nhost.io/blog"
       }
     ]
   },

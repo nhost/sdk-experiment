@@ -6,11 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit"
+    "test": "pnpm test:audit && pnpm test:typecheck && pnpm test:lint && pnpm test:format && echo \"No tests specified\" && exit 0",
+    "test:typecheck": "tsc --noEmit",
+    "test:lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "test:format": "prettier --check .",
+    "test:audit": "pnpm audit",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@nhost/nhost-js": "workspace:*",

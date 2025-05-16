@@ -7,15 +7,15 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "target": "ES2022",
-    
+
     "allowJs": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    
+
     /* Node-specific options */
     "sourceMap": true,
-    
+
     /* Types */
     "types": ["node"]
   },
