@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 interface TabFormProps {
   passwordTabLabel?: string;

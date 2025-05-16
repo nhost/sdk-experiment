@@ -19,8 +19,8 @@ and use it like:
 
 ```ts
 const nhost = createClient({
-  subdomain: subdomain,
-  region: region,
+  subdomain,
+  region,
 });
 
 // Sign in with email/password
@@ -131,8 +131,8 @@ how you can handle errors thrown by the SDK.
 // } from "@nhost/nhost-js/auth";
 //
 const nhost = createClient({
-  subdomain: subdomain,
-  region: region,
+  subdomain,
+  region,
 });
 try {
   await nhost.auth.signInEmailPassword({
@@ -172,8 +172,8 @@ try {
 // } from "@nhost/nhost-js/storage";
 //
 const nhost = createClient({
-  subdomain: subdomain,
-  region: region,
+  subdomain,
+  region,
 });
 try {
   await nhost.storage.uploadFiles({
@@ -208,8 +208,8 @@ try {
 // } from "@nhost/nhost-js/graphql";
 //
 const nhost = createClient({
-  subdomain: subdomain,
-  region: region,
+  subdomain,
+  region,
 });
 
 try {
@@ -254,8 +254,8 @@ try {
 //
 
 const nhost = createClient({
-  subdomain: subdomain,
-  region: region,
+  subdomain,
+  region,
 });
 
 try {
@@ -266,7 +266,6 @@ try {
     },
   });
 } catch (error) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const resp = error as FetchResponse<any>;
   console.log("Error:", resp);
   // Error: {

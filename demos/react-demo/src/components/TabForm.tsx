@@ -1,4 +1,4 @@
-import { ReactNode, useState, JSX } from "react";
+import {type ReactNode, useState, JSX } from "react";
 
 interface TabFormProps {
   passwordTabContent: ReactNode;
