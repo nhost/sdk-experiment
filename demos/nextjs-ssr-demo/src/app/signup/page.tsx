@@ -33,7 +33,7 @@ export default async function SignUp({ searchParams }: any) {
               <div>
                 <MagicLinkForm
                   sendMagicLinkAction={sendMagicLink}
-                  showDisplayName={true}
+                  showDisplayName
                   buttonLabel="Sign up with Magic Link"
                 />
               </div>

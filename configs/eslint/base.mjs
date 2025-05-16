@@ -1,6 +1,6 @@
 import js from "@eslint/js";
 import globals from "globals";
-import tseslint from "typescript-eslint";
+import { configs } from "typescript-eslint";
 
 /**
  * Base ESLint configuration for all Nhost projects
@@ -34,9 +34,16 @@ export default [
     },
   },
   // TypeScript specific configuration
-  ...tseslint.configs.recommended,
+  ...configs.recommended,
   {
     files: ["**/*.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: true,
+        ecmaVersion: 2022,
+        sourceType: "module",
+      },
+    },
     rules: {
       // Enforce explicit types and strict typing
       "@typescript-eslint/explicit-function-return-type": "error",

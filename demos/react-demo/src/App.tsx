@@ -17,7 +17,7 @@ import Verify from "./pages/Verify";
 
 const MfaVerification = lazy(() => import("./pages/signin/mfa"));
 
-function App(): JSX.Element {
+const App = (): JSX.Element => {
   return (
     <AuthProvider>
       <Router>

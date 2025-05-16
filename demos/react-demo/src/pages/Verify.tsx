@@ -83,7 +83,7 @@ export default function Verify(): JSX.Element {
           {status === "verifying" && (
             <div>
               <p className="mb-4">Verifying your email...</p>
-              <div className="w-8 h-8 border-t-2 border-blue-500 rounded-full animate-spin mx-auto"></div>
+              <div className="w-8 h-8 border-t-2 border-blue-500 rounded-full animate-spin mx-auto" />
             </div>
           )}
 

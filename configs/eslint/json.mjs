@@ -1,4 +1,3 @@
-import js from "@eslint/js";
 import jsonPlugin from "@eslint/json";
 
 /**
@@ -9,23 +8,14 @@ import jsonPlugin from "@eslint/json";
  * - Error detection
  */
 export default [
-  {
-    files: ["**/*.json"],
-    plugins: { json: jsonPlugin },
-    languageOptions: {
-      parser: jsonPlugin,
-    },
-    rules: {
-      "json/json": ["error", { allowComments: false }],
-      "json/duplicate-key": "error",
-      "json/undefined": "error",
-      "json/format": [
-        "error",
-        {
-          indentSize: 2,
-          indentType: "space",
+    {
+        files: ["**/*.json"],
+        plugins: { json: jsonPlugin },
+        language: "json/json",
+        rules: {
+            "json/no-duplicate-keys": "error",
+            "json/no-empty-keys": "error",
+            "json/no-unsafe-values": "error",
         },
-      ],
     },
-  },
 ];
