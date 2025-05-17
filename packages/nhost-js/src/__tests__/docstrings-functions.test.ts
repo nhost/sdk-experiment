@@ -1,3 +1,4 @@
+import { test, expect } from "@jest/globals";
 import { createClient } from "../";
 import { FetchResponse } from "../functions";
 
@@ -24,7 +25,7 @@ test("error handling for graphql", async () => {
       },
     });
   } catch (error) {
-    const resp = error as FetchResponse<any>;
+    const resp = error as FetchResponse<object>;
     console.log("Error:", resp);
     // Error: {
     //   status: 500,

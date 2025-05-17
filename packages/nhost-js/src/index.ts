@@ -240,7 +240,7 @@ export class NhostClient {
    *
    * @returns The new session or null if there is currently no session or if refresh fails
    */
-  async refreshSession(marginSeconds: number = 60): Promise<Session | null> {
+  async refreshSession(marginSeconds = 60): Promise<Session | null> {
     try {
       return await this._refreshSession(marginSeconds);
     } catch (error) {
@@ -261,9 +261,7 @@ export class NhostClient {
     }
   }
 
-  private async _refreshSession(
-    marginSeconds: number = 60,
-  ): Promise<Session | null> {
+  private async _refreshSession(marginSeconds = 60): Promise<Session | null> {
     const session = this.sessionStorage.get();
     if (!session) {
       return null;
@@ -298,7 +296,7 @@ export class NhostClient {
   /**
    * Clear the session from storage
    */
-  async clearSession(): Promise<void> {
+  clearSession(): void {
     this.sessionStorage.remove();
   }
 }
@@ -307,7 +305,7 @@ function getMiddlewareChain(
   auth: AuthClient,
   storage: SessionStorageInterface,
   autoRefresh: boolean,
-): Array<ChainFunction> {
+): ChainFunction[] {
   const mwChain = [
     createSessionResponseMiddleware(storage),
     createAttachAccessTokenMiddleware(storage),

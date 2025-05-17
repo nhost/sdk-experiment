@@ -1,3 +1,4 @@
+import { describe, it, expect } from "@jest/globals";
 import {
   createAPIClient,
   type SignUpEmailPasswordRequest,
@@ -60,8 +61,7 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
         password: "wrongpassword",
       });
 
-      // If we reach here, the test should fail
-      fail("Expected sign in to fail with incorrect password");
+      expect(true).toBe(false); // This should not be reached
     } catch (error) {
       const err = error as FetchResponse<ErrorResponse>;
       expect(err.status).toBe(401);

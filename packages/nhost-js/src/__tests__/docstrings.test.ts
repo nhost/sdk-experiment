@@ -1,3 +1,4 @@
+import { test, expect } from "@jest/globals";
 import { createClient } from "../";
 
 test("mainExample", async () => {

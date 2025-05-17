@@ -266,7 +266,7 @@ try {
     },
   });
 } catch (error) {
-  const resp = error as FetchResponse<any>;
+  const resp = error as FetchResponse<object>;
   console.log("Error:", resp);
   // Error: {
   //   status: 500,
@@ -609,14 +609,14 @@ For typical usage, use [createClient](#createclient) instead.
 ##### clearSession()
 
 ```ts
-clearSession(): Promise<void>;
+clearSession(): void;
 ```
 
 Clear the session from storage
 
 ###### Returns
 
-`Promise`&lt;`void`&gt;
+`void`
 
 ##### getUserSession()
 
@@ -739,6 +739,23 @@ Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for s
 
 ---
 
+### SessionRefreshOptions
+
+Configuration options for the session refresh middleware
+
+#### Properties
+
+##### marginSeconds?
+
+```ts
+optional marginSeconds: number;
+```
+
+Number of seconds before token expiration when a refresh should be triggered.
+Default is 60 seconds (1 minute).
+
+---
+
 ### SessionStorageInterface
 
 Session storage interface for session persistence.
@@ -789,22 +806,6 @@ Set the session in storage
 ###### Returns
 
 `void`
-
-## Type Aliases
-
-### SessionRefreshOptions
-
-```ts
-type SessionRefreshOptions = object;
-```
-
-Configuration options for the session refresh middleware
-
-#### Properties
-
-| Property                                    | Type     | Description                                                                                                     |
-| ------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------- |
-| <a id="marginseconds"></a> `marginSeconds?` | `number` | Number of seconds before token expiration when a refresh should be triggered. Default is 60 seconds (1 minute). |
 
 ## Variables
 

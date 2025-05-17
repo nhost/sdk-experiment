@@ -6,7 +6,7 @@
  * that new sessions are properly stored after sign-in operations.
  */
 
-import type { Session } from "./auth";
+import type { Session, SessionPayload } from "./auth";
 import type { SessionStorageInterface } from "./sessionStorage";
 import type { ChainFunction } from "./fetch";
 
@@ -34,18 +34,20 @@ export const createSessionResponseMiddleware = (
    * @param data - Response data to extract session from
    * @returns Session object if found, null otherwise
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sessionExtractor = function (body: any): Session | null {
-    // Look for session in common response patterns
-    return (
-      // Pattern: { session: {...} }
-      (body?.session as Session) ||
-      // Pattern: { data: { session: {...} } }
-      (body?.data?.session as Session) ||
-      // Pattern: { accessToken, refreshToken, ... } where data itself is the session
-      (body?.accessToken && body?.refreshToken && (body as Session)) ||
-      null
-    );
+  const sessionExtractor = function (
+    body: Session | SessionPayload,
+  ): Session | null {
+    if ("session" in body) {
+      // SessionPayload
+      return body.session || null;
+    }
+
+    if ("accessToken" in body && "refreshToken" in body) {
+      // Session
+      return body;
+    }
+
+    return null;
   };
 
   return (next: (url: string, options?: RequestInit) => Promise<Response>) =>
@@ -71,7 +73,9 @@ export const createSessionResponseMiddleware = (
           const clonedResponse = response.clone();
 
           // Parse the JSON data
-          const body = await clonedResponse.json().catch(() => null);
+          const body = (await clonedResponse.json().catch(() => null)) as
+            | Session
+            | SessionPayload;
 
           if (body) {
             // Extract session data from response using provided extractor

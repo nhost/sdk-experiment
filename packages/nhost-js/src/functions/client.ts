@@ -35,7 +35,10 @@ export interface Client {
    * @param options - Additional fetch options to apply to the request
    * @returns Promise with the function response and metadata.    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fetch: (path: string, options?: RequestInit) => Promise<FetchResponse<any>>;
+  fetch<T = any>(
+    path: string,
+    options?: RequestInit,
+  ): Promise<FetchResponse<T>>;
 }
 
 /**
@@ -65,11 +68,10 @@ export const createAPIClient = (
        - text string if the response is text/*
        - Blob if the response is any other type
    */
-  const fetch = async (
+  const fetch = async <T = any>(
     path: string,
     options?: RequestInit,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Promise<FetchResponse<any>> => {
+  ): Promise<FetchResponse<T>> => {
     const resp = await enhancedFetch(`${baseURL}${path}`, options);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

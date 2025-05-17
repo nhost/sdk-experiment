@@ -51,7 +51,7 @@ export default function SignIn(): JSX.Element {
       } else {
         setError("Failed to sign in");
       }
-    } catch (err: any) {
+    } catch (err) {
       const error = err as FetchResponse<ErrorResponse>;
       setError(error.body.message || "An error occurred");
     } finally {

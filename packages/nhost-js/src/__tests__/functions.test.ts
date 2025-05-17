@@ -1,7 +1,5 @@
-import {
-  createAPIClient as createAuthClient,
-  type SessionPayload,
-} from "../auth";
+import { describe, it, expect } from "@jest/globals";
+import { createAPIClient as createAuthClient } from "../auth";
 import { MemoryStorage } from "../sessionStorage";
 import { createSessionRefreshMiddleware } from "../middlewareRefreshSession";
 import { createAttachAccessTokenMiddleware } from "../middlewareAttachToken";
@@ -9,6 +7,12 @@ import {
   createAPIClient as createFunctionClient,
   type FetchResponse,
 } from "../functions";
+
+interface EchoResponse {
+  method: string;
+  headers: Record<string, string>;
+  body: Record<string, unknown>;
+}
 
 describe("Test Storage API", () => {
   const nhostAuth = createAuthClient("https://local.auth.local.nhost.run/v1");
@@ -39,7 +43,7 @@ describe("Test Storage API", () => {
     });
     expect(response.status).toBe(200);
 
-    const body = response.body as SessionPayload;
+    const body = response.body;
     if (!body.session) {
       throw new Error("Session is undefined");
     }
@@ -48,7 +52,7 @@ describe("Test Storage API", () => {
   });
 
   it("text/plain (default) returns string", async () => {
-    const resp = await nhostFunctions.fetch("/echo", {
+    const resp = await nhostFunctions.fetch<string>("/echo", {
       method: "POST",
       body: JSON.stringify({
         message: "Hello, world!",
@@ -59,15 +63,15 @@ describe("Test Storage API", () => {
     });
 
     expect(resp.status).toBe(200);
-    expect(resp!.headers.get("content-type")).toBe("text/plain");
-    expect(resp!.headers.get("content-encoding")).toBe("gzip");
-    expect(resp!.body).toMatch(
+    expect(resp.headers.get("content-type")).toBe("text/plain");
+    expect(resp.headers.get("content-encoding")).toBe("gzip");
+    expect(resp.body).toMatch(
       /"method":POST\n.*"headers":{"host":"local.functions.local.nhost.run","user-agent":"node","content-length":".*","accept":"\*\/\*","accept-encoding":"br, gzip, deflate","accept-language":"\*","authorization":"Bearer .*","content-type":"application\/json","sec-fetch-mode":"cors","x-forwarded-for":".*","x-forwarded-host":"local.functions.local.nhost.run","x-forwarded-port":"443","x-forwarded-proto":"https","x-forwarded-server":".*","x-real-ip":".*","x-replaced-path":"\/v1\/echo"}\n.*"body":{"message":"Hello, world!"}/,
     );
   });
 
   it("text/plain (specified) returns string", async () => {
-    const resp = await nhostFunctions.fetch("/echo", {
+    const resp = await nhostFunctions.fetch<EchoResponse>("/echo", {
       method: "POST",
       body: JSON.stringify({
         message: "Hello, world!",
@@ -79,15 +83,15 @@ describe("Test Storage API", () => {
     });
 
     expect(resp.status).toBe(200);
-    expect(resp!.headers.get("content-type")).toBe("text/plain");
-    expect(resp!.headers.get("content-encoding")).toBe("gzip");
-    expect(resp!.body).toMatch(
+    expect(resp.headers.get("content-type")).toBe("text/plain");
+    expect(resp.headers.get("content-encoding")).toBe("gzip");
+    expect(resp.body).toMatch(
       /"method":POST\n.*"headers":{"host":"local.functions.local.nhost.run","user-agent":"node","content-length":".*","accept":"text\/plain","accept-encoding":"br, gzip, deflate","accept-language":"\*","authorization":"Bearer .*","content-type":"application\/json","sec-fetch-mode":"cors","x-forwarded-for":".*","x-forwarded-host":"local.functions.local.nhost.run","x-forwarded-port":"443","x-forwarded-proto":"https","x-forwarded-server":".*","x-real-ip":".*","x-replaced-path":"\/v1\/echo"}\n.*"body":{"message":"Hello, world!"}/,
     );
   });
 
   it("application/json returns object", async () => {
-    const resp = await nhostFunctions.fetch("/echo", {
+    const resp = await nhostFunctions.fetch<EchoResponse>("/echo", {
       method: "POST",
       body: JSON.stringify({
         message: "Hello, world!",
@@ -99,27 +103,27 @@ describe("Test Storage API", () => {
     });
 
     expect(resp.status).toBe(200);
-    expect(resp!.headers.get("content-type")).toBe("application/json");
-    expect(resp!.headers.get("content-encoding")).toBe("gzip");
-    expect(resp!.body.method).toBe("POST");
-    expect(resp!.body.body).toEqual({
+    expect(resp.headers.get("content-type")).toBe("application/json");
+    expect(resp.headers.get("content-encoding")).toBe("gzip");
+    expect(resp.body.method).toBe("POST");
+    expect(resp.body.body).toEqual({
       message: "Hello, world!",
     });
-    expect(resp!.body.headers.accept).toBe("application/json");
-    expect(resp!.body.headers["authorization"]).toBeDefined();
-    expect(resp!.body.headers["accept-encoding"]).toBe("br, gzip, deflate");
-    expect(resp!.body.headers["accept-language"]).toBe("*");
-    expect(resp!.body.headers["content-length"]).toBe("27");
-    expect(resp!.body.headers["content-type"]).toBe("application/json");
-    expect(resp!.body.headers.host).toBe("local.functions.local.nhost.run");
-    expect(resp!.body.headers["sec-fetch-mode"]).toBe("cors");
-    expect(resp!.body.headers["user-agent"]).toBe("node");
-    expect(resp!.body.headers["x-forwarded-host"]).toBe(
+    expect(resp.body.headers.accept).toBe("application/json");
+    expect(resp.body.headers["authorization"]).toBeDefined();
+    expect(resp.body.headers["accept-encoding"]).toBe("br, gzip, deflate");
+    expect(resp.body.headers["accept-language"]).toBe("*");
+    expect(resp.body.headers["content-length"]).toBe("27");
+    expect(resp.body.headers["content-type"]).toBe("application/json");
+    expect(resp.body.headers.host).toBe("local.functions.local.nhost.run");
+    expect(resp.body.headers["sec-fetch-mode"]).toBe("cors");
+    expect(resp.body.headers["user-agent"]).toBe("node");
+    expect(resp.body.headers["x-forwarded-host"]).toBe(
       "local.functions.local.nhost.run",
     );
-    expect(resp!.body.headers["x-forwarded-port"]).toBe("443");
-    expect(resp!.body.headers["x-forwarded-proto"]).toBe("https");
-    expect(resp!.body.headers["x-replaced-path"]).toBe("/v1/echo");
+    expect(resp.body.headers["x-forwarded-port"]).toBe("443");
+    expect(resp.body.headers["x-forwarded-proto"]).toBe("https");
+    expect(resp.body.headers["x-replaced-path"]).toBe("/v1/echo");
   });
 
   it("application/octet-stream returns blob", async () => {
@@ -131,16 +135,16 @@ describe("Test Storage API", () => {
     });
 
     expect(resp.status).toBe(200);
-    expect(resp!.headers.get("content-type")).toBe("application/octet-stream");
-    expect(resp!.headers.get("content-length")).toBe("29");
-    expect(resp!.headers.get("content-encoding")).toBe("gzip");
+    expect(resp.headers.get("content-type")).toBe("application/octet-stream");
+    expect(resp.headers.get("content-length")).toBe("29");
+    expect(resp.headers.get("content-encoding")).toBe("gzip");
     const body = resp.body as Blob;
     expect(await body.text()).toBe("beep-boop");
   });
 
   it("error handling", async () => {
     try {
-      await nhostFunctions.fetch("/crash", {
+      await nhostFunctions.fetch<undefined>("/crash", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -148,7 +152,7 @@ describe("Test Storage API", () => {
       });
       expect(true).toBe(false);
     } catch (err) {
-      const resp = err as FetchResponse<any>;
+      const resp = err as FetchResponse<undefined>;
       expect(resp.status).toBe(500);
       expect(resp.headers.get("content-type")).toBe("text/html; charset=utf-8");
       expect(resp.headers.get("content-length")).toBe("1056");

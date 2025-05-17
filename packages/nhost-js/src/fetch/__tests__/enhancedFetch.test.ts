@@ -1,20 +1,22 @@
+import { describe, beforeEach, test, expect, jest } from "@jest/globals";
 import { createEnhancedFetch, type ChainFunction } from "../index";
 
-// Mock the global fetch function
 const mockFetch = jest.fn();
 
-global.fetch = mockFetch;
+global.fetch = mockFetch as unknown as typeof global.fetch;
 
 describe("Enhanced Fetch", () => {
   beforeEach(() => {
     // Reset mocks before each test
     mockFetch.mockReset();
     // Default mock implementation returns a successful response
-    mockFetch.mockResolvedValue(
-      new Response(JSON.stringify({ data: "test" }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }),
+    mockFetch.mockImplementation(() =>
+      Promise.resolve(
+        new Response(JSON.stringify({ data: "test" }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      ),
     );
   });
 
@@ -135,10 +137,12 @@ describe("Enhanced Fetch", () => {
 
   test("should allow chain functions to modify the response", async () => {
     // Mock a specific response
-    mockFetch.mockResolvedValue(
-      new Response(JSON.stringify({ original: "data" }), {
-        status: 200,
-      }),
+    mockFetch.mockImplementation(() =>
+      Promise.resolve(
+        new Response(JSON.stringify({ original: "data" }), {
+          status: 200,
+        }),
+      ),
     );
 
     const modifyResponse: ChainFunction =
@@ -147,7 +151,7 @@ describe("Enhanced Fetch", () => {
         const originalResponse = await next(url, options);
 
         // Create a modified response
-        const originalData = await originalResponse.json();
+        const originalData = (await originalResponse.json()) as object;
         const modifiedData = { ...originalData, modified: true };
 
         return new Response(JSON.stringify(modifiedData), {
@@ -158,12 +162,13 @@ describe("Enhanced Fetch", () => {
 
     const enhancedFetch = createEnhancedFetch([modifyResponse]);
     const response = await enhancedFetch("https://api.example.com");
-    const data = await response.json();
+    const data = (await response.json()) as object;
 
     expect(data).toEqual({ original: "data", modified: true });
   });
 
   test("errors in middleware should propagate", async () => {
+    // eslint-disable-next-line @typescript-eslint/require-await
     const errorMiddleware: ChainFunction = () => async () => {
       throw new Error("Middleware error");
     };
@@ -178,7 +183,9 @@ describe("Enhanced Fetch", () => {
 
   test("should allow chain functions to handle fetch errors", async () => {
     // Mock fetch to throw an error
-    mockFetch.mockRejectedValue(new Error("Network error"));
+    mockFetch.mockImplementation(() =>
+      Promise.reject(new Error("Network error")),
+    );
 
     const errorHandler: ChainFunction =
       (next) =>
@@ -198,7 +205,7 @@ describe("Enhanced Fetch", () => {
 
     const enhancedFetch = createEnhancedFetch([errorHandler]);
     const response = await enhancedFetch("https://api.example.com");
-    const data = await response.json();
+    const data = (await response.json()) as object;
 
     expect(response.status).toBe(503);
     expect(data).toEqual({ error: "Handled error", fallback: true });

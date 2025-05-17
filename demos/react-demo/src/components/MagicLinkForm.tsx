@@ -1,6 +1,6 @@
-import React, { JSX, useState } from "react";
+import React, { type JSX, useState } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
 interface MagicLinkFormProps {
   buttonLabel?: string;

@@ -8,7 +8,7 @@ import { createNhostClient } from "../nhost/server";
  * Revalidates the specified path after authentication state changes
  * This ensures that server components re-render with the new auth state
  */
-export async function revalidateAfterAuthChange(path: string = "/") {
+export async function revalidateAfterAuthChange(path = "/") {
   // Revalidate the specified path to refresh server components
   revalidatePath(path);
   return { success: true };

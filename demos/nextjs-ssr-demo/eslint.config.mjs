@@ -1,36 +1,64 @@
-import nextjsConfig from '../../configs/eslint/nextjs.mjs';
-import jsonConfig from '../../configs/eslint/json.mjs';
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import globals from "globals";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+import reactPlugin from "eslint-plugin-react";
+import nextPlugin from "@next/eslint-plugin-next";
 
-export default [
-  ...nextjsConfig,
-  ...jsonConfig,
-  {
-    // Next.js demo specific ignores
-    ignores: [
-      'dist',
-      'build',
-      'node_modules',
-      '.next',
-      'coverage'
-    ]
-  },
-  {
-    // Next.js SSR demo specific rules
-    files: ['**/*.{ts,tsx}'],
-    rules: {
-      // Downgrade from error to warning for demo purposes
-      '@typescript-eslint/no-explicit-any': 'warn',
-      
-      // Enforce using getServerSideProps for SSR demos
-      '@next/next/no-html-link-for-pages': 'error',
-    }
-  },
-  {
-    // Rules specific to Next.js API routes
-    files: ['**/pages/api/**/*.ts'],
-    rules: {
-      // Ensure API handlers have proper error handling
-      'no-console': ['error', { allow: ['error'] }],
-    }
-  }
-];
+export default tseslint.config(
+    eslint.configs.recommended,
+    tseslint.configs.recommendedTypeChecked,
+    tseslint.configs.stylistic,
+    {
+        ignores: [".next", "node_modules"],
+    },
+    {
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
+            },
+        },
+    },
+    {
+        files: ["**/*.{tsx,jsx}"],
+        languageOptions: {
+            globals: {
+                ...globals.browser,
+                React: "readonly",
+                JSX: "readonly",
+            },
+            parserOptions: {
+                ecmaFeatures: { jsx: true },
+            },
+        },
+        plugins: {
+            "react": reactPlugin,
+            "react-hooks": reactHooks,
+            "react-refresh": reactRefresh,
+        },
+        settings: {
+            react: {
+                version: "detect",
+            },
+        },
+        rules: {
+            // React recommended rules
+            ...reactPlugin.configs.recommended.rules,
+            ...reactPlugin.configs['jsx-runtime'].rules,
+
+            // React hooks
+            ...reactHooks.configs.recommended.rules,
+        },
+    },
+    {
+        files: ["**/*.{ts,tsx,js,jsx}"],
+        plugins: {
+            "@next/next": nextPlugin,
+        },
+        rules: {
+            ...nextPlugin.configs.recommended.rules,
+        },
+    },
+);

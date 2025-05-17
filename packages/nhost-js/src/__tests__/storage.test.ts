@@ -1,13 +1,10 @@
-import {
-  createAPIClient as createAuthClient,
-  type SessionPayload,
-} from "../auth";
+import { describe, beforeAll, it, expect } from "@jest/globals";
+import { createAPIClient as createAuthClient } from "../auth";
 import { MemoryStorage } from "../sessionStorage";
 import { createSessionRefreshMiddleware } from "../middlewareRefreshSession";
 import { createAttachAccessTokenMiddleware } from "../middlewareAttachToken";
 import {
   createAPIClient as createStorageClient,
-  type UploadFiles201,
   type FetchResponse,
   type Error,
 } from "../storage";
@@ -41,7 +38,7 @@ describe("Test Storage API", () => {
     });
     expect(response.status).toBe(200);
 
-    const body = response.body as SessionPayload;
+    const body = response.body;
     if (!body.session) {
       throw new Error("Session is undefined");
     }
@@ -81,7 +78,7 @@ describe("Test Storage API", () => {
       ],
     });
 
-    const body = resp.body as UploadFiles201;
+    const body = resp.body;
     expect(body.processedFiles).toBeDefined();
     expect(body.processedFiles?.[0]?.bucketId).toBe("default");
     expect(body.processedFiles?.[0]?.createdAt).toBeDefined();

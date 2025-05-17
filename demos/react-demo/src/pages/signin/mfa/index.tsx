@@ -72,7 +72,7 @@ export default function MfaVerification(): JSX.Element {
       }
 
       return { error: "Failed to verify MFA code" };
-    } catch (err: any) {
+    } catch (err) {
       const error = err as FetchResponse<ErrorResponse>;
       return { error: error.body.message || "Failed to verify code" };
     }

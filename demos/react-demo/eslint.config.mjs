@@ -1,31 +1,55 @@
-import reactConfig from "../../configs/eslint/react.mjs";
-import jsonConfig from "../../configs/eslint/json.mjs";
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import globals from "globals";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+import reactPlugin from "eslint-plugin-react";
 
-export default [
-  ...reactConfig,
-  ...jsonConfig,
-  {
-    // React demo specific ignores
-    ignores: ["dist", "build", "node_modules", ".vite", "coverage"],
-  },
-  {
-    // Override TypeScript parser options to fix project file issues
-    files: ["**/*.ts", "**/*.tsx"],
-    languageOptions: {
-      parserOptions: {
-        project: "./tsconfig.json",
-        tsconfigRootDir: ".",
-      },
+export default tseslint.config(
+    eslint.configs.recommended,
+    tseslint.configs.recommendedTypeChecked,
+    tseslint.configs.stylistic,
+    {
+        // React demo specific ignores
+        ignores: ["dist", "build", "node_modules", ".vite", "coverage", "vite.config.ts"],
     },
-  },
-  {
-    // React demo specific rules
-    files: ["src/**/*.tsx"],
-    rules: {
-      // Allow props spreading in the demo for simplicity
-      "react/jsx-props-no-spreading": "off",
-      // Downgrade from error to warning for demo purposes
-      "@typescript-eslint/no-explicit-any": "warn",
+    {
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
+            },
+        },
     },
-  },
-];
+    {
+        files: ["**/*.{tsx,jsx}"],
+        languageOptions: {
+            globals: {
+                ...globals.browser,
+                React: "readonly",
+                JSX: "readonly",
+            },
+            parserOptions: {
+                ecmaFeatures: { jsx: true },
+            },
+        },
+        plugins: {
+            "react": reactPlugin,
+            "react-hooks": reactHooks,
+            "react-refresh": reactRefresh,
+        },
+        settings: {
+            react: {
+                version: "detect",
+            },
+        },
+        rules: {
+            // React recommended rules
+            ...reactPlugin.configs.recommended.rules,
+            ...reactPlugin.configs['jsx-runtime'].rules,
+
+            // React hooks
+            ...reactHooks.configs.recommended.rules,
+        },
+    },
+);

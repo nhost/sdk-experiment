@@ -44,7 +44,7 @@ export default function SignUp(): JSX.Element {
         // Verification email sent
         navigate("/verify");
       }
-    } catch (err: any) {
+    } catch (err) {
       const error = err as FetchResponse<ErrorResponse>;
       setError(error.body.message || "An error occurred");
     } finally {

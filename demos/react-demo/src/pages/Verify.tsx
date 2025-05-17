@@ -51,7 +51,7 @@ export default function Verify(): JSX.Element {
         setTimeout(() => {
           if (isMounted) navigate("/profile");
         }, 1500);
-      } catch (err: any) {
+      } catch (err) {
         const error = err as FetchResponse<ErrorResponse>;
         if (!isMounted) return;
 
@@ -70,7 +70,7 @@ export default function Verify(): JSX.Element {
     return () => {
       isMounted = false;
     };
-  }, [location.search, navigate]);
+  }, [location.search, navigate, nhost.auth]);
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -92,7 +92,7 @@ export default function Verify(): JSX.Element {
               <p className="mb-4 text-green-500 font-bold">
                 ✓ Successfully verified!
               </p>
-              <p>You'll be redirected to your profile page shortly...</p>
+              <p>You&apos;ll be redirected to your profile page shortly...</p>
             </div>
           )}
 

@@ -11,9 +11,8 @@ import { createEnhancedFetch, type ChainFunction } from "../fetch";
  * Variables object for GraphQL operations.
  * Key-value pairs of variable names and their values.
  */
-export interface GraphQLVariables {
-  [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type GraphQLVariables = Record<string, any>;
 
 /**
  * GraphQL request object used for queries and mutations.
@@ -38,7 +37,7 @@ export interface GraphQLError {
   /** Path in the query where the error occurred */
   path?: string[];
   /** Additional error information specific to the GraphQL implementation */
-  extensions?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  extensions?: { path: string; code: string };
 }
 
 /**
@@ -78,10 +77,11 @@ export interface Client {
    * @param options - Additional fetch options to apply to the request
    * @returns Promise with the GraphQL response and metadata
    */
-  post: (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  post<T = any>(
     request: GraphQLRequest,
     options?: RequestInit,
-  ) => Promise<FetchResponse<GraphQLResponse>>;
+  ): Promise<FetchResponse<GraphQLResponse<T>>>;
 }
 
 /**
@@ -115,7 +115,8 @@ export const createAPIClient = (
     });
 
     const body = await response.text();
-    const data: GraphQLResponse = body ? JSON.parse(body) : {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: GraphQLResponse<any> = body ? JSON.parse(body) : {};
 
     const resp = {
       body: data,
@@ -130,10 +131,11 @@ export const createAPIClient = (
     return resp;
   };
 
-  const post = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const post = <T = any>(
     request: GraphQLRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<GraphQLResponse>> =>
+  ): Promise<FetchResponse<GraphQLResponse<T>>> =>
     executeOperation(request, options);
 
   return {

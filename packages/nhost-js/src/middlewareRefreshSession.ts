@@ -10,6 +10,10 @@ import type { Client, ErrorResponse, FetchResponse, Session } from "./auth";
 import type { SessionStorageInterface } from "./sessionStorage";
 import type { ChainFunction, FetchFunction } from "./fetch";
 
+interface JWTToken {
+  exp: number;
+}
+
 /**
  * Extracts the expiration time from a JWT token
  * @param token - JWT token string
@@ -32,7 +36,7 @@ export const extractTokenExpiration = (token: string): number => {
 
     // Decode the payload (middle part)
     const base64 = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
-    const payload = decodeTokenPayload(base64);
+    const payload = decodeTokenPayload(base64) as JWTToken;
 
     if (payload.exp) {
       // exp claim is in seconds, convert to milliseconds
@@ -75,13 +79,13 @@ function decodeTokenPayload(base64Payload: string): any {
 /**
  * Configuration options for the session refresh middleware
  */
-export type SessionRefreshOptions = {
+export interface SessionRefreshOptions {
   /**
    * Number of seconds before token expiration when a refresh should be triggered.
    * Default is 60 seconds (1 minute).
    */
   marginSeconds?: number;
-};
+}
 
 /**
  * Creates a fetch middleware that automatically refreshes authentication tokens.
