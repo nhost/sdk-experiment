@@ -101,10 +101,11 @@ export const createAPIClient = (
 ): Client => {
   const enhancedFetch = createEnhancedFetch(chainFunctions);
 
-  const executeOperation = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const executeOperation = async <T = any>(
     request: GraphQLRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<GraphQLResponse>> => {
+  ): Promise<FetchResponse<GraphQLResponse<T>>> => {
     const response = await enhancedFetch(`${baseURL}`, {
       method: "POST",
       headers: {
@@ -115,8 +116,9 @@ export const createAPIClient = (
     });
 
     const body = await response.text();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const data: GraphQLResponse<any> = body ? JSON.parse(body) : {};
+    const data: GraphQLResponse<T> = (
+      body ? JSON.parse(body) : {}
+    ) as GraphQLResponse<T>;
 
     const resp = {
       body: data,
@@ -125,6 +127,7 @@ export const createAPIClient = (
     };
 
     if (data.errors) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw resp;
     }
 

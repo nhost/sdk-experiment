@@ -68,17 +68,17 @@ export const createAPIClient = (
        - text string if the response is text/*
        - Blob if the response is any other type
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fetch = async <T = any>(
     path: string,
     options?: RequestInit,
-  ): Promise<FetchResponse<T>> => {
+  ): Promise<FetchResponse<T | string | Blob>> => {
     const resp = await enhancedFetch(`${baseURL}${path}`, options);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let body: any;
+    let body: T | string | Blob;
     // Process response based on content type
     if (resp.headers.get("content-type")?.includes("application/json")) {
-      body = await resp.json();
+      body = (await resp.json()) as T;
     } else if (resp.headers.get("content-type")?.startsWith("text/")) {
       body = await resp.text();
     } else {
@@ -94,6 +94,7 @@ export const createAPIClient = (
 
     // Throw error for non-OK responses
     if (!resp.ok) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw payload;
     }
 
