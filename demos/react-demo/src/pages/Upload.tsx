@@ -1,11 +1,19 @@
-import { useState, useEffect, useRef, JSX } from "react";
+import { useState, useEffect, useRef, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { formatFileSize } from "../lib/utils";
-import { FileMetadata } from "@nhost/nhost-js/storage";
+import type {
+  FileMetadata,
+  FetchResponse,
+  Error,
+} from "@nhost/nhost-js/storage";
 
 interface DeleteStatus {
   message: string;
   isError: boolean;
+}
+
+interface GraphqlGetFilesResponse {
+  files: FileMetadata[];
 }
 
 export default function Upload(): JSX.Element {
@@ -34,7 +42,7 @@ export default function Upload(): JSX.Element {
 
     try {
       // Fetch files using GraphQL query
-      const response = await nhost.graphql.post({
+      const response = await nhost.graphql.post<GraphqlGetFilesResponse>({
         query: `query GetFiles {
             files {
               id
@@ -53,7 +61,7 @@ export default function Upload(): JSX.Element {
         );
       }
 
-      setFiles(response.body.data.files);
+      setFiles(response.body.data?.files || []);
     } catch (err) {
       console.error("Error fetching files:", err);
       setError("Failed to load files. Please try refreshing the page.");
@@ -114,8 +122,9 @@ export default function Upload(): JSX.Element {
       setTimeout(() => {
         setUploadResult(null);
       }, 3000);
-    } catch (err) {
-      setError(err.message || "Failed to upload file");
+    } catch (err: unknown) {
+      const error = err as FetchResponse<Error>;
+      setError(error.body.error?.message || "Failed to upload file");
     } finally {
       setUploading(false);
     }
@@ -176,7 +185,8 @@ export default function Upload(): JSX.Element {
         }
       }
     } catch (err) {
-      setError(`Failed to view file: ${err.message}`);
+      const error = err as FetchResponse<Error>;
+      setError(`Failed to view file: ${error.body.error?.message}`);
       console.error("Error viewing file:", err);
     } finally {
       setViewingFile(null);
@@ -217,8 +227,9 @@ export default function Upload(): JSX.Element {
       }, 3000);
     } catch (err) {
       // Show error message
+      const error = err as FetchResponse<Error>;
       setDeleteStatus({
-        message: `Failed to delete ${fileName}: ${err.message}`,
+        message: `Failed to delete ${fileName}: ${error.body.error?.message}`,
         isError: true,
       });
       console.error("Error deleting file:", err);

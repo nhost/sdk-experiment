@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+};
 
 // Custom hook to use the auth context
 export const useAuth = (): AuthContextType => {

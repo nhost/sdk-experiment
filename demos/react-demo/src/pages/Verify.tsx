@@ -1,7 +1,7 @@
-import { JSX, useEffect, useState } from "react";
+import { type JSX, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
 export default function Verify(): JSX.Element {
   const location = useLocation();
@@ -55,12 +55,8 @@ export default function Verify(): JSX.Element {
         const error = err as FetchResponse<ErrorResponse>;
         if (!isMounted) return;
 
-        console.error(
-          "Verification error:",
-          error.body.message || "An error occurred",
-        );
         setStatus("error");
-        setError(err.message || "An error occurred during verification");
+        setError(error.body.message || "An error occurred during verification");
       }
     }
 

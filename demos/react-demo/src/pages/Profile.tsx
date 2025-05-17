@@ -5,11 +5,11 @@ import ChangePassword from "../components/ChangePassword";
 import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
 interface MfaStatusResponse {
-    data?: {
-      user?: {
-        activeMfaType: string | null;
-      };
+  data?: {
+    user?: {
+      activeMfaType: string | null;
     };
+  };
 }
 
 export default function Profile(): JSX.Element {
@@ -23,18 +23,19 @@ export default function Profile(): JSX.Element {
 
       try {
         // Correctly structure GraphQL query with parameters
-        const response: FetchResponse<MfaStatusResponse> = await nhost.graphql.post({
-          query: `
+        const response: FetchResponse<MfaStatusResponse> =
+          await nhost.graphql.post({
+            query: `
             query GetUserMfaStatus($userId: uuid!) {
               user(id: $userId) {
                 activeMfaType
               }
             }
           `,
-          variables: {
-            userId: user.id,
-          },
-        });
+            variables: {
+              userId: user.id,
+            },
+          });
 
         const userData = response.body?.data;
         const activeMfaType = userData?.user?.activeMfaType;
