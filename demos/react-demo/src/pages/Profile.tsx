@@ -1,8 +1,9 @@
-import { useEffect, useState, JSX } from "react";
+import { useEffect, useState } from "react";
+import type { JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import MFASettings from "../components/MFASettings";
 import ChangePassword from "../components/ChangePassword";
-import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
 interface MfaStatusResponse {
   data?: {
@@ -55,7 +56,7 @@ export default function Profile(): JSX.Element {
     if (isAuthenticated && user?.id) {
       fetchMfaStatus();
     }
-  }, [user, isAuthenticated]);
+  }, [user, isAuthenticated, nhost.graphql]);
 
   // ProtectedRoute component now handles authentication check
   // We can just focus on the component logic here

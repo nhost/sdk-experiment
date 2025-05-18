@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type JSX } from "react";
+import { useState, useEffect, useRef, useCallback, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { formatFileSize } from "../lib/utils";
 import type {
@@ -29,14 +29,7 @@ export default function Upload(): JSX.Element {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [deleteStatus, setDeleteStatus] = useState<DeleteStatus | null>(null);
 
-  // Fetch existing files when component mounts
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchFiles();
-    }
-  }, [isAuthenticated]);
-
-  const fetchFiles = async (): Promise<void> => {
+  const fetchFiles = useCallback(async (): Promise<void> => {
     setIsFetching(true);
     setError(null);
 
@@ -68,7 +61,14 @@ export default function Upload(): JSX.Element {
     } finally {
       setIsFetching(false);
     }
-  };
+  }, [nhost.graphql, setFiles, setError, setIsFetching]);
+
+  // Fetch existing files when component mounts
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchFiles();
+    }
+  }, [isAuthenticated, fetchFiles]);
 
   // ProtectedRoute component now handles authentication check
   // We can just focus on the component logic here

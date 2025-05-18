@@ -18,6 +18,7 @@ export default tseslint.config(
       ".vite",
       "coverage",
       "vite.config.ts",
+      "eslint.config.mjs",
     ],
   },
   {
@@ -67,7 +68,7 @@ export default tseslint.config(
           },
         },
       ],
-      
+
       // Disable floating promises rule for React 19's automatic promise handling
       "@typescript-eslint/no-floating-promises": "off",
     },
