@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createNhostClient } from "../lib/nhost/client";
 import { formatFileSize } from "../lib/utils";
-import { StorageFile } from "./page";
+import type { StorageFile } from "./page";
+import type { FileMetadata } from "@nhost/nhost-js/storage";
 
 interface UploadClientProps {
   initialFiles: StorageFile[];
@@ -21,7 +22,7 @@ export default function UploadClient({
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
-  const [uploadResult, setUploadResult] = useState<any | null>(null);
+  const [uploadResult, setUploadResult] = useState<FileMetadata | null>(null);
   const [error, setError] = useState<string | null>(serverError);
   const [files, setFiles] = useState<StorageFile[]>(initialFiles);
   const [viewingFile, setViewingFile] = useState<string | null>(null);
@@ -85,8 +86,10 @@ export default function UploadClient({
           newWindow.document.close();
         }
       }
-    } catch (err: any) {
-      setError(`Failed to view file: ${err.message}`);
+    } catch (err) {
+      setError(
+        `Failed to view file: ${err instanceof Error ? err.message : "Unknown error"}`,
+      );
       console.error("Error viewing file:", err);
     } finally {
       setViewingFile(null);
@@ -122,7 +125,7 @@ export default function UploadClient({
 
       // Get the processed file data
       const uploadedFile = response.body.processedFiles?.[0];
-      setUploadResult(uploadedFile);
+      setUploadResult(uploadedFile || null);
 
       // Reset form
       setSelectedFile(null);
@@ -157,8 +160,8 @@ export default function UploadClient({
       setTimeout(() => {
         setUploadResult(null);
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || "Failed to upload file");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to upload file");
     } finally {
       setUploading(false);
     }
@@ -196,10 +199,10 @@ export default function UploadClient({
       setTimeout(() => {
         setDeleteStatus(null);
       }, 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Show error message
       setDeleteStatus({
-        message: `Failed to delete ${fileName}: ${err.message}`,
+        message: `Failed to delete ${fileName}: ${err instanceof Error ? err.message : "Unknown error"}`,
         isError: true,
       });
       console.error("Error deleting file:", err);

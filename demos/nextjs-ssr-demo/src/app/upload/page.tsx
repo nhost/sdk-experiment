@@ -1,14 +1,9 @@
 import { createNhostClient } from "../lib/nhost/server";
 import UploadClient from "./client";
+import type { FileMetadata } from "@nhost/nhost-js/storage";
 
-// Define the File type based on the GraphQL schema
-export interface StorageFile {
-  id: string;
-  name: string;
-  size: number;
-  mimeType: string;
-  bucketId: string;
-  uploadedByUserId: string;
+interface GetFilesResponse {
+    files: FileMetadata[];
 }
 
 export default async function UploadPage() {
@@ -16,12 +11,11 @@ export default async function UploadPage() {
   const nhost = await createNhostClient();
 
   // Fetch files on the server
-  let files: StorageFile[] = [];
+  let files: FileMetadata[] = [];
   let error: string | null = null;
 
   try {
-    // @ts-ignore - GraphQL client exists but TypeScript might not know about it
-    const response = await nhost.graphql.post({
+    const response = await nhost.graphql.post<GetFilesResponse>({
       query: `
         query GetFiles {
           files {
@@ -40,9 +34,9 @@ export default async function UploadPage() {
       throw new Error(response.body.errors[0]?.message);
     }
 
-    files = response.body.data.files;
-  } catch (err: any) {
-    error = `Failed to load files: ${err.message}`;
+    files = response.body.data?.files || [];
+  } catch (err) {
+    error = `Failed to load files: ${err instanceof Error ? err.message : "Unknown error"}`;
     console.error("Error fetching files:", err);
   }
 

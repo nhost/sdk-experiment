@@ -32,7 +32,7 @@ export async function createNhostClient(): Promise<
         if (!s) {
           return null;
         }
-        const session: Session = JSON.parse(s);
+        const session = JSON.parse(s) as Session;
         return session;
       },
       set: (value: Session) => {
@@ -71,7 +71,7 @@ export async function handleNhostMiddleware(
         if (!raw) {
           return null;
         }
-        const session: Session = JSON.parse(raw);
+        const session = JSON.parse(raw) as Session;
         return session;
       },
       set: (value: Session) => {

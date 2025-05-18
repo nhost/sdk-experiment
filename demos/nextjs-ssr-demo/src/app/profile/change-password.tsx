@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createNhostClient } from "../lib/nhost/client";
+import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
 export default function ChangePassword() {
   const [newPassword, setNewPassword] = useState("");
@@ -34,20 +35,16 @@ export default function ChangePassword() {
     setIsLoading(true);
 
     try {
-      // Use the changeUserPassword method from the SDK
-      const response = await nhost.auth.changeUserPassword({
+      await nhost.auth.changeUserPassword({
         newPassword,
       });
 
-      if (response.body.error) {
-        setError(response.body.error.message || "Failed to change password");
-      } else {
-        setSuccess(true);
-        setNewPassword("");
-        setConfirmPassword("");
-      }
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred");
+      setSuccess(true);
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      const error = err as FetchResponse<ErrorResponse>;
+      setError("Error changing password: " + error.body.message || "unexpected error");
     } finally {
       setIsLoading(false);
     }

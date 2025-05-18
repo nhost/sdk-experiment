@@ -4,11 +4,14 @@ import SignInForm from "./SignInForm";
 import MagicLinkForm from "../components/MagicLinkForm";
 import { sendMagicLink } from "./actions";
 
-export default async function SignIn({ searchParams }: any) {
+export default function SignIn({
+  searchParams,
+}: {
+  searchParams: { error?: string; magic?: string };
+}) {
   // Extract error and magic link status from URL
-  const params = await searchParams;
-  const error = params?.error as string | undefined;
-  const magicLinkSent = params?.magic === "success";
+  const error = searchParams?.error;
+  const magicLinkSent = searchParams?.magic === "success";
 
   return (
     <div className="flex flex-col items-center justify-center">

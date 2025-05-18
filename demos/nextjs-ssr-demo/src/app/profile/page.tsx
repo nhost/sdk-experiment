@@ -2,6 +2,12 @@ import { createNhostClient } from "../lib/nhost/server";
 import MFASettings from "./mfa-settings";
 import ChangePassword from "./change-password";
 
+interface GetUserMfaStatusResponse {
+  user: {
+    activeMfaType: string | null;
+  };
+}
+
 export default async function Profile() {
   // Create the client with async cookie access
   const nhost = await createNhostClient();
@@ -12,7 +18,7 @@ export default async function Profile() {
 
   if (session?.user?.id) {
     try {
-      const response = await nhost.graphql.post({
+      const response = await nhost.graphql.post<GetUserMfaStatusResponse>({
         query: `
           query GetUserMfaStatus($userId: uuid!) {
             user(id: $userId) {
@@ -26,8 +32,7 @@ export default async function Profile() {
       });
 
       // MFA is enabled if activeMfaType is "totp"
-      const userData = response.body?.data;
-      isMfaEnabled = userData?.user?.activeMfaType === "totp";
+      isMfaEnabled = response.body.data?.user?.activeMfaType === "totp";
 
       if (response.body.errors && response.body.errors.length > 0) {
         console.error("Error fetching MFA status:", response.body.errors);
