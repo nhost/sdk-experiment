@@ -3,7 +3,7 @@ import UploadClient from "./client";
 import type { FileMetadata } from "@nhost/nhost-js/storage";
 
 interface GetFilesResponse {
-    files: FileMetadata[];
+  files: FileMetadata[];
 }
 
 export default async function UploadPage() {

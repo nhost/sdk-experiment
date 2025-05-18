@@ -44,7 +44,9 @@ export default function ChangePassword() {
       setConfirmPassword("");
     } catch (err) {
       const error = err as FetchResponse<ErrorResponse>;
-      setError("Error changing password: " + error.body.message || "unexpected error");
+      setError(
+        "Error changing password: " + error.body.message || "unexpected error",
+      );
     } finally {
       setIsLoading(false);
     }

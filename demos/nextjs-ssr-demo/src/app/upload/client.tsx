@@ -136,8 +136,7 @@ export default function UploadClient({
         setError("Failed to upload file");
         return;
       }
-        setFiles((prevFiles) => [uploadedFile, ...prevFiles]);
-
+      setFiles((prevFiles) => [uploadedFile, ...prevFiles]);
 
       // Refresh page to get updated file list from server
       router.refresh();
@@ -303,7 +302,11 @@ export default function UploadClient({
                       <div className="table-actions">
                         <button
                           onClick={() =>
-                            handleViewFile(file.id || "unknown", file.name || "unknown", file.mimeType || "unknown")
+                            handleViewFile(
+                              file.id || "unknown",
+                              file.name || "unknown",
+                              file.mimeType || "unknown",
+                            )
                           }
                           disabled={viewingFile === file.id}
                           className="action-icon action-icon-view"
