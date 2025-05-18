@@ -1,4 +1,10 @@
-export default function VerificationError({ searchParams }: any) {
+interface ErrorPageProps {
+  searchParams: {
+    message?: string;
+  };
+}
+
+export default function VerificationError({ searchParams }: ErrorPageProps) {
   const errorMessage = searchParams?.message || "Verification failed";
 
   return (
