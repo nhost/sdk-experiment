@@ -11,7 +11,7 @@ export default tseslint.config(
   tseslint.configs.recommendedTypeChecked,
   tseslint.configs.stylistic,
   {
-    ignores: [".next", "node_modules"],
+    ignores: [".next", "node_modules", "eslint.config.mjs"],
   },
   {
     languageOptions: {
