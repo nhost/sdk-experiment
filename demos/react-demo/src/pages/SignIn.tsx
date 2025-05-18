@@ -1,9 +1,9 @@
-import { useState, useEffect, JSX } from "react";
+import { useState, useEffect, type JSX } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import TabForm from "../components/TabForm";
 import MagicLinkForm from "../components/MagicLinkForm";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchResponse, type ErrorResponse } from "@nhost/nhost-js/auth";
 
 export default function SignIn(): JSX.Element {
   const { nhost, isAuthenticated } = useAuth();

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, JSX } from "react";
+import React, { useState, useEffect, type JSX } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../../lib/nhost/AuthProvider";
-import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchResponse, type ErrorResponse } from "@nhost/nhost-js/auth";
 
 interface VerificationResponse {
   success?: boolean;

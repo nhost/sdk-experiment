@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { JSX } from "react";
+import { type JSX } from "react";
 
 export default function Navigation(): JSX.Element {
   const { isAuthenticated, nhost, session } = useAuth();
