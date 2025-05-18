@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { createNhostClient } from "../lib/nhost/server";
-import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
 export async function GET(request: NextRequest) {
   const refreshToken = request.nextUrl.searchParams.get("refreshToken");
