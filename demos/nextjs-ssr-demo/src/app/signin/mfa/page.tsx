@@ -5,11 +5,12 @@ import MfaVerificationForm from "./MfaVerificationForm";
 export default async function MfaVerification({
   searchParams,
 }: {
-  searchParams: { ticket?: string; error?: string };
+  searchParams: Promise<{ ticket?: string; error?: string }>;
 }) {
   // Extract ticket and error from URL
-  const ticket = searchParams.ticket;
-  const error = searchParams.error;
+  const params = await searchParams;
+  const ticket = params.ticket;
+  const error = params.error;
 
   // Check if user is already authenticated
   const nhost = await createNhostClient();

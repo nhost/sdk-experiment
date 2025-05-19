@@ -1,11 +1,12 @@
 interface ErrorPageProps {
-  searchParams: {
+  searchParams: Promise<{
     message?: string;
-  };
+  }>;
 }
 
-export default function VerificationError({ searchParams }: ErrorPageProps) {
-  const errorMessage = searchParams?.message || "Verification failed";
+export default async function VerificationError({ searchParams }: ErrorPageProps) {
+  const params = await searchParams;
+  const errorMessage = params?.message || "Verification failed";
 
   return (
     <div className="flex flex-col items-center justify-center">
