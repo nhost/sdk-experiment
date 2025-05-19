@@ -1,7 +1,8 @@
 import React, { useState, useEffect, type JSX } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../../lib/nhost/AuthProvider";
-import { type FetchResponse, type ErrorResponse } from "@nhost/nhost-js/auth";
+import { type ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
 
 interface VerificationResponse {
   success?: boolean;
@@ -45,8 +46,8 @@ export default function MfaVerification(): JSX.Element {
       await verifyMfa(ticket as string, otp);
       navigate("/profile", { replace: true });
     } catch (err) {
-      const error = err as FetchResponse<ErrorResponse>;
-      setError(error.body.message || "An error occurred during verification");
+      const error = err as FetchError<ErrorResponse>;
+      setError(`An error occurred during verification: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -73,8 +74,8 @@ export default function MfaVerification(): JSX.Element {
 
       return { error: "Failed to verify MFA code" };
     } catch (err) {
-      const error = err as FetchResponse<ErrorResponse>;
-      return { error: error.body.message || "Failed to verify code" };
+      const error = err as FetchError<ErrorResponse>;
+      return { error: `Failed to verify code: ${error.message}` };
     }
   };
 

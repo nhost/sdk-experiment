@@ -109,7 +109,7 @@ function extractMessage(
     return body.errors.map((error) => error.message).join(", ");
   }
 
-  return "An error occurred";
+  return "An unexpcted error occurred";
 }
 
 export class FetchError<

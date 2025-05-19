@@ -3,7 +3,8 @@ import type { JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import MFASettings from "../components/MFASettings";
 import ChangePassword from "../components/ChangePassword";
-import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import type { ErrorResponse } from "@nhost/nhost-js/auth";
+import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
 
 interface MfaStatusResponse {
   data?: {
@@ -45,11 +46,8 @@ export default function Profile(): JSX.Element {
         // Update the state
         setIsMfaEnabled(newMfaEnabled);
       } catch (err) {
-        const error = err as FetchResponse<ErrorResponse>;
-        console.error(
-          "Failed to query MFA status:",
-          error.body.message || "An unexpected error occurred",
-        );
+        const error = err as FetchError<ErrorResponse>;
+        console.error(`Failed to query MFA status: ${error.message}`);
       }
     };
 

@@ -1,11 +1,8 @@
 import { useState, useEffect, useRef, useCallback, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { formatFileSize } from "../lib/utils";
-import type {
-  FileMetadata,
-  FetchResponse,
-  Error,
-} from "@nhost/nhost-js/storage";
+import type { FileMetadata, ErrorResponse } from "@nhost/nhost-js/storage";
+import { type FetchError } from "@nhost/nhost-js/fetch";
 
 interface DeleteStatus {
   message: string;
@@ -123,8 +120,8 @@ export default function Upload(): JSX.Element {
         setUploadResult(null);
       }, 3000);
     } catch (err: unknown) {
-      const error = err as FetchResponse<Error>;
-      setError(error.body.error?.message || "Failed to upload file");
+      const error = err as FetchError<ErrorResponse>;
+      setError(`Failed to upload file: ${error.message}`);
     } finally {
       setUploading(false);
     }
@@ -185,8 +182,8 @@ export default function Upload(): JSX.Element {
         }
       }
     } catch (err) {
-      const error = err as FetchResponse<Error>;
-      setError(`Failed to view file: ${error.body.error?.message}`);
+      const error = err as FetchError<ErrorResponse>;
+      setError(`Failed to view file: ${error.message}`);
       console.error("Error viewing file:", err);
     } finally {
       setViewingFile(null);
@@ -227,9 +224,9 @@ export default function Upload(): JSX.Element {
       }, 3000);
     } catch (err) {
       // Show error message
-      const error = err as FetchResponse<Error>;
+      const error = err as FetchError<ErrorResponse>;
       setDeleteStatus({
-        message: `Failed to delete ${fileName}: ${error.body.error?.message}`,
+        message: `Failed to delete ${fileName}: ${error.message}`,
         isError: true,
       });
       console.error("Error deleting file:", err);
