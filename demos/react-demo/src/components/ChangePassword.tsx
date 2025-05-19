@@ -1,6 +1,6 @@
-import { useState, JSX } from "react";
+import { useState, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchResponse, type ErrorResponse } from "@nhost/nhost-js/auth";
 
 export default function ChangePassword(): JSX.Element {
   const [newPassword, setNewPassword] = useState<string>("");

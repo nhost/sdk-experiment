@@ -8,18 +8,23 @@ but you can also use it directly if you have a specific use case.
 
 GraphQL client interface providing methods for executing queries and mutations
 
-#### Properties
+#### Methods
 
 ##### post()
 
 ```ts
-post: (request: GraphQLRequest, options?: RequestInit) =>
-  Promise<FetchResponse<GraphQLResponse<any>>>;
+post<T>(request: GraphQLRequest, options?: RequestInit): Promise<FetchResponse<GraphQLResponse<T>>>;
 ```
 
 Execute a GraphQL query operation
 
 Queries are used to fetch data and should not modify any data on the server.
+
+###### Type Parameters
+
+| Type Parameter | Default type |
+| -------------- | ------------ |
+| `T`            | `any`        |
 
 ###### Parameters
 
@@ -30,7 +35,7 @@ Queries are used to fetch data and should not modify any data on the server.
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`any`&gt;&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`T`&gt;&gt;&gt;
 
 Promise with the GraphQL response and metadata
 
@@ -83,10 +88,15 @@ Represents a GraphQL error returned from the server.
 ##### extensions?
 
 ```ts
-optional extensions: any;
+optional extensions: object;
 ```
 
 Additional error information specific to the GraphQL implementation
+
+| Name   | Type     |
+| ------ | -------- |
+| `code` | `string` |
+| `path` | `string` |
 
 ##### locations?
 
@@ -179,18 +189,16 @@ optional errors: GraphQLError[];
 
 Array of errors if execution was unsuccessful or partially successful
 
----
+## Type Aliases
 
 ### GraphQLVariables
 
+```ts
+type GraphQLVariables = Record<string, any>;
+```
+
 Variables object for GraphQL operations.
 Key-value pairs of variable names and their values.
-
-#### Indexable
-
-```ts
-[key: string]: any
-```
 
 ## Functions
 

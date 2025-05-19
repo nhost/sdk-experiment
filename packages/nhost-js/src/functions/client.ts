@@ -5,8 +5,7 @@
  * against Nhost serverless functions.
  */
 
-import { createEnhancedFetch } from "../fetch";
-import type { ChainFunction } from "../fetch";
+import { createEnhancedFetch, type ChainFunction } from "../fetch";
 
 /**
  * Response wrapper for function calls with additional metadata.
@@ -36,7 +35,10 @@ export interface Client {
    * @param options - Additional fetch options to apply to the request
    * @returns Promise with the function response and metadata.    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fetch: (path: string, options?: RequestInit) => Promise<FetchResponse<any>>;
+  fetch<T = any>(
+    path: string,
+    options?: RequestInit,
+  ): Promise<FetchResponse<T>>;
 }
 
 /**
@@ -53,7 +55,7 @@ export interface Client {
 export const createAPIClient = (
   baseURL: string,
   chainFunctions: ChainFunction[] = [],
-) => {
+): Client => {
   const enhancedFetch = createEnhancedFetch(chainFunctions);
 
   /**
@@ -66,18 +68,17 @@ export const createAPIClient = (
        - text string if the response is text/*
        - Blob if the response is any other type
    */
-  const fetch = async (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const fetch = async <T = any>(
     path: string,
     options?: RequestInit,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): Promise<FetchResponse<any>> => {
+  ): Promise<FetchResponse<T | string | Blob>> => {
     const resp = await enhancedFetch(`${baseURL}${path}`, options);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let body: any;
+    let body: T | string | Blob;
     // Process response based on content type
     if (resp.headers.get("content-type")?.includes("application/json")) {
-      body = await resp.json();
+      body = (await resp.json()) as T;
     } else if (resp.headers.get("content-type")?.startsWith("text/")) {
       body = await resp.text();
     } else {
@@ -87,12 +88,13 @@ export const createAPIClient = (
     // Create response payload with status, body and headers
     const payload = {
       status: resp.status,
-      body: body,
+      body,
       headers: resp.headers,
     };
 
     // Throw error for non-OK responses
     if (!resp.ok) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw payload;
     }
 

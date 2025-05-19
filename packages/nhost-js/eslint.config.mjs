@@ -1,25 +1,26 @@
-import js from "@eslint/js";
-import globals from "globals";
+import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
-import json from "@eslint/json";
-import { defineConfig, globalIgnores } from "eslint/config";
 
-export default defineConfig([
-  globalIgnores(["src/auth/client.ts", "src/storage/client.ts"]),
+export default tseslint.config(
+  eslint.configs.recommended,
+  tseslint.configs.recommendedTypeChecked,
+  tseslint.configs.stylistic,
   {
-    files: ["**/*.{js,mjs,cjs,ts}"],
-    plugins: { js },
-    extends: ["js/recommended"],
+    ignores: ["src/auth/client.ts", "src/storage/client.ts"],
   },
   {
-    files: ["**/*.{js,mjs,cjs,ts}"],
-    languageOptions: { globals: { ...globals.browser, ...globals.node } },
+    files: ["src/**/*.ts"],
+    languageOptions: {
+      parserOptions: {
+        project: "./tsconfig.eslint.json",
+        tsconfigRootDir: ".",
+      },
+    },
   },
-  tseslint.configs.recommended,
   {
-    files: ["**/*.json"],
-    plugins: { json },
-    language: "json/json",
-    extends: ["json/recommended"],
+    files: ["src/__tests__/docstrings*.test.ts"],
+    rules: {
+      "no-console": "off",
+    },
   },
-]);
+);

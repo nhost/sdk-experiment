@@ -2,11 +2,15 @@ import { createNhostClient } from "../../lib/nhost/server";
 import { redirect } from "next/navigation";
 import MfaVerificationForm from "./MfaVerificationForm";
 
-export default async function MfaVerification({ searchParams }: any) {
+export default async function MfaVerification({
+  searchParams,
+}: {
+  searchParams: Promise<{ ticket?: string; error?: string }>;
+}) {
   // Extract ticket and error from URL
   const params = await searchParams;
-  const ticket = params.ticket as string | undefined;
-  const error = params.error as string | undefined;
+  const ticket = params.ticket;
+  const error = params.error;
 
   // Check if user is already authenticated
   const nhost = await createNhostClient();

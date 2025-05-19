@@ -19,8 +19,8 @@ and use it like:
 
 ```ts
 const nhost = createClient({
-  subdomain: subdomain,
-  region: region,
+  subdomain,
+  region,
 });
 
 // Sign in with email/password
@@ -131,8 +131,8 @@ how you can handle errors thrown by the SDK.
 // } from "@nhost/nhost-js/auth";
 //
 const nhost = createClient({
-  subdomain: subdomain,
-  region: region,
+  subdomain,
+  region,
 });
 try {
   await nhost.auth.signInEmailPassword({
@@ -172,8 +172,8 @@ try {
 // } from "@nhost/nhost-js/storage";
 //
 const nhost = createClient({
-  subdomain: subdomain,
-  region: region,
+  subdomain,
+  region,
 });
 try {
   await nhost.storage.uploadFiles({
@@ -208,8 +208,8 @@ try {
 // } from "@nhost/nhost-js/graphql";
 //
 const nhost = createClient({
-  subdomain: subdomain,
-  region: region,
+  subdomain,
+  region,
 });
 
 try {
@@ -254,8 +254,8 @@ try {
 //
 
 const nhost = createClient({
-  subdomain: subdomain,
-  region: region,
+  subdomain,
+  region,
 });
 
 try {
@@ -266,8 +266,7 @@ try {
     },
   });
 } catch (error) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const resp = error as FetchResponse<any>;
+  const resp = error as FetchResponse<object>;
   console.log("Error:", resp);
   // Error: {
   //   status: 500,
@@ -282,7 +281,7 @@ try {
   //     '</body>\n' +
   //     '</html>\n',
   //   headers: Headers {
-  //     'content-length': '1056',
+  //     'content-length': '1055',
   //     'content-security-policy': "default-src 'none'",
   //     'content-type': 'text/html; charset=utf-8',
   //     date: 'Tue, 13 May 2025 11:20:04 GMT',
@@ -610,14 +609,14 @@ For typical usage, use [createClient](#createclient) instead.
 ##### clearSession()
 
 ```ts
-clearSession(): Promise<void>;
+clearSession(): void;
 ```
 
 Clear the session from storage
 
 ###### Returns
 
-`Promise`&lt;`void`&gt;
+`void`
 
 ##### getUserSession()
 
@@ -740,6 +739,23 @@ Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for s
 
 ---
 
+### SessionRefreshOptions
+
+Configuration options for the session refresh middleware
+
+#### Properties
+
+##### marginSeconds?
+
+```ts
+optional marginSeconds: number;
+```
+
+Number of seconds before token expiration when a refresh should be triggered.
+Default is 60 seconds (1 minute).
+
+---
+
 ### SessionStorageInterface
 
 Session storage interface for session persistence.
@@ -790,22 +806,6 @@ Set the session in storage
 ###### Returns
 
 `void`
-
-## Type Aliases
-
-### SessionRefreshOptions
-
-```ts
-type SessionRefreshOptions = object;
-```
-
-Configuration options for the session refresh middleware
-
-#### Properties
-
-| Property                                    | Type     | Description                                                                                                     |
-| ------------------------------------------- | -------- | --------------------------------------------------------------------------------------------------------------- |
-| <a id="marginseconds"></a> `marginSeconds?` | `number` | Number of seconds before token expiration when a refresh should be triggered. Default is 60 seconds (1 minute). |
 
 ## Variables
 

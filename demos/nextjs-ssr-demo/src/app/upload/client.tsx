@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useRef, ChangeEvent } from "react";
+import { useState, useRef, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createNhostClient } from "../lib/nhost/client";
 import { formatFileSize } from "../lib/utils";
-import { StorageFile } from "./page";
+import type { FileMetadata } from "@nhost/nhost-js/storage";
 
 interface UploadClientProps {
-  initialFiles: StorageFile[];
+  initialFiles: FileMetadata[];
   serverError: string | null;
 }
 
@@ -21,9 +21,9 @@ export default function UploadClient({
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
-  const [uploadResult, setUploadResult] = useState<any | null>(null);
+  const [uploadResult, setUploadResult] = useState<FileMetadata | null>(null);
   const [error, setError] = useState<string | null>(serverError);
-  const [files, setFiles] = useState<StorageFile[]>(initialFiles);
+  const [files, setFiles] = useState<FileMetadata[]>(initialFiles);
   const [viewingFile, setViewingFile] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [deleteStatus, setDeleteStatus] = useState<{
@@ -85,8 +85,10 @@ export default function UploadClient({
           newWindow.document.close();
         }
       }
-    } catch (err: any) {
-      setError(`Failed to view file: ${err.message}`);
+    } catch (err) {
+      setError(
+        `Failed to view file: ${err instanceof Error ? err.message : "Unknown error"}`,
+      );
       console.error("Error viewing file:", err);
     } finally {
       setViewingFile(null);
@@ -122,7 +124,7 @@ export default function UploadClient({
 
       // Get the processed file data
       const uploadedFile = response.body.processedFiles?.[0];
-      setUploadResult(uploadedFile);
+      setUploadResult(uploadedFile || null);
 
       // Reset form
       setSelectedFile(null);
@@ -130,25 +132,11 @@ export default function UploadClient({
         fileInputRef.current.value = "";
       }
 
-      // Update the local files list with the new file if we have the data
-      if (
-        uploadedFile &&
-        uploadedFile.id &&
-        uploadedFile.name &&
-        uploadedFile.size &&
-        uploadedFile.mimeType
-      ) {
-        const newFile: StorageFile = {
-          id: uploadedFile.id,
-          name: uploadedFile.name,
-          size: uploadedFile.size,
-          mimeType: uploadedFile.mimeType,
-          bucketId: "default",
-          uploadedByUserId: "", // This will be refreshed from server
-        };
-
-        setFiles((prevFiles) => [newFile, ...prevFiles]);
+      if (!uploadedFile) {
+        setError("Failed to upload file");
+        return;
       }
+      setFiles((prevFiles) => [uploadedFile, ...prevFiles]);
 
       // Refresh page to get updated file list from server
       router.refresh();
@@ -157,8 +145,8 @@ export default function UploadClient({
       setTimeout(() => {
         setUploadResult(null);
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || "Failed to upload file");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to upload file");
     } finally {
       setUploading(false);
     }
@@ -196,10 +184,10 @@ export default function UploadClient({
       setTimeout(() => {
         setDeleteStatus(null);
       }, 3000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Show error message
       setDeleteStatus({
-        message: `Failed to delete ${fileName}: ${err.message}`,
+        message: `Failed to delete ${fileName}: ${err instanceof Error ? err.message : "Unknown error"}`,
         isError: true,
       });
       console.error("Error deleting file:", err);
@@ -309,12 +297,16 @@ export default function UploadClient({
                   <tr key={file.id}>
                     <td>{file.name}</td>
                     <td>{file.mimeType}</td>
-                    <td>{formatFileSize(file.size)}</td>
+                    <td>{formatFileSize(file.size || 0)}</td>
                     <td>
                       <div className="table-actions">
                         <button
                           onClick={() =>
-                            handleViewFile(file.id, file.name, file.mimeType)
+                            handleViewFile(
+                              file.id || "unknown",
+                              file.name || "unknown",
+                              file.mimeType || "unknown",
+                            )
                           }
                           disabled={viewingFile === file.id}
                           className="action-icon action-icon-view"
@@ -347,7 +339,7 @@ export default function UploadClient({
                           )}
                         </button>
                         <button
-                          onClick={() => handleDeleteFile(file.id)}
+                          onClick={() => handleDeleteFile(file.id || "unknown")}
                           disabled={deleting === file.id}
                           className="action-icon action-icon-delete"
                           title="Delete File"

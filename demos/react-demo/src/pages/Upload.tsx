@@ -1,11 +1,19 @@
-import { useState, useEffect, useRef, JSX } from "react";
+import { useState, useEffect, useRef, useCallback, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { formatFileSize } from "../lib/utils";
-import { FileMetadata } from "@nhost/nhost-js/storage";
+import type {
+  FileMetadata,
+  FetchResponse,
+  Error,
+} from "@nhost/nhost-js/storage";
 
 interface DeleteStatus {
   message: string;
   isError: boolean;
+}
+
+interface GraphqlGetFilesResponse {
+  files: FileMetadata[];
 }
 
 export default function Upload(): JSX.Element {
@@ -21,20 +29,13 @@ export default function Upload(): JSX.Element {
   const [deleting, setDeleting] = useState<string | null>(null);
   const [deleteStatus, setDeleteStatus] = useState<DeleteStatus | null>(null);
 
-  // Fetch existing files when component mounts
-  useEffect(() => {
-    if (isAuthenticated) {
-      fetchFiles();
-    }
-  }, [isAuthenticated]);
-
-  const fetchFiles = async (): Promise<void> => {
+  const fetchFiles = useCallback(async (): Promise<void> => {
     setIsFetching(true);
     setError(null);
 
     try {
       // Fetch files using GraphQL query
-      const response = await nhost.graphql.post({
+      const response = await nhost.graphql.post<GraphqlGetFilesResponse>({
         query: `query GetFiles {
             files {
               id
@@ -53,14 +54,21 @@ export default function Upload(): JSX.Element {
         );
       }
 
-      setFiles(response.body.data.files);
-    } catch (err: any) {
+      setFiles(response.body.data?.files || []);
+    } catch (err) {
       console.error("Error fetching files:", err);
       setError("Failed to load files. Please try refreshing the page.");
     } finally {
       setIsFetching(false);
     }
-  };
+  }, [nhost.graphql, setFiles, setError, setIsFetching]);
+
+  // Fetch existing files when component mounts
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchFiles();
+    }
+  }, [isAuthenticated, fetchFiles]);
 
   // ProtectedRoute component now handles authentication check
   // We can just focus on the component logic here
@@ -69,7 +77,7 @@ export default function Upload(): JSX.Element {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       if (file) {
-        setSelectedFile(file as any);
+        setSelectedFile(file);
         setError(null);
         setUploadResult(null);
       }
@@ -114,8 +122,9 @@ export default function Upload(): JSX.Element {
       setTimeout(() => {
         setUploadResult(null);
       }, 3000);
-    } catch (err: any) {
-      setError(err.message || "Failed to upload file");
+    } catch (err: unknown) {
+      const error = err as FetchResponse<Error>;
+      setError(error.body.error?.message || "Failed to upload file");
     } finally {
       setUploading(false);
     }
@@ -175,8 +184,9 @@ export default function Upload(): JSX.Element {
           newWindow.document.close();
         }
       }
-    } catch (err: any) {
-      setError(`Failed to view file: ${err.message}`);
+    } catch (err) {
+      const error = err as FetchResponse<Error>;
+      setError(`Failed to view file: ${error.body.error?.message}`);
       console.error("Error viewing file:", err);
     } finally {
       setViewingFile(null);
@@ -215,10 +225,11 @@ export default function Upload(): JSX.Element {
       setTimeout(() => {
         setDeleteStatus(null);
       }, 3000);
-    } catch (err: any) {
+    } catch (err) {
       // Show error message
+      const error = err as FetchResponse<Error>;
       setDeleteStatus({
-        message: `Failed to delete ${fileName}: ${err.message}`,
+        message: `Failed to delete ${fileName}: ${error.body.error?.message}`,
         isError: true,
       });
       console.error("Error deleting file:", err);
@@ -358,8 +369,8 @@ export default function Upload(): JSX.Element {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                             >
-                              <circle cx="12" cy="12" r="10"></circle>
-                              <path d="M12 6v6"></path>
+                              <circle cx="12" cy="12" r="10" />
+                              <path d="M12 6v6" />
                             </svg>
                           ) : (
                             <svg
@@ -370,8 +381,8 @@ export default function Upload(): JSX.Element {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                             >
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                              <circle cx="12" cy="12" r="3"></circle>
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              <circle cx="12" cy="12" r="3" />
                             </svg>
                           )}
                         </button>
@@ -390,8 +401,8 @@ export default function Upload(): JSX.Element {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                             >
-                              <circle cx="12" cy="12" r="10"></circle>
-                              <path d="M12 6v6"></path>
+                              <circle cx="12" cy="12" r="10" />
+                              <path d="M12 6v6" />
                             </svg>
                           ) : (
                             <svg
@@ -402,9 +413,9 @@ export default function Upload(): JSX.Element {
                               strokeLinecap="round"
                               strokeLinejoin="round"
                             >
-                              <path d="M3 6h18"></path>
-                              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"></path>
-                              <path d="M10 11v6M14 11v6"></path>
+                              <path d="M3 6h18" />
+                              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                              <path d="M10 11v6M14 11v6" />
                             </svg>
                           )}
                         </button>

@@ -1,30 +1,7 @@
 {
+  "extends": "../../configs/tsconfig/frontend.json",
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "target": "ES2022",
-    "module": "esnext",
     "jsx": "preserve",
-
-    "allowJs": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "moduleResolution": "bundler",
-
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "incremental": true,
-
-    // Best practices
-    "strict": true,
-    "skipLibCheck": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUnusedParameters": true,
-    "noUnusedLocals": true,
-    "noUncheckedIndexedAccess": true,
-
-    // Relaxed for library code
-    "noPropertyAccessFromIndexSignature": true,
-
     "plugins": [
       {
         "name": "next"

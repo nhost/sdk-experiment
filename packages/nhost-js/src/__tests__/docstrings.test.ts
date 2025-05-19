@@ -1,3 +1,4 @@
+import { test, expect } from "@jest/globals";
 import { createClient } from "../";
 
 test("mainExample", async () => {
@@ -9,8 +10,8 @@ test("mainExample", async () => {
 
   //#region mainExample
   const nhost = createClient({
-    subdomain: subdomain,
-    region: region,
+    subdomain,
+    region,
   });
 
   // Sign in with email/password

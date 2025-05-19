@@ -1,20 +1,15 @@
-import { useEffect, useState, JSX } from "react";
+import { useEffect, useState } from "react";
+import type { JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import MFASettings from "../components/MFASettings";
 import ChangePassword from "../components/ChangePassword";
-import { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
 interface MfaStatusResponse {
-  body: {
-    data?: {
-      user?: {
-        activeMfaType: string | null;
-      };
+  data?: {
+    user?: {
+      activeMfaType: string | null;
     };
-    errors?: Array<{
-      message: string;
-      [key: string]: any;
-    }>;
   };
 }
 
@@ -29,18 +24,19 @@ export default function Profile(): JSX.Element {
 
       try {
         // Correctly structure GraphQL query with parameters
-        const response: MfaStatusResponse = await nhost.graphql.post({
-          query: `
+        const response: FetchResponse<MfaStatusResponse> =
+          await nhost.graphql.post({
+            query: `
             query GetUserMfaStatus($userId: uuid!) {
               user(id: $userId) {
                 activeMfaType
               }
             }
           `,
-          variables: {
-            userId: user.id,
-          },
-        });
+            variables: {
+              userId: user.id,
+            },
+          });
 
         const userData = response.body?.data;
         const activeMfaType = userData?.user?.activeMfaType;
@@ -60,7 +56,7 @@ export default function Profile(): JSX.Element {
     if (isAuthenticated && user?.id) {
       fetchMfaStatus();
     }
-  }, [user, isAuthenticated]);
+  }, [user, isAuthenticated, nhost.graphql]);
 
   // ProtectedRoute component now handles authentication check
   // We can just focus on the component logic here

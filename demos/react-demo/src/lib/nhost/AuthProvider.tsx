@@ -4,10 +4,10 @@ import {
   useEffect,
   useState,
   useMemo,
-  ReactNode,
+  type ReactNode,
 } from "react";
 import { createClient, NhostClient } from "@nhost/nhost-js";
-import { Session } from "@nhost/nhost-js/auth";
+import { type Session } from "@nhost/nhost-js/auth";
 import { EventEmitterStorage } from "./EventEmitterStorage";
 
 interface AuthContextType {
@@ -25,7 +25,7 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<Session["user"] | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -70,6 +70,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         unsubscribe();
       };
     }
+
+    return undefined;
   }, [nhost]);
 
   // Effect to refresh the session every 10 seconds
@@ -95,7 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
+};
 
 // Custom hook to use the auth context
 export const useAuth = (): AuthContextType => {

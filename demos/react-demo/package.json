@@ -6,8 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
+    "test": "pnpm test:audit && pnpm test:typecheck && pnpm test:lint && pnpm test:format && echo \"No tests specified\" && exit 0",
+    "test:typecheck": "tsc --noEmit",
+    "test:lint": "eslint .",
+    "test:format": "prettier --check .",
+    "test:audit": "pnpm audit",
+    "format": "prettier --write .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -17,18 +21,8 @@
     "react-router-dom": "^6.30.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.25.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
-    "@typescript-eslint/eslint-plugin": "^8.32.1",
-    "@typescript-eslint/parser": "^8.32.1",
-    "@vitejs/plugin-react": "^4.4.1",
-    "eslint": "^9.25.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.19",
-    "globals": "^16.0.0",
-    "prettier": "^3.5.3",
-    "typescript": "^5",
-    "vite": "^6.3.5"
+    "@vitejs/plugin-react": "^4.4.1"
   }
 }

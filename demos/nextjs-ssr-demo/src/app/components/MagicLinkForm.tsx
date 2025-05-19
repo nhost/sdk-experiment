@@ -4,7 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface MagicLinkFormProps {
-  sendMagicLinkAction: (formData: FormData) => Promise<any>;
+  sendMagicLinkAction: (formData: FormData) => Promise<{
+    redirect?: string;
+    error?: string;
+  }>;
   showDisplayName?: boolean;
   buttonLabel?: string;
 }
@@ -26,8 +29,10 @@ export default function MagicLinkForm({
       } else if (result.error) {
         setError(result.error);
       }
-    } catch (err: any) {
-      setError(err.message || "Failed to send magic link");
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "Failed to send magic link",
+      );
     }
   };
 

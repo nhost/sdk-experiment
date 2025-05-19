@@ -1,3 +1,4 @@
+import { test, expect } from "@jest/globals";
 import { createClient } from "../";
 import { type FetchResponse, type ErrorResponse } from "../auth";
 
@@ -17,8 +18,8 @@ test("error handling for auth", async () => {
   // } from "@nhost/nhost-js/auth";
   //
   const nhost = createClient({
-    subdomain: subdomain,
-    region: region,
+    subdomain,
+    region,
   });
   try {
     await nhost.auth.signInEmailPassword({

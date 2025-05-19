@@ -9,7 +9,7 @@ interface SignInFormProps {
 }
 
 export default function SignInForm({ initialError }: SignInFormProps) {
-  const [error, setError] = useState(initialError);
+  const [error, setError] = useState<string | undefined>(initialError);
   const router = useRouter();
 
   const handleSubmit = async (formData: FormData) => {
@@ -21,8 +21,10 @@ export default function SignInForm({ initialError }: SignInFormProps) {
       } else if (result.error) {
         setError(result.error);
       }
-    } catch (err: any) {
-      setError(err.message || "An error occurred during sign in");
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "An error occurred during sign in",
+      );
     }
   };
 

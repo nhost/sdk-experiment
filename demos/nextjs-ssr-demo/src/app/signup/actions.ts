@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createNhostClient } from "../lib/nhost/server";
+import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
 /**
  * Signs up a user with email and password
@@ -40,9 +41,11 @@ export async function signUp(formData: FormData) {
 
     // If we got here, something went wrong
     return { error: "Failed to sign up" };
-  } catch (error: any) {
-    console.error("Sign up error:", error);
-    return { error: error.message || "Failed to sign up" };
+  } catch (err) {
+    const error = err as FetchResponse<ErrorResponse>;
+    return {
+      error: `Failed to sign up: ${error?.body?.message || "unknown error"}`,
+    };
   }
 }
 
@@ -81,8 +84,10 @@ export async function sendMagicLink(formData: FormData) {
 
     // If we got here, something went wrong
     return { error: "Failed to send magic link" };
-  } catch (error: any) {
-    console.error("Magic link error:", error);
-    return { error: error.message || "Failed to send magic link" };
+  } catch (err) {
+    const error = err as FetchResponse<ErrorResponse>;
+    return {
+      error: `Failed to send magic link: ${error?.body?.message || "unknown error"}`,
+    };
   }
 }

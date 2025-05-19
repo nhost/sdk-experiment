@@ -14,7 +14,7 @@ export default function MfaVerificationForm({
   ticket,
   initialError,
 }: MfaVerificationFormProps) {
-  const [error, setError] = useState(initialError);
+  const [error, setError] = useState<string | undefined>(initialError);
   const router = useRouter();
 
   const handleSubmit = async (formData: FormData) => {
@@ -26,8 +26,12 @@ export default function MfaVerificationForm({
       } else if (result.error) {
         setError(result.error);
       }
-    } catch (err: any) {
-      setError(err.message || "An error occurred during verification");
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An error occurred during verification",
+      );
     }
   };
 

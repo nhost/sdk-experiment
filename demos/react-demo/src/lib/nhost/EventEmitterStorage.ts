@@ -1,5 +1,5 @@
 import { CookieStorage } from "@nhost/nhost-js";
-import { Session } from "@nhost/nhost-js/auth";
+import { type Session } from "@nhost/nhost-js/auth";
 
 /**
  * Type definition for session change listener
@@ -55,7 +55,7 @@ export class EventEmitterStorage extends CookieStorage {
    * @param {UserSession} value - The session to store
    * @override
    */
-  set(value: Session): void {
+  override set(value: Session): void {
     super.set(value);
 
     // Compare with last known session to avoid unnecessary notifications
@@ -72,7 +72,7 @@ export class EventEmitterStorage extends CookieStorage {
    * Removes the session from storage and notifies listeners
    * @override
    */
-  remove(): void {
+  override remove(): void {
     super.remove();
 
     if (this.lastSession !== null) {

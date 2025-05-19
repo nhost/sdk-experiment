@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createNhostClient } from "../lib/nhost/server";
+import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
 
 /**
  * Signs in a user with email and password
@@ -41,10 +42,12 @@ export async function signIn(formData: FormData) {
     }
 
     // If we got here, something went wrong
-    return { error: "Failed to sign in" };
-  } catch (error: any) {
-    console.error("Sign in error:", error);
-    return { error: error.message || "Failed to sign in" };
+    return { error: "Failed to sign in: unexpected error" };
+  } catch (err) {
+    const error = err as FetchResponse<ErrorResponse>;
+    return {
+      error: `Failed to sign in: ${error.body.message || "unexpected error"}`,
+    };
   }
 }
 
@@ -81,9 +84,12 @@ export async function verifyMfa(formData: FormData) {
 
     // If we got here, something went wrong
     return { error: "Failed to verify MFA code", ticket };
-  } catch (error: any) {
-    console.error("MFA verification error:", error);
-    return { error: error.message || "Failed to verify code", ticket };
+  } catch (err) {
+    const error = err as FetchResponse<ErrorResponse>;
+    return {
+      error: `Failed to verify MFA code: ${error.body.message || "unexpected error"}`,
+      ticket,
+    };
   }
 }
 
@@ -122,8 +128,10 @@ export async function sendMagicLink(formData: FormData) {
 
     // If we got here, something went wrong
     return { error: "Failed to send magic link" };
-  } catch (error: any) {
-    console.error("Magic link error:", error);
-    return { error: error.message || "Failed to send magic link" };
+  } catch (err) {
+    const error = err as FetchResponse<ErrorResponse>;
+    return {
+      error: `Failed to sign in: ${error.body.message || "unexpected error"}`,
+    };
   }
 }

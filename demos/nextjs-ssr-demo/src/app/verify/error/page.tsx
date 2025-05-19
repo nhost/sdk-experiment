@@ -1,5 +1,14 @@
-export default function VerificationError({ searchParams }: any) {
-  const errorMessage = searchParams?.message || "Verification failed";
+interface ErrorPageProps {
+  searchParams: Promise<{
+    message?: string;
+  }>;
+}
+
+export default async function VerificationError({
+  searchParams,
+}: ErrorPageProps) {
+  const params = await searchParams;
+  const errorMessage = params?.message || "Verification failed";
 
   return (
     <div className="flex flex-col items-center justify-center">

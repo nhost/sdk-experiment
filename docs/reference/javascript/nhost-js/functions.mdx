@@ -8,12 +8,12 @@ but you can also use it directly if you have a specific use case.
 
 Functions client interface providing methods for executing serverless function calls
 
-#### Properties
+#### Methods
 
 ##### fetch()
 
 ```ts
-fetch: (path: string, options?: RequestInit) => Promise<FetchResponse<any>>;
+fetch<T>(path: string, options?: RequestInit): Promise<FetchResponse<T>>;
 ```
 
 Execute a request to a serverless function
@@ -22,6 +22,12 @@ The response body will be automatically parsed based on the content type into th
 - Object if the response is application/json
 - string text string if the response is text/\*
 - Blob if the response is any other type
+
+###### Type Parameters
+
+| Type Parameter | Default type |
+| -------------- | ------------ |
+| `T`            | `any`        |
 
 ###### Parameters
 
@@ -32,7 +38,7 @@ The response body will be automatically parsed based on the content type into th
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`any`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`T`&gt;&gt;
 
 Promise with the function response and metadata.
 

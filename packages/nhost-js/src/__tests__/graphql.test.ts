@@ -1,5 +1,23 @@
+import { describe, it, expect } from "@jest/globals";
 import { createClient } from "../index";
 import type { FetchResponse, GraphQLResponse } from "../graphql/client";
+
+interface GetUsersResponse {
+  users: {
+    id: string;
+    displayName: string;
+    metadata: {
+      source: string;
+    };
+  }[];
+}
+
+interface UpdateUsersDisplayNameResponse {
+  updateUser: {
+    id: string;
+    displayName: string;
+  };
+}
 
 describe("Nhost - Sign Up with Email and Password and upload file", () => {
   const nhost = createClient({
@@ -9,7 +27,7 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
 
   let userID: string;
 
-  it.only("should sign up a user with email and password", async () => {
+  it("should sign up a user with email and password", async () => {
     const resp = await nhost.auth.signUpEmailPassword({
       email: `test-${Date.now()}@example.com`,
       password: "password123",
@@ -29,8 +47,8 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
     }
   });
 
-  it.only("query", async () => {
-    const users = await nhost.graphql.post({
+  it("query", async () => {
+    const users = await nhost.graphql.post<GetUsersResponse>({
       query: `query GetUsers {
           users {
             id
@@ -40,17 +58,17 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
         }`,
     });
 
-    expect(users.body.data.users).toBeDefined();
-    expect(users.body.data.users[0].id).toBeDefined();
-    expect(users.body.data.users[0].displayName).toBeDefined();
-    expect(users.body.data.users[0].metadata).toBeDefined();
-    expect(users.body.data.users[0].metadata.source).toBe("test");
+    expect(users.body.data?.users).toBeDefined();
+    expect(users.body.data?.users[0].id).toBeDefined();
+    expect(users.body.data?.users[0].displayName).toBeDefined();
+    expect(users.body.data?.users[0].metadata).toBeDefined();
+    expect(users.body.data?.users[0].metadata.source).toBe("test");
 
-    userID = users.body.data.users[0].id;
+    userID = users.body.data?.users[0].id || "";
   });
 
-  it.only("mutate", async () => {
-    const resp = await nhost.graphql.post({
+  it("mutate", async () => {
+    const resp = await nhost.graphql.post<UpdateUsersDisplayNameResponse>({
       query: `mutation UpdateUsersDisplayName($id: uuid!, $displayName: String!) {
           updateUser(pk_columns: {id: $id}, _set: {displayName: $displayName}) {
             id
@@ -64,12 +82,12 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
       operationName: "UpdateUsersDisplayName",
     });
 
-    expect(resp.body.data.updateUser).toBeDefined();
-    expect(resp.body.data.updateUser.id).toBeDefined();
-    expect(resp.body.data.updateUser.displayName).toBe("My New Display Name");
+    expect(resp.body.data?.updateUser).toBeDefined();
+    expect(resp.body.data?.updateUser.id).toBeDefined();
+    expect(resp.body.data?.updateUser.displayName).toBe("My New Display Name");
   });
 
-  it.only("errors: bad query", async () => {
+  it("errors: bad query", async () => {
     try {
       await nhost.graphql.post({
         query: `wrong query`,
@@ -82,13 +100,13 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
       expect(resp.body.errors).toBeDefined();
       expect(resp.body.errors).toHaveLength(1);
       const errors = resp.body.errors!;
-      expect(errors[0]?.message).toBe("not a valid graphql query");
-      expect(errors[0]?.extensions.path).toBe("$.query");
-      expect(errors[0]?.extensions.code).toBe("validation-failed");
+      expect(errors[0].message).toBe("not a valid graphql query");
+      expect(errors[0].extensions?.path).toBe("$.query");
+      expect(errors[0].extensions?.code).toBe("validation-failed");
     }
   });
 
-  it.only("errors: no permissions or doesn't exist", async () => {
+  it("errors: no permissions or doesn't exist", async () => {
     try {
       await nhost.graphql.post({
         query: `query { restricted { id } }`,
@@ -103,8 +121,8 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
       expect(errors[0]?.message).toBe(
         "field 'restricted' not found in type: 'query_root'",
       );
-      expect(errors[0]?.extensions.path).toBe("$.selectionSet.restricted");
-      expect(errors[0]?.extensions.code).toBe("validation-failed");
+      expect(errors[0].extensions?.path).toBe("$.selectionSet.restricted");
+      expect(errors[0].extensions?.code).toBe("validation-failed");
     }
   });
 });

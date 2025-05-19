@@ -4,10 +4,14 @@ import SignUpForm from "./SignUpForm";
 import MagicLinkForm from "../components/MagicLinkForm";
 import { sendMagicLink } from "./actions";
 
-export default async function SignUp({ searchParams }: any) {
+export default async function SignUp({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; magic?: string }>;
+}) {
   // Extract error and magic link status from URL
   const params = await searchParams;
-  const error = params?.error as string | undefined;
+  const error = params?.error;
   const magicLinkSent = params?.magic === "success";
 
   return (
@@ -33,7 +37,7 @@ export default async function SignUp({ searchParams }: any) {
               <div>
                 <MagicLinkForm
                   sendMagicLinkAction={sendMagicLink}
-                  showDisplayName={true}
+                  showDisplayName
                   buttonLabel="Sign up with Magic Link"
                 />
               </div>

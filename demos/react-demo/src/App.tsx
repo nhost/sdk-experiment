@@ -1,4 +1,4 @@
-import { Suspense, lazy, JSX } from "react";
+import { Suspense, lazy, type JSX } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -17,7 +17,7 @@ import Verify from "./pages/Verify";
 
 const MfaVerification = lazy(() => import("./pages/signin/mfa"));
 
-function App(): JSX.Element {
+const App = (): JSX.Element => {
   return (
     <AuthProvider>
       <Router>
@@ -60,6 +60,6 @@ function App(): JSX.Element {
       </Router>
     </AuthProvider>
   );
-}
+};
 
 export default App;
