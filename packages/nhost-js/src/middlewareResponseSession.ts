@@ -35,8 +35,12 @@ export const createSessionResponseMiddleware = (
    * @returns Session object if found, null otherwise
    */
   const sessionExtractor = function (
-    body: Session | SessionPayload,
+    body: Session | SessionPayload | string,
   ): Session | null {
+    if (typeof body === "string") {
+      return null;
+    }
+
     if ("session" in body) {
       // SessionPayload
       return body.session || null;

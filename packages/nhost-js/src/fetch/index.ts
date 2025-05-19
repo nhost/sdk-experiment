@@ -72,59 +72,61 @@ export interface FetchResponse<T> {
   headers: Headers;
 }
 
-/**
- * Error response interfaces
- */
-interface AuthErrorResponse {
-  message: string;
-}
-
-interface StorageErrorResponseMessage {
-  error: {
-    message: string;
-  };
-}
-
-interface GraphQLError {
-  errors?: {
-    message: string;
-  }[];
-}
-
-/**
- * Extracts error message from various response formats
- */
-function extractMessage(
-  body: AuthErrorResponse | StorageErrorResponseMessage | GraphQLError,
-): string {
-  if ("message" in body) {
-    return body.message;
+function extractMessage(body: unknown): string {
+  if (body && typeof body === "string") {
+    return body;
   }
 
-  if ("error" in body && body.error && "message" in body.error) {
-    return body.error.message;
+  if (body && typeof body === "object") {
+    const typedBody = body as Record<string, unknown>;
+
+    if ("message" in typedBody && typeof typedBody["message"] === "string") {
+      return typedBody["message"];
+    }
+
+    if ("error" in typedBody && typeof typedBody["error"] === "string") {
+      return typedBody["error"];
+    }
+
+    if (
+      "error" in typedBody &&
+      typedBody["error"] &&
+      typeof typedBody["error"] === "object"
+    ) {
+      const error = typedBody["error"] as Record<string, unknown>;
+      if ("message" in error && typeof error["message"] === "string") {
+        return error["message"];
+      }
+    }
+
+    if ("errors" in typedBody && Array.isArray(typedBody["errors"])) {
+      const messages = (typedBody["errors"] as unknown[])
+        .filter(
+          (error): error is { message: string } =>
+            typeof error === "object" &&
+            error !== null &&
+            "message" in error &&
+            typeof (error as { message: unknown })["message"] === "string",
+        )
+        .map((error) => error["message"]);
+
+      if (messages.length > 0) {
+        return messages.join(", ");
+      }
+    }
   }
 
-  if ("errors" in body && Array.isArray(body.errors)) {
-    return body.errors.map((error) => error.message).join(", ");
-  }
-
-  return "An unexpcted error occurred";
+  return "An unexpected error occurred";
 }
 
-export class FetchError<
-  T = AuthErrorResponse | StorageErrorResponseMessage | GraphQLError,
-> extends Error {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class FetchError<T = any> extends Error {
   body: T;
   status: number;
   headers: Headers;
 
   constructor(body: T, status: number, headers: Headers) {
-    super(
-      extractMessage(
-        body as AuthErrorResponse | StorageErrorResponseMessage | GraphQLError,
-      ),
-    );
+    super(extractMessage(body));
     this.body = body;
     this.status = status;
     this.headers = headers;
