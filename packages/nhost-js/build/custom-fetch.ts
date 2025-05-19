@@ -118,8 +118,7 @@ ${
     contentType === "application/x-ndjson";
 
   const isNdJson = response.contentTypes.some(isContentTypeNdJson);
-  const allResponses = [...response.types.success];
-  const allErrors = [...response.types.errors];
+  const allResponses = [...response.types.success, ...response.types.errors];
   if (allResponses.length === 0) {
     allResponses.push({
       contentType: "",
@@ -134,19 +133,6 @@ ${
     });
   }
   const responseTypeName = allResponses
-    .map((response) => {
-      const { value, type, schemas } = response;
-      if (type === "unknown") {
-        return value;
-      }
-      if (schemas.length > 0) {
-        return schemas[0]?.name;
-      }
-      return value;
-    })
-    .join(" | ");
-
-  const errorTypeName = allErrors
     .map((response) => {
       const { value, type, schemas } = response;
       if (type === "unknown") {
@@ -228,10 +214,6 @@ ${
       ? `{ body: payload, status: res.status,
           headers: res.headers,
       } as FetchResponse<${responseTypeName}>
-
-    if (!res.ok) {
-            throw response;
-    }
 
     return response;`
       : "return payload"

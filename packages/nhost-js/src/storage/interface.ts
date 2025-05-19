@@ -9,6 +9,7 @@ import type {
   GetFileParams,
   ReplaceFileBody,
   FileMetadata,
+  ErrorResponse,
 } from "./client";
 
 /**
@@ -49,7 +50,7 @@ export interface Client {
   uploadFiles: (
     uploadFilesBody: UploadFilesBody,
     options?: RequestInit,
-  ) => Promise<FetchResponse<UploadFiles201>>;
+  ) => Promise<FetchResponse<UploadFiles201 | ErrorResponse>>;
 
   /**
    * Retrieve file metadata using HTTP HEAD method
@@ -59,7 +60,7 @@ export interface Client {
     id: string,
     params?: GetFileMetadataHeadersParams,
     options?: RequestInit,
-  ) => Promise<FetchResponse<void>>;
+  ) => Promise<FetchResponse<void | ErrorResponse>>;
 
   /**
    * Download a file
@@ -69,7 +70,7 @@ export interface Client {
     id: string,
     params?: GetFileParams,
     options?: RequestInit,
-  ) => Promise<FetchResponse<Blob>>;
+  ) => Promise<FetchResponse<Blob | void>>;
 
   /**
    * Replace an existing file
@@ -79,7 +80,7 @@ export interface Client {
     id: string,
     replaceFileBody: ReplaceFileBody,
     options?: RequestInit,
-  ) => Promise<FetchResponse<FileMetadata>>;
+  ) => Promise<FetchResponse<FileMetadata | ErrorResponse>>;
 
   /**
    * Delete a file
@@ -88,5 +89,5 @@ export interface Client {
   deleteFile: (
     id: string,
     options?: RequestInit,
-  ) => Promise<FetchResponse<void>>;
+  ) => Promise<FetchResponse<void | ErrorResponse>>;
 }

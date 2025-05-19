@@ -110,7 +110,7 @@ export interface PresignedURLResponse {
 /**
  * Error details.
  */
-export type ErrorError = {
+export type ErrorResponseError = {
   /** Human-readable error message. */
   message: string;
 };
@@ -118,9 +118,9 @@ export type ErrorError = {
 /**
  * Error information returned by the API.
  */
-export interface Error {
+export interface ErrorResponse {
   /** Error details. */
-  error?: ErrorError;
+  error?: ErrorResponseError;
 }
 
 export type GetOpenAPISpec200 = { [key: string]: unknown };
@@ -240,10 +240,6 @@ export const createAPIClient = (
       headers: res.headers,
     } as FetchResponse<GetOpenAPISpec200>;
 
-    if (!res.ok) {
-      throw response;
-    }
-
     return response;
   };
 
@@ -274,10 +270,6 @@ export const createAPIClient = (
       headers: res.headers,
     } as FetchResponse<VersionInformation>;
 
-    if (!res.ok) {
-      throw response;
-    }
-
     return response;
   };
 
@@ -292,7 +284,7 @@ export const createAPIClient = (
   const uploadFiles = async (
     uploadFilesBody: UploadFilesBody,
     options?: RequestInit,
-  ): Promise<FetchResponse<UploadFiles201>> => {
+  ): Promise<FetchResponse<UploadFiles201 | ErrorResponse>> => {
     const formData = new FormData();
     if (uploadFilesBody["bucket-id"] !== undefined) {
       formData.append(`bucket-id`, uploadFilesBody["bucket-id"]);
@@ -317,17 +309,15 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const payload: UploadFiles201 = body ? JSON.parse(body) : {};
+    const payload: UploadFiles201 | ErrorResponse = body
+      ? JSON.parse(body)
+      : {};
 
     const response = {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<UploadFiles201>;
-
-    if (!res.ok) {
-      throw response;
-    }
+    } as FetchResponse<UploadFiles201 | ErrorResponse>;
 
     return response;
   };
@@ -344,7 +334,7 @@ export const createAPIClient = (
     id: string,
     params?: GetFileMetadataHeadersParams,
     options?: RequestInit,
-  ): Promise<FetchResponse<void>> => {
+  ): Promise<FetchResponse<void | void>> => {
     const res = await fetch(getGetFileMetadataHeadersUrl(id, params), {
       ...options,
       method: "HEAD",
@@ -353,17 +343,13 @@ export const createAPIClient = (
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const payload: void = body ? JSON.parse(body) : {};
+    const payload: void | void = body ? JSON.parse(body) : {};
 
     const response = {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<void>;
-
-    if (!res.ok) {
-      throw response;
-    }
+    } as FetchResponse<void | void>;
 
     return response;
   };
@@ -398,23 +384,19 @@ export const createAPIClient = (
     id: string,
     params?: GetFileParams,
     options?: RequestInit,
-  ): Promise<FetchResponse<Blob>> => {
+  ): Promise<FetchResponse<Blob | void>> => {
     const res = await fetch(getGetFileUrl(id, params), {
       ...options,
       method: "GET",
     });
 
-    const payload: Blob = await res.blob();
+    const payload: Blob | void = await res.blob();
 
     const response = {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<Blob>;
-
-    if (!res.ok) {
-      throw response;
-    }
+    } as FetchResponse<Blob | void>;
 
     return response;
   };
@@ -452,7 +434,7 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     id: string,
     replaceFileBody: ReplaceFileBody,
     options?: RequestInit,
-  ): Promise<FetchResponse<FileMetadata>> => {
+  ): Promise<FetchResponse<FileMetadata | ErrorResponse>> => {
     const formData = new FormData();
     if (replaceFileBody.metadata !== undefined) {
       formData.append(`metadata`, JSON.stringify(replaceFileBody.metadata));
@@ -470,17 +452,13 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const payload: FileMetadata = body ? JSON.parse(body) : {};
+    const payload: FileMetadata | ErrorResponse = body ? JSON.parse(body) : {};
 
     const response = {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<FileMetadata>;
-
-    if (!res.ok) {
-      throw response;
-    }
+    } as FetchResponse<FileMetadata | ErrorResponse>;
 
     return response;
   };
@@ -496,7 +474,7 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
   const deleteFile = async (
     id: string,
     options?: RequestInit,
-  ): Promise<FetchResponse<void>> => {
+  ): Promise<FetchResponse<void | ErrorResponse>> => {
     const res = await fetch(getDeleteFileUrl(id), {
       ...options,
       method: "DELETE",
@@ -505,17 +483,13 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
-    const payload: void = body ? JSON.parse(body) : {};
+    const payload: void | ErrorResponse = body ? JSON.parse(body) : {};
 
     const response = {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<void>;
-
-    if (!res.ok) {
-      throw response;
-    }
+    } as FetchResponse<void | ErrorResponse>;
 
     return response;
   };
