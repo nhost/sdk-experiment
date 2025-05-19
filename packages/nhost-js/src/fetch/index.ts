@@ -130,12 +130,5 @@ export class FetchError<T = any> extends Error {
     this.body = body;
     this.status = status;
     this.headers = headers;
-
-    // Maintain proper stack trace (V8 only)
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, FetchError);
-    }
-
-    this.name = "FetchError";
   }
 }

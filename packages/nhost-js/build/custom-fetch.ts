@@ -232,7 +232,7 @@ ${
     override.fetch.includeHttpResponseReturnType
       ? `
     if (res.status >= 400) {
-        const body = await res.text();
+        const body = [412].includes(res.status) ? null : await res.text()
         const payload: ${errorTypeName} = body ? JSON.parse(body) : {}
         throw new FetchError(payload, res.status, res.headers);
     }
@@ -240,7 +240,7 @@ ${
     ${
       response.isBlob
         ? `const payload: ${responseTypeName} = await res.blob()`
-        : `  const body = [204, 205, 304, 412].includes(res.status) ? null : await res.text()
+        : `  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
     const payload: ${responseTypeName} = body ? JSON.parse(body) : {}
       `
     }

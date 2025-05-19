@@ -525,14 +525,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: unknown = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: void = body ? JSON.parse(body) : {};
 
     return {
@@ -559,14 +557,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: unknown = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -593,14 +589,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: unknown = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: GetVersion200 = body ? JSON.parse(body) : {};
 
     return {
@@ -630,14 +624,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: Session = body ? JSON.parse(body) : {};
 
     return {
@@ -666,14 +658,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -703,14 +693,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: SignInEmailPasswordResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -740,14 +728,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: SessionPayload = body ? JSON.parse(body) : {};
 
     return {
@@ -777,14 +763,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -814,14 +798,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: SessionPayload = body ? JSON.parse(body) : {};
 
     return {
@@ -851,14 +833,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -885,14 +865,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: TotpGenerateResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -918,14 +896,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: unknown = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: JWKSet = body ? JSON.parse(body) : {};
 
     return {
@@ -954,14 +930,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: CreatePATResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -990,14 +964,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: SessionPayload = body ? JSON.parse(body) : {};
 
     return {
@@ -1026,14 +998,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -1062,14 +1032,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: SignInOTPEmailVerifyResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -1098,14 +1066,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: SessionPayload = body ? JSON.parse(body) : {};
 
     return {
@@ -1134,14 +1100,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: SessionPayload = body ? JSON.parse(body) : {};
 
     return {
@@ -1170,14 +1134,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -1206,14 +1168,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -1242,14 +1202,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -1278,14 +1236,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -1314,14 +1270,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -1350,14 +1304,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
     return {
@@ -1384,14 +1336,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: unknown = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: void = body ? JSON.parse(body) : {};
 
     return {

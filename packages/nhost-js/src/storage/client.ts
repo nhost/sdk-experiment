@@ -224,14 +224,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: unknown = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: GetOpenAPISpec200 = body ? JSON.parse(body) : {};
 
     return {
@@ -258,14 +256,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: unknown = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: VersionInformation = body ? JSON.parse(body) : {};
 
     return {
@@ -309,14 +305,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: UploadFiles201 = body ? JSON.parse(body) : {};
 
     return {
@@ -345,14 +339,12 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: void = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: void = body ? JSON.parse(body) : {};
 
     return {
@@ -399,7 +391,7 @@ export const createAPIClient = (
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: void = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
@@ -462,14 +454,12 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: FileMetadata = body ? JSON.parse(body) : {};
 
     return {
@@ -497,14 +487,12 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
     });
 
     if (res.status >= 400) {
-      const body = await res.text();
+      const body = [412].includes(res.status) ? null : await res.text();
       const payload: ErrorResponse = body ? JSON.parse(body) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: void = body ? JSON.parse(body) : {};
 
     return {
