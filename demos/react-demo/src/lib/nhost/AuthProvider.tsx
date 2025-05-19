@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         unsubscribe();
       };
     }
-    
+
     return undefined;
   }, [nhost]);
 

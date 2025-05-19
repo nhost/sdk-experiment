@@ -4,7 +4,9 @@ interface ErrorPageProps {
   }>;
 }
 
-export default async function VerificationError({ searchParams }: ErrorPageProps) {
+export default async function VerificationError({
+  searchParams,
+}: ErrorPageProps) {
   const params = await searchParams;
   const errorMessage = params?.message || "Verification failed";
 

@@ -5,6 +5,7 @@ This is a very simple Nhost backend that we will use to demonstrate how to use t
 ## Database schema
 
 - A `tasks` table with the following columns:
+
   - `id` (UUID)
   - `created_at` (Timestamp)
   - `updated_at` (Timestamp)

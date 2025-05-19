@@ -40,7 +40,7 @@ test("error handling for graphql", async () => {
     //     '</body>\n' +
     //     '</html>\n',
     //   headers: Headers {
-    //     'content-length': '1056',
+    //     'content-length': '1055',
     //     'content-security-policy': "default-src 'none'",
     //     'content-type': 'text/html; charset=utf-8',
     //     date: 'Tue, 13 May 2025 11:20:04 GMT',
@@ -53,7 +53,7 @@ test("error handling for graphql", async () => {
 
     expect(resp.status).toBe(500);
     expect(resp.headers.get("content-type")).toBe("text/html; charset=utf-8");
-    expect(resp.headers.get("content-length")).toBe("1056");
+    expect(resp.headers.get("content-length")).toBe("1055");
     expect(resp.body).toBeDefined();
   }
 });

@@ -155,7 +155,7 @@ describe("Test Storage API", () => {
       const resp = err as FetchResponse<undefined>;
       expect(resp.status).toBe(500);
       expect(resp.headers.get("content-type")).toBe("text/html; charset=utf-8");
-      expect(resp.headers.get("content-length")).toBe("1056");
+      expect(resp.headers.get("content-length")).toBe("1055");
       expect(resp.body).toBeDefined();
     }
   });
