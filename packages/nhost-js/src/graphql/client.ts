@@ -5,7 +5,12 @@
  * a Hasura GraphQL API.
  */
 
-import { createEnhancedFetch, type ChainFunction } from "../fetch";
+import {
+  createEnhancedFetch,
+  type ChainFunction,
+  type FetchResponse,
+  FetchError,
+} from "../fetch";
 
 /**
  * Variables object for GraphQL operations.
@@ -49,19 +54,6 @@ export interface GraphQLResponse<T = any> {
   data?: T;
   /** Array of errors if execution was unsuccessful or partially successful */
   errors?: GraphQLError[];
-}
-
-/**
- * Response wrapper for GraphQL operations with additional metadata.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface FetchResponse<T = any> {
-  /** The parsed response body */
-  body: T;
-  /** HTTP status code of the response */
-  status: number;
-  /** HTTP headers from the response */
-  headers: Headers;
 }
 
 /**
@@ -127,8 +119,7 @@ export const createAPIClient = (
     };
 
     if (data.errors) {
-      // eslint-disable-next-line @typescript-eslint/only-throw-error
-      throw resp;
+      throw new FetchError(data, response.status, response.headers);
     }
 
     return resp;

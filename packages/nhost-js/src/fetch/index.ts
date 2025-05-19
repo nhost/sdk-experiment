@@ -65,3 +65,75 @@ export function createEnhancedFetch(
     fetch as FetchFunction,
   );
 }
+
+export interface FetchResponse<T> {
+  body: T;
+  status: number;
+  headers: Headers;
+}
+
+/**
+ * Error response interfaces
+ */
+interface AuthErrorResponse {
+  message: string;
+}
+
+interface StorageErrorResponseMessage {
+  error: {
+    message: string;
+  };
+}
+
+interface GraphQLError {
+  errors?: {
+    message: string;
+  }[];
+}
+
+/**
+ * Extracts error message from various response formats
+ */
+function extractMessage(
+  body: AuthErrorResponse | StorageErrorResponseMessage | GraphQLError,
+): string {
+  if ("message" in body) {
+    return body.message;
+  }
+
+  if ("error" in body && body.error && "message" in body.error) {
+    return body.error.message;
+  }
+
+  if ("errors" in body && Array.isArray(body.errors)) {
+    return body.errors.map((error) => error.message).join(", ");
+  }
+
+  return "An error occurred";
+}
+
+export class FetchError<
+  T = AuthErrorResponse | StorageErrorResponseMessage | GraphQLError,
+> extends Error {
+  body: T;
+  status: number;
+  headers: Headers;
+
+  constructor(body: T, status: number, headers: Headers) {
+    super(
+      extractMessage(
+        body as AuthErrorResponse | StorageErrorResponseMessage | GraphQLError,
+      ),
+    );
+    this.body = body;
+    this.status = status;
+    this.headers = headers;
+
+    // Maintain proper stack trace (V8 only)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, FetchError);
+    }
+
+    this.name = "FetchError";
+  }
+}

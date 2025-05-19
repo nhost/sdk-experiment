@@ -1,3 +1,84 @@
+## Classes
+
+### FetchError&lt;T&gt;
+
+#### Extends
+
+- `Error`
+
+#### Type Parameters
+
+| Type Parameter | Default type                                                           |
+| -------------- | ---------------------------------------------------------------------- |
+| `T`            | `AuthErrorResponse` \| `StorageErrorResponseMessage` \| `GraphQLError` |
+
+#### Constructors
+
+##### Constructor
+
+```ts
+new FetchError<T>(
+   body: T,
+   status: number,
+   headers: Headers): FetchError<T>;
+```
+
+###### Parameters
+
+| Parameter | Type      |
+| --------- | --------- |
+| `body`    | `T`       |
+| `status`  | `number`  |
+| `headers` | `Headers` |
+
+###### Returns
+
+[`FetchError`](#fetcherror)&lt;`T`&gt;
+
+###### Overrides
+
+```ts
+Error.constructor;
+```
+
+#### Properties
+
+| Property                       | Type      |
+| ------------------------------ | --------- |
+| <a id="body"></a> `body`       | `T`       |
+| <a id="headers"></a> `headers` | `Headers` |
+| <a id="status"></a> `status`   | `number`  |
+
+## Interfaces
+
+### FetchResponse&lt;T&gt;
+
+#### Type Parameters
+
+| Type Parameter |
+| -------------- |
+| `T`            |
+
+#### Properties
+
+##### body
+
+```ts
+body: T;
+```
+
+##### headers
+
+```ts
+headers: Headers;
+```
+
+##### status
+
+```ts
+status: number;
+```
+
 ## Type Aliases
 
 ### ChainFunction()

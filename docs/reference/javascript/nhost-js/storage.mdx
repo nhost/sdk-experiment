@@ -35,7 +35,7 @@ Delete a file
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`void`&gt;&gt;
 
 ##### getFile()
 
@@ -56,7 +56,7 @@ Download a file
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`Blob`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`Blob`&gt;&gt;
 
 ##### getFileMetadataHeaders()
 
@@ -80,7 +80,7 @@ Retrieve file metadata using HTTP HEAD method
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`void`&gt;&gt;
 
 ##### getOpenAPISpec()
 
@@ -99,7 +99,7 @@ Returns the OpenAPI schema definition for this API
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetOpenAPISpec200`](#getopenapispec200)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`GetOpenAPISpec200`](#getopenapispec200)&gt;&gt;
 
 ##### getVersion()
 
@@ -118,7 +118,7 @@ Retrieves build and version information about the storage service
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`VersionInformation`](#versioninformation)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`VersionInformation`](#versioninformation)&gt;&gt;
 
 ##### pushChainFunction()
 
@@ -160,7 +160,7 @@ Replace an existing file
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`FileMetadata`](#filemetadata)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`FileMetadata`](#filemetadata)&gt;&gt;
 
 ##### uploadFiles()
 
@@ -180,11 +180,11 @@ Upload one or more files to storage
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;
 
 ---
 
-### Error
+### ErrorResponse
 
 Error information returned by the API.
 
@@ -193,7 +193,7 @@ Error information returned by the API.
 ##### error?
 
 ```ts
-optional error: ErrorError;
+optional error: ErrorResponseError;
 ```
 
 Error details.
@@ -432,10 +432,10 @@ The version number of the storage service build.
 
 ## Type Aliases
 
-### ErrorError
+### ErrorResponseError
 
 ```ts
-type ErrorError = object;
+type ErrorResponseError = object;
 ```
 
 Error details.
@@ -445,28 +445,6 @@ Error details.
 | Property                       | Type     | Description                   |
 | ------------------------------ | -------- | ----------------------------- |
 | <a id="message"></a> `message` | `string` | Human-readable error message. |
-
----
-
-### FetchResponse&lt;T&gt;
-
-```ts
-type FetchResponse<T> = object;
-```
-
-#### Type Parameters
-
-| Type Parameter |
-| -------------- |
-| `T`            |
-
-#### Properties
-
-| Property                       | Type      |
-| ------------------------------ | --------- |
-| <a id="body"></a> `body`       | `T`       |
-| <a id="headers"></a> `headers` | `Headers` |
-| <a id="status"></a> `status`   | `number`  |
 
 ---
 

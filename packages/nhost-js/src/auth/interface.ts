@@ -1,7 +1,6 @@
 import type {
   CreatePATRequest,
   CreatePATResponse,
-  FetchResponse,
   GetVersion200,
   JWKSet,
   LinkIdTokenRequest,
@@ -31,7 +30,7 @@ import type {
   VerifyTicketParams,
 } from "./client";
 
-import type { ChainFunction } from "../fetch";
+import type { ChainFunction, FetchResponse } from "../fetch";
 
 /**
  * Authentication client interface providing methods for user sign-in, sign-up, and session management

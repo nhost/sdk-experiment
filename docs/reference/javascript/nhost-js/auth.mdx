@@ -38,7 +38,7 @@ Change user email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### changeUserMfa()
 
@@ -57,7 +57,7 @@ Generate a Time-based One-Time Password (TOTP) secret for setting up multi-facto
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;
 
 ##### changeUserMfaVerify()
 
@@ -77,7 +77,7 @@ Activate or deactivate multi-factor authentication for the authenticated user
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### changeUserPassword()
 
@@ -99,7 +99,7 @@ Change user password
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### createPAT()
 
@@ -119,7 +119,7 @@ Create a Personal Access Token (PAT)
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`CreatePATResponse`](#createpatresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`CreatePATResponse`](#createpatresponse)&gt;&gt;
 
 ##### deanonymizeUser()
 
@@ -141,7 +141,7 @@ Deanonymize an anonymous user by adding missing email or email+password
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### getJWKs()
 
@@ -159,7 +159,7 @@ Get public keys for JWT verification in JWK Set format
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`JWKSet`](#jwkset)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`JWKSet`](#jwkset)&gt;&gt;
 
 ##### getVersion()
 
@@ -177,7 +177,7 @@ Retrieve version information about the authentication service
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;
 
 ##### healthCheckGet()
 
@@ -195,7 +195,7 @@ Verify if the authentication service is operational using GET method
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### healthCheckHead()
 
@@ -213,7 +213,7 @@ Verify if the authentication service is operational using HEAD method
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`void`&gt;&gt;
 
 ##### linkIdToken()
 
@@ -233,7 +233,7 @@ Link a user account with the provider's account using an id token
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### pushChainFunction()
 
@@ -273,7 +273,7 @@ Generate a new JWT access token using a valid refresh token
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`Session`](#session)&gt;&gt;
 
 ##### sendPasswordResetEmail()
 
@@ -295,7 +295,7 @@ Request a password reset
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### sendVerificationEmail()
 
@@ -317,7 +317,7 @@ Send verification email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### signInAnonymous()
 
@@ -339,7 +339,7 @@ Sign in anonymously
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### signInEmailPassword()
 
@@ -361,7 +361,7 @@ Authenticate a user with their email and password
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt;
 
 ##### signInIdToken()
 
@@ -383,7 +383,7 @@ Sign in with an id token
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### signInOTPEmail()
 
@@ -405,7 +405,7 @@ Sign in with a one time password sent to user's email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### signInPasswordlessEmail()
 
@@ -427,7 +427,7 @@ Initiate passwordless authentication by sending a magic link to the user's email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### signInPAT()
 
@@ -447,7 +447,7 @@ Sign in with Personal Access Token (PAT)
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### signInVerifyMfaTotp()
 
@@ -469,7 +469,7 @@ Complete the multi-factor authentication by verifying a Time-based One-Time Pass
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### signOut()
 
@@ -489,7 +489,7 @@ Sign out the current user
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### signUpEmailPassword()
 
@@ -511,7 +511,7 @@ Register a new user account with email and password
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### verifySignInOTPEmail()
 
@@ -533,7 +533,7 @@ Verify OTP and return a session if validation is successful
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInOTPEmailVerifyResponse`](#signinotpemailverifyresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInOTPEmailVerifyResponse`](#signinotpemailverifyresponse)&gt;&gt;
 
 ##### verifyTicket()
 
@@ -553,7 +553,7 @@ Verify tickets created by email verification, magic link, or password reset
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`void`&gt;&gt;
 
 ---
 
@@ -1695,28 +1695,6 @@ type ErrorResponseError =
 ```
 
 Error code identifying the specific application error
-
----
-
-### FetchResponse&lt;T&gt;
-
-```ts
-type FetchResponse<T> = object;
-```
-
-#### Type Parameters
-
-| Type Parameter |
-| -------------- |
-| `T`            |
-
-#### Properties
-
-| Property                       | Type      |
-| ------------------------------ | --------- |
-| <a id="body"></a> `body`       | `T`       |
-| <a id="headers"></a> `headers` | `Headers` |
-| <a id="status-1"></a> `status` | `number`  |
 
 ---
 

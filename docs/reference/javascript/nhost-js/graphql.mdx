@@ -35,47 +35,9 @@ Queries are used to fetch data and should not modify any data on the server.
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`T`&gt;&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`T`&gt;&gt;&gt;
 
 Promise with the GraphQL response and metadata
-
----
-
-### FetchResponse&lt;T&gt;
-
-Response wrapper for GraphQL operations with additional metadata.
-
-#### Type Parameters
-
-| Type Parameter | Default type |
-| -------------- | ------------ |
-| `T`            | `any`        |
-
-#### Properties
-
-##### body
-
-```ts
-body: T;
-```
-
-The parsed response body
-
-##### headers
-
-```ts
-headers: Headers;
-```
-
-HTTP headers from the response
-
-##### status
-
-```ts
-status: number;
-```
-
-HTTP status code of the response
 
 ---
 

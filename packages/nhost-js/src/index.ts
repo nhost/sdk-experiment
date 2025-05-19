@@ -47,7 +47,6 @@ import {
   createAPIClient as createAuthClient,
   type Client as AuthClient,
   type Session,
-  type FetchResponse,
   type ErrorResponse,
 } from "./auth";
 import {
@@ -70,7 +69,7 @@ import {
 } from "./middlewareRefreshSession";
 import { createAttachAccessTokenMiddleware } from "./middlewareAttachToken";
 import { createSessionResponseMiddleware } from "./middlewareResponseSession";
-import type { ChainFunction } from "./fetch";
+import type { ChainFunction, FetchResponse } from "./fetch";
 
 export {
   type SessionStorageInterface,
