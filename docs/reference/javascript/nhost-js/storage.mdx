@@ -21,7 +21,8 @@ Base URL for the storage service
 ##### deleteFile()
 
 ```ts
-deleteFile: (id: string, options?: RequestInit) => Promise<FetchResponse<void>>;
+deleteFile: (id: string, options?: RequestInit) =>
+  Promise<FetchResponse<void | ErrorResponse>>;
 ```
 
 Delete a file
@@ -35,13 +36,13 @@ Delete a file
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### getFile()
 
 ```ts
 getFile: (id: string, params?: GetFileParams, options?: RequestInit) =>
-  Promise<FetchResponse<Blob>>;
+  Promise<FetchResponse<void | Blob>>;
 ```
 
 Download a file
@@ -56,7 +57,7 @@ Download a file
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`Blob`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void` \| `Blob`&gt;&gt;
 
 ##### getFileMetadataHeaders()
 
@@ -65,7 +66,7 @@ getFileMetadataHeaders: (
   id: string,
   params?: GetFileMetadataHeadersParams,
   options?: RequestInit,
-) => Promise<FetchResponse<void>>;
+) => Promise<FetchResponse<void | ErrorResponse>>;
 ```
 
 Retrieve file metadata using HTTP HEAD method
@@ -80,7 +81,7 @@ Retrieve file metadata using HTTP HEAD method
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`void` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### getOpenAPISpec()
 
@@ -145,7 +146,7 @@ replaceFile: (
   id: string,
   replaceFileBody: ReplaceFileBody,
   options?: RequestInit,
-) => Promise<FetchResponse<FileMetadata>>;
+) => Promise<FetchResponse<ErrorResponse | FileMetadata>>;
 ```
 
 Replace an existing file
@@ -160,13 +161,13 @@ Replace an existing file
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`FileMetadata`](#filemetadata)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`ErrorResponse`](#errorresponse) \| [`FileMetadata`](#filemetadata)&gt;&gt;
 
 ##### uploadFiles()
 
 ```ts
 uploadFiles: (uploadFilesBody: UploadFilesBody, options?: RequestInit) =>
-  Promise<FetchResponse<UploadFiles201>>;
+  Promise<FetchResponse<UploadFiles201 | ErrorResponse>>;
 ```
 
 Upload one or more files to storage
@@ -180,11 +181,11 @@ Upload one or more files to storage
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201) \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ---
 
-### Error
+### ErrorResponse
 
 Error information returned by the API.
 
@@ -193,7 +194,7 @@ Error information returned by the API.
 ##### error?
 
 ```ts
-optional error: ErrorError;
+optional error: ErrorResponseError;
 ```
 
 Error details.
@@ -432,10 +433,10 @@ The version number of the storage service build.
 
 ## Type Aliases
 
-### ErrorError
+### ErrorResponseError
 
 ```ts
-type ErrorError = object;
+type ErrorResponseError = object;
 ```
 
 Error details.

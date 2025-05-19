@@ -1,12 +1,14 @@
 import { describe, beforeAll, it, expect } from "@jest/globals";
-import { createAPIClient as createAuthClient } from "../auth";
+import { createAPIClient as createAuthClient, SessionPayload } from "../auth";
 import { MemoryStorage } from "../sessionStorage";
 import { createSessionRefreshMiddleware } from "../middlewareRefreshSession";
 import { createAttachAccessTokenMiddleware } from "../middlewareAttachToken";
 import {
   createAPIClient as createStorageClient,
   type FetchResponse,
-  type Error,
+  type ErrorResponse,
+  UploadFiles201,
+  FileMetadata,
 } from "../storage";
 
 describe("Test Storage API", () => {
@@ -38,12 +40,16 @@ describe("Test Storage API", () => {
     });
     expect(response.status).toBe(200);
 
-    const body = response.body;
-    if (!body.session) {
-      throw new Error("Session is undefined");
+    if (response.status !== 200) {
+      throw new Error("Failed to sign up");
     }
 
-    storage.set(body.session);
+    const payload = response.body as SessionPayload;
+    if (!payload.session) {
+      throw new Error("Session not found in response");
+    }
+
+    storage.set(payload.session);
   });
 
   const uuid1 = crypto.randomUUID();
@@ -78,68 +84,67 @@ describe("Test Storage API", () => {
       ],
     });
 
-    const body = resp.body;
-    expect(body.processedFiles).toBeDefined();
-    expect(body.processedFiles?.[0]?.bucketId).toBe("default");
-    expect(body.processedFiles?.[0]?.createdAt).toBeDefined();
-    expect(body.processedFiles?.[0]?.etag).toBeDefined();
-    expect(body.processedFiles?.[0]?.id).toBe(uuid1);
-    expect(body.processedFiles?.[0]?.isUploaded).toBe(true);
-    expect(body.processedFiles?.[0]?.metadata).toEqual({
+    if (resp.status !== 200) {
+      throw new Error("Failed to upload files");
+    }
+
+    const payload = resp.body as UploadFiles201;
+
+    expect(payload.processedFiles).toBeDefined();
+    expect(payload.processedFiles?.[0]?.bucketId).toBe("default");
+    expect(payload.processedFiles?.[0]?.createdAt).toBeDefined();
+    expect(payload.processedFiles?.[0]?.etag).toBeDefined();
+    expect(payload.processedFiles?.[0]?.id).toBe(uuid1);
+    expect(payload.processedFiles?.[0]?.isUploaded).toBe(true);
+    expect(payload.processedFiles?.[0]?.metadata).toEqual({
       key1: "value1",
     });
-    expect(body.processedFiles?.[0]?.mimeType).toBe("text/plain");
-    expect(body.processedFiles?.[0]?.name).toBe("test1");
-    expect(body.processedFiles?.[0]?.size).toBe(5);
-    expect(body.processedFiles?.[0]?.updatedAt).toBeDefined();
-    expect(body.processedFiles?.[0]?.uploadedByUserId).toBeDefined();
-    expect(body.processedFiles?.[1]?.bucketId).toBe("default");
-    expect(body.processedFiles?.[1]?.createdAt).toBeDefined();
-    expect(body.processedFiles?.[1]?.etag).toBeDefined();
-    expect(body.processedFiles?.[1]?.id).toBe(uuid2);
-    expect(body.processedFiles?.[1]?.isUploaded).toBe(true);
-    expect(body.processedFiles?.[1]?.metadata).toEqual({
+    expect(payload.processedFiles?.[0]?.mimeType).toBe("text/plain");
+    expect(payload.processedFiles?.[0]?.name).toBe("test1");
+    expect(payload.processedFiles?.[0]?.size).toBe(5);
+    expect(payload.processedFiles?.[0]?.updatedAt).toBeDefined();
+    expect(payload.processedFiles?.[0]?.uploadedByUserId).toBeDefined();
+    expect(payload.processedFiles?.[1]?.bucketId).toBe("default");
+    expect(payload.processedFiles?.[1]?.createdAt).toBeDefined();
+    expect(payload.processedFiles?.[1]?.etag).toBeDefined();
+    expect(payload.processedFiles?.[1]?.id).toBe(uuid2);
+    expect(payload.processedFiles?.[1]?.isUploaded).toBe(true);
+    expect(payload.processedFiles?.[1]?.metadata).toEqual({
       key2: "value2",
     });
-    expect(body.processedFiles?.[1]?.mimeType).toBe("text/plain");
-    expect(body.processedFiles?.[1]?.name).toBe("test2");
-    expect(body.processedFiles?.[1]?.size).toBe(15);
-    expect(body.processedFiles?.[1]?.updatedAt).toBeDefined();
-    expect(body.processedFiles?.[1]?.uploadedByUserId).toBeDefined();
+    expect(payload.processedFiles?.[1]?.mimeType).toBe("text/plain");
+    expect(payload.processedFiles?.[1]?.name).toBe("test2");
+    expect(payload.processedFiles?.[1]?.size).toBe(15);
+    expect(payload.processedFiles?.[1]?.updatedAt).toBeDefined();
+    expect(payload.processedFiles?.[1]?.uploadedByUserId).toBeDefined();
   });
 
   it("upload fails", async () => {
-    try {
-      await nhostStorage.uploadFiles({
-        "bucket-id": "default",
-        "metadata[]": [
-          {
-            id: uuid1,
-            name: "test1",
-            metadata: { key1: "value1" },
-          },
-          {
-            id: uuid2,
-            name: "test2",
-            metadata: { key2: "value2" },
-          },
-        ],
-      });
-    } catch (error) {
-      const err = error as FetchResponse<Error>;
+    const resp = await nhostStorage.uploadFiles({
+      "bucket-id": "default",
+      "metadata[]": [
+        {
+          id: uuid1,
+          name: "test1",
+          metadata: { key1: "value1" },
+        },
+        {
+          id: uuid2,
+          name: "test2",
+          metadata: { key2: "value2" },
+        },
+      ],
+    });
 
-      expect(err).toBeDefined();
-      expect(err.status).toBe(400);
-      expect(err.body).toBeDefined();
-      expect(err.body.error?.message).toBe(
-        "file[] not found in Multipart form",
-      );
-      expect(err.headers.get("content-length")).toBe("58");
-      expect(err.headers.get("content-type")).toBe(
-        "application/json; charset=utf-8",
-      );
-      expect(err.headers.get("date")).toBeDefined();
-    }
+    expect(resp.status).toBe(400);
+    expect(resp.headers.get("content-length")).toBe("58");
+    expect(resp.headers.get("content-type")).toBe(
+      "application/json; charset=utf-8",
+    );
+    expect(resp.headers.get("date")).toBeDefined();
+
+    const err = resp.body as ErrorResponse;
+    expect(err.error?.message).toBe("file[] not found in Multipart form");
   });
 
   let etag: string;
@@ -219,7 +224,13 @@ describe("Test Storage API", () => {
     expect(resp.headers.get("surrogate-control")).toBe("max-age=604800");
     expect(resp.headers.get("content-length")).toBe("5");
     expect(resp.headers.get("date")).toBeDefined();
-    expect(await resp.body.text()).toBe("test1");
+
+    if (resp.status !== 200) {
+      throw new Error("Failed to get file");
+    }
+    const payload = resp.body as Blob;
+
+    expect(await payload.text()).toBe("test1");
   });
 
   it("should not get file If-None-Match matches", async () => {
@@ -256,18 +267,25 @@ describe("Test Storage API", () => {
         },
       },
     });
+
+    if (fileResponse.status !== 200) {
+      throw new Error("Failed to replace file");
+    }
+
+    const payload = fileResponse.body as FileMetadata;
+
     expect(fileResponse.status).toBe(200);
-    expect(fileResponse.body.bucketId).toBe("default");
-    expect(fileResponse.body.createdAt).toBeDefined();
-    expect(fileResponse.body.etag).toBeDefined();
-    expect(fileResponse.body.id).toBe(uuid1);
-    expect(fileResponse.body.isUploaded).toBe(true);
-    expect(fileResponse.body.metadata).toEqual({ key1: "value1 new" });
-    expect(fileResponse.body.mimeType).toBe("text/plain");
-    expect(fileResponse.body.name).toBe("test1 new");
-    expect(fileResponse.body.size).toBe(9);
-    expect(fileResponse.body.updatedAt).toBeDefined();
-    expect(fileResponse.body.uploadedByUserId).toBeDefined();
+    expect(payload.bucketId).toBe("default");
+    expect(payload.createdAt).toBeDefined();
+    expect(payload.etag).toBeDefined();
+    expect(payload.id).toBe(uuid1);
+    expect(payload.isUploaded).toBe(true);
+    expect(payload.metadata).toEqual({ key1: "value1 new" });
+    expect(payload.mimeType).toBe("text/plain");
+    expect(payload.name).toBe("test1 new");
+    expect(payload.size).toBe(9);
+    expect(payload.updatedAt).toBeDefined();
+    expect(payload.uploadedByUserId).toBeDefined();
   });
 
   it("should delete file", async () => {

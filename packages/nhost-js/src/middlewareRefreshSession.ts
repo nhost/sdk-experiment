@@ -6,7 +6,7 @@
  * without requiring manual token refresh by the application.
  */
 
-import type { Client, ErrorResponse, FetchResponse, Session } from "./auth";
+import type { Client, Session } from "./auth";
 import type { SessionStorageInterface } from "./sessionStorage";
 import type { ChainFunction, FetchFunction } from "./fetch";
 
@@ -177,14 +177,18 @@ async function refreshToken(
   refreshToken: string,
 ): Promise<Session | null> {
   try {
-    const refreshResponse = await authClient.refreshToken({ refreshToken });
-    storage.set(refreshResponse.body);
-    return refreshResponse.body;
-  } catch (error) {
-    const err = error as FetchResponse<ErrorResponse>;
-    if (err.status === 401) {
-      storage.remove();
+    const resp = await authClient.refreshToken({ refreshToken });
+    switch (resp.status) {
+      case 200:
+        storage.set(resp.body as Session);
+        return resp.body as Session;
+      case 401:
+        storage.remove();
+        return null;
+      default:
+        return null;
     }
+  } catch {
     return null;
   }
 }

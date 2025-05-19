@@ -1,5 +1,5 @@
 import { describe, it, expect } from "@jest/globals";
-import { createAPIClient as createAuthClient } from "../auth";
+import { createAPIClient as createAuthClient, SessionPayload } from "../auth";
 import { MemoryStorage } from "../sessionStorage";
 import { createSessionRefreshMiddleware } from "../middlewareRefreshSession";
 import { createAttachAccessTokenMiddleware } from "../middlewareAttachToken";
@@ -43,7 +43,7 @@ describe("Test Storage API", () => {
     });
     expect(response.status).toBe(200);
 
-    const body = response.body;
+    const body = response.body as SessionPayload;
     if (!body.session) {
       throw new Error("Session is undefined");
     }

@@ -274,22 +274,22 @@ export class NhostClient {
       return session; // No need to refresh
     }
 
-    try {
-      const response = await this.auth.refreshToken({
-        refreshToken: session.refreshToken,
-      });
-      this.sessionStorage.set(response.body);
-
-      return response.body;
-    } catch (error) {
-      if (!sessionExpired) {
-        // If the session is not expired, we can still use the current session
-        // so there is no need to error for now
-        return session;
-      }
-
-      // we throw the error so the caller can handle it
-      throw error;
+    const response = await this.auth.refreshToken({
+      refreshToken: session.refreshToken,
+    });
+    switch (response.status) {
+      case 200:
+        this.sessionStorage.set(response.body as Session);
+        return response.body as Session;
+      default:
+        if (!sessionExpired) {
+          // If the session is not expired, we can still use the current session
+          // so there is no need to error for now
+          return session;
+        }
+        throw new Error(
+          `Unexpected response status while refreshing session: ${response.status}`,
+        );
     }
   }
 

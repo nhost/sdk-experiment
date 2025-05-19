@@ -4,6 +4,7 @@ import {
   type SignUpEmailPasswordRequest,
   type FetchResponse,
   type ErrorResponse,
+  SessionPayload,
 } from "../auth/client";
 
 describe("Nhost Auth - Sign Up with Email and Password", () => {
@@ -32,11 +33,17 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
     // Make an actual API call
     const response = await nhostAuth.signUpEmailPassword(signUpRequest);
 
+    if (response.status !== 200) {
+      throw new Error("Failed to sign up");
+    }
+
+    const payload = response.body as SessionPayload;
+
     // Verify structure of response
-    expect(response.body.session).toBeDefined();
-    expect(response.body.session?.accessToken).toBeDefined();
-    expect(response.body.session?.refreshToken).toBeDefined();
-    expect(response.body.session?.user).toBeDefined();
+    expect(payload.session).toBeDefined();
+    expect(payload.session?.accessToken).toBeDefined();
+    expect(payload.session?.refreshToken).toBeDefined();
+    expect(payload.session?.user).toBeDefined();
   });
 
   it("should sign in a user with email and password", async () => {
@@ -46,11 +53,17 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
       password,
     });
 
+    if (response.status !== 200) {
+      throw new Error("Failed to sign up");
+    }
+
+    const payload = response.body as SessionPayload;
+
     // Verify structure of response
-    expect(response.body.session).toBeDefined();
-    expect(response.body.session?.accessToken).toBeDefined();
-    expect(response.body.session?.refreshToken).toBeDefined();
-    expect(response.body.session?.user).toBeDefined();
+    expect(payload.session).toBeDefined();
+    expect(payload.session?.accessToken).toBeDefined();
+    expect(payload.session?.refreshToken).toBeDefined();
+    expect(payload.session?.user).toBeDefined();
   });
 
   it("should fail sign in a user with email and password", async () => {

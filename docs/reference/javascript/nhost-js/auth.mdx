@@ -24,10 +24,8 @@ Base URL for the authentication service
 changeUserEmail: (
   userEmailChangeRequest: UserEmailChangeRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+) => Promise<FetchResponse<"OK" | ErrorResponse>>;
 ```
-
-Change user email
 
 ###### Parameters
 
@@ -38,13 +36,13 @@ Change user email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### changeUserMfa()
 
 ```ts
 changeUserMfa: (options?: RequestInit) =>
-  Promise<FetchResponse<TotpGenerateResponse>>;
+  Promise<FetchResponse<ErrorResponse | TotpGenerateResponse>>;
 ```
 
 Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication
@@ -57,13 +55,15 @@ Generate a Time-based One-Time Password (TOTP) secret for setting up multi-facto
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;
+\| [`ErrorResponse`](#errorresponse)
+\| [`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;
 
 ##### changeUserMfaVerify()
 
 ```ts
 changeUserMfaVerify: (userMfaRequest: UserMfaRequest, options?: RequestInit) =>
-  Promise<FetchResponse<"OK">>;
+  Promise<FetchResponse<"OK" | ErrorResponse>>;
 ```
 
 Activate or deactivate multi-factor authentication for the authenticated user
@@ -77,7 +77,7 @@ Activate or deactivate multi-factor authentication for the authenticated user
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### changeUserPassword()
 
@@ -85,10 +85,8 @@ Activate or deactivate multi-factor authentication for the authenticated user
 changeUserPassword: (
   userPasswordRequest: UserPasswordRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+) => Promise<FetchResponse<"OK" | ErrorResponse>>;
 ```
-
-Change user password
 
 ###### Parameters
 
@@ -99,16 +97,14 @@ Change user password
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### createPAT()
 
 ```ts
 createPAT: (createPATRequest: CreatePATRequest, options?: RequestInit) =>
-  Promise<FetchResponse<CreatePATResponse>>;
+  Promise<FetchResponse<ErrorResponse | CreatePATResponse>>;
 ```
-
-Create a Personal Access Token (PAT)
 
 ###### Parameters
 
@@ -119,7 +115,9 @@ Create a Personal Access Token (PAT)
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`CreatePATResponse`](#createpatresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;
+\| [`ErrorResponse`](#errorresponse)
+\| [`CreatePATResponse`](#createpatresponse)&gt;&gt;
 
 ##### deanonymizeUser()
 
@@ -127,10 +125,8 @@ Create a Personal Access Token (PAT)
 deanonymizeUser: (
   userDeanonymizeRequest: UserDeanonymizeRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+) => Promise<FetchResponse<"OK" | ErrorResponse>>;
 ```
-
-Deanonymize an anonymous user by adding missing email or email+password
 
 ###### Parameters
 
@@ -141,7 +137,7 @@ Deanonymize an anonymous user by adding missing email or email+password
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### getJWKs()
 
@@ -219,10 +215,8 @@ Verify if the authentication service is operational using HEAD method
 
 ```ts
 linkIdToken: (linkIdTokenRequest: LinkIdTokenRequest, options?: RequestInit) =>
-  Promise<FetchResponse<"OK">>;
+  Promise<FetchResponse<"OK" | ErrorResponse>>;
 ```
-
-Link a user account with the provider's account using an id token
 
 ###### Parameters
 
@@ -233,7 +227,7 @@ Link a user account with the provider's account using an id token
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### pushChainFunction()
 
@@ -259,10 +253,10 @@ Add a middleware function to the request chain
 refreshToken: (
   refreshTokenRequest: RefreshTokenRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<Session>>;
+) => Promise<FetchResponse<Session | ErrorResponse>>;
 ```
 
-Generate a new JWT access token using a valid refresh token
+Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued.
 
 ###### Parameters
 
@@ -273,7 +267,7 @@ Generate a new JWT access token using a valid refresh token
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`Session`](#session) \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### sendPasswordResetEmail()
 
@@ -281,10 +275,8 @@ Generate a new JWT access token using a valid refresh token
 sendPasswordResetEmail: (
   userPasswordResetRequest: UserPasswordResetRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+) => Promise<FetchResponse<"OK" | ErrorResponse>>;
 ```
-
-Request a password reset
 
 ###### Parameters
 
@@ -295,7 +287,7 @@ Request a password reset
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### sendVerificationEmail()
 
@@ -303,10 +295,8 @@ Request a password reset
 sendVerificationEmail: (
   userEmailSendVerificationEmailRequest: UserEmailSendVerificationEmailRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+) => Promise<FetchResponse<"OK" | ErrorResponse>>;
 ```
-
-Send verification email
 
 ###### Parameters
 
@@ -317,7 +307,7 @@ Send verification email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### signInAnonymous()
 
@@ -325,10 +315,8 @@ Send verification email
 signInAnonymous: (
   signinAnonymousRequest?: SigninAnonymousRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<SessionPayload>>;
+) => Promise<FetchResponse<ErrorResponse | SessionPayload>>;
 ```
-
-Sign in anonymously
 
 ###### Parameters
 
@@ -339,7 +327,7 @@ Sign in anonymously
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`ErrorResponse`](#errorresponse) \| [`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### signInEmailPassword()
 
@@ -347,10 +335,10 @@ Sign in anonymously
 signInEmailPassword: (
   signInEmailPasswordRequest: SignInEmailPasswordRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<SignInEmailPasswordResponse>>;
+) => Promise<FetchResponse<ErrorResponse | SignInEmailPasswordResponse>>;
 ```
 
-Authenticate a user with their email and password
+Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
 
 ###### Parameters
 
@@ -361,7 +349,9 @@ Authenticate a user with their email and password
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;
+\| [`ErrorResponse`](#errorresponse)
+\| [`SignInEmailPasswordResponse`](#signinemailpasswordresponse)&gt;&gt;
 
 ##### signInIdToken()
 
@@ -369,10 +359,8 @@ Authenticate a user with their email and password
 signInIdToken: (
   signInIdTokenRequest: SignInIdTokenRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<SessionPayload>>;
+) => Promise<FetchResponse<ErrorResponse | SessionPayload>>;
 ```
-
-Sign in with an id token
 
 ###### Parameters
 
@@ -383,7 +371,7 @@ Sign in with an id token
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`ErrorResponse`](#errorresponse) \| [`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### signInOTPEmail()
 
@@ -391,10 +379,8 @@ Sign in with an id token
 signInOTPEmail: (
   signInOTPEmailRequest: SignInOTPEmailRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+) => Promise<FetchResponse<"OK" | ErrorResponse>>;
 ```
-
-Sign in with a one time password sent to user's email
 
 ###### Parameters
 
@@ -405,7 +391,7 @@ Sign in with a one time password sent to user's email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### signInPasswordlessEmail()
 
@@ -413,10 +399,10 @@ Sign in with a one time password sent to user's email
 signInPasswordlessEmail: (
   signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+) => Promise<FetchResponse<"OK" | ErrorResponse>>;
 ```
 
-Initiate passwordless authentication by sending a magic link to the user's email
+Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options.
 
 ###### Parameters
 
@@ -427,16 +413,14 @@ Initiate passwordless authentication by sending a magic link to the user's email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### signInPAT()
 
 ```ts
 signInPAT: (signInPATRequest: SignInPATRequest, options?: RequestInit) =>
-  Promise<FetchResponse<SessionPayload>>;
+  Promise<FetchResponse<ErrorResponse | SessionPayload>>;
 ```
-
-Sign in with Personal Access Token (PAT)
 
 ###### Parameters
 
@@ -447,7 +431,7 @@ Sign in with Personal Access Token (PAT)
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`ErrorResponse`](#errorresponse) \| [`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### signInVerifyMfaTotp()
 
@@ -455,10 +439,10 @@ Sign in with Personal Access Token (PAT)
 signInVerifyMfaTotp: (
   signInMfaTotpRequest: SignInMfaTotpRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<SessionPayload>>;
+) => Promise<FetchResponse<ErrorResponse | SessionPayload>>;
 ```
 
-Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP)
+Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
 
 ###### Parameters
 
@@ -469,16 +453,14 @@ Complete the multi-factor authentication by verifying a Time-based One-Time Pass
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`ErrorResponse`](#errorresponse) \| [`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### signOut()
 
 ```ts
 signOut: (signOutSchema: SignOutSchema, options?: RequestInit) =>
-  Promise<FetchResponse<"OK">>;
+  Promise<FetchResponse<"OK" | ErrorResponse>>;
 ```
-
-Sign out the current user
 
 ###### Parameters
 
@@ -489,7 +471,7 @@ Sign out the current user
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`"OK"` \| [`ErrorResponse`](#errorresponse)&gt;&gt;
 
 ##### signUpEmailPassword()
 
@@ -497,10 +479,10 @@ Sign out the current user
 signUpEmailPassword: (
   signUpEmailPasswordRequest: SignUpEmailPasswordRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<SessionPayload>>;
+) => Promise<FetchResponse<ErrorResponse | SessionPayload>>;
 ```
 
-Register a new user account with email and password
+Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session.
 
 ###### Parameters
 
@@ -511,7 +493,7 @@ Register a new user account with email and password
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`ErrorResponse`](#errorresponse) \| [`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### verifySignInOTPEmail()
 
@@ -519,10 +501,8 @@ Register a new user account with email and password
 verifySignInOTPEmail: (
   signInOTPEmailVerifyRequest: SignInOTPEmailVerifyRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<SignInOTPEmailVerifyResponse>>;
+) => Promise<FetchResponse<ErrorResponse | SignInOTPEmailVerifyResponse>>;
 ```
-
-Verify OTP and return a session if validation is successful
 
 ###### Parameters
 
@@ -533,7 +513,9 @@ Verify OTP and return a session if validation is successful
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;[`SignInOTPEmailVerifyResponse`](#signinotpemailverifyresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;
+\| [`ErrorResponse`](#errorresponse)
+\| [`SignInOTPEmailVerifyResponse`](#signinotpemailverifyresponse)&gt;&gt;
 
 ##### verifyTicket()
 
@@ -541,8 +523,6 @@ Verify OTP and return a session if validation is successful
 verifyTicket: (params: VerifyTicketParams, options?: RequestInit) =>
   Promise<FetchResponse<void>>;
 ```
-
-Verify tickets created by email verification, magic link, or password reset
 
 ###### Parameters
 
