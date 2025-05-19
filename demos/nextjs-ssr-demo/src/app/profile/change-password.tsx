@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { createNhostClient } from "../lib/nhost/client";
-import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import type { ErrorResponse } from "@nhost/nhost-js/auth";
+import type { FetchError } from "@nhost/nhost-js/fetch";
 
 export default function ChangePassword() {
   const [newPassword, setNewPassword] = useState("");
@@ -43,10 +44,8 @@ export default function ChangePassword() {
       setNewPassword("");
       setConfirmPassword("");
     } catch (err) {
-      const error = err as FetchResponse<ErrorResponse>;
-      setError(
-        "Error changing password: " + error.body.message || "unexpected error",
-      );
+      const error = err as FetchError<ErrorResponse>;
+      setError(`Failed to change password: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
