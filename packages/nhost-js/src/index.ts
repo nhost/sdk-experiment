@@ -274,23 +274,22 @@ export class NhostClient {
       return session; // No need to refresh
     }
 
-    try {
-      const response = await this.auth.refreshToken({
-        refreshToken: session.refreshToken,
-      });
-      this.sessionStorage.set(response.body);
-
-      return response.body;
-    } catch (error) {
+    const { body, error } = await this.auth.refreshToken({
+      refreshToken: session.refreshToken,
+    });
+    if (error) {
       if (!sessionExpired) {
-        // If the session is not expired, we can still use the current session
-        // so there is no need to error for now
         return session;
       }
-
-      // we throw the error so the caller can handle it
-      throw error;
+      throw new Error(error.message);
     }
+
+    if (!body) {
+      throw new Error("No session found in response");
+    }
+
+    this.sessionStorage.set(body);
+    return body;
   }
 
   /**

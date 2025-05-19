@@ -80,6 +80,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/Session"
           description: "Access token successfully refreshed"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /signout:
     post:
@@ -102,6 +108,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OKResponse"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /signin/email-password:
     post:
@@ -124,6 +136,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/SignInEmailPasswordResponse"
           description: "Authentication successful. If MFA is enabled, a challenge will be returned instead of a session."
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /signin/mfa/totp:
     post:
@@ -146,6 +164,12 @@ paths:
               schema:
                 $ref: "#/components/schemas/SessionPayload"
           description: "MFA verification successful, session created"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /signin/passwordless/email:
     post:
@@ -168,6 +192,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OKResponse"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /signup/email-password:
     post:
@@ -226,6 +256,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OKResponse"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /mfa/totp/generate:
     get:
@@ -244,6 +280,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TotpGenerateResponse"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /.well-known/jwks.json:
     get:
@@ -282,6 +324,12 @@ paths:
                 $ref: "#/components/schemas/CreatePATResponse"
           description: >-
             Successfully created a Personal Access Token
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /signin/anonymous:
     post:
@@ -304,6 +352,12 @@ paths:
                 $ref: "#/components/schemas/SessionPayload"
           description: >-
             Successfully signed in
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /signin/otp/email:
     post:
@@ -330,6 +384,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OKResponse"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /signin/otp/email/verify:
     post:
@@ -354,6 +414,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SignInOTPEmailVerifyResponse"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /signin/pat:
     post:
@@ -377,6 +443,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SessionPayload"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /signin/idtoken:
     post:
@@ -401,6 +473,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SessionPayload"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /link/idtoken:
     post:
@@ -425,6 +503,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OKResponse"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /user/deanonymize:
     post:
@@ -449,6 +533,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OKResponse"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /user/email/change:
     post:
@@ -473,6 +563,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OKResponse"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /user/email/send-verification-email:
     post:
@@ -495,6 +591,12 @@ paths:
                 $ref: "#/components/schemas/OKResponse"
           description: >-
             Email verification email sent successfully
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /user/password:
     post:
@@ -521,6 +623,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OKResponse"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /user/password/reset:
     post:
@@ -544,6 +652,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/OKResponse"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
 
   /verify:
     get:

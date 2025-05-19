@@ -501,8 +501,9 @@ export type VerifyTicketParams = {
   redirectTo: RedirectToQueryParameter;
 };
 
-export type FetchResponse<T> = {
-  body: T;
+export type FetchResponse<T, E> = {
+  body?: T;
+  error?: E;
   status: number;
   headers: Headers;
 };
@@ -524,28 +525,32 @@ export const createAPIClient = (
    */
   const healthCheckHead = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<void>> => {
+  ): Promise<FetchResponse<void, unknown>> => {
     const res = await fetch(getHealthCheckHeadUrl(), {
       ...options,
       method: "HEAD",
     });
+
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: unknown = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<void, unknown>;
+    }
 
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: void = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<void>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<void, unknown>;
   };
 
   const getHealthCheckHeadUrl = () => {
@@ -558,28 +563,32 @@ export const createAPIClient = (
    */
   const healthCheckGet = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse, unknown>> => {
     const res = await fetch(getHealthCheckGetUrl(), {
       ...options,
       method: "GET",
     });
+
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: unknown = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<OKResponse, unknown>;
+    }
 
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<OKResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<OKResponse, unknown>;
   };
 
   const getHealthCheckGetUrl = () => {
@@ -592,28 +601,32 @@ export const createAPIClient = (
    */
   const getVersion = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<GetVersion200>> => {
+  ): Promise<FetchResponse<GetVersion200, unknown>> => {
     const res = await fetch(getGetVersionUrl(), {
       ...options,
       method: "GET",
     });
+
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: unknown = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<GetVersion200, unknown>;
+    }
 
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: GetVersion200 = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<GetVersion200>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<GetVersion200, unknown>;
   };
 
   const getGetVersionUrl = () => {
@@ -627,7 +640,7 @@ export const createAPIClient = (
   const refreshToken = async (
     refreshTokenRequest: RefreshTokenRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<Session>> => {
+  ): Promise<FetchResponse<Session, ErrorResponse>> => {
     const res = await fetch(getRefreshTokenUrl(), {
       ...options,
       method: "POST",
@@ -635,22 +648,26 @@ export const createAPIClient = (
       body: JSON.stringify(refreshTokenRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<Session, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: Session = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<Session>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<Session, ErrorResponse>;
   };
 
   const getRefreshTokenUrl = () => {
@@ -663,7 +680,7 @@ export const createAPIClient = (
   const signOut = async (
     signOutSchema: SignOutSchema,
     options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse, ErrorResponse>> => {
     const res = await fetch(getSignOutUrl(), {
       ...options,
       method: "POST",
@@ -671,22 +688,26 @@ export const createAPIClient = (
       body: JSON.stringify(signOutSchema),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<OKResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<OKResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<OKResponse, ErrorResponse>;
   };
 
   const getSignOutUrl = () => {
@@ -700,7 +721,7 @@ export const createAPIClient = (
   const signInEmailPassword = async (
     signInEmailPasswordRequest: SignInEmailPasswordRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SignInEmailPasswordResponse>> => {
+  ): Promise<FetchResponse<SignInEmailPasswordResponse, ErrorResponse>> => {
     const res = await fetch(getSignInEmailPasswordUrl(), {
       ...options,
       method: "POST",
@@ -708,22 +729,26 @@ export const createAPIClient = (
       body: JSON.stringify(signInEmailPasswordRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<SignInEmailPasswordResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: SignInEmailPasswordResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<SignInEmailPasswordResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<SignInEmailPasswordResponse, ErrorResponse>;
   };
 
   const getSignInEmailPasswordUrl = () => {
@@ -737,7 +762,7 @@ export const createAPIClient = (
   const signInVerifyMfaTotp = async (
     signInMfaTotpRequest: SignInMfaTotpRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>> => {
+  ): Promise<FetchResponse<SessionPayload, ErrorResponse>> => {
     const res = await fetch(getSignInVerifyMfaTotpUrl(), {
       ...options,
       method: "POST",
@@ -745,22 +770,26 @@ export const createAPIClient = (
       body: JSON.stringify(signInMfaTotpRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<SessionPayload, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: SessionPayload = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<SessionPayload>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<SessionPayload, ErrorResponse>;
   };
 
   const getSignInVerifyMfaTotpUrl = () => {
@@ -774,7 +803,7 @@ export const createAPIClient = (
   const signInPasswordlessEmail = async (
     signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse, ErrorResponse>> => {
     const res = await fetch(getSignInPasswordlessEmailUrl(), {
       ...options,
       method: "POST",
@@ -782,22 +811,26 @@ export const createAPIClient = (
       body: JSON.stringify(signInPasswordlessEmailRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<OKResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<OKResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<OKResponse, ErrorResponse>;
   };
 
   const getSignInPasswordlessEmailUrl = () => {
@@ -811,7 +844,7 @@ export const createAPIClient = (
   const signUpEmailPassword = async (
     signUpEmailPasswordRequest: SignUpEmailPasswordRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>> => {
+  ): Promise<FetchResponse<SessionPayload, ErrorResponse>> => {
     const res = await fetch(getSignUpEmailPasswordUrl(), {
       ...options,
       method: "POST",
@@ -819,22 +852,26 @@ export const createAPIClient = (
       body: JSON.stringify(signUpEmailPasswordRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<SessionPayload, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: SessionPayload = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<SessionPayload>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<SessionPayload, ErrorResponse>;
   };
 
   const getSignUpEmailPasswordUrl = () => {
@@ -848,7 +885,7 @@ export const createAPIClient = (
   const changeUserMfaVerify = async (
     userMfaRequest: UserMfaRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse, ErrorResponse>> => {
     const res = await fetch(getChangeUserMfaVerifyUrl(), {
       ...options,
       method: "POST",
@@ -856,22 +893,26 @@ export const createAPIClient = (
       body: JSON.stringify(userMfaRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<OKResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<OKResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<OKResponse, ErrorResponse>;
   };
 
   const getChangeUserMfaVerifyUrl = () => {
@@ -884,28 +925,32 @@ export const createAPIClient = (
    */
   const changeUserMfa = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<TotpGenerateResponse>> => {
+  ): Promise<FetchResponse<TotpGenerateResponse, ErrorResponse>> => {
     const res = await fetch(getChangeUserMfaUrl(), {
       ...options,
       method: "GET",
     });
+
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<TotpGenerateResponse, ErrorResponse>;
+    }
 
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: TotpGenerateResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<TotpGenerateResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<TotpGenerateResponse, ErrorResponse>;
   };
 
   const getChangeUserMfaUrl = () => {
@@ -917,28 +962,32 @@ export const createAPIClient = (
    */
   const getJWKs = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<JWKSet>> => {
+  ): Promise<FetchResponse<JWKSet, unknown>> => {
     const res = await fetch(getGetJWKsUrl(), {
       ...options,
       method: "GET",
     });
+
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: unknown = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<JWKSet, unknown>;
+    }
 
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: JWKSet = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<JWKSet>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<JWKSet, unknown>;
   };
 
   const getGetJWKsUrl = () => {
@@ -951,7 +1000,7 @@ export const createAPIClient = (
   const createPAT = async (
     createPATRequest: CreatePATRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<CreatePATResponse>> => {
+  ): Promise<FetchResponse<CreatePATResponse, ErrorResponse>> => {
     const res = await fetch(getCreatePATUrl(), {
       ...options,
       method: "POST",
@@ -959,22 +1008,26 @@ export const createAPIClient = (
       body: JSON.stringify(createPATRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<CreatePATResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: CreatePATResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<CreatePATResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<CreatePATResponse, ErrorResponse>;
   };
 
   const getCreatePATUrl = () => {
@@ -987,7 +1040,7 @@ export const createAPIClient = (
   const signInAnonymous = async (
     signinAnonymousRequest?: SigninAnonymousRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>> => {
+  ): Promise<FetchResponse<SessionPayload, ErrorResponse>> => {
     const res = await fetch(getSignInAnonymousUrl(), {
       ...options,
       method: "POST",
@@ -995,22 +1048,26 @@ export const createAPIClient = (
       body: JSON.stringify(signinAnonymousRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<SessionPayload, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: SessionPayload = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<SessionPayload>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<SessionPayload, ErrorResponse>;
   };
 
   const getSignInAnonymousUrl = () => {
@@ -1023,7 +1080,7 @@ export const createAPIClient = (
   const signInOTPEmail = async (
     signInOTPEmailRequest: SignInOTPEmailRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse, ErrorResponse>> => {
     const res = await fetch(getSignInOTPEmailUrl(), {
       ...options,
       method: "POST",
@@ -1031,22 +1088,26 @@ export const createAPIClient = (
       body: JSON.stringify(signInOTPEmailRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<OKResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<OKResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<OKResponse, ErrorResponse>;
   };
 
   const getSignInOTPEmailUrl = () => {
@@ -1059,7 +1120,7 @@ export const createAPIClient = (
   const verifySignInOTPEmail = async (
     signInOTPEmailVerifyRequest: SignInOTPEmailVerifyRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SignInOTPEmailVerifyResponse>> => {
+  ): Promise<FetchResponse<SignInOTPEmailVerifyResponse, ErrorResponse>> => {
     const res = await fetch(getVerifySignInOTPEmailUrl(), {
       ...options,
       method: "POST",
@@ -1067,22 +1128,26 @@ export const createAPIClient = (
       body: JSON.stringify(signInOTPEmailVerifyRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<SignInOTPEmailVerifyResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: SignInOTPEmailVerifyResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<SignInOTPEmailVerifyResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<SignInOTPEmailVerifyResponse, ErrorResponse>;
   };
 
   const getVerifySignInOTPEmailUrl = () => {
@@ -1095,7 +1160,7 @@ export const createAPIClient = (
   const signInPAT = async (
     signInPATRequest: SignInPATRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>> => {
+  ): Promise<FetchResponse<SessionPayload, ErrorResponse>> => {
     const res = await fetch(getSignInPATUrl(), {
       ...options,
       method: "POST",
@@ -1103,22 +1168,26 @@ export const createAPIClient = (
       body: JSON.stringify(signInPATRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<SessionPayload, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: SessionPayload = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<SessionPayload>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<SessionPayload, ErrorResponse>;
   };
 
   const getSignInPATUrl = () => {
@@ -1131,7 +1200,7 @@ export const createAPIClient = (
   const signInIdToken = async (
     signInIdTokenRequest: SignInIdTokenRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>> => {
+  ): Promise<FetchResponse<SessionPayload, ErrorResponse>> => {
     const res = await fetch(getSignInIdTokenUrl(), {
       ...options,
       method: "POST",
@@ -1139,22 +1208,26 @@ export const createAPIClient = (
       body: JSON.stringify(signInIdTokenRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<SessionPayload, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: SessionPayload = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<SessionPayload>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<SessionPayload, ErrorResponse>;
   };
 
   const getSignInIdTokenUrl = () => {
@@ -1167,7 +1240,7 @@ export const createAPIClient = (
   const linkIdToken = async (
     linkIdTokenRequest: LinkIdTokenRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse, ErrorResponse>> => {
     const res = await fetch(getLinkIdTokenUrl(), {
       ...options,
       method: "POST",
@@ -1175,22 +1248,26 @@ export const createAPIClient = (
       body: JSON.stringify(linkIdTokenRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<OKResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<OKResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<OKResponse, ErrorResponse>;
   };
 
   const getLinkIdTokenUrl = () => {
@@ -1203,7 +1280,7 @@ export const createAPIClient = (
   const deanonymizeUser = async (
     userDeanonymizeRequest: UserDeanonymizeRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse, ErrorResponse>> => {
     const res = await fetch(getDeanonymizeUserUrl(), {
       ...options,
       method: "POST",
@@ -1211,22 +1288,26 @@ export const createAPIClient = (
       body: JSON.stringify(userDeanonymizeRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<OKResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<OKResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<OKResponse, ErrorResponse>;
   };
 
   const getDeanonymizeUserUrl = () => {
@@ -1239,7 +1320,7 @@ export const createAPIClient = (
   const changeUserEmail = async (
     userEmailChangeRequest: UserEmailChangeRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse, ErrorResponse>> => {
     const res = await fetch(getChangeUserEmailUrl(), {
       ...options,
       method: "POST",
@@ -1247,22 +1328,26 @@ export const createAPIClient = (
       body: JSON.stringify(userEmailChangeRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<OKResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<OKResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<OKResponse, ErrorResponse>;
   };
 
   const getChangeUserEmailUrl = () => {
@@ -1275,7 +1360,7 @@ export const createAPIClient = (
   const sendVerificationEmail = async (
     userEmailSendVerificationEmailRequest: UserEmailSendVerificationEmailRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse, ErrorResponse>> => {
     const res = await fetch(getSendVerificationEmailUrl(), {
       ...options,
       method: "POST",
@@ -1283,22 +1368,26 @@ export const createAPIClient = (
       body: JSON.stringify(userEmailSendVerificationEmailRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<OKResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<OKResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<OKResponse, ErrorResponse>;
   };
 
   const getSendVerificationEmailUrl = () => {
@@ -1311,7 +1400,7 @@ export const createAPIClient = (
   const changeUserPassword = async (
     userPasswordRequest: UserPasswordRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse, ErrorResponse>> => {
     const res = await fetch(getChangeUserPasswordUrl(), {
       ...options,
       method: "POST",
@@ -1319,22 +1408,26 @@ export const createAPIClient = (
       body: JSON.stringify(userPasswordRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<OKResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<OKResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<OKResponse, ErrorResponse>;
   };
 
   const getChangeUserPasswordUrl = () => {
@@ -1347,7 +1440,7 @@ export const createAPIClient = (
   const sendPasswordResetEmail = async (
     userPasswordResetRequest: UserPasswordResetRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
+  ): Promise<FetchResponse<OKResponse, ErrorResponse>> => {
     const res = await fetch(getSendPasswordResetEmailUrl(), {
       ...options,
       method: "POST",
@@ -1355,22 +1448,26 @@ export const createAPIClient = (
       body: JSON.stringify(userPasswordResetRequest),
     });
 
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<OKResponse, ErrorResponse>;
+    }
+
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: OKResponse = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<OKResponse>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<OKResponse, ErrorResponse>;
   };
 
   const getSendPasswordResetEmailUrl = () => {
@@ -1383,28 +1480,32 @@ export const createAPIClient = (
   const verifyTicket = async (
     params: VerifyTicketParams,
     options?: RequestInit,
-  ): Promise<FetchResponse<void>> => {
+  ): Promise<FetchResponse<void, unknown>> => {
     const res = await fetch(getVerifyTicketUrl(params), {
       ...options,
       method: "GET",
     });
+
+    if (res.status >= 400) {
+      const body = await res.text();
+      const payload: unknown = body ? JSON.parse(body) : {};
+      return {
+        error: payload,
+        status: res.status,
+        headers: res.headers,
+      } as FetchResponse<void, unknown>;
+    }
 
     const body = [204, 205, 304, 412].includes(res.status)
       ? null
       : await res.text();
     const payload: void = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<void>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
+    } as FetchResponse<void, unknown>;
   };
 
   const getVerifyTicketUrl = (params: VerifyTicketParams) => {

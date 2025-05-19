@@ -9,6 +9,7 @@ import type {
   GetFileParams,
   ReplaceFileBody,
   FileMetadata,
+  ErrorResponse,
 } from "./client";
 
 /**
@@ -32,7 +33,7 @@ export interface Client {
    */
   getOpenAPISpec: (
     options?: RequestInit,
-  ) => Promise<FetchResponse<GetOpenAPISpec200>>;
+  ) => Promise<FetchResponse<GetOpenAPISpec200, unknown>>;
 
   /**
    * Retrieves build and version information about the storage service
@@ -40,7 +41,7 @@ export interface Client {
    */
   getVersion: (
     options?: RequestInit,
-  ) => Promise<FetchResponse<VersionInformation>>;
+  ) => Promise<FetchResponse<VersionInformation, unknown>>;
 
   /**
    * Upload one or more files to storage
@@ -49,7 +50,7 @@ export interface Client {
   uploadFiles: (
     uploadFilesBody: UploadFilesBody,
     options?: RequestInit,
-  ) => Promise<FetchResponse<UploadFiles201>>;
+  ) => Promise<FetchResponse<UploadFiles201, ErrorResponse>>;
 
   /**
    * Retrieve file metadata using HTTP HEAD method
@@ -59,7 +60,7 @@ export interface Client {
     id: string,
     params?: GetFileMetadataHeadersParams,
     options?: RequestInit,
-  ) => Promise<FetchResponse<void>>;
+  ) => Promise<FetchResponse<void, void>>;
 
   /**
    * Download a file
@@ -69,7 +70,7 @@ export interface Client {
     id: string,
     params?: GetFileParams,
     options?: RequestInit,
-  ) => Promise<FetchResponse<Blob>>;
+  ) => Promise<FetchResponse<Blob, void>>;
 
   /**
    * Replace an existing file
@@ -79,7 +80,7 @@ export interface Client {
     id: string,
     replaceFileBody: ReplaceFileBody,
     options?: RequestInit,
-  ) => Promise<FetchResponse<FileMetadata>>;
+  ) => Promise<FetchResponse<FileMetadata, ErrorResponse>>;
 
   /**
    * Delete a file
@@ -88,5 +89,5 @@ export interface Client {
   deleteFile: (
     id: string,
     options?: RequestInit,
-  ) => Promise<FetchResponse<void>>;
+  ) => Promise<FetchResponse<void, ErrorResponse>>;
 }
