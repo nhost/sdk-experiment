@@ -60,13 +60,13 @@ export default function SignIn(): JSX.Element {
     }
   };
 
-  const handleGitHubSignIn = async () => {
+  const handleSocialSignIn = (provider: "github") => {
     // Get the current origin (to build the redirect URL)
     const origin = window.location.origin;
     const redirectUrl = `${origin}/verify`;
 
-    // Sign in with GitHub provider
-    const url = nhost.auth.signInProvider("github", {
+    // Sign in with the specified provider
+    const url = nhost.auth.signInProvider(provider, {
       redirectTo: redirectUrl,
     });
 
@@ -136,7 +136,7 @@ export default function SignIn(): JSX.Element {
                 <p className="mb-6">Sign in using your Social account</p>
                 <button
                   type="button"
-                  onClick={handleGitHubSignIn}
+                  onClick={() => handleSocialSignIn("github")}
                   className="btn btn-secondary w-full flex items-center justify-center gap-2"
                   disabled={isLoading}
                 >
