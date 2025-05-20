@@ -8,8 +8,12 @@ export async function GET(request: NextRequest) {
   const refreshToken = request.nextUrl.searchParams.get("refreshToken");
 
   if (!refreshToken) {
+    // Collect all query parameters
+    const params = new URLSearchParams(request.nextUrl.searchParams);
+    params.set("message", "No refresh token provided");
+
     return NextResponse.redirect(
-      new URL("/verify/error?message=No+refresh+token+provided", request.url),
+      new URL(`/verify/error?${params.toString()}`, request.url),
     );
   }
 
@@ -17,8 +21,12 @@ export async function GET(request: NextRequest) {
     const nhost = await createNhostClient();
 
     if (nhost.getUserSession()) {
+      // Collect all query parameters
+      const params = new URLSearchParams(request.nextUrl.searchParams);
+      params.set("message", "Already signed in");
+
       return NextResponse.redirect(
-        new URL("/verify/error?message=Already signed in", request.url),
+        new URL(`/verify/error?${params.toString()}`, request.url),
       );
     }
 
@@ -29,11 +37,12 @@ export async function GET(request: NextRequest) {
     const error = err as FetchError<ErrorResponse>;
     const errorMessage = `Failed to verify token: ${error.message}`;
 
+    // Collect all query parameters
+    const params = new URLSearchParams(request.nextUrl.searchParams);
+    params.set("message", errorMessage);
+
     return NextResponse.redirect(
-      new URL(
-        `/verify/error?message=${encodeURIComponent(errorMessage)}`,
-        request.url,
-      ),
+      new URL(`/verify/error?${params.toString()}`, request.url),
     );
   }
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import TabForm from "../components/TabForm";
 import SignUpForm from "./SignUpForm";
 import MagicLinkForm from "../components/MagicLinkForm";
+import SocialSignIn from "../components/SocialSignIn";
 import { sendMagicLink } from "./actions";
 
 export default async function SignUp({
@@ -40,6 +41,12 @@ export default async function SignUp({
                   showDisplayName
                   buttonLabel="Sign up with Magic Link"
                 />
+              </div>
+            }
+            socialTabContent={
+              <div className="text-center">
+                <p className="mb-6">Sign up using your Social account</p>
+                <SocialSignIn provider="github" />
               </div>
             }
           />
