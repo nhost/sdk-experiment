@@ -278,9 +278,9 @@ export interface OptionsRedirectTo {
   redirectTo?: string;
 }
 
-export type SigninAnonymousRequestMetadata = { [key: string]: unknown };
+export type SignInAnonymousRequestMetadata = { [key: string]: unknown };
 
-export interface SigninAnonymousRequest {
+export interface SignInAnonymousRequest {
   displayName?: string;
   /**
    * A two-characters locale
@@ -288,7 +288,7 @@ export interface SigninAnonymousRequest {
    * @maxLength 2
    */
   locale?: string;
-  metadata?: SigninAnonymousRequestMetadata;
+  metadata?: SignInAnonymousRequestMetadata;
 }
 
 /**
@@ -411,7 +411,7 @@ export interface SignUpWebauthnVerifyRequest {
 }
 
 export interface SignInIdTokenRequest {
-  provider: Provider;
+  provider: IdTokenProvider;
   /** Apple ID token */
   idToken: string;
   /** Nonce used during sign in process */
@@ -429,9 +429,9 @@ export interface SignInMfaTotpRequest {
   otp: string;
 }
 
-export type Provider = "apple" | "google";
+export type IdTokenProvider = "apple" | "google";
 export interface LinkIdTokenRequest {
-  provider: Provider;
+  provider: IdTokenProvider;
   /** Apple ID token */
   idToken: string;
   /** Nonce used during sign in process */
@@ -499,6 +499,37 @@ export type VerifyTicketParams = {
    * Target URL for the redirect
    */
   redirectTo: RedirectToQueryParameter;
+};
+
+export type SignInProviderParams = {
+  /**
+   * Array of allowed roles for the user
+   */
+  allowedRoles?: string[];
+  /**
+   * Default role for the user
+   */
+  defaultRole?: string;
+  /**
+   * Display name for the user
+   */
+  displayName?: string;
+  /**
+   * A two-characters locale
+   */
+  locale?: string;
+  /**
+   * Additional metadata for the user
+   */
+  metadata?: { [key: string]: unknown };
+  /**
+   * URI to redirect to
+   */
+  redirectTo?: string;
+  /**
+   * If set, this means that the user is already authenticated and wants to link their account. This needs to be a valid JWT access token.
+   */
+  connect?: string;
 };
 
 export const createAPIClient = (
@@ -953,14 +984,14 @@ export const createAPIClient = (
    * @summary Sign in anonymously
    */
   const signInAnonymous = async (
-    signinAnonymousRequest?: SigninAnonymousRequest,
+    signInAnonymousRequest?: SignInAnonymousRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
     const res = await fetch(getSignInAnonymousUrl(), {
       ...options,
       method: "POST",
       headers: { "Content-Type": "application/json", ...options?.headers },
-      body: JSON.stringify(signinAnonymousRequest),
+      body: JSON.stringify(signInAnonymousRequest),
     });
 
     if (res.status >= 400) {
@@ -1370,6 +1401,69 @@ export const createAPIClient = (
       : baseURL + `/verify`;
   };
 
+  /**
+   * @summary Sign in with an oauth2 provider
+   */
+  const signInProvider = async (
+    provider:
+      | "apple"
+      | "github"
+      | "google"
+      | "linkedin"
+      | "discord"
+      | "spotify",
+    params?: SignInProviderParams,
+    options?: RequestInit,
+  ): Promise<FetchResponse<unknown>> => {
+    const res = await fetch(getSignInProviderUrl(provider, params), {
+      ...options,
+      method: "GET",
+    });
+
+    if (res.status >= 400) {
+      const body = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = body ? JSON.parse(body) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const payload: unknown = body ? JSON.parse(body) : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<unknown>;
+  };
+
+  const getSignInProviderUrl = (
+    provider:
+      | "apple"
+      | "github"
+      | "google"
+      | "linkedin"
+      | "discord"
+      | "spotify",
+    params?: SignInProviderParams,
+  ) => {
+    const normalizedParams = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value !== undefined) {
+        normalizedParams.append(
+          key,
+          value === null ? "null" : value.toString(),
+        );
+      }
+    });
+
+    const stringifiedParams = normalizedParams.toString();
+
+    return stringifiedParams.length > 0
+      ? baseURL + `/signin/provider/${provider}?${stringifiedParams}`
+      : baseURL + `/signin/provider/${provider}`;
+  };
+
   return {
     healthCheckHead,
     healthCheckGet,
@@ -1396,6 +1490,8 @@ export const createAPIClient = (
     changeUserPassword,
     sendPasswordResetEmail,
     verifyTicket,
+    signInProvider,
+    getSignInProviderUrl,
     pushChainFunction,
     baseURL,
   };

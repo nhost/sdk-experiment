@@ -19,7 +19,8 @@ import type {
   SignInPasswordlessEmailRequest,
   SignOutSchema,
   SignUpEmailPasswordRequest,
-  SigninAnonymousRequest,
+  SignInAnonymousRequest,
+  SignInProviderParams,
   TotpGenerateResponse,
   UserDeanonymizeRequest,
   UserEmailChangeRequest,
@@ -156,7 +157,7 @@ export interface Client {
    * @summary Anonymous sign-in
    */
   signInAnonymous: (
-    signinAnonymousRequest?: SigninAnonymousRequest,
+    signinAnonymousRequest?: SignInAnonymousRequest,
     options?: RequestInit,
   ) => Promise<FetchResponse<SessionPayload>>;
 
@@ -258,4 +259,30 @@ export interface Client {
     params: VerifyTicketParams,
     options?: RequestInit,
   ) => Promise<FetchResponse<void>>;
+
+  /**
+   * @summary Sign in with an oauth2 provider
+   */
+  signInProvider: (
+    provider:
+      | "apple"
+      | "github"
+      | "google"
+      | "linkedin"
+      | "discord"
+      | "spotify",
+    params?: SignInProviderParams,
+    options?: RequestInit,
+  ) => Promise<FetchResponse<unknown>>;
+
+  getSignInProviderUrl: (
+    provider:
+      | "apple"
+      | "github"
+      | "google"
+      | "linkedin"
+      | "discord"
+      | "spotify",
+    params?: SignInProviderParams,
+  ) => string;
 }
