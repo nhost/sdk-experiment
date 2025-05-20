@@ -253,14 +253,16 @@ export interface Client {
 
   /**
    * Verify tickets created by email verification, magic link, or password reset
+   *
+   * This method returns a redirect URL to send the user to after verifying the ticket.
+   *
    * @summary Verify ticket
    */
-  verifyTicket: (
-    params: VerifyTicketParams,
-    options?: RequestInit,
-  ) => Promise<FetchResponse<void>>;
+  verifyTicket: (params: VerifyTicketParams, options?: RequestInit) => string;
 
   /**
+   * This method returns a redirect URL to send the user to for signing in with an OAuth2 provider.
+   *
    * @summary Sign in with an oauth2 provider
    */
   signInProvider: (
@@ -273,16 +275,5 @@ export interface Client {
       | "spotify",
     params?: SignInProviderParams,
     options?: RequestInit,
-  ) => Promise<FetchResponse<unknown>>;
-
-  getSignInProviderUrl: (
-    provider:
-      | "apple"
-      | "github"
-      | "google"
-      | "linkedin"
-      | "discord"
-      | "spotify",
-    params?: SignInProviderParams,
   ) => string;
 }

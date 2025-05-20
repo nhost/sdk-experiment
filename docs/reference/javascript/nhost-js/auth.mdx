@@ -456,8 +456,10 @@ signInProvider: (
   provider: "apple" | "github" | "google" | "linkedin" | "discord" | "spotify",
   params?: SignInProviderParams,
   options?: RequestInit,
-) => Promise<FetchResponse<unknown>>;
+) => string;
 ```
+
+This method returns a redirect URL to send the user to for signing in with an OAuth2 provider.
 
 ###### Parameters
 
@@ -469,51 +471,7 @@ signInProvider: (
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`unknown`&gt;&gt;
-
-##### signInProviderCallbackGet()
-
-```ts
-signInProviderCallbackGet: (
-  provider: "apple" | "github" | "google" | "linkedin" | "discord" | "spotify",
-  params: SignInProviderCallbackGetParams,
-  options?: RequestInit,
-) => Promise<FetchResponse<unknown>>;
-```
-
-###### Parameters
-
-| Parameter  | Type                                                                                |
-| ---------- | ----------------------------------------------------------------------------------- |
-| `provider` | `"apple"` \| `"github"` \| `"google"` \| `"linkedin"` \| `"discord"` \| `"spotify"` |
-| `params`   | [`SignInProviderCallbackGetParams`](#signinprovidercallbackgetparams)               |
-| `options?` | `RequestInit`                                                                       |
-
-###### Returns
-
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`unknown`&gt;&gt;
-
-##### signInProviderCallbackPost()
-
-```ts
-signInProviderCallbackPost: (
-  provider: "apple" | "github" | "google" | "linkedin" | "discord" | "spotify",
-  signinProviderCallbackPostBody: SignInProviderCallbackPostBody,
-  options?: RequestInit,
-) => Promise<FetchResponse<unknown>>;
-```
-
-###### Parameters
-
-| Parameter                        | Type                                                                                |
-| -------------------------------- | ----------------------------------------------------------------------------------- |
-| `provider`                       | `"apple"` \| `"github"` \| `"google"` \| `"linkedin"` \| `"discord"` \| `"spotify"` |
-| `signinProviderCallbackPostBody` | [`SignInProviderCallbackPostBody`](#signinprovidercallbackpostbody)                 |
-| `options?`                       | `RequestInit`                                                                       |
-
-###### Returns
-
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`unknown`&gt;&gt;
+`string`
 
 ##### signInVerifyMfaTotp()
 
@@ -604,11 +562,12 @@ Verify OTP and return a session if validation is successful
 ##### verifyTicket()
 
 ```ts
-verifyTicket: (params: VerifyTicketParams, options?: RequestInit) =>
-  Promise<FetchResponse<void>>;
+verifyTicket: (params: VerifyTicketParams, options?: RequestInit) => string;
 ```
 
 Verify tickets created by email verification, magic link, or password reset
+
+This method returns a redirect URL to send the user to after verifying the ticket.
 
 ###### Parameters
 
@@ -619,7 +578,7 @@ Verify tickets created by email verification, magic link, or password reset
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`void`&gt;&gt;
+`string`
 
 ---
 
@@ -1815,51 +1774,6 @@ type SignInAnonymousRequestMetadata = object;
 ```ts
 [key: string]: unknown
 ```
-
----
-
-### SignInProviderCallbackGetParams
-
-```ts
-type SignInProviderCallbackGetParams = object;
-```
-
-#### Properties
-
-| Property                                            | Type     | Description                                                |
-| --------------------------------------------------- | -------- | ---------------------------------------------------------- |
-| <a id="code"></a> `code?`                           | `string` | Authorization code provided by the authentication provider |
-| <a id="error-1"></a> `error?`                       | `string` | Error message if authentication failed                     |
-| <a id="error_description"></a> `error_description?` | `string` | Detailed error description if authentication failed        |
-| <a id="error_uri"></a> `error_uri?`                 | `string` | URI with more information about the error                  |
-| <a id="id_token"></a> `id_token?`                   | `string` | ID token provided by the authentication provider           |
-| <a id="state"></a> `state`                          | `string` | State parameter to avoid CSRF attacks                      |
-
----
-
-### SignInProviderCallbackPostBody
-
-```ts
-type SignInProviderCallbackPostBody = object;
-```
-
-#### Indexable
-
-```ts
-[key: string]: unknown
-```
-
-#### Properties
-
-| Property                                              | Type               | Description                                                                                             |
-| ----------------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------- |
-| <a id="code-1"></a> `code?`                           | `string` \| `null` | Authorization code provided by the authentication provider **Nullable**                                 |
-| <a id="error-2"></a> `error?`                         | `string` \| `null` | Error message if authentication failed **Nullable**                                                     |
-| <a id="error_description-1"></a> `error_description?` | `string` \| `null` | Detailed error description if authentication failed **Nullable**                                        |
-| <a id="error_uri-1"></a> `error_uri?`                 | `string` \| `null` | URI with more information about the error **Nullable**                                                  |
-| <a id="id_token-1"></a> `id_token?`                   | `string` \| `null` | ID token provided by the authentication provider **Nullable**                                           |
-| <a id="state-1"></a> `state`                          | `string`           | State parameter to avoid CSRF attacks                                                                   |
-| <a id="user-1"></a> `user?`                           | `string` \| `null` | JSON string containing user information (only provided on first authentication with Apple) **Nullable** |
 
 ---
 

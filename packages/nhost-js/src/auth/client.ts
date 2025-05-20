@@ -1357,31 +1357,9 @@ export const createAPIClient = (
   /**
    * @summary Verify tickets created by email verification, email passwordless authentication (magic link), or password reset
    */
-  const verifyTicket = async (
-    params: VerifyTicketParams,
-    options?: RequestInit,
-  ): Promise<FetchResponse<void>> => {
-    const res = await fetch(getVerifyTicketUrl(params), {
-      ...options,
-      method: "GET",
-    });
-
-    if (res.status >= 400) {
-      const body = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = body ? JSON.parse(body) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: void = body ? JSON.parse(body) : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<void>;
+  const verifyTicket = (params: VerifyTicketParams): string => {
+    return getVerifyTicketUrl(params);
   };
-
   const getVerifyTicketUrl = (params: VerifyTicketParams) => {
     const normalizedParams = new URLSearchParams();
 
@@ -1404,7 +1382,7 @@ export const createAPIClient = (
   /**
    * @summary Sign in with an oauth2 provider
    */
-  const signInProvider = async (
+  const signInProvider = (
     provider:
       | "apple"
       | "github"
@@ -1413,29 +1391,9 @@ export const createAPIClient = (
       | "discord"
       | "spotify",
     params?: SignInProviderParams,
-    options?: RequestInit,
-  ): Promise<FetchResponse<unknown>> => {
-    const res = await fetch(getSignInProviderUrl(provider, params), {
-      ...options,
-      method: "GET",
-    });
-
-    if (res.status >= 400) {
-      const body = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = body ? JSON.parse(body) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: unknown = body ? JSON.parse(body) : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<unknown>;
+  ): string => {
+    return getSignInProviderUrl(provider, params);
   };
-
   const getSignInProviderUrl = (
     provider:
       | "apple"
@@ -1491,7 +1449,6 @@ export const createAPIClient = (
     sendPasswordResetEmail,
     verifyTicket,
     signInProvider,
-    getSignInProviderUrl,
     pushChainFunction,
     baseURL,
   };

@@ -5,7 +5,6 @@ import MagicLinkForm from "../components/MagicLinkForm";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
-import { type FetchResponse } from "@nhost/nhost-js/fetch";
 
 export default function SignIn(): JSX.Element {
   const { nhost, isAuthenticated } = useAuth();
@@ -67,7 +66,7 @@ export default function SignIn(): JSX.Element {
     const redirectUrl = `${origin}/verify`;
 
     // Sign in with GitHub provider
-    const url = nhost.auth.getSignInProviderUrl("github", {
+    const url = nhost.auth.signInProvider("github", {
       redirectTo: redirectUrl,
     });
 

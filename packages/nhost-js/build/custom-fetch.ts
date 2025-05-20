@@ -41,7 +41,10 @@ export const generateRequestFunction = (
   }: GeneratorVerbOptions,
   { route, context, pathRoute }: GeneratorOptions,
 ) => {
-  const isRequestOptions = override?.requestOptions !== false;
+  const isRedirectResponse =
+    response?.originalSchema && "302" in response.originalSchema;
+  const isRequestOptions =
+    override?.requestOptions !== false && !isRedirectResponse;
   const isFormData = override?.formData.disabled === false;
   const isFormUrlEncoded = override?.formUrlEncoded !== false;
 
@@ -268,10 +271,16 @@ ${
     ? customFetchResponseImplementation
     : fetchResponseImplementation;
 
-  const fetchImplementation = `const ${operationName} = async (${args}): ${returnType} => {
+  let fetchImplementation = `const ${operationName} = async (${args}): ${returnType} => {
   ${bodyForm ? `  ${bodyForm}` : ""}
   ${fetchImplementationBody}}
 `;
+
+  if (isRedirectResponse) {
+    fetchImplementation = `const ${operationName} = (${args}): string => {
+          return ${getUrlFnName}(${getUrlFnProperties});
+      };`;
+  }
 
   const implementation = `${fetchImplementation}\n ${getUrlFnImplementation}\n`;
 

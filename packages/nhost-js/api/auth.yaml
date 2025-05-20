@@ -755,7 +755,7 @@ paths:
 
       responses:
         "302":
-          description: Redirect to GitHub
+          description: Redirect to social provider
           headers:
             Location:
               $ref: "#/components/headers/RedirectLocation"
