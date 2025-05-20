@@ -133,6 +133,19 @@ ${
       value: "unknown",
     });
   }
+  if (allErrors.length === 0) {
+    allErrors.push({
+      contentType: "",
+      hasReadonlyProps: false,
+      imports: [],
+      isEnum: false,
+      isRef: false,
+      key: "default",
+      schemas: [],
+      type: "unknown",
+      value: "unknown",
+    });
+  }
   const responseTypeName = allResponses
     .map((response) => {
       const { value, type, schemas } = response;
@@ -216,24 +229,28 @@ ${
     : `const res = await fetch(${fetchFnOptions})
 
   ${
-    response.isBlob
-      ? `const payload: ${responseTypeName} = await res.blob()`
-      : `  const body = [204, 205, 304, 412].includes(res.status) ? null : await res.text()
-  const payload: ${responseTypeName} = body ? JSON.parse(body) : {}
-    `
-  }
-
-  const response = ${
     override.fetch.includeHttpResponseReturnType
-      ? `{ body: payload, status: res.status,
-          headers: res.headers,
-      } as FetchResponse<${responseTypeName}>
-
-    if (!res.ok) {
-            throw response;
+      ? `
+    if (res.status >= 400) {
+        const body = [412].includes(res.status) ? null : await res.text()
+        const payload: ${errorTypeName} = body ? JSON.parse(body) : {}
+        throw new FetchError(payload, res.status, res.headers);
     }
 
-    return response;`
+    ${
+      response.isBlob
+        ? `const payload: ${responseTypeName} = await res.blob()`
+        : `  const body = [204, 205, 304].includes(res.status) ? null : await res.text()
+    const payload: ${responseTypeName} = body ? JSON.parse(body) : {}
+      `
+    }
+
+    return {
+        body: payload,
+        status: res.status,
+        headers: res.headers
+        } as FetchResponse<${responseTypeName}>;
+    `
       : "return payload"
   }
 `;
@@ -288,12 +305,6 @@ export const generateFetchHeader: ClientHeaderBuilder = ({
     ? getHTTPStatusCodes()
     : "" +
         `
-      export type FetchResponse<T> = {
-          body: T;
-          status: number;
-          headers: Headers;
-      };
-
       export const createAPIClient = (
         baseURL: string,
         chainFunctions: ChainFunction[] = [],

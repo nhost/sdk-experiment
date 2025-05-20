@@ -3,10 +3,8 @@ import { createAPIClient as createAuthClient } from "../auth";
 import { MemoryStorage } from "../sessionStorage";
 import { createSessionRefreshMiddleware } from "../middlewareRefreshSession";
 import { createAttachAccessTokenMiddleware } from "../middlewareAttachToken";
-import {
-  createAPIClient as createFunctionClient,
-  type FetchResponse,
-} from "../functions";
+import { createAPIClient as createFunctionClient } from "../functions";
+import { type FetchError } from "../fetch";
 
 interface EchoResponse {
   method: string;
@@ -152,7 +150,7 @@ describe("Test Storage API", () => {
       });
       expect(true).toBe(false);
     } catch (err) {
-      const resp = err as FetchResponse<undefined>;
+      const resp = err as FetchError<string>;
       expect(resp.status).toBe(500);
       expect(resp.headers.get("content-type")).toBe("text/html; charset=utf-8");
       expect(resp.headers.get("content-length")).toBe("1055");

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "@jest/globals";
 import { createClient } from "../index";
-import type { FetchResponse, GraphQLResponse } from "../graphql/client";
+import type { GraphQLResponse } from "../graphql/client";
+import type { FetchError } from "../fetch";
 
 interface GetUsersResponse {
   users: {
@@ -95,12 +96,13 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
 
       expect(true).toBe(false);
     } catch (error) {
-      const resp = error as FetchResponse<GraphQLResponse>;
+      const resp = error as FetchError<GraphQLResponse>;
 
       expect(resp.body.errors).toBeDefined();
       expect(resp.body.errors).toHaveLength(1);
       const errors = resp.body.errors!;
       expect(errors[0].message).toBe("not a valid graphql query");
+      expect(error.message).toBe("not a valid graphql query");
       expect(errors[0].extensions?.path).toBe("$.query");
       expect(errors[0].extensions?.code).toBe("validation-failed");
     }
@@ -114,11 +116,14 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
 
       expect(true).toBe(false);
     } catch (error) {
-      const resp = error as FetchResponse<GraphQLResponse>;
+      const resp = error as FetchError<GraphQLResponse>;
       expect(resp.body.errors).toBeDefined();
       expect(resp.body.errors).toHaveLength(1);
       const errors = resp.body.errors!;
       expect(errors[0]?.message).toBe(
+        "field 'restricted' not found in type: 'query_root'",
+      );
+      expect(error.message).toBe(
         "field 'restricted' not found in type: 'query_root'",
       );
       expect(errors[0].extensions?.path).toBe("$.selectionSet.restricted");

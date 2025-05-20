@@ -1,6 +1,7 @@
 import { useState, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { type FetchResponse, type ErrorResponse } from "@nhost/nhost-js/auth";
+import { type ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
 
 export default function ChangePassword(): JSX.Element {
   const [newPassword, setNewPassword] = useState<string>("");
@@ -41,8 +42,10 @@ export default function ChangePassword(): JSX.Element {
       setNewPassword("");
       setConfirmPassword("");
     } catch (err) {
-      const error = err as FetchResponse<ErrorResponse>;
-      setError(error.body.message || "An unexpected error occurred");
+      const error = err as FetchError<ErrorResponse>;
+      setError(
+        `An error occurred while changing the password: ${error.message}`,
+      );
     } finally {
       setIsLoading(false);
     }

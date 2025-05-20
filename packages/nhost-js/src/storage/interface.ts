@@ -1,6 +1,5 @@
-import type { ChainFunction } from "../fetch";
+import type { ChainFunction, FetchResponse } from "../fetch";
 import type {
-  FetchResponse,
   GetOpenAPISpec200,
   VersionInformation,
   UploadFilesBody,

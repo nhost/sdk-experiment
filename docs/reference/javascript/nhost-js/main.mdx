@@ -126,9 +126,11 @@ how you can handle errors thrown by the SDK.
 // Needs the following imports:
 //
 // import {
-//   type FetchResponse,
 //   type ErrorResponse,
 // } from "@nhost/nhost-js/auth";
+// import {
+//   type FetchError,
+// } from "@nhost/nhost-js/fetch";
 //
 const nhost = createClient({
   subdomain,
@@ -142,7 +144,7 @@ try {
 
   expect(true).toBe(false); // This should not be reached
 } catch (error) {
-  const err = error as FetchResponse<ErrorResponse>;
+  const err = error as FetchError<ErrorResponse>;
   console.log("Error:", err);
   // Error: {
   //   body: {
@@ -167,9 +169,11 @@ try {
 // Needs the following imports:
 //
 // import {
-//   type FetchResponse,
-//   type Error,
+//   type ErrorResponse,
 // } from "@nhost/nhost-js/storage";
+// import {
+//   type FetchError,
+// } from "@nhost/nhost-js/fetch";
 //
 const nhost = createClient({
   subdomain,
@@ -182,7 +186,7 @@ try {
 
   expect(true).toBe(false); // This should not be reached
 } catch (error) {
-  const err = error as FetchResponse<Error>;
+  const err = error as FetchError<ErrorResponse>;
   console.log("Error:", err);
   // Error: {
   //   body: { error: { message: 'you are not authorized' } },
@@ -203,9 +207,11 @@ try {
 // Needs the following imports:
 //
 // import {
-//   type FetchResponse,
 //   type GraphQLResponse,
 // } from "@nhost/nhost-js/graphql";
+// import {
+//   type FetchError,
+// } from "@nhost/fetch";
 //
 const nhost = createClient({
   subdomain,
@@ -223,7 +229,7 @@ try {
     `,
   });
 } catch (error) {
-  const resp = error as FetchResponse<GraphQLResponse>;
+  const resp = error as FetchError<GraphQLResponse>;
 
   console.log("Error:", JSON.stringify(resp, null, 2));
   // Error: {

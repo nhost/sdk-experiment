@@ -5,8 +5,8 @@
  * Nhost Storage API - A service for managing and serving files with powerful access control capabilities
  * OpenAPI spec version: 1.0.0
  */
-import { createEnhancedFetch } from "../fetch";
-import type { ChainFunction } from "../fetch";
+import { FetchError, createEnhancedFetch } from "../fetch";
+import type { ChainFunction, FetchResponse } from "../fetch";
 
 import type { Client } from "./interface";
 
@@ -110,7 +110,7 @@ export interface PresignedURLResponse {
 /**
  * Error details.
  */
-export type ErrorError = {
+export type ErrorResponseError = {
   /** Human-readable error message. */
   message: string;
 };
@@ -118,9 +118,9 @@ export type ErrorError = {
 /**
  * Error information returned by the API.
  */
-export interface Error {
+export interface ErrorResponse {
   /** Error details. */
-  error?: ErrorError;
+  error?: ErrorResponseError;
 }
 
 export type GetOpenAPISpec200 = { [key: string]: unknown };
@@ -200,12 +200,6 @@ export type ReplaceFileBody = {
   file?: Blob;
 };
 
-export type FetchResponse<T> = {
-  body: T;
-  status: number;
-  headers: Headers;
-};
-
 export const createAPIClient = (
   baseURL: string,
   chainFunctions: ChainFunction[] = [],
@@ -229,22 +223,20 @@ export const createAPIClient = (
       method: "GET",
     });
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    if (res.status >= 400) {
+      const body = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = body ? JSON.parse(body) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: GetOpenAPISpec200 = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<GetOpenAPISpec200>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
   };
 
   const getGetOpenAPISpecUrl = () => {
@@ -263,22 +255,20 @@ export const createAPIClient = (
       method: "GET",
     });
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    if (res.status >= 400) {
+      const body = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = body ? JSON.parse(body) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: VersionInformation = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<VersionInformation>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
   };
 
   const getGetVersionUrl = () => {
@@ -314,22 +304,20 @@ export const createAPIClient = (
       body: formData,
     });
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    if (res.status >= 400) {
+      const body = [412].includes(res.status) ? null : await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: UploadFiles201 = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<UploadFiles201>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
   };
 
   const getUploadFilesUrl = () => {
@@ -350,22 +338,20 @@ export const createAPIClient = (
       method: "HEAD",
     });
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    if (res.status >= 400) {
+      const body = [412].includes(res.status) ? null : await res.text();
+      const payload: void = body ? JSON.parse(body) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: void = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<void>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
   };
 
   const getGetFileMetadataHeadersUrl = (
@@ -404,19 +390,19 @@ export const createAPIClient = (
       method: "GET",
     });
 
+    if (res.status >= 400) {
+      const body = [412].includes(res.status) ? null : await res.text();
+      const payload: void = body ? JSON.parse(body) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
     const payload: Blob = await res.blob();
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<Blob>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
   };
 
   const getGetFileUrl = (id: string, params?: GetFileParams) => {
@@ -467,22 +453,20 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
       body: formData,
     });
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    if (res.status >= 400) {
+      const body = [412].includes(res.status) ? null : await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: FileMetadata = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<FileMetadata>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
   };
 
   const getReplaceFileUrl = (id: string) => {
@@ -502,22 +486,20 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
       method: "DELETE",
     });
 
-    const body = [204, 205, 304, 412].includes(res.status)
-      ? null
-      : await res.text();
+    if (res.status >= 400) {
+      const body = [412].includes(res.status) ? null : await res.text();
+      const payload: ErrorResponse = body ? JSON.parse(body) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: void = body ? JSON.parse(body) : {};
 
-    const response = {
+    return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<void>;
-
-    if (!res.ok) {
-      throw response;
-    }
-
-    return response;
   };
 
   const getDeleteFileUrl = (id: string) => {

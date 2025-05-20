@@ -1,7 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { createNhostClient } from "../lib/nhost/server";
-import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import type { ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
 
 export async function GET(request: NextRequest) {
   const refreshToken = request.nextUrl.searchParams.get("refreshToken");
@@ -25,8 +26,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.redirect(new URL("/profile", request.url));
   } catch (err) {
-    const error = err as FetchResponse<ErrorResponse>;
-    const errorMessage = `Failed to verify token: ${error.body.message || "An error occurred during verification"}`;
+    const error = err as FetchError<ErrorResponse>;
+    const errorMessage = `Failed to verify token: ${error.message}`;
 
     return NextResponse.redirect(
       new URL(

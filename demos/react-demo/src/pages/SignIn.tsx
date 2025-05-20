@@ -3,7 +3,8 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import TabForm from "../components/TabForm";
 import MagicLinkForm from "../components/MagicLinkForm";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { type FetchResponse, type ErrorResponse } from "@nhost/nhost-js/auth";
+import { type ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
 
 export default function SignIn(): JSX.Element {
   const { nhost, isAuthenticated } = useAuth();
@@ -52,8 +53,8 @@ export default function SignIn(): JSX.Element {
         setError("Failed to sign in");
       }
     } catch (err) {
-      const error = err as FetchResponse<ErrorResponse>;
-      setError(error.body.message || "An error occurred");
+      const error = err as FetchError<ErrorResponse>;
+      setError(`An error occurred during sign in: ${error.message}`);
     } finally {
       setIsLoading(false);
     }

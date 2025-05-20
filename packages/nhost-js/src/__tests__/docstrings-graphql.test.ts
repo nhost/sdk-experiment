@@ -1,6 +1,7 @@
 import { test, expect } from "@jest/globals";
 import { createClient } from "../";
-import type { FetchResponse, GraphQLResponse } from "../graphql";
+import type { GraphQLResponse } from "../graphql/client";
+import type { FetchError } from "../fetch";
 
 test("error handling for graphql", async () => {
   const subdomain = "local";
@@ -10,9 +11,11 @@ test("error handling for graphql", async () => {
   // Needs the following imports:
   //
   // import {
-  //   type FetchResponse,
   //   type GraphQLResponse,
   // } from "@nhost/nhost-js/graphql";
+  // import {
+  //   type FetchError,
+  // } from "@nhost/fetch";
   //
   const nhost = createClient({
     subdomain,
@@ -30,7 +33,7 @@ test("error handling for graphql", async () => {
       `,
     });
   } catch (error) {
-    const resp = error as FetchResponse<GraphQLResponse>;
+    const resp = error as FetchError<GraphQLResponse>;
 
     console.log("Error:", JSON.stringify(resp, null, 2));
     // Error: {
@@ -56,6 +59,9 @@ test("error handling for graphql", async () => {
     expect(resp.body.errors).toHaveLength(1);
     const errors = resp.body.errors!;
     expect(errors[0]?.message).toBe(
+      "field 'restrictedObject' not found in type: 'query_root'",
+    );
+    expect(error.message).toBe(
       "field 'restrictedObject' not found in type: 'query_root'",
     );
     expect(errors[0].extensions?.path).toBe("$.selectionSet.restrictedObject");

@@ -2,9 +2,9 @@ import { describe, it, expect } from "@jest/globals";
 import {
   createAPIClient,
   type SignUpEmailPasswordRequest,
-  type FetchResponse,
   type ErrorResponse,
 } from "../auth/client";
+import { type FetchError } from "../fetch";
 
 describe("Nhost Auth - Sign Up with Email and Password", () => {
   const nhostAuth = createAPIClient("https://local.auth.nhost.run/v1");
@@ -63,7 +63,7 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
 
       expect(true).toBe(false); // This should not be reached
     } catch (error) {
-      const err = error as FetchResponse<ErrorResponse>;
+      const err = error as FetchError<ErrorResponse>;
       expect(err.status).toBe(401);
       expect(err.body).toStrictEqual({
         error: "invalid-email-password",

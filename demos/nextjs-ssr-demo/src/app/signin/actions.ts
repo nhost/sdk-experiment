@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { createNhostClient } from "../lib/nhost/server";
-import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import type { ErrorResponse } from "@nhost/nhost-js/auth";
+import type { FetchError } from "@nhost/nhost-js/fetch";
 
 /**
  * Signs in a user with email and password
@@ -44,9 +45,9 @@ export async function signIn(formData: FormData) {
     // If we got here, something went wrong
     return { error: "Failed to sign in: unexpected error" };
   } catch (err) {
-    const error = err as FetchResponse<ErrorResponse>;
+    const error = err as FetchError<ErrorResponse>;
     return {
-      error: `Failed to sign in: ${error.body.message || "unexpected error"}`,
+      error: `Failed to sign in: ${error.message}`,
     };
   }
 }
@@ -85,9 +86,9 @@ export async function verifyMfa(formData: FormData) {
     // If we got here, something went wrong
     return { error: "Failed to verify MFA code", ticket };
   } catch (err) {
-    const error = err as FetchResponse<ErrorResponse>;
+    const error = err as FetchError<ErrorResponse>;
     return {
-      error: `Failed to verify MFA code: ${error.body.message || "unexpected error"}`,
+      error: `Failed to verify MFA code: ${error.message}`,
       ticket,
     };
   }
@@ -129,9 +130,9 @@ export async function sendMagicLink(formData: FormData) {
     // If we got here, something went wrong
     return { error: "Failed to send magic link" };
   } catch (err) {
-    const error = err as FetchResponse<ErrorResponse>;
+    const error = err as FetchError<ErrorResponse>;
     return {
-      error: `Failed to sign in: ${error.body.message || "unexpected error"}`,
+      error: `Failed to sign in: ${error.message}`,
     };
   }
 }

@@ -5,20 +5,12 @@
  * against Nhost serverless functions.
  */
 
-import { createEnhancedFetch, type ChainFunction } from "../fetch";
-
-/**
- * Response wrapper for function calls with additional metadata.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface FetchResponse<T = any> {
-  /** The parsed response body */
-  body: T;
-  /** HTTP status code of the response */
-  status: number;
-  /** HTTP headers from the response */
-  headers: Headers;
-}
+import {
+  createEnhancedFetch,
+  FetchError,
+  type ChainFunction,
+  type FetchResponse,
+} from "../fetch";
 
 /**
  * Functions client interface providing methods for executing serverless function calls
@@ -85,20 +77,16 @@ export const createAPIClient = (
       body = await resp.blob();
     }
 
-    // Create response payload with status, body and headers
-    const payload = {
+    // Throw error for non-OK responses
+    if (!resp.ok) {
+      throw new FetchError(body, resp.status, resp.headers);
+    }
+
+    return {
       status: resp.status,
       body,
       headers: resp.headers,
     };
-
-    // Throw error for non-OK responses
-    if (!resp.ok) {
-      // eslint-disable-next-line @typescript-eslint/only-throw-error
-      throw payload;
-    }
-
-    return payload;
   };
 
   // Return client object with the fetch method

@@ -1,6 +1,7 @@
 import { useState, useEffect, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { type FetchResponse, type ErrorResponse } from "@nhost/nhost-js/auth";
+import { type ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
 
 interface MFASettingsProps {
   initialMfaEnabled: boolean;
@@ -46,8 +47,8 @@ export default function MFASettings({
       setQrCodeUrl(response.body.imageUrl);
       setIsSettingUpMfa(true);
     } catch (err) {
-      const error = err as FetchResponse<ErrorResponse>;
-      setError(error.body.message || "An unexpected error occurred");
+      const error = err as FetchError<ErrorResponse>;
+      setError(`An error occurred while enabling MFA: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -75,8 +76,8 @@ export default function MFASettings({
       setIsSettingUpMfa(false);
       setSuccess("MFA has been successfully enabled.");
     } catch (err) {
-      const error = err as FetchResponse<ErrorResponse>;
-      setError(error.body.message || "An unexpected error occurred");
+      const error = err as FetchError<ErrorResponse>;
+      setError(`An error occurred while verifying the code: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -112,8 +113,8 @@ export default function MFASettings({
       setDisableVerificationCode("");
       setSuccess("MFA has been successfully disabled.");
     } catch (err) {
-      const error = err as FetchResponse<ErrorResponse>;
-      setError(error.body.message || "An unexpected error occurred");
+      const error = err as FetchError<ErrorResponse>;
+      setError(`An error occurred while disabling MFA: ${error.message}`);
     } finally {
       setIsLoading(false);
     }

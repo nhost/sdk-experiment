@@ -15,6 +15,8 @@ function createClient() {
               values: true,
             },
             { name: "ChainFunction" },
+            { name: "FetchResponse" },
+            { name: "FetchError", values: true },
           ],
           dependency: "../fetch",
         },

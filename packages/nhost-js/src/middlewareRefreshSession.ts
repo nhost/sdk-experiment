@@ -6,9 +6,9 @@
  * without requiring manual token refresh by the application.
  */
 
-import type { Client, ErrorResponse, FetchResponse, Session } from "./auth";
+import type { Client, ErrorResponse, Session } from "./auth";
 import type { SessionStorageInterface } from "./sessionStorage";
-import type { ChainFunction, FetchFunction } from "./fetch";
+import type { ChainFunction, FetchFunction, FetchError } from "./fetch";
 
 interface JWTToken {
   exp: number;
@@ -181,7 +181,7 @@ async function refreshToken(
     storage.set(refreshResponse.body);
     return refreshResponse.body;
   } catch (error) {
-    const err = error as FetchResponse<ErrorResponse>;
+    const err = error as FetchError<ErrorResponse>;
     if (err.status === 401) {
       storage.remove();
     }

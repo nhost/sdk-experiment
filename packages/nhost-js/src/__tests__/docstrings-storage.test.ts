@@ -1,6 +1,7 @@
 import { test, expect } from "@jest/globals";
 import { createClient } from "../";
-import { type FetchResponse, type Error } from "../storage";
+import { type ErrorResponse } from "../storage";
+import { type FetchError } from "../fetch";
 
 test("error handling for storage", async () => {
   const subdomain = "local";
@@ -10,9 +11,11 @@ test("error handling for storage", async () => {
   // Needs the following imports:
   //
   // import {
-  //   type FetchResponse,
-  //   type Error,
+  //   type ErrorResponse,
   // } from "@nhost/nhost-js/storage";
+  // import {
+  //   type FetchError,
+  // } from "@nhost/nhost-js/fetch";
   //
   const nhost = createClient({
     subdomain,
@@ -25,7 +28,7 @@ test("error handling for storage", async () => {
 
     expect(true).toBe(false); // This should not be reached
   } catch (error) {
-    const err = error as FetchResponse<Error>;
+    const err = error as FetchError<ErrorResponse>;
     console.log("Error:", err);
     // Error: {
     //   body: { error: { message: 'you are not authorized' } },

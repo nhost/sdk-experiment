@@ -1,7 +1,8 @@
 import { type JSX, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import type { FetchResponse, ErrorResponse } from "@nhost/nhost-js/auth";
+import type { ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
 
 export default function Verify(): JSX.Element {
   const location = useLocation();
@@ -52,11 +53,11 @@ export default function Verify(): JSX.Element {
           if (isMounted) navigate("/profile");
         }, 1500);
       } catch (err) {
-        const error = err as FetchResponse<ErrorResponse>;
+        const error = err as FetchError<ErrorResponse>;
         if (!isMounted) return;
 
         setStatus("error");
-        setError(error.body.message || "An error occurred during verification");
+        setError(`An error occurred during verification: ${error.message}`);
       }
     }
 

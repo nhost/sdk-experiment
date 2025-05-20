@@ -93,7 +93,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/ErrorResponse"
 
   /files/{id}:
     head:
@@ -460,7 +460,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/ErrorResponse"
 
     delete:
       summary: "Delete file"
@@ -485,7 +485,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
+                $ref: "#/components/schemas/ErrorResponse"
 
   # /files/{id}/presignedurl:
   #   get:
@@ -516,7 +516,7 @@ paths:
   #         content:
   #           application/json:
   #             schema:
-  #               $ref: '#/components/schemas/Error'
+  #               $ref: '#/components/schemas/ErrorResponse'
 
   # /files/{id}/presignedurl/contents:
   #   get:
@@ -756,7 +756,7 @@ paths:
   #         content:
   #           application/json:
   #             schema:
-  #               $ref: '#/components/schemas/Error'
+  #               $ref: '#/components/schemas/ErrorResponse'
 
   # /ops/delete-orphans:
   #   post:
@@ -783,7 +783,7 @@ paths:
   #         content:
   #           application/json:
   #             schema:
-  #               $ref: '#/components/schemas/Error'
+  #               $ref: '#/components/schemas/ErrorResponse'
 
   # /ops/list-broken-metadata:
   #   post:
@@ -810,7 +810,7 @@ paths:
   #         content:
   #           application/json:
   #             schema:
-  #               $ref: '#/components/schemas/Error'
+  #               $ref: '#/components/schemas/ErrorResponse'
 
   # /ops/delete-broken-metadata:
   #   post:
@@ -837,7 +837,7 @@ paths:
   #         content:
   #           application/json:
   #             schema:
-  #               $ref: '#/components/schemas/Error'
+  #               $ref: '#/components/schemas/ErrorResponse'
 
   # /ops/list-not-uploaded:
   #   post:
@@ -864,7 +864,7 @@ paths:
   #         content:
   #           application/json:
   #             schema:
-  #               $ref: '#/components/schemas/Error'
+  #               $ref: '#/components/schemas/ErrorResponse'
 
 components:
   securitySchemes:
@@ -1000,7 +1000,7 @@ components:
           type: number
           description: "The time in seconds until the URL expires."
           example: 3600
-    Error:
+    ErrorResponse:
       type: object
       description: "Error information returned by the API."
       properties:

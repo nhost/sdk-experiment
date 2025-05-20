@@ -1,6 +1,6 @@
 import { test, expect } from "@jest/globals";
 import { createClient } from "../";
-import { FetchResponse } from "../functions";
+import { FetchError } from "../fetch";
 
 test("error handling for graphql", async () => {
   const subdomain = "local";
@@ -9,7 +9,7 @@ test("error handling for graphql", async () => {
   //#region errorHandling
   // Needs the following imports:
   //
-  // import { FetchResponse } from "../functions";
+  // import { FetchError } from "@nhost/nhost-js/fetch";
   //
 
   const nhost = createClient({
@@ -25,7 +25,7 @@ test("error handling for graphql", async () => {
       },
     });
   } catch (error) {
-    const resp = error as FetchResponse<object>;
+    const resp = error as FetchError<string>;
     console.log("Error:", resp);
     // Error: {
     //   status: 500,
