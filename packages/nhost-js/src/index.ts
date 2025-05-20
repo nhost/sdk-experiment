@@ -240,56 +240,7 @@ export class NhostClient {
    * @returns The new session or null if there is currently no session or if refresh fails
    */
   async refreshSession(marginSeconds = 60): Promise<Session | null> {
-    try {
-      return await this._refreshSession(marginSeconds);
-    } catch (error) {
-      try {
-        // we retry the refresh token in case of transient error
-        // or race conditions
-        console.warn("error refreshing session, retrying:", error);
-        return await this._refreshSession(marginSeconds);
-      } catch (error) {
-        const errResponse = error as FetchResponse<ErrorResponse>;
-        if (errResponse?.status === 401) {
-          // this probably means the refresh token is invalid
-          console.error("session probably expired");
-          this.sessionStorage.remove();
-        }
-        return null;
-      }
-    }
-  }
-
-  private async _refreshSession(marginSeconds = 60): Promise<Session | null> {
-    const session = this.sessionStorage.get();
-    if (!session) {
-      return null;
-    }
-
-    const tokenExpiresAt = extractTokenExpiration(session?.accessToken || "");
-    const currentTime = Date.now();
-    const sessionExpired = tokenExpiresAt < currentTime;
-    if (tokenExpiresAt - currentTime > marginSeconds * 1000) {
-      return session; // No need to refresh
-    }
-
-    try {
-      const response = await this.auth.refreshToken({
-        refreshToken: session.refreshToken,
-      });
-      this.sessionStorage.set(response.body);
-
-      return response.body;
-    } catch (error) {
-      if (!sessionExpired) {
-        // If the session is not expired, we can still use the current session
-        // so there is no need to error for now
-        return session;
-      }
-
-      // we throw the error so the caller can handle it
-      throw error;
-    }
+    return refreshSession(this.auth, this.sessionStorage, marginSeconds);
   }
 
   /**
@@ -312,7 +263,9 @@ function getMiddlewareChain(
   if (autoRefresh) {
     // we need to process this one first to make sure any following middlewares
     // run after the session has been refreshed
-    mwChain.unshift(createSessionRefreshMiddleware(auth, storage));
+    mwChain.unshift(
+      createSessionRefreshMiddleware(refreshSession, auth, storage),
+    );
   }
   return mwChain;
 }
@@ -388,3 +341,116 @@ export function createClient(options: NhostClientOptions = {}): NhostClient {
     storage,
   );
 }
+
+const refreshSession = async (
+  auth: AuthClient,
+  storage: SessionStorageInterface,
+  marginSeconds = 60,
+): Promise<Session | null> => {
+  try {
+    return await _refreshSession(auth, storage, marginSeconds);
+  } catch (error) {
+    try {
+      // we retry the refresh token in case of transient error
+      // or race conditions
+      console.warn("error refreshing session, retrying:", error);
+      return await _refreshSession(auth, storage, marginSeconds);
+    } catch (error) {
+      const errResponse = error as FetchResponse<ErrorResponse>;
+      if (errResponse?.status === 401) {
+        // this probably means the refresh token is invalid
+        console.error("session probably expired");
+        storage.remove();
+      }
+      return null;
+    }
+  }
+};
+
+const _refreshSession = async (
+  auth: AuthClient,
+  storage: SessionStorageInterface,
+  marginSeconds = 60,
+): Promise<Session | null> => {
+  // we do a quick check with a shared lock to see if we need to refresh
+  const { session, needsRefresh } = await navigator.locks.request(
+    "nhostSessionLock",
+    { mode: "shared" },
+    async () => {
+      return _needsRefresh(storage, marginSeconds);
+    },
+  );
+
+  if (!session) {
+    return null; // No session found
+  }
+
+  if (!needsRefresh) {
+    return session; // No need to refresh
+  }
+
+  // as we probably need to refresh now we get an exclusive lock
+  const refreshedSession: Session = await navigator.locks.request(
+    "nhostSessionLock",
+    { mode: "exclusive" },
+    async () => {
+      // we check again if we need to refresh as there is a small chance
+      // someone may have done it while acquiring the exclusive lock
+      const { session, needsRefresh, sessionExpired } = _needsRefresh(
+        storage,
+        marginSeconds,
+      );
+
+      if (!session) {
+        return null; // No session found
+      }
+
+      if (!needsRefresh) {
+        return session; // No need to refresh
+      }
+
+      try {
+        const response = await auth.refreshToken({
+          refreshToken: session.refreshToken,
+        });
+        storage.set(response.body);
+
+        return response.body;
+      } catch (error) {
+        if (!sessionExpired) {
+          // If the session is not expired, we can still use the current session
+          // so there is no need to error for now
+          return session;
+        }
+
+        // we throw the error so the caller can handle it
+        throw error;
+      }
+    },
+  );
+
+  return refreshedSession;
+};
+
+const _needsRefresh = (
+  storage: SessionStorageInterface,
+  marginSeconds = 60,
+) => {
+  const session = storage.get();
+  if (!session) {
+    return { session: null, needsRefresh: false, sessionExpired: false };
+  }
+
+  const tokenExpiresAt = extractTokenExpiration(session?.accessToken || "");
+  const currentTime = Date.now();
+
+  if (tokenExpiresAt - currentTime > marginSeconds * 1000) {
+    return { session, needsRefresh: false, sessionExpired: false };
+  }
+
+  return {
+    session,
+    needsRefresh: true,
+    sessionExpired: tokenExpiresAt < currentTime,
+  };
+};

@@ -6,9 +6,9 @@
  * without requiring manual token refresh by the application.
  */
 
-import type { Client, ErrorResponse, Session } from "./auth";
+import type { Client, Session } from "./auth";
+import type { ChainFunction, FetchFunction } from "./fetch";
 import type { SessionStorageInterface } from "./sessionStorage";
-import type { ChainFunction, FetchFunction, FetchError } from "./fetch";
 
 interface JWTToken {
   exp: number;
@@ -103,91 +103,33 @@ export interface SessionRefreshOptions {
  * @returns A middleware function that can be used in the fetch chain
  */
 export const createSessionRefreshMiddleware = (
-  authClient: Client,
+  refreshSession: (
+    auth: Client,
+    storage: SessionStorageInterface,
+    marginSeconds: number,
+  ) => Promise<Session | null>,
+  auth: Client,
   storage: SessionStorageInterface,
   options?: SessionRefreshOptions,
 ): ChainFunction => {
   const { marginSeconds = 60 } = options || {};
 
-  // Session state
-  let currentSession: Session | null = null;
-  let tokenExpiresAt = 0;
-
   // Create and return the chain function
   return (next: FetchFunction): FetchFunction =>
     async (url: string, options: RequestInit = {}): Promise<Response> => {
       // Skip token handling for certain requests
-      if (shouldSkipTokenHandling(url, options, authClient.baseURL)) {
+      if (shouldSkipTokenHandling(url, options)) {
         return next(url, options);
       }
 
       try {
-        // Get current session from storage
-        currentSession = storage.get();
-
-        if (currentSession?.accessToken) {
-          tokenExpiresAt = extractTokenExpiration(currentSession.accessToken);
-        }
-
-        // If we don't have a session, proceed without authorization
-        if (!currentSession) {
-          return next(url, options);
-        }
-
-        // Check if token needs refresh
-        if (isTokenExpiringSoon(tokenExpiresAt, marginSeconds)) {
-          if (currentSession.refreshToken) {
-            // Refresh the token
-            const refreshedSession = await refreshToken(
-              authClient,
-              storage,
-              currentSession.refreshToken,
-            );
-
-            if (refreshedSession) {
-              currentSession = refreshedSession;
-              tokenExpiresAt = extractTokenExpiration(
-                refreshedSession.accessToken,
-              );
-              storage.set(refreshedSession);
-            }
-          }
-        }
-
-        // Continue with the fetch chain
-        return next(url, options);
+        await refreshSession(auth, storage, marginSeconds);
       } catch {
-        // Continue with the request even if token refresh fails
-        return next(url, options);
+        // do nothing, we still want to call the next function
       }
+      return next(url, options);
     };
 };
-
-/**
- * Performs the actual token refresh operation using the auth client
- *
- * @param authClient - Auth API client to use for token refresh
- * @param storage - Storage implementation for persisting the new session
- * @param refreshToken - Current refresh token to use
- * @returns A new session if refresh was successful, null otherwise
- */
-async function refreshToken(
-  authClient: Client,
-  storage: SessionStorageInterface,
-  refreshToken: string,
-): Promise<Session | null> {
-  try {
-    const refreshResponse = await authClient.refreshToken({ refreshToken });
-    storage.set(refreshResponse.body);
-    return refreshResponse.body;
-  } catch (error) {
-    const err = error as FetchError<ErrorResponse>;
-    if (err.status === 401) {
-      storage.remove();
-    }
-    return null;
-  }
-}
 
 /**
  * Determines if token handling should be skipped for this request
@@ -197,11 +139,7 @@ async function refreshToken(
  * @param authApiUrl - Base URL for auth API
  * @returns True if token handling should be skipped, false otherwise
  */
-function shouldSkipTokenHandling(
-  url: string,
-  options: RequestInit,
-  authApiUrl: string,
-): boolean {
+function shouldSkipTokenHandling(url: string, options: RequestInit): boolean {
   const headers = new Headers(options.headers || {});
 
   // If Authorization header is explicitly set, skip token handling
@@ -210,24 +148,9 @@ function shouldSkipTokenHandling(
   }
 
   // If calling the token endpoint, skip to avoid infinite loops
-  if (url === `${authApiUrl}/token`) {
+  if (url.endsWith("/v1/token")) {
     return true;
   }
 
   return false;
-}
-
-/**
- * Checks if a token is expiring soon and needs to be refreshed
- *
- * @param expiresAt - Token expiration timestamp in milliseconds
- * @param marginSeconds - Number of seconds before expiration to trigger refresh
- * @returns True if token is expiring soon, false otherwise
- */
-function isTokenExpiringSoon(
-  expiresAt: number,
-  marginSeconds: number,
-): boolean {
-  const currentTime = Date.now();
-  return expiresAt - currentTime < marginSeconds * 1000;
 }

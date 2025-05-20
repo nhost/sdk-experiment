@@ -1,5 +1,5 @@
 import { useState, useEffect, type JSX } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import TabForm from "../components/TabForm";
 import MagicLinkForm from "../components/MagicLinkForm";
 import { useAuth } from "../lib/nhost/AuthProvider";
@@ -8,18 +8,19 @@ import { type FetchError } from "@nhost/nhost-js/fetch";
 
 export default function SignIn(): JSX.Element {
   const { nhost, isAuthenticated } = useAuth();
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(
-    searchParams.get("error") || null,
+    params.get("error") || null,
   );
 
-  const magicLinkSent = searchParams.get("magic") === "success";
-  const isVerifying = searchParams.has("fromVerify");
+  const magicLinkSent = params.get("magic") === "success";
+  const isVerifying = params.has("fromVerify");
 
   // Use useEffect for navigation after authentication is confirmed
   useEffect(() => {

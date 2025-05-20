@@ -892,7 +892,12 @@ A configured Nhost client
 
 ```ts
 function createSessionRefreshMiddleware(
-  authClient: Client,
+  refreshSession: (
+    auth: Client,
+    storage: SessionStorageInterface,
+    marginSeconds: number,
+  ) => Promise<null | Session>,
+  auth: Client,
   storage: SessionStorageInterface,
   options?: SessionRefreshOptions,
 ): ChainFunction;
@@ -910,11 +915,12 @@ doesn't need to manually refresh tokens.
 
 #### Parameters
 
-| Parameter    | Type                                                  | Description                                        |
-| ------------ | ----------------------------------------------------- | -------------------------------------------------- |
-| `authClient` | [`Client`](auth#client)                           | Auth API client for token refresh operations       |
-| `storage`    | [`SessionStorageInterface`](#sessionstorageinterface) | Storage implementation for persisting session data |
-| `options?`   | [`SessionRefreshOptions`](#sessionrefreshoptions)     | Configuration options for token refresh behavior   |
+| Parameter        | Type                                                                                                                                                                                           | Description                                        |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `refreshSession` | (`auth`: [`Client`](auth#client), `storage`: [`SessionStorageInterface`](#sessionstorageinterface), `marginSeconds`: `number`) => `Promise`&lt;`null` \| [`Session`](auth#session)&gt; | -                                                  |
+| `auth`           | [`Client`](auth#client)                                                                                                                                                                    | -                                                  |
+| `storage`        | [`SessionStorageInterface`](#sessionstorageinterface)                                                                                                                                          | Storage implementation for persisting session data |
+| `options?`       | [`SessionRefreshOptions`](#sessionrefreshoptions)                                                                                                                                              | Configuration options for token refresh behavior   |
 
 #### Returns
 

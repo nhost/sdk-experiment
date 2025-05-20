@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         storage: new EventEmitterStorage({
           secure: import.meta.env.VITE_ENV === "production",
         }),
-        disableAutoRefreshToken: true,
+        disableAutoRefreshToken: false,
       }),
     [],
   );
@@ -74,18 +74,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return undefined;
   }, [nhost]);
 
-  // Effect to refresh the session every 10 seconds
-  useEffect(() => {
-    if (!isAuthenticated) return;
+  // Effect to refresh the session every 1 seconds
+  // useEffect(() => {
+  //   if (!isAuthenticated) return;
 
-    const intervalId = setInterval(() => {
-      nhost.refreshSession();
-    }, 10000);
+  //   const intervalId = setInterval(() => {
+  //     nhost.refreshSession();
+  //   }, 1000);
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [nhost, isAuthenticated]);
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, [nhost, isAuthenticated]);
 
   // Context value with nhost client directly exposed
   const value: AuthContextType = {
