@@ -3,13 +3,17 @@ import { type ReactNode, useState, type JSX } from "react";
 interface TabFormProps {
   passwordTabContent: ReactNode;
   magicTabContent: ReactNode;
+  socialTabContent?: ReactNode;
 }
 
 export default function TabForm({
   passwordTabContent,
   magicTabContent,
+  socialTabContent,
 }: TabFormProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<"password" | "magic">("password");
+  const [activeTab, setActiveTab] = useState<"password" | "magic" | "social">(
+    "password",
+  );
 
   return (
     <div>
@@ -26,10 +30,22 @@ export default function TabForm({
         >
           Magic Link
         </button>
+        {socialTabContent && (
+          <button
+            className={`tab-button ${activeTab === "social" ? "tab-active" : ""}`}
+            onClick={() => setActiveTab("social")}
+          >
+            Social
+          </button>
+        )}
       </div>
 
       <div className="tab-content">
-        {activeTab === "password" ? passwordTabContent : magicTabContent}
+        {activeTab === "password"
+          ? passwordTabContent
+          : activeTab === "magic"
+            ? magicTabContent
+            : socialTabContent}
       </div>
     </div>
   );
