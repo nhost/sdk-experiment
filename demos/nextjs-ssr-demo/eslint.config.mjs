@@ -7,69 +7,69 @@ import reactPlugin from "eslint-plugin-react";
 import nextPlugin from "@next/eslint-plugin-next";
 
 export default tseslint.config(
-  eslint.configs.recommended,
-  tseslint.configs.recommendedTypeChecked,
-  tseslint.configs.stylistic,
-  {
-    ignores: [".next", "node_modules", "eslint.config.mjs"],
-  },
-  {
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
-      },
+    eslint.configs.recommended,
+    tseslint.configs.recommendedTypeChecked,
+    tseslint.configs.stylistic,
+    {
+        ignores: [".next", "node_modules", "eslint.config.mjs"],
     },
-  },
-  {
-    files: ["**/*.{tsx,jsx}"],
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        React: "readonly",
-        JSX: "readonly",
-      },
-      parserOptions: {
-        ecmaFeatures: { jsx: true },
-      },
-    },
-    plugins: {
-      react: reactPlugin,
-      "react-hooks": reactHooks,
-      "react-refresh": reactRefresh,
-    },
-    settings: {
-      react: {
-        version: "detect",
-      },
-    },
-    rules: {
-      // React recommended rules
-      ...reactPlugin.configs.recommended.rules,
-      ...reactPlugin.configs["jsx-runtime"].rules,
-
-      // React hooks
-      ...reactHooks.configs.recommended.rules,
-
-      // Allow async event handlers for React 19
-      "@typescript-eslint/no-misused-promises": [
-        "error",
-        {
-          checksVoidReturn: {
-            attributes: false,
-          },
+    {
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
+            },
         },
-      ],
+    },
+    {
+        files: ["**/*.{tsx,jsx}"],
+        languageOptions: {
+            globals: {
+                ...globals.browser,
+                React: "readonly",
+                JSX: "readonly",
+            },
+            parserOptions: {
+                ecmaFeatures: { jsx: true },
+            },
+        },
+        plugins: {
+            react: reactPlugin,
+            "react-hooks": reactHooks,
+            "react-refresh": reactRefresh,
+        },
+        settings: {
+            react: {
+                version: "detect",
+            },
+        },
+        rules: {
+            // React recommended rules
+            ...reactPlugin.configs.recommended.rules,
+            ...reactPlugin.configs["jsx-runtime"].rules,
 
-      // Disable floating promises rule for React 19's automatic promise handling
-      "@typescript-eslint/no-floating-promises": "off",
+            // React hooks
+            ...reactHooks.configs.recommended.rules,
+
+            // Allow async event handlers for React 19
+            "@typescript-eslint/no-misused-promises": [
+                "error",
+                {
+                    checksVoidReturn: {
+                        attributes: false,
+                    },
+                },
+            ],
+
+            // Disable floating promises rule for React 19's automatic promise handling
+            "@typescript-eslint/no-floating-promises": "off",
+        },
     },
-  },
-  {
-    files: ["**/*.{ts,tsx,js,jsx}"],
-    plugins: {
-      "@next/next": nextPlugin,
+    {
+        files: ["**/*.{ts,tsx,js,jsx}"],
+        plugins: {
+            "@next/next": nextPlugin,
+        },
+        rules: {},
     },
-    rules: {},
-  },
 );

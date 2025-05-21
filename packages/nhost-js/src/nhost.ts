@@ -256,7 +256,7 @@ export interface NhostServerClientOptions extends NhostClientOptions {
  * @param options - Configuration options for the client
  * @returns A configured Nhost client
  */
-export function createServerClient(
+export function createSSRClient(
   options: NhostServerClientOptions,
 ): NhostClient {
   const {

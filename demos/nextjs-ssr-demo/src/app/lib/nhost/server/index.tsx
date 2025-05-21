@@ -1,4 +1,5 @@
-import { createClient, DEFAULT_SESSION_KEY } from "@nhost/nhost-js";
+import { createSSRClient as createSSRClient, type NhostClient } from "@nhost/nhost-js";
+import { DEFAULT_SESSION_KEY } from "@nhost/nhost-js/session";
 import { type Session } from "@nhost/nhost-js/auth";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -16,15 +17,12 @@ const key = DEFAULT_SESSION_KEY;
  * refreshed in a server component will not be persisted and might lead to issues with the session.
  *
  */
-export async function createNhostClient(): Promise<
-  ReturnType<typeof createClient>
-> {
+export async function createNhostClient(): Promise<NhostClient> {
   const cookieStore = await cookies();
 
-  const nhost = createClient({
+  const nhost = createSSRClient({
     region: process.env["NHOST_REGION"] || "local",
     subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
-    disableAutoRefreshToken: true, // this is important to avoid issues with session refresh
     storage: {
       // storage compatible with Next.js server components
       get: (): Session | null => {
@@ -61,7 +59,7 @@ export async function handleNhostMiddleware(
   request: NextRequest,
   response: NextResponse<unknown>,
 ): Promise<Session | null> {
-  const nhost = createClient({
+  const nhost = createSSRClient({
     region: process.env["NHOST_REGION"] || "local",
     subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
     storage: {
