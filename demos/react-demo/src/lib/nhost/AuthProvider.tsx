@@ -6,9 +6,9 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import { createClient, NhostClient } from "@nhost/nhost-js";
+import { createClient } from "@nhost/nhost-js/client";
+import { CookieStorage, NhostClient } from "@nhost/nhost-js";
 import { type Session } from "@nhost/nhost-js/auth";
-import { EventEmitterStorage } from "./EventEmitterStorage";
 
 interface AuthContextType {
   user: Session["user"] | null;
@@ -37,10 +37,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       createClient({
         region: import.meta.env.VITE_NHOST_REGION || "local",
         subdomain: import.meta.env.VITE_NHOST_SUBDOMAIN || "local",
-        storage: new EventEmitterStorage({
-          secure: import.meta.env.VITE_ENV === "production",
+        storage: new CookieStorage({
+          secure: import.meta.env.MODE === "production",
         }),
-        disableAutoRefreshToken: false,
       }),
     [],
   );
@@ -56,36 +55,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsAuthenticated(!!currentSession);
     setIsLoading(false);
 
-    // Use the event emitter instead of polling for changes
-    const sessionStorage = nhost.sessionStorage;
-    if (sessionStorage instanceof EventEmitterStorage) {
-      const unsubscribe = sessionStorage.onSessionChange((currentSession) => {
-        setUser(currentSession?.user || null);
-        setSession(currentSession);
-        setIsAuthenticated(!!currentSession);
-      });
+    const unsubscribe = nhost.sessionStorage.onChange((currentSession) => {
+      console.log("wtf");
+      setUser(currentSession?.user || null);
+      setSession(currentSession);
+      setIsAuthenticated(!!currentSession);
+    });
 
-      // Clean up subscription on unmount
-      return () => {
-        unsubscribe();
-      };
-    }
-
-    return undefined;
+    // Clean up subscription on unmount
+    return () => {
+      unsubscribe();
+    };
   }, [nhost]);
-
-  // Effect to refresh the session every 1 seconds
-  // useEffect(() => {
-  //   if (!isAuthenticated) return;
-
-  //   const intervalId = setInterval(() => {
-  //     nhost.refreshSession();
-  //   }, 1000);
-
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, [nhost, isAuthenticated]);
 
   // Context value with nhost client directly exposed
   const value: AuthContextType = {

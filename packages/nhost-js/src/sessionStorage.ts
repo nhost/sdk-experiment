@@ -6,185 +6,83 @@
  */
 
 import type { Session } from "./auth";
+import {
+  type SessionStorageBackend,
+  LocalStorage,
+  MemoryStorage,
+} from "./sessionStorageBackend";
 
 /**
- * Session storage interface for session persistence.
- * This interface can be implemented to provide custom storage solutions.
+ * Callback function type for session change subscriptions
  */
-export interface SessionStorageInterface {
-  /**
-   * Get the current session from storage
-   * @returns The stored session or null if not found
-   */
-  get(): Session | null;
-
-  /**
-   * Set the session in storage
-   * @param value - The session to store
-   */
-  set(value: Session): void;
-
-  /**
-   * Remove the session from storage
-   */
-  remove(): void;
-}
+export type SessionChangeCallback = (session: Session | null) => void;
 
 /**
- * Default storage key used for storing the Nhost session
+ * A wrapper around any SessionStorageInterface implementation that adds
+ * the ability to subscribe to session changes.
  */
-export const DEFAULT_SESSION_KEY = "nhostSession";
-
-/**
- * Browser localStorage implementation of StorageInterface.
- * Persists the session across page reloads and browser restarts.
- */
-export class LocalStorage implements SessionStorageInterface {
-  private readonly storageKey: string;
+export class SessionStorage {
+  private readonly storage: SessionStorageBackend;
+  private subscribers: Set<SessionChangeCallback> = new Set();
 
   /**
-   * Creates a new LocalStorage instance
-   * @param options - Configuration options
-   * @param options.storageKey - The key to use in localStorage (defaults to "nhostSession")
+   * Creates a new SessionStorage instance
+   * @param storage - The underlying storage implementation to use
    */
-  constructor(options?: { storageKey?: string }) {
-    this.storageKey = options?.storageKey || DEFAULT_SESSION_KEY;
+  constructor(storage: SessionStorageBackend) {
+    this.storage = storage;
   }
 
   /**
-   * Gets the session from localStorage
+   * Gets the session from the underlying storage
    * @returns The stored session or null if not found
    */
   get(): Session | null {
-    try {
-      const value = window.localStorage.getItem(this.storageKey);
-      return value ? (JSON.parse(value) as Session) : null;
-    } catch {
-      this.remove();
-      return null;
-    }
+    return this.storage.get();
   }
 
   /**
-   * Sets the session in localStorage
+   * Sets the session in the underlying storage and notifies subscribers
    * @param value - The session to store
    */
   set(value: Session): void {
-    window.localStorage.setItem(this.storageKey, JSON.stringify(value));
+    this.storage.set(value);
+    this.notifySubscribers(value);
   }
 
   /**
-   * Removes the session from localStorage
+   * Removes the session from the underlying storage and notifies subscribers
    */
   remove(): void {
-    window.localStorage.removeItem(this.storageKey);
-  }
-}
-
-/**
- * In-memory storage implementation for non-browser environments or when
- * persistent storage is not available or desirable.
- */
-export class MemoryStorage implements SessionStorageInterface {
-  private session: Session | null = null;
-
-  /**
-   * Gets the session from memory
-   * @returns The stored session or null if not set
-   */
-  get(): Session | null {
-    return this.session;
+    this.storage.remove();
+    this.notifySubscribers(null);
   }
 
   /**
-   * Sets the session in memory
-   * @param value - The session to store
+   * Subscribe to session changes
+   * @param callback - Function that will be called when the session changes
+   * @returns An unsubscribe function to remove this subscription
    */
-  set(value: Session): void {
-    this.session = value;
+  onChange(callback: SessionChangeCallback) {
+    this.subscribers.add(callback);
+
+    return () => {
+      this.subscribers.delete(callback);
+    };
   }
 
   /**
-   * Clears the session from memory
+   * Notify all subscribers of a session change
+   * @param session - The new session value or null if removed
    */
-  remove(): void {
-    this.session = null;
-  }
-}
-
-/**
- * Cookie-based storage implementation.
- * This storage uses web browser cookies to store the session so it's not
- * available in server-side environments. It is useful though for sinchronizing
- * sessions between client and server environments.
- */
-export class CookieStorage implements SessionStorageInterface {
-  private readonly cookieName: string;
-  private readonly expirationDays: number;
-  private readonly secure: boolean;
-  private readonly sameSite: "strict" | "lax" | "none";
-
-  /**
-   * Creates a new CookieStorage instance
-   * @param options - Configuration options
-   * @param options.cookieName - Name of the cookie to use (defaults to "nhostSession")
-   * @param options.expirationDays - Number of days until the cookie expires (defaults to 30)
-   * @param options.secure - Whether to set the Secure flag on the cookie (defaults to true)
-   * @param options.sameSite - SameSite policy for the cookie (defaults to "lax")
-   */
-  constructor(options?: {
-    cookieName?: string;
-    expirationDays?: number;
-    secure?: boolean;
-    sameSite?: "strict" | "lax" | "none";
-  }) {
-    this.cookieName = options?.cookieName || DEFAULT_SESSION_KEY;
-    this.expirationDays = options?.expirationDays ?? 30;
-    this.secure = options?.secure ?? true;
-    this.sameSite = options?.sameSite || "lax";
-  }
-
-  /**
-   * Gets the session from cookies
-   * @returns The stored session or null if not found
-   */
-  get(): Session | null {
-    const cookies = document.cookie.split(";");
-    for (const cookie of cookies) {
-      const [name, value] = cookie.trim().split("=");
-      if (name === this.cookieName) {
-        try {
-          return JSON.parse(decodeURIComponent(value || "")) as Session;
-        } catch {
-          this.remove();
-          return null;
-        }
+  private notifySubscribers(session: Session | null): void {
+    for (const subscriber of this.subscribers) {
+      try {
+        subscriber(session);
+      } catch (error) {
+        console.error("Error notifying subscriber:", error);
       }
     }
-    return null;
-  }
-
-  /**
-   * Sets the session in a cookie
-   * @param value - The session to store
-   */
-  set(value: Session): void {
-    const expires = new Date();
-    expires.setTime(
-      expires.getTime() + this.expirationDays * 24 * 60 * 60 * 1000,
-    );
-
-    const cookieValue = encodeURIComponent(JSON.stringify(value));
-    const cookieString = `${this.cookieName}=${cookieValue}; expires=${expires.toUTCString()}; path=/; ${this.secure ? "secure; " : ""}SameSite=${this.sameSite}`;
-
-    document.cookie = cookieString;
-  }
-
-  /**
-   * Removes the session cookie
-   */
-  remove(): void {
-    document.cookie = `${this.cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; ${this.secure ? "secure; " : ""}SameSite=${this.sameSite}`;
   }
 }
 
@@ -195,20 +93,11 @@ export class CookieStorage implements SessionStorageInterface {
  * 1. Try to use localStorage if we're in a browser environment
  * 2. Fall back to in-memory storage if localStorage isn't available
  *
- * @returns The best available storage implementation for the current environment
+ * @returns The best available storage implementation wrapped in a SessionStorage
  */
-export const detectStorage = (): SessionStorageInterface => {
-  if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
-    try {
-      // Test if localStorage is actually available (could be disabled)
-      localStorage.setItem("__test", "__test");
-      localStorage.removeItem("__test");
-      return new LocalStorage();
-    } catch {
-      console.warn(
-        `localStorage is not available, using in-memory storage instead`,
-      );
-    }
+export const detectStorage = (): SessionStorageBackend => {
+  if (typeof window !== "undefined") {
+    return new LocalStorage();
   }
   return new MemoryStorage();
 };

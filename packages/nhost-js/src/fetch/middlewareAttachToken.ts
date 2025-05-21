@@ -6,8 +6,8 @@
  * is properly authenticated.
  */
 
-import type { Session } from "./auth";
-import type { SessionStorageInterface } from "./sessionStorage";
+import type { Session } from "../auth";
+import type { SessionStorage } from "../sessionStorage";
 import type { ChainFunction, FetchFunction } from "./fetch";
 
 /**
@@ -24,7 +24,7 @@ import type { ChainFunction, FetchFunction } from "./fetch";
  * @returns A middleware function that adds Authorization headers
  */
 export const createAttachAccessTokenMiddleware =
-  (storage: SessionStorageInterface): ChainFunction =>
+  (storage: SessionStorage): ChainFunction =>
   (next: FetchFunction): FetchFunction =>
   async (url: string, options: RequestInit = {}): Promise<Response> => {
     const headers = new Headers(options.headers || {});

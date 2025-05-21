@@ -6,9 +6,9 @@
  * without requiring manual token refresh by the application.
  */
 
-import type { Client, Session } from "./auth";
+import type { Client, Session } from "../auth";
 import type { ChainFunction, FetchFunction } from "./fetch";
-import type { SessionStorageInterface } from "./sessionStorage";
+import type { SessionStorage } from "../sessionStorage";
 
 interface JWTToken {
   exp: number;
@@ -105,11 +105,11 @@ export interface SessionRefreshOptions {
 export const createSessionRefreshMiddleware = (
   refreshSession: (
     auth: Client,
-    storage: SessionStorageInterface,
+    storage: SessionStorage,
     marginSeconds: number,
   ) => Promise<Session | null>,
   auth: Client,
-  storage: SessionStorageInterface,
+  storage: SessionStorage,
   options?: SessionRefreshOptions,
 ): ChainFunction => {
   const { marginSeconds = 60 } = options || {};

@@ -49,9 +49,7 @@ const router = createBrowserRouter(
         path="signin/mfa"
         element={
           <Suspense
-            fallback={
-              <div className="loading-container">Loading...</div>
-            }
+            fallback={<div className="loading-container">Loading...</div>}
           >
             <MfaVerification />
           </Suspense>
@@ -64,8 +62,8 @@ const router = createBrowserRouter(
         <Route path="upload" element={<Upload />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
-    </Route>
-  )
+    </Route>,
+  ),
 );
 
 const App = (): JSX.Element => {

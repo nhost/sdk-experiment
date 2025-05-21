@@ -6,8 +6,8 @@
  * that new sessions are properly stored after sign-in operations.
  */
 
-import type { Session, SessionPayload } from "./auth";
-import type { SessionStorageInterface } from "./sessionStorage";
+import type { Session, SessionPayload } from "../auth";
+import type { SessionStorage } from "../sessionStorage";
 import type { ChainFunction } from "./fetch";
 
 /**
@@ -26,7 +26,7 @@ import type { ChainFunction } from "./fetch";
  * @returns A middleware function that can be used in the fetch chain
  */
 export const createSessionResponseMiddleware = (
-  storage: SessionStorageInterface,
+  storage: SessionStorage,
 ): ChainFunction => {
   /**
    * Helper function to extract session data from various response formats

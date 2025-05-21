@@ -3,10 +3,10 @@
   "entryPoints": [
     "src/index.ts",
     "src/auth/index.ts",
-    "src/storage/index.ts",
+    "src/fetch/index.ts",
     "src/functions/index.ts",
     "src/graphql/index.ts",
-    "src/fetch/index.ts"
+    "src/storage/index.ts"
   ],
   "entryPointStrategy": "expand",
   "out": "../../docs/reference/javascript/nhost-js",
