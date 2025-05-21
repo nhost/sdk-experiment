@@ -1,5 +1,5 @@
 /**
- * @fileoverview Enhanced fetch implementation with middleware support.
+ * Enhanced fetch implementation with middleware support.
  *
  * This module provides a middleware pattern for the Fetch API, allowing
  * chain functions to be applied to requests and responses, such as

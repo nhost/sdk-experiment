@@ -1,5 +1,5 @@
 /**
- * @fileoverview Authorization token attachment middleware for the Nhost SDK.
+ * Authorization token attachment middleware for the Nhost SDK.
  *
  * This module provides middleware functionality to automatically attach
  * authorization tokens to outgoing API requests, ensuring the client
@@ -7,7 +7,7 @@
  */
 
 import type { Session } from "../auth";
-import type { SessionStorage } from "../sessionStorage";
+import type { SessionStorage } from "../session/storage";
 import type { ChainFunction, FetchFunction } from "./fetch";
 
 /**

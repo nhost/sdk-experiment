@@ -1,11 +1,11 @@
 /**
- * @fileoverview Storage implementations for session persistence in different environments.
+ * Storage implementations for session persistence in different environments.
  *
  * This module provides different storage adapters for persisting authentication sessions
  * across page reloads and browser sessions.
  */
 
-import type { Session } from "./auth";
+import type { Session } from "../auth";
 
 /**
  * Session storage interface for session persistence.
@@ -115,7 +115,7 @@ export class MemoryStorage implements SessionStorageBackend {
 /**
  * Cookie-based storage implementation.
  * This storage uses web browser cookies to store the session so it's not
- * available in server-side environments. It is useful though for sinchronizing
+ * available in server-side environments. It is useful though for synchronizing
  * sessions between client and server environments.
  */
 export class CookieStorage implements SessionStorageBackend {

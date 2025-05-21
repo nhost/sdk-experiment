@@ -6,6 +6,7 @@
     "src/fetch/index.ts",
     "src/functions/index.ts",
     "src/graphql/index.ts",
+    "src/session/index.ts",
     "src/storage/index.ts"
   ],
   "entryPointStrategy": "expand",

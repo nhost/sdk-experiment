@@ -22,10 +22,12 @@ import {
   updateSessionFromResponseMiddleware,
   sessionRefreshMiddleware,
 } from "./fetch";
-
-import { detectStorage, SessionStorage } from "./sessionStorage";
-import { type SessionStorageBackend } from "./sessionStorageBackend";
-import { refreshSession } from "./refreshSession";
+import {
+  detectStorage,
+  SessionStorage,
+  type SessionStorageBackend,
+  refreshSession,
+} from "./session/";
 
 /**
  * Main client class that provides access to all Nhost services

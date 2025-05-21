@@ -31,6 +31,11 @@
       "import": "./dist/nhost-js/graphql.es.js",
       "require": "./dist/nhost-js/graphql.cjs.js"
     },
+    "./session": {
+      "types": "./dist/src/session/index.d.ts",
+      "import": "./dist/nhost-js/session.es.js",
+      "require": "./dist/nhost-js/session.cjs.js"
+    },
     "./storage": {
       "types": "./dist/src/storage/index.d.ts",
       "import": "./dist/nhost-js/storage.es.js",
@@ -50,6 +55,9 @@
       ],
       "graphql": [
         "dist/src/graphql/index.d.ts"
+      ],
+      "session": [
+        "dist/src/session/index.d.ts"
       ],
       "storage": [
         "dist/src/storage/index.d.ts"

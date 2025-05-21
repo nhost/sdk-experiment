@@ -1,5 +1,5 @@
 /**
- * @fileoverview Session response middleware for the Nhost SDK.
+ * Session response middleware for the Nhost SDK.
  *
  * This module provides middleware functionality to automatically extract
  * and persist session information from authentication responses, ensuring
@@ -7,7 +7,7 @@
  */
 
 import type { Session, SessionPayload } from "../auth";
-import type { SessionStorage } from "../sessionStorage";
+import type { SessionStorage } from "../session/storage";
 import type { ChainFunction } from "./fetch";
 
 /**

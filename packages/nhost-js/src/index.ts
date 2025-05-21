@@ -21,15 +21,6 @@
  * @packageDocumentation
  */
 
-export { SessionStorage, type SessionChangeCallback } from "./sessionStorage";
-export {
-  type SessionStorageBackend,
-  DEFAULT_SESSION_KEY,
-  LocalStorage,
-  MemoryStorage,
-  CookieStorage,
-} from "./sessionStorageBackend";
-
 export {
   type NhostClient,
   type NhostClientOptions,

@@ -2,10 +2,10 @@ import {
   type Client as AuthClient,
   type Session,
   type ErrorResponse,
-} from "./auth";
+} from "../auth";
 
-import { type SessionStorage } from "./sessionStorage";
-import type { FetchResponse } from "./fetch";
+import { type SessionStorage } from "./storage";
+import type { FetchResponse } from "../fetch";
 
 interface JWTToken {
   exp: number;
@@ -73,6 +73,18 @@ function decodeTokenPayload(base64Payload: string): any {
   return JSON.parse(jsonPayload);
 }
 
+/**
+ * Refreshes the authentication session if needed
+ *
+ * This function checks if the current session needs to be refreshed based on
+ * the access token expiration time. If a refresh is needed, it will attempt to
+ * refresh the token using the provided auth client.
+ *
+ * @param auth - The authentication client to use for token refresh
+ * @param storage - The session storage implementation
+ * @param marginSeconds - How many seconds before expiration to trigger a refresh (defaults to 60 seconds)
+ * @returns A promise that resolves to the current session (refreshed if needed) or null if no session exists
+ */
 export const refreshSession = async (
   auth: AuthClient,
   storage: SessionStorage,
@@ -98,6 +110,15 @@ export const refreshSession = async (
   }
 };
 
+/**
+ * Internal implementation of the refresh session logic
+ *
+ * @param auth - The authentication client to use for token refresh
+ * @param storage - The session storage implementation
+ * @param marginSeconds - How many seconds before expiration to trigger a refresh
+ * @returns A promise that resolves to the current session (refreshed if needed) or null if no session exists
+ * @private
+ */
 const _refreshSession = async (
   auth: AuthClient,
   storage: SessionStorage,
@@ -163,6 +184,14 @@ const _refreshSession = async (
   return refreshedSession;
 };
 
+/**
+ * Checks if the current session needs to be refreshed based on token expiration
+ *
+ * @param storage - The session storage implementation
+ * @param marginSeconds - How many seconds before expiration to trigger a refresh
+ * @returns An object containing the session, whether it needs refreshing, and whether it has expired
+ * @private
+ */
 const _needsRefresh = (storage: SessionStorage, marginSeconds = 60) => {
   const session = storage.get();
   if (!session) {

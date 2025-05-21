@@ -1,16 +1,16 @@
 /**
- * @fileoverview Storage implementations for session persistence in different environments.
+ * Storage implementations for session persistence in different environments.
  *
  * This module provides different storage adapters for persisting authentication sessions
  * across page reloads and browser sessions.
  */
 
-import type { Session } from "./auth";
+import type { Session } from "../auth";
 import {
   type SessionStorageBackend,
   LocalStorage,
   MemoryStorage,
-} from "./sessionStorageBackend";
+} from "./storageBackend";
 
 /**
  * Callback function type for session change subscriptions
@@ -93,7 +93,7 @@ export class SessionStorage {
  * 1. Try to use localStorage if we're in a browser environment
  * 2. Fall back to in-memory storage if localStorage isn't available
  *
- * @returns The best available storage implementation wrapped in a SessionStorage
+ * @returns The best available storage implementation as a SessionStorageBackend
  */
 export const detectStorage = (): SessionStorageBackend => {
   if (typeof window !== "undefined") {

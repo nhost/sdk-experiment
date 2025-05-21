@@ -1,5 +1,5 @@
 /**
- * @fileoverview Auth token refresh middleware for the Nhost SDK.
+ * Auth token refresh middleware for the Nhost SDK.
  *
  * This module provides middleware functionality to automatically refresh
  * authentication tokens before they expire, ensuring seamless API access
@@ -8,8 +8,8 @@
 
 import type { Client } from "../auth";
 import type { ChainFunction, FetchFunction } from "./fetch";
-import type { SessionStorage } from "../sessionStorage";
-import { refreshSession } from "../refreshSession";
+import type { SessionStorage } from "../session/storage";
+import { refreshSession } from "../session/refreshSession";
 
 /**
  * Creates a fetch middleware that automatically refreshes authentication tokens.
