@@ -30,10 +30,10 @@ export default function MfaVerification(): JSX.Element {
     }
 
     // If no ticket is provided, redirect to sign in
-    if (!ticket) {
+    if (!ticket && !isLoading) {
       navigate("/signin", { replace: true });
     }
-  }, [isAuthenticated, ticket, navigate]);
+  }, [isAuthenticated, ticket, navigate, isLoading]);
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -43,8 +43,13 @@ export default function MfaVerification(): JSX.Element {
     setError(null);
 
     try {
-      await verifyMfa(ticket as string, otp);
-      navigate("/profile", { replace: true });
+      const result = await verifyMfa(ticket as string, otp);
+
+      if (result.error) {
+        setError(result.error);
+      } else if (result.success) {
+        navigate("/profile", { replace: true });
+      }
     } catch (err) {
       const error = err as FetchError<ErrorResponse>;
       setError(`An error occurred during verification: ${error.message}`);
@@ -72,7 +77,7 @@ export default function MfaVerification(): JSX.Element {
         return { success: true };
       }
 
-      return { error: "Failed to verify MFA code" };
+      return { error: "Failed to verify MFA code. Please try again." };
     } catch (err) {
       const error = err as FetchError<ErrorResponse>;
       return { error: `Failed to verify code: ${error.message}` };

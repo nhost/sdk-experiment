@@ -39,6 +39,10 @@ function createClient() {
 export default defineConfig({
   auth: {
     input: {
+      filters: {
+        mode: "exclude",
+        tags: ["excludeme"],
+      },
       target: "../api/auth.yaml",
     },
     output: {

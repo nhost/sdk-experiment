@@ -19,7 +19,8 @@ import type {
   SignInPasswordlessEmailRequest,
   SignOutSchema,
   SignUpEmailPasswordRequest,
-  SigninAnonymousRequest,
+  SignInAnonymousRequest,
+  SignInProviderParams,
   TotpGenerateResponse,
   UserDeanonymizeRequest,
   UserEmailChangeRequest,
@@ -156,7 +157,7 @@ export interface Client {
    * @summary Anonymous sign-in
    */
   signInAnonymous: (
-    signinAnonymousRequest?: SigninAnonymousRequest,
+    signinAnonymousRequest?: SignInAnonymousRequest,
     options?: RequestInit,
   ) => Promise<FetchResponse<SessionPayload>>;
 
@@ -252,10 +253,27 @@ export interface Client {
 
   /**
    * Verify tickets created by email verification, magic link, or password reset
+   *
+   * This method returns a redirect URL to send the user to after verifying the ticket.
+   *
    * @summary Verify ticket
    */
-  verifyTicket: (
-    params: VerifyTicketParams,
+  verifyTicket: (params: VerifyTicketParams, options?: RequestInit) => string;
+
+  /**
+   * This method returns a redirect URL to send the user to for signing in with an OAuth2 provider.
+   *
+   * @summary Sign in with an oauth2 provider
+   */
+  signInProvider: (
+    provider:
+      | "apple"
+      | "github"
+      | "google"
+      | "linkedin"
+      | "discord"
+      | "spotify",
+    params?: SignInProviderParams,
     options?: RequestInit,
-  ) => Promise<FetchResponse<void>>;
+  ) => string;
 }

@@ -5,17 +5,23 @@ import { useState, type ReactNode } from "react";
 interface TabFormProps {
   passwordTabLabel?: string;
   magicTabLabel?: string;
+  socialTabLabel?: string;
   passwordTabContent: ReactNode;
   magicTabContent: ReactNode;
+  socialTabContent?: ReactNode;
 }
 
 export default function TabForm({
   passwordTabLabel = "Email & Password",
   magicTabLabel = "Magic Link",
+  socialTabLabel = "Social",
   passwordTabContent,
   magicTabContent,
+  socialTabContent,
 }: TabFormProps) {
-  const [activeTab, setActiveTab] = useState<"password" | "magic">("password");
+  const [activeTab, setActiveTab] = useState<"password" | "magic" | "social">(
+    "password",
+  );
 
   return (
     <div>
@@ -34,11 +40,21 @@ export default function TabForm({
         >
           {magicTabLabel}
         </button>
+        {socialTabContent && (
+          <button
+            className={`tab-button ${activeTab === "social" ? "tab-active" : ""}`}
+            onClick={() => setActiveTab("social")}
+            type="button"
+          >
+            {socialTabLabel}
+          </button>
+        )}
       </div>
 
       <div className="tab-content">
         {activeTab === "password" && passwordTabContent}
         {activeTab === "magic" && magicTabContent}
+        {activeTab === "social" && socialTabContent}
       </div>
     </div>
   );

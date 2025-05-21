@@ -11,6 +11,7 @@ export default function Verify(): JSX.Element {
     "verifying",
   );
   const [error, setError] = useState<string>("");
+  const [urlParams, setUrlParams] = useState<Record<string, string>>({});
 
   const { nhost } = useAuth();
 
@@ -20,6 +21,13 @@ export default function Verify(): JSX.Element {
     const refreshToken = params.get("refreshToken");
 
     if (!refreshToken) {
+      // Collect all URL parameters to display
+      const allParams: Record<string, string> = {};
+      params.forEach((value, key) => {
+        allParams[key] = value;
+      });
+      setUrlParams(allParams);
+
       setStatus("error");
       setError("No refresh token found in URL");
       return;
@@ -36,6 +44,13 @@ export default function Verify(): JSX.Element {
         if (!isMounted) return;
 
         if (!refreshToken) {
+          // Collect all URL parameters to display
+          const allParams: Record<string, string> = {};
+          params.forEach((value, key) => {
+            allParams[key] = value;
+          });
+          setUrlParams(allParams);
+
           setStatus("error");
           setError("No refresh token found in URL");
           return;
@@ -99,6 +114,19 @@ export default function Verify(): JSX.Element {
                 Verification failed
               </p>
               <p className="mb-4">{error}</p>
+
+              {Object.keys(urlParams).length > 0 && (
+                <div className="mb-4 p-4 bg-gray-100 rounded-md text-left overflow-auto max-h-48">
+                  <p className="font-semibold mb-2">URL Parameters:</p>
+                  {Object.entries(urlParams).map(([key, value]) => (
+                    <div key={key} className="mb-1">
+                      <span className="font-mono text-blue-600">{key}:</span>{" "}
+                      <span className="font-mono">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               <button
                 onClick={() => navigate("/signin")}
                 className="btn btn-primary"

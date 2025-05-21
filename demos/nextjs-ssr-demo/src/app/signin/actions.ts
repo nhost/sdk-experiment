@@ -136,3 +136,30 @@ export async function sendMagicLink(formData: FormData) {
     };
   }
 }
+
+/**
+ * Gets the URL for social provider sign in
+ */
+export async function getProviderSignInUrl(provider: "github") {
+  try {
+    // Get origin for redirect URL
+    const origin =
+      process.env["NEXT_PUBLIC_APP_URL"] || "http://localhost:3000";
+    const redirectTo = `${origin}/verify`;
+
+    // Get the server Nhost client
+    const nhost = await createNhostClient();
+
+    // Get provider URL
+    const url = nhost.auth.signInProvider(provider, {
+      redirectTo,
+    });
+
+    return { url };
+  } catch (err) {
+    const error = err as FetchError<ErrorResponse>;
+    return {
+      error: `Failed to create provider URL: ${error.message}`,
+    };
+  }
+}

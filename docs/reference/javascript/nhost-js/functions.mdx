@@ -38,47 +38,9 @@ The response body will be automatically parsed based on the content type into th
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](#fetchresponse)&lt;`T`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`T`&gt;&gt;
 
 Promise with the function response and metadata.
-
----
-
-### FetchResponse&lt;T&gt;
-
-Response wrapper for function calls with additional metadata.
-
-#### Type Parameters
-
-| Type Parameter | Default type |
-| -------------- | ------------ |
-| `T`            | `any`        |
-
-#### Properties
-
-##### body
-
-```ts
-body: T;
-```
-
-The parsed response body
-
-##### headers
-
-```ts
-headers: Headers;
-```
-
-HTTP headers from the response
-
-##### status
-
-```ts
-status: number;
-```
-
-HTTP status code of the response
 
 ## Functions
 

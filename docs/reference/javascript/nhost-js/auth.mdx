@@ -323,7 +323,7 @@ Send verification email
 
 ```ts
 signInAnonymous: (
-  signinAnonymousRequest?: SigninAnonymousRequest,
+  signinAnonymousRequest?: SignInAnonymousRequest,
   options?: RequestInit,
 ) => Promise<FetchResponse<SessionPayload>>;
 ```
@@ -334,7 +334,7 @@ Sign in anonymously
 
 | Parameter                 | Type                                                |
 | ------------------------- | --------------------------------------------------- |
-| `signinAnonymousRequest?` | [`SigninAnonymousRequest`](#signinanonymousrequest) |
+| `signinAnonymousRequest?` | [`SignInAnonymousRequest`](#signinanonymousrequest) |
 | `options?`                | `RequestInit`                                       |
 
 ###### Returns
@@ -449,6 +449,30 @@ Sign in with Personal Access Token (PAT)
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
+##### signInProvider()
+
+```ts
+signInProvider: (
+  provider: "apple" | "github" | "google" | "linkedin" | "discord" | "spotify",
+  params?: SignInProviderParams,
+  options?: RequestInit,
+) => string;
+```
+
+This method returns a redirect URL to send the user to for signing in with an OAuth2 provider.
+
+###### Parameters
+
+| Parameter  | Type                                                                                |
+| ---------- | ----------------------------------------------------------------------------------- |
+| `provider` | `"apple"` \| `"github"` \| `"google"` \| `"linkedin"` \| `"discord"` \| `"spotify"` |
+| `params?`  | [`SignInProviderParams`](#signinproviderparams)                                     |
+| `options?` | `RequestInit`                                                                       |
+
+###### Returns
+
+`string`
+
 ##### signInVerifyMfaTotp()
 
 ```ts
@@ -538,11 +562,12 @@ Verify OTP and return a session if validation is successful
 ##### verifyTicket()
 
 ```ts
-verifyTicket: (params: VerifyTicketParams, options?: RequestInit) =>
-  Promise<FetchResponse<void>>;
+verifyTicket: (params: VerifyTicketParams, options?: RequestInit) => string;
 ```
 
 Verify tickets created by email verification, magic link, or password reset
+
+This method returns a redirect URL to send the user to after verifying the ticket.
 
 ###### Parameters
 
@@ -553,7 +578,7 @@ Verify tickets created by email verification, magic link, or password reset
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`void`&gt;&gt;
+`string`
 
 ---
 
@@ -734,7 +759,7 @@ Nonce used during sign in process
 ##### provider
 
 ```ts
-provider: Provider;
+provider: IdTokenProvider;
 ```
 
 ---
@@ -859,7 +884,7 @@ User session data. Null if authentication requires additional steps.
 
 ---
 
-### SigninAnonymousRequest
+### SignInAnonymousRequest
 
 #### Properties
 
@@ -888,7 +913,7 @@ A two-characters locale
 ##### metadata?
 
 ```ts
-optional metadata: SigninAnonymousRequestMetadata;
+optional metadata: SignInAnonymousRequestMetadata;
 ```
 
 ---
@@ -978,7 +1003,7 @@ optional options: SignUpOptions;
 ##### provider
 
 ```ts
-provider: Provider;
+provider: IdTokenProvider;
 ```
 
 ---
@@ -1712,18 +1737,18 @@ type GetVersion200 = object;
 
 ---
 
-### OKResponse
+### IdTokenProvider
 
 ```ts
-type OKResponse = "OK";
+type IdTokenProvider = "apple" | "google";
 ```
 
 ---
 
-### Provider
+### OKResponse
 
 ```ts
-type Provider = "apple" | "google";
+type OKResponse = "OK";
 ```
 
 ---
@@ -1738,10 +1763,10 @@ Target URL for the redirect
 
 ---
 
-### SigninAnonymousRequestMetadata
+### SignInAnonymousRequestMetadata
 
 ```ts
-type SigninAnonymousRequestMetadata = object;
+type SignInAnonymousRequestMetadata = object;
 ```
 
 #### Index Signature
@@ -1749,6 +1774,26 @@ type SigninAnonymousRequestMetadata = object;
 ```ts
 [key: string]: unknown
 ```
+
+---
+
+### SignInProviderParams
+
+```ts
+type SignInProviderParams = object;
+```
+
+#### Properties
+
+| Property                                  | Type       | Description                                                                                                                           |
+| ----------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| <a id="allowedroles"></a> `allowedRoles?` | `string`[] | Array of allowed roles for the user                                                                                                   |
+| <a id="connect"></a> `connect?`           | `string`   | If set, this means that the user is already authenticated and wants to link their account. This needs to be a valid JWT access token. |
+| <a id="defaultrole"></a> `defaultRole?`   | `string`   | Default role for the user                                                                                                             |
+| <a id="displayname-1"></a> `displayName?` | `string`   | Display name for the user                                                                                                             |
+| <a id="locale-1"></a> `locale?`           | `string`   | A two-characters locale                                                                                                               |
+| <a id="metadata-2"></a> `metadata?`       | `object`   | Additional metadata for the user                                                                                                      |
+| <a id="redirectto-1"></a> `redirectTo?`   | `string`   | URI to redirect to                                                                                                                    |
 
 ---
 
@@ -1887,7 +1932,7 @@ type VerifyTicketParams = object;
 
 | Property                               | Type                                                    | Description                                                   |
 | -------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------- |
-| <a id="redirectto-2"></a> `redirectTo` | [`RedirectToQueryParameter`](#redirecttoqueryparameter) | Target URL for the redirect                                   |
+| <a id="redirectto-3"></a> `redirectTo` | [`RedirectToQueryParameter`](#redirecttoqueryparameter) | Target URL for the redirect                                   |
 | <a id="ticket-3"></a> `ticket`         | [`TicketQueryParameter`](#ticketqueryparameter)         | Ticket                                                        |
 | <a id="type"></a> ~~`type?`~~          | [`TicketTypeQueryParameter`](#tickettypequeryparameter) | Type of the ticket. Deprecated, no longer used **Deprecated** |
 
