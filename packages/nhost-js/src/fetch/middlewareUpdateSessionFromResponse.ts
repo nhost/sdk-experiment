@@ -25,13 +25,13 @@ import type { ChainFunction } from "./fetch";
  * @param storage - Storage implementation for persisting session data
  * @returns A middleware function that can be used in the fetch chain
  */
-export const createSessionResponseMiddleware = (
+export const updateSessionFromResponseMiddleware = (
   storage: SessionStorage,
 ): ChainFunction => {
   /**
    * Helper function to extract session data from various response formats
    *
-   * @param data - Response data to extract session from
+   * @param body - Response data to extract session from
    * @returns Session object if found, null otherwise
    */
   const sessionExtractor = function (

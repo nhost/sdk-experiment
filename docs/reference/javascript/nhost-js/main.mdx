@@ -114,190 +114,6 @@ console.log(JSON.stringify(graphResp, null, 2));
 // }
 ```
 
-## Error handling
-
-The SDK will throw errors on most operations if the request returns a non-2xx status code or
-if the request fails entirely (i.e., due to network errors). A continuation you can see
-how you can handle errors thrown by the SDK.
-
-### Auth
-
-```ts
-// Needs the following imports:
-//
-// import {
-//   type ErrorResponse,
-// } from "@nhost/nhost-js/auth";
-// import {
-//   type FetchError,
-// } from "@nhost/nhost-js/fetch";
-//
-const nhost = createClient({
-  subdomain,
-  region,
-});
-try {
-  await nhost.auth.signInEmailPassword({
-    email,
-    password,
-  });
-
-  expect(true).toBe(false); // This should not be reached
-} catch (error) {
-  const err = error as FetchError<ErrorResponse>;
-  console.log("Error:", err);
-  // Error: {
-  //   body: {
-  //     error: 'invalid-email-password',
-  //     message: 'Incorrect email or password',
-  //     status: 401
-  //   },
-  //   status: 401,
-  //   headers: {
-  //     'content-length': '88',
-  //     'content-type': 'application/json',
-  //     date: 'Mon, 12 May 2025 08:08:28 GMT'
-  //   }
-  // }
-
-  // error handling...
-```
-
-### Storage
-
-```ts
-// Needs the following imports:
-//
-// import {
-//   type ErrorResponse,
-// } from "@nhost/nhost-js/storage";
-// import {
-//   type FetchError,
-// } from "@nhost/nhost-js/fetch";
-//
-const nhost = createClient({
-  subdomain,
-  region,
-});
-try {
-  await nhost.storage.uploadFiles({
-    "file[]": [new File(["test1"], "file-1", { type: "text/plain" })],
-  });
-
-  expect(true).toBe(false); // This should not be reached
-} catch (error) {
-  const err = error as FetchError<ErrorResponse>;
-  console.log("Error:", err);
-  // Error: {
-  //   body: { error: { message: 'you are not authorized' } },
-  //   status: 403,
-  //   headers: {
-  //     'content-length': '46',
-  //     'content-type': 'application/json; charset=utf-8',
-  //     date: 'Mon, 12 May 2025 08:18:52 GMT'
-  //   }
-  // }
-
-  // error handling...
-```
-
-### GraphQL
-
-```ts
-// Needs the following imports:
-//
-// import {
-//   type GraphQLResponse,
-// } from "@nhost/nhost-js/graphql";
-// import {
-//   type FetchError,
-// } from "@nhost/fetch";
-//
-const nhost = createClient({
-  subdomain,
-  region,
-});
-
-try {
-  await nhost.graphql.post({
-    query: `
-      query GetRestrictedObject {
-        restrictedObject {
-          restrictedField
-        }
-      }
-    `,
-  });
-} catch (error) {
-  const resp = error as FetchError<GraphQLResponse>;
-
-  console.log("Error:", JSON.stringify(resp, null, 2));
-  // Error: {
-  //   "body": {
-  //     "errors": [
-  //       {
-  //         "message": "field 'restrictedObject' not found in type: 'query_root'",
-  //         "extensions": {
-  //           "path": "$.selectionSet.restrictedObject",
-  //           "code": "validation-failed"
-  //         }
-  //       }
-  //     ]
-  //   },
-  //   "status": 200,
-  //   "headers": {}
-  // }
-  //
-  // error handling...
-```
-
-### Functions
-
-```ts
-// Needs the following imports:
-//
-// import { FetchError } from "@nhost/nhost-js/fetch";
-//
-
-const nhost = createClient({
-  subdomain,
-  region,
-});
-
-try {
-  await nhost.functions.fetch("/crash", {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-    },
-  });
-} catch (error) {
-  const resp = error as FetchError<string>;
-  console.log("Error:", resp);
-  // Error: {
-  //   status: 500,
-  //   body: '<!DOCTYPE html>\n' +
-  //     '<html lang="en">\n' +
-  //     '<head>\n' +
-  //     '<meta charset="utf-8">\n' +
-  //     '<title>Error</title>\n' +
-  //     '</head>\n' +
-  //     '<body>\n' +
-  //     '<pre>Error: This is an unhandled error<br> &nbsp; &nbsp;at default (/opt/project/functions/crash.ts:4:11)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/usr/local/lib/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:144:13)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)</pre>\n' +
-  //     '</body>\n' +
-  //     '</html>\n',
-  //   headers: Headers {
-  //     'content-length': '1055',
-  //     'content-security-policy': "default-src 'none'",
-  //     'content-type': 'text/html; charset=utf-8',
-  //     date: 'Tue, 13 May 2025 11:20:04 GMT',
-  //     'x-content-type-options': 'nosniff'
-  //   }
-  // }
-  //
-  // error handling...
-```
-
 ## Classes
 
 ### CookieStorage
@@ -723,9 +539,9 @@ Subscribe to session changes
 
 ###### Parameters
 
-| Parameter  | Type                    | Description                                           |
-| ---------- | ----------------------- | ----------------------------------------------------- |
-| `callback` | `SessionChangeCallback` | Function that will be called when the session changes |
+| Parameter  | Type                                              | Description                                           |
+| ---------- | ------------------------------------------------- | ----------------------------------------------------- |
+| `callback` | [`SessionChangeCallback`](#sessionchangecallback) | Function that will be called when the session changes |
 
 ###### Returns
 
@@ -771,20 +587,169 @@ Sets the session in the underlying storage and notifies subscribers
 
 ## Interfaces
 
-### SessionRefreshOptions
+### NhostClientOptions
 
-Configuration options for the session refresh middleware
+Configuration options for creating an Nhost client
+
+#### Extended by
+
+- [`NhostServerClientOptions`](#nhostserverclientoptions)
 
 #### Properties
 
-##### marginSeconds?
+##### authUrl?
 
 ```ts
-optional marginSeconds: number;
+optional authUrl: string;
 ```
 
-Number of seconds before token expiration when a refresh should be triggered.
-Default is 60 seconds (1 minute).
+Complete base URL for the auth service (overrides subdomain/region)
+
+##### functionsUrl?
+
+```ts
+optional functionsUrl: string;
+```
+
+Complete base URL for the functions service (overrides subdomain/region)
+
+##### graphqlUrl?
+
+```ts
+optional graphqlUrl: string;
+```
+
+Complete base URL for the GraphQL service (overrides subdomain/region)
+
+##### region?
+
+```ts
+optional region: string;
+```
+
+Nhost region (e.g., 'eu-central-1'). Used to construct the base URL for services for the Nhost cloud.
+
+##### storage?
+
+```ts
+optional storage: SessionStorageBackend;
+```
+
+Storage backend to use for session persistence. If not provided, the SDK will
+default to localStorage in the browser or memory in other environments.
+
+##### storageUrl?
+
+```ts
+optional storageUrl: string;
+```
+
+Complete base URL for the storage service (overrides subdomain/region)
+
+##### subdomain?
+
+```ts
+optional subdomain: string;
+```
+
+Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for services for the Nhost cloud.
+
+---
+
+### NhostServerClientOptions
+
+Configuration options for creating an Nhost client
+
+#### Extends
+
+- [`NhostClientOptions`](#nhostclientoptions)
+
+#### Properties
+
+##### authUrl?
+
+```ts
+optional authUrl: string;
+```
+
+Complete base URL for the auth service (overrides subdomain/region)
+
+###### Inherited from
+
+[`NhostClientOptions`](#nhostclientoptions).[`authUrl`](#authurl)
+
+##### functionsUrl?
+
+```ts
+optional functionsUrl: string;
+```
+
+Complete base URL for the functions service (overrides subdomain/region)
+
+###### Inherited from
+
+[`NhostClientOptions`](#nhostclientoptions).[`functionsUrl`](#functionsurl)
+
+##### graphqlUrl?
+
+```ts
+optional graphqlUrl: string;
+```
+
+Complete base URL for the GraphQL service (overrides subdomain/region)
+
+###### Inherited from
+
+[`NhostClientOptions`](#nhostclientoptions).[`graphqlUrl`](#graphqlurl)
+
+##### region?
+
+```ts
+optional region: string;
+```
+
+Nhost region (e.g., 'eu-central-1'). Used to construct the base URL for services for the Nhost cloud.
+
+###### Inherited from
+
+[`NhostClientOptions`](#nhostclientoptions).[`region`](#region)
+
+##### storage
+
+```ts
+storage: SessionStorageBackend;
+```
+
+Storage backend to use for session persistence. If not provided, the SDK will
+default to localStorage in the browser or memory in other environments.
+
+###### Overrides
+
+[`NhostClientOptions`](#nhostclientoptions).[`storage`](#storage-1)
+
+##### storageUrl?
+
+```ts
+optional storageUrl: string;
+```
+
+Complete base URL for the storage service (overrides subdomain/region)
+
+###### Inherited from
+
+[`NhostClientOptions`](#nhostclientoptions).[`storageUrl`](#storageurl)
+
+##### subdomain?
+
+```ts
+optional subdomain: string;
+```
+
+Nhost project subdomain (e.g., 'abcdefgh'). Used to construct the base URL for services for the Nhost cloud.
+
+###### Inherited from
+
+[`NhostClientOptions`](#nhostclientoptions).[`subdomain`](#subdomain)
 
 ---
 
@@ -839,6 +804,26 @@ Set the session in storage
 
 `void`
 
+## Type Aliases
+
+### SessionChangeCallback()
+
+```ts
+type SessionChangeCallback = (session: Session | null) => void;
+```
+
+Callback function type for session change subscriptions
+
+#### Parameters
+
+| Parameter | Type                                    |
+| --------- | --------------------------------------- |
+| `session` | [`Session`](auth#session) \| `null` |
+
+#### Returns
+
+`void`
+
 ## Variables
 
 ### DEFAULT_SESSION_KEY
@@ -851,108 +836,62 @@ Default storage key used for storing the Nhost session
 
 ## Functions
 
-### createAttachAccessTokenMiddleware()
+### createClient()
 
 ```ts
-function createAttachAccessTokenMiddleware(
-  storage: SessionStorage,
-): ChainFunction;
+function createClient(options: NhostClientOptions): NhostClient;
 ```
 
-Creates a fetch middleware that adds the Authorization header with the current access token.
+Creates and configures a new Nhost client instance.
 
-This middleware:
+This helper method instantiates a fully configured Nhost client by:
 
-1. Gets the current session from storage
-2. Adds the authorization header with the access token to outgoing requests
-
-This middleware should be used after the refresh middleware in the chain to
-ensure the most recent token is used.
+- Instantiating the various service clients (auth, storage, functions and graphql)
+- Configuring a session storage if none is provided
+- Setting up the necessary middleware for automatic session management:
+  - Automatically attaching the authorization token to requests
+  - Refreshing the session when it expires
+  - Applying session tokens to function calls
 
 #### Parameters
 
-| Parameter | Type                                  | Description                                        |
-| --------- | ------------------------------------- | -------------------------------------------------- |
-| `storage` | [`SessionStorage`](#sessionstorage-1) | Storage implementation for retrieving session data |
+| Parameter | Type                                        | Description                          |
+| --------- | ------------------------------------------- | ------------------------------------ |
+| `options` | [`NhostClientOptions`](#nhostclientoptions) | Configuration options for the client |
 
 #### Returns
 
-[`ChainFunction`](fetch#chainfunction)
+[`NhostClient`](#nhostclient)
 
-A middleware function that adds Authorization headers
+A configured Nhost client
 
 ---
 
-### createSessionRefreshMiddleware()
+### createServerClient()
 
 ```ts
-function createSessionRefreshMiddleware(
-  refreshSession: (
-    auth: Client,
-    storage: SessionStorage,
-    marginSeconds: number,
-  ) => Promise<null | Session>,
-  auth: Client,
-  storage: SessionStorage,
-  options?: SessionRefreshOptions,
-): ChainFunction;
+function createServerClient(options: NhostServerClientOptions): NhostClient;
 ```
 
-Creates a fetch middleware that automatically refreshes authentication tokens.
+Creates and configures a new Nhost client instance to be used on a server component or middleware.
 
-This middleware:
+This helper method instantiates a fully configured Nhost client by:
 
-1. Checks if the current token is about to expire
-2. If so, uses the refresh token to obtain a new access token
-
-The middleware handles token refresh transparently, so the application
-doesn't need to manually refresh tokens.
+- Instantiating the various service clients (auth, storage, functions and graphql)
+- Configuring a session storage if none is provided
+- Setting up the necessary middleware for automatic session management:
+  - Automatically attaching the authorization token to requests
+  - Refreshing the session when it expires
+  - Applying session tokens to function calls
 
 #### Parameters
 
-| Parameter        | Type                                                                                                                                                                           | Description                                        |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
-| `refreshSession` | (`auth`: [`Client`](auth#client), `storage`: [`SessionStorage`](#sessionstorage-1), `marginSeconds`: `number`) => `Promise`&lt;`null` \| [`Session`](auth#session)&gt; | -                                                  |
-| `auth`           | [`Client`](auth#client)                                                                                                                                                    | -                                                  |
-| `storage`        | [`SessionStorage`](#sessionstorage-1)                                                                                                                                          | Storage implementation for persisting session data |
-| `options?`       | [`SessionRefreshOptions`](#sessionrefreshoptions)                                                                                                                              | Configuration options for token refresh behavior   |
+| Parameter | Type                                                    | Description                          |
+| --------- | ------------------------------------------------------- | ------------------------------------ |
+| `options` | [`NhostServerClientOptions`](#nhostserverclientoptions) | Configuration options for the client |
 
 #### Returns
 
-[`ChainFunction`](fetch#chainfunction)
+[`NhostClient`](#nhostclient)
 
-A middleware function that can be used in the fetch chain
-
----
-
-### createSessionResponseMiddleware()
-
-```ts
-function createSessionResponseMiddleware(
-  storage: SessionStorage,
-): ChainFunction;
-```
-
-Creates a fetch middleware that automatically extracts and stores session data from API responses.
-
-This middleware:
-
-1. Monitors responses from authentication-related endpoints
-2. Extracts session information when present
-3. Stores the session in the provided storage implementation
-4. Handles session removal on sign-out
-
-This ensures that session data is always up-to-date in storage after operations
-that create or invalidate sessions.
-
-#### Parameters
-
-| Parameter | Type                                  | Description                                        |
-| --------- | ------------------------------------- | -------------------------------------------------- |
-| `storage` | [`SessionStorage`](#sessionstorage-1) | Storage implementation for persisting session data |
-
-#### Returns
-
-[`ChainFunction`](fetch#chainfunction)
-
-A middleware function that can be used in the fetch chain
+A configured Nhost client

@@ -18,32 +18,10 @@
  *
  * {@includeCode ./__tests__/docstrings.test.ts#mainExample}
  *
- * ## Error handling
- *
- * The SDK will throw errors on most operations if the request returns a non-2xx status code or
- * if the request fails entirely (i.e., due to network errors). A continuation you can see
- * how you can handle errors thrown by the SDK.
- *
- * ### Auth
- *
- * {@includeCode ./__tests__/docstrings-auth.test.ts#errorHandling}
- *
- * ### Storage
- *
- * {@includeCode ./__tests__/docstrings-storage.test.ts#errorHandling}
- *
- * ### GraphQL
- *
- * {@includeCode ./__tests__/docstrings-graphql.test.ts#errorHandling}
- *
- * ### Functions
- *
- * {@includeCode ./__tests__/docstrings-functions.test.ts#errorHandling}
- *
  * @packageDocumentation
  */
 
-export { SessionStorage } from "./sessionStorage";
+export { SessionStorage, type SessionChangeCallback } from "./sessionStorage";
 export {
   type SessionStorageBackend,
   DEFAULT_SESSION_KEY,

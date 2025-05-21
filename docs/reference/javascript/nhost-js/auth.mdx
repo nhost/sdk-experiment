@@ -2,6 +2,53 @@ This is the main module to interact with Nhost's Auth service.
 Typically you would use this modula via the main [Nhost client](main#createclient)
 but you can also use it directly if you have a specific use case.
 
+## Error handling
+
+The SDK will throw errors in most operations if the request return a status >=400 or
+if the request fails entirely (i.e., due to network errors). A continuation you can see
+how you can handle errors thrown by the SDK when the status is >=400.
+
+```ts
+// Needs the following imports:
+//
+// import {
+//   type ErrorResponse,
+// } from "@nhost/nhost-js/auth";
+// import {
+//   type FetchError,
+// } from "@nhost/nhost-js/fetch";
+//
+const nhost = createClient({
+  subdomain,
+  region,
+});
+try {
+  await nhost.auth.signInEmailPassword({
+    email,
+    password,
+  });
+
+  expect(true).toBe(false); // This should not be reached
+} catch (error) {
+  const err = error as FetchError<ErrorResponse>;
+  console.log("Error:", err);
+  // Error: {
+  //   body: {
+  //     error: 'invalid-email-password',
+  //     message: 'Incorrect email or password',
+  //     status: 401
+  //   },
+  //   status: 401,
+  //   headers: {
+  //     'content-length': '88',
+  //     'content-type': 'application/json',
+  //     date: 'Mon, 12 May 2025 08:08:28 GMT'
+  //   }
+  // }
+
+  // error handling...
+```
+
 ## Interfaces
 
 ### Client

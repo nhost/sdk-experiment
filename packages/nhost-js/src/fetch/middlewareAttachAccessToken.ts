@@ -23,7 +23,7 @@ import type { ChainFunction, FetchFunction } from "./fetch";
  * @param storage - Storage implementation for retrieving session data
  * @returns A middleware function that adds Authorization headers
  */
-export const createAttachAccessTokenMiddleware =
+export const attachAccessTokenMiddleware =
   (storage: SessionStorage): ChainFunction =>
   (next: FetchFunction): FetchFunction =>
   async (url: string, options: RequestInit = {}): Promise<Response> => {

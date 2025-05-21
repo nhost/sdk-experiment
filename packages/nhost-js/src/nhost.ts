@@ -7,16 +7,22 @@ import {
   createAPIClient as createStorageClient,
   type Client as StorageClient,
 } from "./storage";
-import type { Client as GraphQLClient } from "./graphql";
-import type { Client as FunctionsClient } from "./functions";
-import { createAPIClient as createGraphQLClient } from "./graphql";
-import { createAPIClient as createFunctionsClient } from "./functions";
-import type { ChainFunction } from "./fetch";
+import {
+  type Client as GraphQLClient,
+  createAPIClient as createGraphQLClient,
+} from "./graphql";
+import {
+  type Client as FunctionsClient,
+  createAPIClient as createFunctionsClient,
+} from "./functions";
 import { generateServiceUrl } from "./";
+import {
+  type ChainFunction,
+  attachAccessTokenMiddleware,
+  updateSessionFromResponseMiddleware,
+  sessionRefreshMiddleware,
+} from "./fetch";
 
-import { createSessionRefreshMiddleware } from "./fetch/middlewareRefreshSession";
-import { createAttachAccessTokenMiddleware } from "./fetch/middlewareAttachToken";
-import { createSessionResponseMiddleware } from "./fetch/middlewareResponseSession";
 import { detectStorage, SessionStorage } from "./sessionStorage";
 import { type SessionStorageBackend } from "./sessionStorageBackend";
 import { refreshSession } from "./refreshSession";
@@ -314,12 +320,12 @@ function getMiddlewareChain(
   autoRefresh: boolean,
 ): ChainFunction[] {
   const mwChain = [
-    createSessionResponseMiddleware(storage),
-    createAttachAccessTokenMiddleware(storage),
+    updateSessionFromResponseMiddleware(storage),
+    attachAccessTokenMiddleware(storage),
   ];
 
   if (autoRefresh) {
-    mwChain.push(createSessionRefreshMiddleware(refreshSession, auth, storage));
+    mwChain.push(sessionRefreshMiddleware(auth, storage));
   }
 
   return mwChain;

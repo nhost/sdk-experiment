@@ -2,6 +2,59 @@ This is the main module to interact with Nhost's GraphQL service.
 Typically you would use this modula via the main [Nhost client](main#createclient)
 but you can also use it directly if you have a specific use case.
 
+## Error handling
+
+The SDK will throw errors in gaphql operations that respond with the errors attribute
+with length > 0.
+
+```ts
+// Needs the following imports:
+//
+// import {
+//   type GraphQLResponse,
+// } from "@nhost/nhost-js/graphql";
+// import {
+//   type FetchError,
+// } from "@nhost/fetch";
+//
+const nhost = createClient({
+  subdomain,
+  region,
+});
+
+try {
+  await nhost.graphql.post({
+    query: `
+      query GetRestrictedObject {
+        restrictedObject {
+          restrictedField
+        }
+      }
+    `,
+  });
+} catch (error) {
+  const resp = error as FetchError<GraphQLResponse>;
+
+  console.log("Error:", JSON.stringify(resp, null, 2));
+  // Error: {
+  //   "body": {
+  //     "errors": [
+  //       {
+  //         "message": "field 'restrictedObject' not found in type: 'query_root'",
+  //         "extensions": {
+  //           "path": "$.selectionSet.restrictedObject",
+  //           "code": "validation-failed"
+  //         }
+  //       }
+  //     ]
+  //   },
+  //   "status": 200,
+  //   "headers": {}
+  // }
+  //
+  // error handling...
+```
+
 ## Interfaces
 
 ### Client

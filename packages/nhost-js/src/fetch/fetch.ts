@@ -58,9 +58,20 @@ export function createEnhancedFetch(
   );
 }
 
+/**
+ * Interface representing a structured API response.
+ *
+ * This interface provides a consistent structure for responses across the SDK,
+ * offering access to the parsed response body along with status and headers.
+ *
+ * @template T - The type of the response body
+ */
 export interface FetchResponse<T> {
+  /** The parsed response body */
   body: T;
+  /** HTTP status code of the response */
   status: number;
+  /** Response headers */
   headers: Headers;
 }
 
@@ -111,12 +122,32 @@ function extractMessage(body: unknown): string {
   return "An unexpected error occurred";
 }
 
+/**
+ * Error class for representing fetch operation failures.
+ *
+ * This class extends the standard Error to include additional
+ * information about failed requests, including the response body,
+ * status code, and headers. The error message is automatically
+ * extracted from common error response formats.
+ *
+ * @template T - The type of the response body
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class FetchError<T = any> extends Error {
+  /** The original response body */
   body: T;
+  /** HTTP status code of the failed response */
   status: number;
+  /** Response headers */
   headers: Headers;
 
+  /**
+   * Creates a new FetchError instance
+   *
+   * @param body - The response body from the failed request
+   * @param status - The HTTP status code
+   * @param headers - The response headers
+   */
   constructor(body: T, status: number, headers: Headers) {
     super(extractMessage(body));
     this.body = body;
