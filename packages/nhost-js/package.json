@@ -16,10 +16,10 @@
       "import": "./dist/nhost-js/auth.es.js",
       "require": "./dist/nhost-js/auth.cjs.js"
     },
-    "./storage": {
-      "types": "./dist/src/storage/index.d.ts",
-      "import": "./dist/nhost-js/storage.es.js",
-      "require": "./dist/nhost-js/storage.cjs.js"
+    "./fetch": {
+      "types": "./dist/src/fetch/index.d.ts",
+      "import": "./dist/nhost-js/fetch.es.js",
+      "require": "./dist/nhost-js/fetch.cjs.js"
     },
     "./functions": {
       "types": "./dist/src/functions/index.d.ts",
@@ -31,10 +31,15 @@
       "import": "./dist/nhost-js/graphql.es.js",
       "require": "./dist/nhost-js/graphql.cjs.js"
     },
-    "./fetch": {
-      "types": "./dist/src/fetch/index.d.ts",
-      "import": "./dist/nhost-js/fetch.es.js",
-      "require": "./dist/nhost-js/fetch.cjs.js"
+    "./session": {
+      "types": "./dist/src/session/index.d.ts",
+      "import": "./dist/nhost-js/session.es.js",
+      "require": "./dist/nhost-js/session.cjs.js"
+    },
+    "./storage": {
+      "types": "./dist/src/storage/index.d.ts",
+      "import": "./dist/nhost-js/storage.es.js",
+      "require": "./dist/nhost-js/storage.cjs.js"
     }
   },
   "typesVersions": {
@@ -42,8 +47,8 @@
       "auth": [
         "dist/src/auth/index.d.ts"
       ],
-      "storage": [
-        "dist/src/storage/index.d.ts"
+      "fetch": [
+        "dist/src/fetch/index.d.ts"
       ],
       "functions": [
         "dist/src/functions/index.d.ts"
@@ -51,8 +56,11 @@
       "graphql": [
         "dist/src/graphql/index.d.ts"
       ],
-      "fetch": [
-        "dist/src/fetch/index.d.ts"
+      "session": [
+        "dist/src/session/index.d.ts"
+      ],
+      "storage": [
+        "dist/src/storage/index.d.ts"
       ]
     }
   },

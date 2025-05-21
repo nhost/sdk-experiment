@@ -1,7 +1,7 @@
 import { test, expect } from "@jest/globals";
-import { createClient } from "../";
-import { type ErrorResponse } from "../storage";
-import { type FetchError } from "../fetch";
+import { createClient } from "../../";
+import { type ErrorResponse } from "../../storage";
+import { type FetchError } from "../../fetch";
 
 test("error handling for storage", async () => {
   const subdomain = "local";

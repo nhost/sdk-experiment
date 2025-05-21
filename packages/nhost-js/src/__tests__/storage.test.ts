@@ -1,29 +1,13 @@
 import { describe, beforeAll, it, expect } from "@jest/globals";
-import { createAPIClient as createAuthClient } from "../auth";
-import { MemoryStorage } from "../sessionStorage";
-import { createSessionRefreshMiddleware } from "../middlewareRefreshSession";
-import { createAttachAccessTokenMiddleware } from "../middlewareAttachToken";
-import {
-  createAPIClient as createStorageClient,
-  type ErrorResponse,
-} from "../storage";
+import { createClient } from "../";
+import { type ErrorResponse } from "../storage";
 import { type FetchError } from "../fetch";
 
 describe("Test Storage API", () => {
-  const nhostAuth = createAuthClient("https://local.auth.local.nhost.run/v1");
-
-  const storage = new MemoryStorage();
-
-  const nhostStorage = createStorageClient(
-    "https://local.storage.local.nhost.run/v1",
-    [
-      createSessionRefreshMiddleware(nhostAuth, storage),
-      createAttachAccessTokenMiddleware(storage),
-    ],
-  );
+  const nhost = createClient();
 
   beforeAll(async () => {
-    const response = await nhostAuth.signUpEmailPassword({
+    const response = await nhost.auth.signUpEmailPassword({
       email: `test-${Date.now()}@example.com`,
       password: "password123",
       options: {
@@ -42,15 +26,13 @@ describe("Test Storage API", () => {
     if (!body.session) {
       throw new Error("Session is undefined");
     }
-
-    storage.set(body.session);
   });
 
   const uuid1 = crypto.randomUUID();
   const uuid2 = crypto.randomUUID();
 
   it("should get version", async () => {
-    const resp = await nhostStorage.getVersion();
+    const resp = await nhost.storage.getVersion();
 
     expect(resp.status).toBe(200);
     expect(resp.body).toBeDefined();
@@ -58,7 +40,7 @@ describe("Test Storage API", () => {
   });
 
   it("should upload a file", async () => {
-    const resp = await nhostStorage.uploadFiles({
+    const resp = await nhost.storage.uploadFiles({
       "bucket-id": "default",
       "metadata[]": [
         {
@@ -110,7 +92,7 @@ describe("Test Storage API", () => {
 
   it("upload fails", async () => {
     try {
-      await nhostStorage.uploadFiles({
+      await nhost.storage.uploadFiles({
         "bucket-id": "default",
         "metadata[]": [
           {
@@ -145,7 +127,7 @@ describe("Test Storage API", () => {
   let etag: string;
 
   it("should get file metadata headers", async () => {
-    const resp = await nhostStorage.getFileMetadataHeaders(uuid1);
+    const resp = await nhost.storage.getFileMetadataHeaders(uuid1);
 
     expect(resp.status).toBe(200);
     expect(resp.headers.get("content-type")).toBe("text/plain");
@@ -161,7 +143,7 @@ describe("Test Storage API", () => {
   });
 
   it("should get file metadata headers with If-None-Match matches", async () => {
-    const resp = await nhostStorage.getFileMetadataHeaders(
+    const resp = await nhost.storage.getFileMetadataHeaders(
       uuid1,
       {},
       {
@@ -180,7 +162,7 @@ describe("Test Storage API", () => {
   });
 
   it("should get file metadata headers with If-None-Match does not match", async () => {
-    const resp = await nhostStorage.getFileMetadataHeaders(
+    const resp = await nhost.storage.getFileMetadataHeaders(
       uuid1,
       {},
       {
@@ -202,7 +184,7 @@ describe("Test Storage API", () => {
   });
 
   it("should get file", async () => {
-    const resp = await nhostStorage.getFile(uuid1, {});
+    const resp = await nhost.storage.getFile(uuid1, {});
     expect(resp.status).toBe(200);
     expect(resp.body).toBeDefined();
     expect(resp.headers).toBeDefined();
@@ -218,7 +200,7 @@ describe("Test Storage API", () => {
   });
 
   it("should not get file If-None-Match matches", async () => {
-    const resp = await nhostStorage.getFile(
+    const resp = await nhost.storage.getFile(
       uuid1,
       {},
       {
@@ -238,7 +220,7 @@ describe("Test Storage API", () => {
   });
 
   it("should replace file", async () => {
-    const fileResponse = await nhostStorage.replaceFile(uuid1, {
+    const fileResponse = await nhost.storage.replaceFile(uuid1, {
       file: new Blob(["test1 new"], { type: "text/plain" }),
       metadata: {
         name: "test1 new",
@@ -262,7 +244,7 @@ describe("Test Storage API", () => {
   });
 
   it("should delete file", async () => {
-    const fileResponse = await nhostStorage.deleteFile(uuid1);
+    const fileResponse = await nhost.storage.deleteFile(uuid1);
     expect(fileResponse.status).toBe(204);
   });
 });

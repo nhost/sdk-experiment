@@ -1,5 +1,5 @@
 /**
- * @fileoverview GraphQL client for the Nhost JavaScript SDK.
+ * GraphQL client for the Nhost JavaScript SDK.
  *
  * This module provides functionality for executing GraphQL operations against
  * a Hasura GraphQL API.

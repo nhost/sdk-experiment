@@ -1,5 +1,5 @@
 /**
- * @fileoverview Functions client for the Nhost JavaScript SDK.
+ * Functions client for the Nhost JavaScript SDK.
  *
  * This module provides functionality for executing serverless function calls
  * against Nhost serverless functions.

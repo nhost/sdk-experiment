@@ -9,10 +9,11 @@ export default defineConfig({
       entry: {
         "nhost-js": resolve(__dirname, "src/index.ts"),
         "nhost-js/auth": resolve(__dirname, "src/auth/index.ts"),
-        "nhost-js/storage": resolve(__dirname, "src/storage/index.ts"),
+        "nhost-js/fetch": resolve(__dirname, "src/fetch/index.ts"),
         "nhost-js/functions": resolve(__dirname, "src/functions/index.ts"),
         "nhost-js/graphql": resolve(__dirname, "src/graphql/index.ts"),
-        "nhost-js/fetch": resolve(__dirname, "src/fetch/index.ts"),
+        "nhost-js/session": resolve(__dirname, "src/session/index.ts"),
+        "nhost-js/storage": resolve(__dirname, "src/storage/index.ts"),
       },
       name: "NhostJs",
       formats: ["es", "cjs"],

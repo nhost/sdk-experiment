@@ -1,9 +1,5 @@
 import { describe, it, expect } from "@jest/globals";
-import { createAPIClient as createAuthClient } from "../auth";
-import { MemoryStorage } from "../sessionStorage";
-import { createSessionRefreshMiddleware } from "../middlewareRefreshSession";
-import { createAttachAccessTokenMiddleware } from "../middlewareAttachToken";
-import { createAPIClient as createFunctionClient } from "../functions";
+import { createClient } from "../";
 import { type FetchError } from "../fetch";
 
 interface EchoResponse {
@@ -13,20 +9,10 @@ interface EchoResponse {
 }
 
 describe("Test Storage API", () => {
-  const nhostAuth = createAuthClient("https://local.auth.local.nhost.run/v1");
-
-  const storage = new MemoryStorage();
-
-  const nhostFunctions = createFunctionClient(
-    "https://local.functions.local.nhost.run/v1",
-    [
-      createSessionRefreshMiddleware(nhostAuth, storage),
-      createAttachAccessTokenMiddleware(storage),
-    ],
-  );
+  const nhost = createClient();
 
   it("should sign up a user with email and password", async () => {
-    const response = await nhostAuth.signUpEmailPassword({
+    const response = await nhost.auth.signUpEmailPassword({
       email: `test-${Date.now()}@example.com`,
       password: "password123",
       options: {
@@ -45,12 +31,10 @@ describe("Test Storage API", () => {
     if (!body.session) {
       throw new Error("Session is undefined");
     }
-
-    storage.set(body.session);
   });
 
   it("text/plain (default) returns string", async () => {
-    const resp = await nhostFunctions.fetch<string>("/echo", {
+    const resp = await nhost.functions.fetch<string>("/echo", {
       method: "POST",
       body: JSON.stringify({
         message: "Hello, world!",
@@ -69,7 +53,7 @@ describe("Test Storage API", () => {
   });
 
   it("text/plain (specified) returns string", async () => {
-    const resp = await nhostFunctions.fetch<EchoResponse>("/echo", {
+    const resp = await nhost.functions.fetch<EchoResponse>("/echo", {
       method: "POST",
       body: JSON.stringify({
         message: "Hello, world!",
@@ -89,7 +73,7 @@ describe("Test Storage API", () => {
   });
 
   it("application/json returns object", async () => {
-    const resp = await nhostFunctions.fetch<EchoResponse>("/echo", {
+    const resp = await nhost.functions.fetch<EchoResponse>("/echo", {
       method: "POST",
       body: JSON.stringify({
         message: "Hello, world!",
@@ -125,7 +109,7 @@ describe("Test Storage API", () => {
   });
 
   it("application/octet-stream returns blob", async () => {
-    const resp = await nhostFunctions.fetch("/echo", {
+    const resp = await nhost.functions.fetch("/echo", {
       method: "POST",
       headers: {
         Accept: "application/octet-stream",
@@ -142,7 +126,7 @@ describe("Test Storage API", () => {
 
   it("error handling", async () => {
     try {
-      await nhostFunctions.fetch<undefined>("/crash", {
+      await nhost.functions.fetch<undefined>("/crash", {
         method: "POST",
         headers: {
           Accept: "application/json",

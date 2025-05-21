@@ -1,13 +1,13 @@
 /**
- * @fileoverview Authorization token attachment middleware for the Nhost SDK.
+ * Authorization token attachment middleware for the Nhost SDK.
  *
  * This module provides middleware functionality to automatically attach
  * authorization tokens to outgoing API requests, ensuring the client
  * is properly authenticated.
  */
 
-import type { Session } from "./auth";
-import type { SessionStorageInterface } from "./sessionStorage";
+import type { Session } from "../auth";
+import type { SessionStorage } from "../session/storage";
 import type { ChainFunction, FetchFunction } from "./fetch";
 
 /**
@@ -23,8 +23,8 @@ import type { ChainFunction, FetchFunction } from "./fetch";
  * @param storage - Storage implementation for retrieving session data
  * @returns A middleware function that adds Authorization headers
  */
-export const createAttachAccessTokenMiddleware =
-  (storage: SessionStorageInterface): ChainFunction =>
+export const attachAccessTokenMiddleware =
+  (storage: SessionStorage): ChainFunction =>
   (next: FetchFunction): FetchFunction =>
   async (url: string, options: RequestInit = {}): Promise<Response> => {
     const headers = new Headers(options.headers || {});

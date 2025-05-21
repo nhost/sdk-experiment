@@ -1,7 +1,7 @@
 import { test, expect } from "@jest/globals";
-import { createClient } from "../";
-import type { GraphQLResponse } from "../graphql/client";
-import type { FetchError } from "../fetch";
+import { createClient } from "../../";
+import type { GraphQLResponse } from "../../graphql/client";
+import type { FetchError } from "../../fetch";
 
 test("error handling for graphql", async () => {
   const subdomain = "local";

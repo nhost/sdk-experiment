@@ -1,6 +1,22 @@
+Enhanced fetch implementation with middleware support.
+
+This module provides a middleware pattern for the Fetch API, allowing
+chain functions to be applied to requests and responses, such as
+authentication token refreshing, error handling, and request/response transformation.
+
+This is an advanced submodule of the Nhost SDK, primarily used internally but it is exposed
+for advanced use cases.
+
 ## Classes
 
 ### FetchError&lt;T&gt;
+
+Error class for representing fetch operation failures.
+
+This class extends the standard Error to include additional
+information about failed requests, including the response body,
+status code, and headers. The error message is automatically
+extracted from common error response formats.
 
 #### Extends
 
@@ -8,9 +24,9 @@
 
 #### Type Parameters
 
-| Type Parameter | Default type |
-| -------------- | ------------ |
-| `T`            | `any`        |
+| Type Parameter | Default type | Description                   |
+| -------------- | ------------ | ----------------------------- |
+| `T`            | `any`        | The type of the response body |
 
 #### Constructors
 
@@ -23,13 +39,15 @@ new FetchError<T>(
    headers: Headers): FetchError<T>;
 ```
 
+Creates a new FetchError instance
+
 ###### Parameters
 
-| Parameter | Type      |
-| --------- | --------- |
-| `body`    | `T`       |
-| `status`  | `number`  |
-| `headers` | `Headers` |
+| Parameter | Type      | Description                               |
+| --------- | --------- | ----------------------------------------- |
+| `body`    | `T`       | The response body from the failed request |
+| `status`  | `number`  | The HTTP status code                      |
+| `headers` | `Headers` | The response headers                      |
 
 ###### Returns
 
@@ -43,21 +61,26 @@ Error.constructor;
 
 #### Properties
 
-| Property                       | Type      |
-| ------------------------------ | --------- |
-| <a id="body"></a> `body`       | `T`       |
-| <a id="headers"></a> `headers` | `Headers` |
-| <a id="status"></a> `status`   | `number`  |
+| Property                       | Type      | Description                             |
+| ------------------------------ | --------- | --------------------------------------- |
+| <a id="body"></a> `body`       | `T`       | The original response body              |
+| <a id="headers"></a> `headers` | `Headers` | Response headers                        |
+| <a id="status"></a> `status`   | `number`  | HTTP status code of the failed response |
 
 ## Interfaces
 
 ### FetchResponse&lt;T&gt;
 
+Interface representing a structured API response.
+
+This interface provides a consistent structure for responses across the SDK,
+offering access to the parsed response body along with status and headers.
+
 #### Type Parameters
 
-| Type Parameter |
-| -------------- |
-| `T`            |
+| Type Parameter | Description                   |
+| -------------- | ----------------------------- |
+| `T`            | The type of the response body |
 
 #### Properties
 
@@ -67,17 +90,23 @@ Error.constructor;
 body: T;
 ```
 
+The parsed response body
+
 ##### headers
 
 ```ts
 headers: Headers;
 ```
 
+Response headers
+
 ##### status
 
 ```ts
 status: number;
 ```
+
+HTTP status code of the response
 
 ## Type Aliases
 
@@ -132,6 +161,36 @@ This allows middleware to intercept and modify requests and responses.
 
 ## Functions
 
+### attachAccessTokenMiddleware()
+
+```ts
+function attachAccessTokenMiddleware(storage: SessionStorage): ChainFunction;
+```
+
+Creates a fetch middleware that adds the Authorization header with the current access token.
+
+This middleware:
+
+1. Gets the current session from storage
+2. Adds the authorization header with the access token to outgoing requests
+
+This middleware should be used after the refresh middleware in the chain to
+ensure the most recent token is used.
+
+#### Parameters
+
+| Parameter | Type                                           | Description                                        |
+| --------- | ---------------------------------------------- | -------------------------------------------------- |
+| `storage` | [`SessionStorage`](session#sessionstorage) | Storage implementation for retrieving session data |
+
+#### Returns
+
+[`ChainFunction`](#chainfunction)
+
+A middleware function that adds Authorization headers
+
+---
+
 ### createEnhancedFetch()
 
 ```ts
@@ -173,3 +232,74 @@ const loggingMiddleware: ChainFunction = (next) => {
 const enhancedFetch = createEnhancedFetch([loggingMiddleware]);
 const response = await enhancedFetch("https://api.example.com/data");
 ```
+
+---
+
+### sessionRefreshMiddleware()
+
+```ts
+function sessionRefreshMiddleware(
+  auth: Client,
+  storage: SessionStorage,
+  options?: object,
+): ChainFunction;
+```
+
+Creates a fetch middleware that automatically refreshes authentication tokens.
+
+This middleware:
+
+1. Checks if the current token is about to expire
+2. If so, uses the refresh token to obtain a new access token
+
+The middleware handles token refresh transparently, so the application
+doesn't need to manually refresh tokens.
+
+#### Parameters
+
+| Parameter                | Type                                           | Description                                                                           |
+| ------------------------ | ---------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `auth`                   | [`Client`](auth#client)                    | Auth API client for token refresh operations                                          |
+| `storage`                | [`SessionStorage`](session#sessionstorage) | Storage implementation for persisting session data                                    |
+| `options?`               | \{ `marginSeconds?`: `number`; \}              | Configuration options for token refresh behavior                                      |
+| `options.marginSeconds?` | `number`                                       | Number of seconds before token expiration to trigger a refresh, default is 60 seconds |
+
+#### Returns
+
+[`ChainFunction`](#chainfunction)
+
+A middleware function that can be used in the fetch chain
+
+---
+
+### updateSessionFromResponseMiddleware()
+
+```ts
+function updateSessionFromResponseMiddleware(
+  storage: SessionStorage,
+): ChainFunction;
+```
+
+Creates a fetch middleware that automatically extracts and stores session data from API responses.
+
+This middleware:
+
+1. Monitors responses from authentication-related endpoints
+2. Extracts session information when present
+3. Stores the session in the provided storage implementation
+4. Handles session removal on sign-out
+
+This ensures that session data is always up-to-date in storage after operations
+that create or invalidate sessions.
+
+#### Parameters
+
+| Parameter | Type                                           | Description                                        |
+| --------- | ---------------------------------------------- | -------------------------------------------------- |
+| `storage` | [`SessionStorage`](session#sessionstorage) | Storage implementation for persisting session data |
+
+#### Returns
+
+[`ChainFunction`](#chainfunction)
+
+A middleware function that can be used in the fetch chain

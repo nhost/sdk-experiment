@@ -2,6 +2,48 @@ This is the main module to interact with Nhost's Storage service.
 Typically you would use this modula via the main [Nhost client](main#createclient)
 but you can also use it directly if you have a specific use case.
 
+## Error handling
+
+The SDK will throw errors in most operations if the request return a status >=400 or
+if the request fails entirely (i.e., due to network errors). A continuation you can see
+how you can handle errors thrown by the SDK when the status is >=400.
+
+```ts
+// Needs the following imports:
+//
+// import {
+//   type ErrorResponse,
+// } from "@nhost/nhost-js/storage";
+// import {
+//   type FetchError,
+// } from "@nhost/nhost-js/fetch";
+//
+const nhost = createClient({
+  subdomain,
+  region,
+});
+try {
+  await nhost.storage.uploadFiles({
+    "file[]": [new File(["test1"], "file-1", { type: "text/plain" })],
+  });
+
+  expect(true).toBe(false); // This should not be reached
+} catch (error) {
+  const err = error as FetchError<ErrorResponse>;
+  console.log("Error:", err);
+  // Error: {
+  //   body: { error: { message: 'you are not authorized' } },
+  //   status: 403,
+  //   headers: {
+  //     'content-length': '46',
+  //     'content-type': 'application/json; charset=utf-8',
+  //     date: 'Mon, 12 May 2025 08:18:52 GMT'
+  //   }
+  // }
+
+  // error handling...
+```
+
 ## Interfaces
 
 ### Client

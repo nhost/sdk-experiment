@@ -1,17 +1,17 @@
 /**
- * @fileoverview Storage implementations for session persistence in different environments.
+ * Storage implementations for session persistence in different environments.
  *
  * This module provides different storage adapters for persisting authentication sessions
  * across page reloads and browser sessions.
  */
 
-import type { Session } from "./auth";
+import type { Session } from "../auth";
 
 /**
  * Session storage interface for session persistence.
  * This interface can be implemented to provide custom storage solutions.
  */
-export interface SessionStorageInterface {
+export interface SessionStorageBackend {
   /**
    * Get the current session from storage
    * @returns The stored session or null if not found
@@ -39,7 +39,7 @@ export const DEFAULT_SESSION_KEY = "nhostSession";
  * Browser localStorage implementation of StorageInterface.
  * Persists the session across page reloads and browser restarts.
  */
-export class LocalStorage implements SessionStorageInterface {
+export class LocalStorage implements SessionStorageBackend {
   private readonly storageKey: string;
 
   /**
@@ -85,7 +85,7 @@ export class LocalStorage implements SessionStorageInterface {
  * In-memory storage implementation for non-browser environments or when
  * persistent storage is not available or desirable.
  */
-export class MemoryStorage implements SessionStorageInterface {
+export class MemoryStorage implements SessionStorageBackend {
   private session: Session | null = null;
 
   /**
@@ -115,10 +115,10 @@ export class MemoryStorage implements SessionStorageInterface {
 /**
  * Cookie-based storage implementation.
  * This storage uses web browser cookies to store the session so it's not
- * available in server-side environments. It is useful though for sinchronizing
+ * available in server-side environments. It is useful though for synchronizing
  * sessions between client and server environments.
  */
-export class CookieStorage implements SessionStorageInterface {
+export class CookieStorage implements SessionStorageBackend {
   private readonly cookieName: string;
   private readonly expirationDays: number;
   private readonly secure: boolean;
@@ -187,28 +187,3 @@ export class CookieStorage implements SessionStorageInterface {
     document.cookie = `${this.cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; ${this.secure ? "secure; " : ""}SameSite=${this.sameSite}`;
   }
 }
-
-/**
- * Detects the best available storage implementation for the current environment.
- *
- * The detection process follows this order:
- * 1. Try to use localStorage if we're in a browser environment
- * 2. Fall back to in-memory storage if localStorage isn't available
- *
- * @returns The best available storage implementation for the current environment
- */
-export const detectStorage = (): SessionStorageInterface => {
-  if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
-    try {
-      // Test if localStorage is actually available (could be disabled)
-      localStorage.setItem("__test", "__test");
-      localStorage.removeItem("__test");
-      return new LocalStorage();
-    } catch {
-      console.warn(
-        `localStorage is not available, using in-memory storage instead`,
-      );
-    }
-  }
-  return new MemoryStorage();
-};
