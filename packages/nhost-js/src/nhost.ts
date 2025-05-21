@@ -67,7 +67,7 @@ export class NhostClient {
 
   /**
    * Create a new Nhost client. This constructor is reserved for advanced use cases.
-   * For typical usage, use [createClient](#createclient) or [createSSRClient](#createssrclient) instead.
+   * For typical usage, use [createClient](#createclient) or [createServerClient](#createserverclient) instead.
    *
    * @param auth - Authentication client instance
    * @param storage - Storage client instance
@@ -332,7 +332,7 @@ export interface NhostServerClientOptions extends NhostClientOptions {
  * // Example with cookie storage for Next.js API route or server component
  * import { cookies } from 'next/headers';
  *
- * const nhost = createSSRClient({
+ * const nhost = createServerClient({
  *   region: process.env["NHOST_REGION"] || "local",
  *   subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
  *   storage: {
@@ -355,7 +355,7 @@ export interface NhostServerClientOptions extends NhostClientOptions {
  * });
  *
  * // Example with cookie storage for Next.js middleware
- * const nhost = createSSRClient({
+ * const nhost = createServerClient({
  *   region: process.env["NHOST_REGION"] || "local",
  *   subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
  *   storage: {
@@ -385,19 +385,38 @@ export interface NhostServerClientOptions extends NhostClientOptions {
  *   },
  * });
  *
- * // Example with cookie storage for Express.js
- * import { CookieStorage } from "@nhost/nhost-js/session";
+ * // Example for express reading session from a cookie
  *
- * const nhost = createSSRClient({
- *   region: process.env["NHOST_REGION"] || "local",
- *   subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
- *   storage: new CookieStorage({
- *     secure: process.env.NODE_ENV === "production",
- *   }),
- * });
+ * import express, { Request, Response } from "express";
+ * import cookieParser from "cookie-parser";
+ *
+ * app.use(cookieParser());
+ *
+ * const nhostClientFromCookies = (req: Request) => {
+ *   return createServerClient({
+ *     subdomain: "local",
+ *     region: "local",
+ *     storage: {
+ *       get: (): Session | null => {
+ *         const s = req.cookies.nhostSession || null;
+ *         if (!s) {
+ *           return null;
+ *         }
+ *         const session = JSON.parse(s) as Session;
+ *         return session;
+ *       },
+ *       set: (_value: Session) => {
+ *         throw new Error("It is easier to handle the session in the client");
+ *       },
+ *       remove: () => {
+ *         throw new Error("It is easier to handle the session in the client");
+ *       },
+ *     },
+ *   });
+ * };
  * ```
  */
-export function createSSRClient(
+export function createServerClient(
   options: NhostServerClientOptions,
 ): NhostClient {
   const {

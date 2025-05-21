@@ -26,7 +26,7 @@ export {
   type NhostClientOptions,
   createClient,
   type NhostServerClientOptions,
-  createSSRClient,
+  createServerClient,
 } from "./nhost";
 
 /**

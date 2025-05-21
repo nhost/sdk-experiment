@@ -136,7 +136,7 @@ new NhostClient(
 ```
 
 Create a new Nhost client. This constructor is reserved for advanced use cases.
-For typical usage, use [createClient](#createclient) or [createSSRClient](#createssrclient) instead.
+For typical usage, use [createClient](#createclient) or [createServerClient](#createserverclient) instead.
 
 ###### Parameters
 
@@ -481,10 +481,10 @@ const nhost = createClient({
 
 ---
 
-### createSSRClient()
+### createServerClient()
 
 ```ts
-function createSSRClient(options: NhostServerClientOptions): NhostClient;
+function createServerClient(options: NhostServerClientOptions): NhostClient;
 ```
 
 Creates and configures a new Nhost client instance optimized for server-side usage.
@@ -523,7 +523,7 @@ A configured Nhost client optimized for server-side usage
 // Example with cookie storage for Next.js API route or server component
 import { cookies } from "next/headers";
 
-const nhost = createSSRClient({
+const nhost = createServerClient({
   region: process.env["NHOST_REGION"] || "local",
   subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
   storage: {
@@ -546,7 +546,7 @@ const nhost = createSSRClient({
 });
 
 // Example with cookie storage for Next.js middleware
-const nhost = createSSRClient({
+const nhost = createServerClient({
   region: process.env["NHOST_REGION"] || "local",
   subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
   storage: {
@@ -576,16 +576,35 @@ const nhost = createSSRClient({
   },
 });
 
-// Example with cookie storage for Express.js
-import { CookieStorage } from "@nhost/nhost-js/session";
+// Example for express reading session from a cookie
 
-const nhost = createSSRClient({
-  region: process.env["NHOST_REGION"] || "local",
-  subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
-  storage: new CookieStorage({
-    secure: process.env.NODE_ENV === "production",
-  }),
-});
+import express, { Request, Response } from "express";
+import cookieParser from "cookie-parser";
+
+app.use(cookieParser());
+
+const nhostClientFromCookies = (req: Request) => {
+  return createServerClient({
+    subdomain: "local",
+    region: "local",
+    storage: {
+      get: (): Session | null => {
+        const s = req.cookies.nhostSession || null;
+        if (!s) {
+          return null;
+        }
+        const session = JSON.parse(s) as Session;
+        return session;
+      },
+      set: (_value: Session) => {
+        throw new Error("It is easier to handle the session in the client");
+      },
+      remove: () => {
+        throw new Error("It is easier to handle the session in the client");
+      },
+    },
+  });
+};
 ```
 
 ---

@@ -1,4 +1,4 @@
-import { createSSRClient as createSSRClient, type NhostClient } from "@nhost/nhost-js";
+import { createServerClient, type NhostClient } from "@nhost/nhost-js";
 import { DEFAULT_SESSION_KEY } from "@nhost/nhost-js/session";
 import { type Session } from "@nhost/nhost-js/auth";
 import { cookies } from "next/headers";
@@ -20,7 +20,7 @@ const key = DEFAULT_SESSION_KEY;
 export async function createNhostClient(): Promise<NhostClient> {
   const cookieStore = await cookies();
 
-  const nhost = createSSRClient({
+  const nhost = createServerClient({
     region: process.env["NHOST_REGION"] || "local",
     subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
     storage: {
@@ -59,7 +59,7 @@ export async function handleNhostMiddleware(
   request: NextRequest,
   response: NextResponse<unknown>,
 ): Promise<Session | null> {
-  const nhost = createSSRClient({
+  const nhost = createServerClient({
     region: process.env["NHOST_REGION"] || "local",
     subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
     storage: {
