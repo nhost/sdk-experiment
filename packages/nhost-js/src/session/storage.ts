@@ -23,7 +23,7 @@ export type SessionChangeCallback = (session: Session | null) => void;
  */
 export class SessionStorage {
   private readonly storage: SessionStorageBackend;
-  private subscribers: Set<SessionChangeCallback> = new Set();
+  private subscribers = new Set<SessionChangeCallback>();
 
   /**
    * Creates a new SessionStorage instance

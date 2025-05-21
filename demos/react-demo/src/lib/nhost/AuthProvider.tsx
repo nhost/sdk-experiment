@@ -6,8 +6,8 @@ import {
   useMemo,
   type ReactNode,
 } from "react";
-import { createClient } from "@nhost/nhost-js/client";
-import { CookieStorage, NhostClient } from "@nhost/nhost-js";
+import { createClient, type NhostClient } from "@nhost/nhost-js";
+import { CookieStorage } from "@nhost/nhost-js/session";
 import { type Session } from "@nhost/nhost-js/auth";
 
 interface AuthContextType {
@@ -37,9 +37,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       createClient({
         region: import.meta.env.VITE_NHOST_REGION || "local",
         subdomain: import.meta.env.VITE_NHOST_SUBDOMAIN || "local",
-        storage: new CookieStorage({
-          secure: import.meta.env.MODE === "production",
-        }),
       }),
     [],
   );
@@ -56,7 +53,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setIsLoading(false);
 
     const unsubscribe = nhost.sessionStorage.onChange((currentSession) => {
-      console.log("wtf");
       setUser(currentSession?.user || null);
       setSession(currentSession);
       setIsAuthenticated(!!currentSession);

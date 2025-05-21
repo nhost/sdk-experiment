@@ -11,6 +11,29 @@ interface JWTToken {
   exp: number;
 }
 
+class DummyLock implements Lock {
+  async request(
+    _name: string,
+    _options: { mode: "exclusive" | "shared" },
+    callback: () => Promise<any>, //eslint-disable-line @typescript-eslint/no-explicit-any
+  ) {
+    return callback(); //eslint-disable-line @typescript-eslint/no-unsafe-return
+  }
+}
+
+interface Lock {
+  request: (
+    name: string,
+    options: { mode: "exclusive" | "shared" },
+    callback: () => Promise<any>, //eslint-disable-line @typescript-eslint/no-explicit-any
+  ) => Promise<any>; //eslint-disable-line @typescript-eslint/no-explicit-any
+}
+
+const lock: Lock =
+  typeof navigator !== "undefined" && navigator.locks
+    ? navigator.locks
+    : new DummyLock();
+
 /**
  * Extracts the expiration time from a JWT token
  * @param token - JWT token string
@@ -124,14 +147,10 @@ const _refreshSession = async (
   storage: SessionStorage,
   marginSeconds = 60,
 ): Promise<Session | null> => {
-  // we do a quick check with a shared lock to see if we need to refresh
-  const { session, needsRefresh } = await navigator.locks.request(
-    "nhostSessionLock",
-    { mode: "shared" },
-    async () => {
+  const { session, needsRefresh }: { session: Session; needsRefresh: boolean } =
+    await lock.request("nhostSessionLock", { mode: "shared" }, async () => {
       return _needsRefresh(storage, marginSeconds);
-    },
-  );
+    });
 
   if (!session) {
     return null; // No session found
@@ -141,13 +160,10 @@ const _refreshSession = async (
     return session; // No need to refresh
   }
 
-  // as we probably need to refresh now we get an exclusive lock
-  const refreshedSession: Session = await navigator.locks.request(
+  const refreshedSession: Session = await lock.request(
     "nhostSessionLock",
     { mode: "exclusive" },
     async () => {
-      // we check again if we need to refresh as there is a small chance
-      // someone may have done it while acquiring the exclusive lock
       const { session, needsRefresh, sessionExpired } = _needsRefresh(
         storage,
         marginSeconds,
@@ -170,12 +186,9 @@ const _refreshSession = async (
         return response.body;
       } catch (error) {
         if (!sessionExpired) {
-          // If the session is not expired, we can still use the current session
-          // so there is no need to error for now
           return session;
         }
 
-        // we throw the error so the caller can handle it
         throw error;
       }
     },

@@ -327,7 +327,7 @@ function getMiddlewareChain(
   ];
 
   if (autoRefresh) {
-    mwChain.push(sessionRefreshMiddleware(auth, storage));
+    mwChain.unshift(sessionRefreshMiddleware(auth, storage));
   }
 
   return mwChain;
