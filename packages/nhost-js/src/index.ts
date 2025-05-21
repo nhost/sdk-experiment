@@ -37,8 +37,6 @@ export {
  * @param region - Nhost region
  * @param customUrl - Custom URL override if provided
  * @returns The base URL for the service
- *
- * @internal
  */
 export const generateServiceUrl = (
   serviceType: "auth" | "storage" | "graphql" | "functions",
