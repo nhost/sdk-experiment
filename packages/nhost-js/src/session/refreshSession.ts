@@ -147,7 +147,9 @@ const _refreshSession = async (
   storage: SessionStorage,
   marginSeconds = 60,
 ): Promise<Session | null> => {
-  const { session, needsRefresh }: { session: Session; needsRefresh: boolean } =
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const { session, needsRefresh }: { session: Session | null; needsRefresh: boolean } =
+    //eslint-disable-next-line @typescript-eslint/require-await
     await lock.request("nhostSessionLock", { mode: "shared" }, async () => {
       return _needsRefresh(storage, marginSeconds);
     });
@@ -160,7 +162,8 @@ const _refreshSession = async (
     return session; // No need to refresh
   }
 
-  const refreshedSession: Session = await lock.request(
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const refreshedSession: Session | null = await lock.request(
     "nhostSessionLock",
     { mode: "exclusive" },
     async () => {
