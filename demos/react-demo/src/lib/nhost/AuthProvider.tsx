@@ -7,7 +7,6 @@ import {
   type ReactNode,
 } from "react";
 import { createClient, type NhostClient } from "@nhost/nhost-js";
-import { CookieStorage } from "@nhost/nhost-js/session";
 import { type Session } from "@nhost/nhost-js/auth";
 
 interface AuthContextType {
