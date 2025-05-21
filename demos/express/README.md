@@ -5,6 +5,7 @@ This demo showcases how to integrate the Nhost SDK with an Express server, demon
 ## Overview
 
 This demo shows how to:
+
 1. Create an SSR (Server-Side Rendering) Nhost client in an Express application
 2. Handle authentication using cookies
 3. Handle authentication using Authorization headers (JWT tokens)
@@ -13,22 +14,26 @@ This demo shows how to:
 ## Setup
 
 1. Clone the repository and navigate to this demo directory:
+
 ```bash
 cd sdk-experiment/demos/express
 ```
 
 2. Install dependencies:
+
 ```bash
 pnpm install
 ```
 
 3. Start the local Nhost backend (from the root directory):
+
 ```bash
 cd ../..
 pnpm nhost:dev
 ```
 
 4. Start the Express server:
+
 ```bash
 cd demos/express
 pnpm dev
@@ -109,6 +114,7 @@ Use the included curl script to test both authentication methods:
 ### Example Requests
 
 #### Using cookies:
+
 ```bash
 curl \
     -X POST \
@@ -117,6 +123,7 @@ curl \
 ```
 
 #### Using authorization header:
+
 ```bash
 curl \
     -X POST \
@@ -147,10 +154,7 @@ Both endpoints return similar responses:
       "locale": "en",
       "metadata": null,
       "phoneNumberVerified": false,
-      "roles": [
-        "user",
-        "me"
-      ]
+      "roles": ["user", "me"]
     }
   },
   "files": [
