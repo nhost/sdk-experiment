@@ -1613,6 +1613,7 @@ components:
         activeMfaType:
           type: string
           enum: [totp, ""]
+          x-enumNames: [totp, empty]
           description: "Type of MFA to activate. Use empty string to disable MFA."
           example: "totp"
       required:

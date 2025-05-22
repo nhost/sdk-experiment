@@ -1,0 +1,204 @@
+/**
+ * This file is auto-generated. Do not edit manually.
+ */
+import { FetchError, createEnhancedFetch } from "../fetch";
+import type { ChainFunction, FetchResponse } from "../fetch";
+
+import type { Client } from "./interface";
+
+{{- define "renderMethod" }}
+  /**
+   * {{ .Summary }}
+   *
+   * {{ .Description }}
+   */
+  const {{ .Name }} = async (
+      {{- if .HasArgs }}
+      {{ .ArgumentName }}{{ if not .ArgumentRequired }}?{{ end }}: {{ .ArgumentType }},
+      {{- end }}
+      {{ range .PathParameters }}
+      {{ .Name }}: string,
+      {{- end }}
+      {{- if .HasQueryParameters }}
+      params{{ if not .QueryParametersRequired }}?{{ end }}: {{ ToCamelCase .Name }}Params,
+      {{- end }}
+      options?: RequestInit,
+  ): Promise<FetchResponse<{{ .ReturnType }}>> => {
+    {{- if .HasQueryParameters }}
+    const normalizedParams = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value !== undefined) {
+        normalizedParams.append(
+          key,
+          value === null ? "null" : value.toString(),
+        );
+      }
+    });
+
+    const stringifiedParams = normalizedParams.toString();
+
+    baseURL = stringifiedParams.length > 0
+      ? baseURL + `{{ .Path }}?${stringifiedParams}`
+      : baseURL + `{{ .Path }}`;
+
+    {{- end }}
+    const res = await fetch(baseURL + `{{ .Path }}`, {
+      {{- if .HasArgs }}
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify({{ .ArgumentName }}),
+      {{- else }}
+      ...options,
+      {{- end }}
+    });
+
+    if (res.status >= 400) {
+      const body = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = body ? JSON.parse(body) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const payload: {{ .ReturnType }} = body ? JSON.parse(body) : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<{{ .ReturnType }}>;
+  };
+{{- end -}}
+
+{{- define "renderMethodRedirect" }}
+  /**
+   * {{ .Summary }}
+   *
+   * {{ .Description }}
+   */
+  const {{ .Name }} = (
+      {{ range .PathParameters }}
+      {{ .Name }}: string,
+      {{- end }}
+      {{- if .HasQueryParameters }}
+      params{{ if not .QueryParametersRequired }}?{{ end }}: {{ ToCamelCase .Name }}Params,
+      {{- end }}
+  ): string => {
+    {{- if .HasQueryParameters }}
+    const normalizedParams = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value !== undefined) {
+        normalizedParams.append(
+          key,
+          value === null ? "null" : value.toString(),
+        );
+      }
+    });
+
+    const stringifiedParams = normalizedParams.toString();
+
+    baseURL = stringifiedParams.length > 0
+      ? baseURL + `{{ .Path }}?${stringifiedParams}`
+      : baseURL + `{{ .Path }}`;
+
+    {{- end }}
+    return baseURL + `{{ .Path }}`;
+  };
+{{- end -}}
+
+{{- define "renderObject" }}
+/**
+ * {{ .Schema.Description }}
+{{- range .Properties }}
+ * @property {{ .Name }} {{ .Schema.Description }}
+  {{- if .Example }}
+    *    Example - {{ .Example }}
+  {{- end }}
+  {{- if .Schema.Pattern }}
+    *    Pattern - {{ .Schema.Pattern }}
+  {{- end }}
+  {{- if .Format }}
+    *    Format - {{ .Format }}
+  {{- end }}
+  {{- if .MinLength }}
+    *    MinLength - {{ .MinLength }}
+  {{- end }}
+  {{- if .MaxLength }}
+    *    MaxLength - {{ .MaxLength }}
+  {{- end }}
+{{- end -}}
+ */
+export interface {{ .Name }} {
+  {{- range .Properties }}
+  {{ .Name }}{{ if not .IsRequired }}?{{ end}}: {{ .Type }};
+  {{- end }}
+};
+{{ end }}
+
+{{- define "union" }}
+export type {{ .Name }} = {{ range .Union }}{{ . }} & {{ end }}{};
+{{- end }}
+
+
+{{- define "renderEnum" }}
+/**
+ * {{ .Schema.Description }}
+ */
+export enum {{ .Name }} {
+{{- range .Enum }}
+  {{ ToCamelCase .Name }} = "{{ .Value }}",
+{{- end }}
+};
+{{- end }}
+
+{{- range .Types }}
+{{ if .IsUnion }}
+{{ template "union" . }}
+{{ else if .IsObject }}
+{{ template "renderObject" . }}
+{{ else if .IsEnum }}
+{{ template "renderEnum" . }}
+{{ else if .IsUnion }}
+{{ else }}
+// !!!!!!!!!!!! {{ .Name }} is not supported !!!!!!!!!!!!
+{{ end }}
+{{- end }}
+
+{{- range .Methods }}
+{{ if .HasQueryParameters }}
+export interface {{ ToCamelCase .Name }}Params {
+{{- range .QueryParameters }}
+  {{ .Name }}{{ if not .Required }}?{{ end }}: {{ .Type }};
+{{- end }}
+};
+{{- end }}
+{{- end }}
+
+export const createAPIClient = (
+  baseURL: string,
+  chainFunctions: ChainFunction[] = [],
+): Client => {
+  let fetch = createEnhancedFetch(chainFunctions);
+
+  const pushChainFunction = (chainFunction: ChainFunction) => {
+    chainFunctions.push(chainFunction);
+    fetch = createEnhancedFetch(chainFunctions);
+  };
+
+{{- range .Methods }}
+{{ if .IsRedirect }}
+  {{ template "renderMethodRedirect" . }}
+{{ else }}
+  {{ template "renderMethod" . }}
+{{ end }}
+{{- end }}
+
+  return {
+{{- range .Methods }}
+    {{ .Name }},
+{{- end }}
+    baseURL,
+    pushChainFunction,
+  };
+}
