@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createNhostClient } from "../lib/nhost/client";
 import Image from "next/image";
+import { UserMfaRequestActiveMfaType } from "@nhost/nhost-js/auth";
 
 interface MFASettingsProps {
   initialMfaEnabled: boolean;
@@ -62,7 +63,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
     try {
       // Verify and activate MFA
       const response = await nhost.auth.changeUserMfaVerify({
-        activeMfaType: "totp",
+        activeMfaType: UserMfaRequestActiveMfaType.Totp,
         code: verificationCode,
       });
 
@@ -103,7 +104,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
       // Disable MFA by setting activeMfaType to empty string
       // We need to provide the current TOTP code to verify identity
       const response = await nhost.auth.changeUserMfaVerify({
-        activeMfaType: "",
+        activeMfaType: UserMfaRequestActiveMfaType.Empty,
         code: disableVerificationCode,
       });
 

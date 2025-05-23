@@ -1930,35 +1930,6 @@ export const createAPIClient = (
   };
 
   /**
-   * Health check (GET)
-   *
-   * Verify if the authentication service is operational using GET method
-   */
-  const healthCheckGet = async (
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
-    const url = baseURL + `/healthz`;
-    const res = await fetch(url, {
-      ...options,
-      method: "GET",
-    });
-
-    if (res.status >= 400) {
-      const body = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = body ? JSON.parse(body) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: OKResponse = body ? JSON.parse(body) : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<OKResponse>;
-  };
-
-  /**
    * Health check (HEAD)
    *
    * Verify if the authentication service is operational using HEAD method
@@ -1985,6 +1956,35 @@ export const createAPIClient = (
       status: res.status,
       headers: res.headers,
     } as FetchResponse<void>;
+  };
+
+  /**
+   * Health check (GET)
+   *
+   * Verify if the authentication service is operational using GET method
+   */
+  const healthCheckGet = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>> => {
+    const url = baseURL + `/healthz`;
+    const res = await fetch(url, {
+      ...options,
+      method: "GET",
+    });
+
+    if (res.status >= 400) {
+      const body = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = body ? JSON.parse(body) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+    const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const payload: OKResponse = body ? JSON.parse(body) : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<OKResponse>;
   };
 
   /**
@@ -2701,11 +2701,11 @@ export const createAPIClient = (
 
     const stringifiedParams = normalizedParams.toString();
 
-    baseURL =
+    const url =
       stringifiedParams.length > 0
         ? baseURL + `/verify?${stringifiedParams}`
         : baseURL + `/verify`;
-    return baseURL + `/verify`;
+    return url;
   };
 
   /**
@@ -2730,16 +2730,16 @@ export const createAPIClient = (
 
     const stringifiedParams = normalizedParams.toString();
 
-    baseURL =
+    const url =
       stringifiedParams.length > 0
         ? baseURL + `/signin/provider/${provider}?${stringifiedParams}`
         : baseURL + `/signin/provider/${provider}`;
-    return baseURL + `/signin/provider/${provider}`;
+    return url;
   };
 
   return {
-    healthCheckGet,
     healthCheckHead,
+    healthCheckGet,
     getVersion,
     refreshToken,
     signOut,
