@@ -79,7 +79,7 @@
     "build:types": "tsc -p tsconfig.json",
     "build:js": "vite build --config vite.config.ts && vite build --config vite.umd.config.ts",
     "build:docs": "pnpm docs:markdown",
-    "build:generate": "orval --config build/orval.config.ts",
+    "build:generate": "./gen.sh",
     "docs:markdown": "./typedoc.sh",
     "prepublishOnly": "pnpm build && pnpm test"
   },
@@ -105,14 +105,12 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "@orval/core": "^7.9.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.17",
     "@types/rollup-plugin-peer-deps-external": "^2.2.5",
     "jest": "^29.7.0",
     "openapi3-ts": "^4.4.0",
-    "orval": "7.9.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "terser": "^5.39.0",
     "ts-jest": "^29.3.2",
