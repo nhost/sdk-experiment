@@ -2,8 +2,8 @@
  * This file is auto-generated. Do not edit manually.
  */
 
-{{- define "renderObject" }}
-export const {{ .Name }} =
+{{- define "renderObject" -}}
+export const {{ .Name }} = {
 {{- range .Properties }}
   {{ .Name }}: {{ .Type.Name }},
 {{- end }}
@@ -11,9 +11,11 @@ export const {{ .Name }} =
 {{- end }}
 
 {{- range .Types }}
-{{- if eq .Type "object" }}
+{{ if eq .Type "object" }}
 {{ template "renderObject" . }}
-{{- else }}
+{{ else if eq .Type "enum" }}
+export type {{ .Name }} = {{ join .Values " | " }};
+{{ else }}
 ------ NOT IMPLEMENTED
 {{- end -}}
 {{- end -}}

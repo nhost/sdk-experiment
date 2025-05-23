@@ -2,6 +2,7 @@ package typescript
 
 import (
 	_ "embed"
+	"fmt"
 	"strings"
 
 	"github.com/nhost/sdk-experiment/tools/codegen/processor"
@@ -43,6 +44,30 @@ func (t *Typescript) TypeScalarName(scalar *processor.TypeScalar) string {
 }
 
 func (t *Typescript) TypeArrayName(array *processor.TypeArray) string {
-	items := array.Schema().Schema().Items.A.Schema().Type[0]
-	return items + "[]"
+	return array.Item.Name() + "[]"
+}
+
+func (t *Typescript) TypeEnumName(name string) string {
+	return "Enum" + ToCamelCase(name)
+}
+
+func (t *Typescript) TypeEnumValues(values []any) []string {
+	enumValues := make([]string, len(values))
+	if len(values) == 0 {
+		return enumValues
+	}
+
+	f := values[0]
+	if _, ok := f.(string); ok {
+		for i, v := range values {
+			enumValues[i] = fmt.Sprintf("\"%s\"", v)
+		}
+		return enumValues
+	}
+
+	for i, v := range values {
+		enumValues[i] = fmt.Sprintf("%v", v)
+	}
+
+	return enumValues
 }

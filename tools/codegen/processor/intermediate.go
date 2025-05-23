@@ -3,6 +3,7 @@ package processor
 import (
 	"fmt"
 	"io"
+	"strings"
 	"text/template"
 
 	"github.com/pb33f/libopenapi"
@@ -52,7 +53,9 @@ func NewInterMediateRepresentation(
 }
 
 func (ir *InterMediateRepresentation) Render(out io.Writer) error {
-	interfaceTemplate, err := template.New("interface.ts.tmpl").Parse(ir.plugin.GetTemplate())
+	interfaceTemplate, err := template.New("interface.ts.tmpl").Funcs(template.FuncMap{
+		"join": strings.Join,
+	}).Parse(ir.plugin.GetTemplate())
 	if err != nil {
 		return fmt.Errorf("failed to parse interface template: %w", err)
 	}
