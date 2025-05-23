@@ -22,15 +22,15 @@ nav:
       - Migrating From Older Releases: v3/migrating-from-older-releases.md
       - Examples:
           - Greet: v3/examples/greet.md
-          - Flags:
+          - Flags: 
               - Basics: v3/examples/flags/basics.md
               - Value Sources: v3/examples/flags/value-sources.md
               - Short Options: v3/examples/flags/short-options.md
               - Advanced: v3/examples/flags/advanced.md
-          - Arguments:
+          - Arguments: 
               - Basics: v3/examples/arguments/basics.md
               - Advanced: v3/examples/arguments/advanced.md
-          - Subcommands:
+          - Subcommands: 
               - Basics: v3/examples/subcommands/basics.md
               - Categories: v3/examples/subcommands/categories.md
           - Completions:
@@ -40,7 +40,7 @@ nav:
               - Generated Help Text: v3/examples/help/generated-help-text.md
               - Suggestions: v3/examples/help/suggestions.md
           - Error Handling:
-              - Exit Codes: v3/examples/exit-codes.md
+              - Exit Codes: v3/examples/exit-codes.md          
           - Full API Example: v3/examples/full-api-example.md
   - v2 Manual:
       - Getting Started: v2/getting-started.md
@@ -102,7 +102,7 @@ plugins:
   - search
   - redirects:
       redirect_maps:
-        "v3/examples/bash-completions.md": "v3/examples/completions/shell-completions.md"
+        'v3/examples/bash-completions.md': 'v3/examples/completions/shell-completions.md'
   - tags
 
 # NOTE: this is the recommended configuration from

@@ -125,7 +125,10 @@ func action(_ context.Context, c *cli.Command) error {
 		if proxy.Schema() != nil && len(proxy.Schema().Type) > 0 {
 			data, err := processObject(schemaName, proxy, processor)
 			if err != nil {
-				return cli.Exit(fmt.Sprintf("failed to process object schema %s: %v", schemaName, err), 1)
+				return cli.Exit(
+					fmt.Sprintf("failed to process object schema %s: %v", schemaName, err),
+					1,
+				)
 			}
 
 			wrappedSchema.Types = append(wrappedSchema.Types, data...)

@@ -1,0 +1,19 @@
+/**
+ * This file is auto-generated. Do not edit manually.
+ */
+
+{{- define "renderObject" }}
+export const {{ .Name }} =
+{{- range .Properties }}
+  {{ .Name }}: {{ .Type.Name }},
+{{- end }}
+};
+{{- end }}
+
+{{- range .Types }}
+{{- if eq .Type "object" }}
+{{ template "renderObject" . }}
+{{- else }}
+------ NOT IMPLEMENTED
+{{- end -}}
+{{- end -}}

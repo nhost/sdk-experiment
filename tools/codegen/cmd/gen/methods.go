@@ -160,7 +160,11 @@ func processOperation(
 			if needsAddedObject(param.Schema.Schema()) {
 				t, err := processObject(param.Name, param.Schema, processor)
 				if err != nil {
-					return nil, nil, fmt.Errorf("%s: problem processing inline object: %w", param.Name, err)
+					return nil, nil, fmt.Errorf(
+						"%s: problem processing inline object: %w",
+						param.Name,
+						err,
+					)
 				}
 
 				types = append(types, t...)
@@ -206,7 +210,11 @@ func processOperation(
 			}
 		default:
 			return nil, nil,
-				fmt.Errorf("%s: unsupported request content type %s", op.OperationId, ct) //nolint:goerr113
+				fmt.Errorf(
+					"%s: unsupported request content type %s",
+					op.OperationId,
+					ct,
+				) //nolint:goerr113
 		}
 	}
 
@@ -227,7 +235,11 @@ func processOperation(
 						responseType, op.OperationId, code, processor,
 					)
 					if err != nil {
-						return nil, nil, fmt.Errorf("%s: problem processing inline object: %w", name, err)
+						return nil, nil, fmt.Errorf(
+							"%s: problem processing inline object: %w",
+							name,
+							err,
+						)
 					}
 					responseTypes[code][ct] = name
 					types = append(types, t...)
@@ -235,7 +247,11 @@ func processOperation(
 					responseTypes[code][ct] = "application/octet-stream"
 				default:
 					return nil, nil,
-						fmt.Errorf("%s: unsupported response content type %s", code, ct) //nolint:goerr113
+						fmt.Errorf(
+							"%s: unsupported response content type %s",
+							code,
+							ct,
+						) //nolint:goerr113
 				}
 			}
 		}

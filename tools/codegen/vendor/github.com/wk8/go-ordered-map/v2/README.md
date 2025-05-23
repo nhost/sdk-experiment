@@ -6,20 +6,18 @@
 Same as regular maps, but also remembers the order in which keys were inserted, akin to [Python's `collections.OrderedDict`s](https://docs.python.org/3.7/library/collections.html#ordereddict-objects).
 
 It offers the following features:
-
-- optimal runtime performance (all operations are constant time)
-- optimal memory usage (only one copy of values, no unnecessary memory allocation)
-- allows iterating from newest or oldest keys indifferently, without memory copy, allowing to `break` the iteration, and in time linear to the number of keys iterated over rather than the total length of the ordered map
-- supports any generic types for both keys and values. If you're running go < 1.18, you can use [version 1](https://github.com/wk8/go-ordered-map/tree/v1) that takes and returns generic `interface{}`s instead of using generics
-- idiomatic API, akin to that of [`container/list`](https://golang.org/pkg/container/list)
-- support for JSON and YAML marshalling
+* optimal runtime performance (all operations are constant time)
+* optimal memory usage (only one copy of values, no unnecessary memory allocation)
+* allows iterating from newest or oldest keys indifferently, without memory copy, allowing to `break` the iteration, and in time linear to the number of keys iterated over rather than the total length of the ordered map
+* supports any generic types for both keys and values. If you're running go < 1.18, you can use [version 1](https://github.com/wk8/go-ordered-map/tree/v1) that takes and returns generic `interface{}`s instead of using generics
+* idiomatic API, akin to that of [`container/list`](https://golang.org/pkg/container/list)
+* support for JSON and YAML marshalling
 
 ## Documentation
 
 [The full documentation is available on pkg.go.dev](https://pkg.go.dev/github.com/wk8/go-ordered-map/v2).
 
 ## Installation
-
 ```bash
 go get -u github.com/wk8/go-ordered-map/v2
 ```
@@ -105,13 +103,11 @@ func main() {
 ```
 
 Also worth noting that you can provision ordered maps with a capacity hint, as you would do by passing an optional hint to `make(map[K]V, capacity`):
-
 ```go
 om := orderedmap.New[int, *myStruct](28)
 ```
 
 You can also pass in some initial data to store in the map:
-
 ```go
 om := orderedmap.New[int, string](orderedmap.WithInitialData[int, string](
 	orderedmap.Pair[int, string]{
@@ -205,8 +201,7 @@ for k, v := range om2.FromOldest() {
 ## Alternatives
 
 There are several other ordered map golang implementations out there, but I believe that at the time of writing none of them offer the same functionality as this library; more specifically:
-
-- [iancoleman/orderedmap](https://github.com/iancoleman/orderedmap) only accepts `string` keys, its `Delete` operations are linear
-- [cevaris/ordered_map](https://github.com/cevaris/ordered_map) uses a channel for iterations, and leaks goroutines if the iteration is interrupted before fully traversing the map
-- [mantyr/iterator](https://github.com/mantyr/iterator) also uses a channel for iterations, and its `Delete` operations are linear
-- [samdolan/go-ordered-map](https://github.com/samdolan/go-ordered-map) adds unnecessary locking (users should add their own locking instead if they need it), its `Delete` and `Get` operations are linear, iterations trigger a linear memory allocation
+* [iancoleman/orderedmap](https://github.com/iancoleman/orderedmap) only accepts `string` keys, its `Delete` operations are linear
+* [cevaris/ordered_map](https://github.com/cevaris/ordered_map) uses a channel for iterations, and leaks goroutines if the iteration is interrupted before fully traversing the map
+* [mantyr/iterator](https://github.com/mantyr/iterator) also uses a channel for iterations, and its `Delete` operations are linear
+* [samdolan/go-ordered-map](https://github.com/samdolan/go-ordered-map) adds unnecessary locking (users should add their own locking instead if they need it), its `Delete` and `Get` operations are linear, iterations trigger a linear memory allocation

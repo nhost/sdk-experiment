@@ -4,6 +4,9 @@ github.com/bahlo/generic-list-go
 # github.com/buger/jsonparser v1.1.1
 ## explicit; go 1.13
 github.com/buger/jsonparser
+# github.com/davecgh/go-spew v1.1.1
+## explicit
+github.com/davecgh/go-spew/spew
 # github.com/mailru/easyjson v0.7.7
 ## explicit; go 1.12
 github.com/mailru/easyjson/buffer
@@ -27,11 +30,18 @@ github.com/pb33f/libopenapi/orderedmap
 github.com/pb33f/libopenapi/utils
 github.com/pb33f/libopenapi/what-changed
 github.com/pb33f/libopenapi/what-changed/model
+# github.com/pmezard/go-difflib v1.0.0
+## explicit
+github.com/pmezard/go-difflib/difflib
 # github.com/speakeasy-api/jsonpath v0.6.2
 ## explicit; go 1.22
 github.com/speakeasy-api/jsonpath/pkg/jsonpath
 github.com/speakeasy-api/jsonpath/pkg/jsonpath/config
 github.com/speakeasy-api/jsonpath/pkg/jsonpath/token
+# github.com/stretchr/testify v1.10.0
+## explicit; go 1.17
+github.com/stretchr/testify/assert
+github.com/stretchr/testify/assert/yaml
 # github.com/urfave/cli/v3 v3.3.3
 ## explicit; go 1.22
 github.com/urfave/cli/v3
