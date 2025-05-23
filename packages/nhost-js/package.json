@@ -75,7 +75,7 @@
     "test:lint": "eslint src --ext .ts,.tsx",
     "test:typecheck": "tsc --noEmit",
     "test:audit": "pnpm audit",
-    "build": "rm -rf dist && pnpm build:generate && pnpm build:types && pnpm build:js && pnpm build:docs",
+    "build": "rm -rf dist && pnpm build:types && pnpm build:js && pnpm build:docs",
     "build:types": "tsc -p tsconfig.json",
     "build:js": "vite build --config vite.config.ts && vite build --config vite.umd.config.ts",
     "build:docs": "pnpm docs:markdown",

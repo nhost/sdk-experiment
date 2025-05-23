@@ -92,6 +92,7 @@ describe("Test Storage API", () => {
 
   it("upload fails", async () => {
     try {
+      // @ts-expect-error we want the error for testing purposes
       await nhost.storage.uploadFiles({
         "bucket-id": "default",
         "metadata[]": [

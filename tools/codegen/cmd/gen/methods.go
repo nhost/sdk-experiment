@@ -50,8 +50,18 @@ func (m *Method) Name() string {
 	return m.p.MethodName(m.Op.OperationId)
 }
 
-func (m *Method) HasArgs() bool {
-	return len(m.RequestTypes) > 0
+func (m *Method) RequestIsEmpty() bool {
+	return len(m.RequestTypes) == 0
+}
+
+func (m *Method) RequestIsJSON() bool {
+	_, ok := m.RequestTypes["application/json"]
+	return ok
+}
+
+func (m *Method) RequestIsMultipart() bool {
+	_, ok := m.RequestTypes["multipart/form-data"]
+	return ok
 }
 
 func (m *Method) HasQueryParameters() bool {
@@ -144,8 +154,18 @@ func processOperation(
 ) (*Method, []*Type, error) {
 	queryParams := make([]*Parameter, 0, len(op.Parameters))
 	pathParams := make([]*Parameter, 0, len(op.Parameters))
+	types := make([]*Type, 0, 4) //nolint:mnd
 	if op.Parameters != nil {
 		for _, param := range op.Parameters {
+			if needsAddedObject(param.Schema.Schema()) {
+				t, err := processObject(param.Name, param.Schema, processor)
+				if err != nil {
+					return nil, nil, fmt.Errorf("%s: problem processing inline object: %w", param.Name, err)
+				}
+
+				types = append(types, t...)
+			}
+
 			p := &Parameter{
 				name:   param.Name,
 				schema: param,
@@ -159,28 +179,34 @@ func processOperation(
 		}
 	}
 
-	types := make([]*Type, 0, 4) //nolint:mnd
-
 	requestTypes := make(map[string]string)
 	if op.RequestBody != nil {
 		pair := op.RequestBody.Content.First()
 
-		if pair.Next() != nil {
+		ct := pair.Key()
+
+		n := pair.Next()
+		if n != nil {
 			panic("multiple content types not supported yet")
 		}
 
-		ct := pair.Key()
-		schemaProxy := pair.Value().Schema
-		if schemaProxy.IsReference() {
-			requestTypes[ct] = getNameFromComponentRef(schemaProxy.GetReference())
-		} else {
-			name := op.OperationId + "Request"
-			requestTypes[ct] = name
-			t, err := processObject(name, schemaProxy, processor)
-			if err != nil {
-				return nil, nil, fmt.Errorf("%s: problem processing inline object: %w", name, err)
+		switch ct {
+		case "application/json", "multipart/form-data":
+			schemaProxy := pair.Value().Schema
+			if schemaProxy.IsReference() {
+				requestTypes[ct] = getNameFromComponentRef(schemaProxy.GetReference())
+			} else {
+				name := op.OperationId + "Body"
+				requestTypes[ct] = name
+				t, err := processObject(name, schemaProxy, processor)
+				if err != nil {
+					return nil, nil, fmt.Errorf("%s: problem processing inline object: %w", name, err)
+				}
+				types = append(types, t...)
 			}
-			types = append(types, t...)
+		default:
+			return nil, nil,
+				fmt.Errorf("%s: unsupported request content type %s", op.OperationId, ct) //nolint:goerr113
 		}
 	}
 
@@ -195,17 +221,21 @@ func processOperation(
 				ct := rpair.Key()
 				responseType := rpair.Value()
 
-				schemaProxy := responseType.Schema
-				if schemaProxy.IsReference() {
-					responseTypes[code][ct] = getNameFromComponentRef(schemaProxy.GetReference())
-				} else {
-					name := op.OperationId + code
-					responseTypes[code][ct] = name
-					t, err := processObject(name, schemaProxy, processor)
+				switch ct {
+				case "application/json":
+					name, t, err := processOperationResponseStructured(
+						responseType, op.OperationId, code, processor,
+					)
 					if err != nil {
 						return nil, nil, fmt.Errorf("%s: problem processing inline object: %w", name, err)
 					}
+					responseTypes[code][ct] = name
 					types = append(types, t...)
+				case "application/octet-stream":
+					responseTypes[code][ct] = "application/octet-stream"
+				default:
+					return nil, nil,
+						fmt.Errorf("%s: unsupported response content type %s", code, ct) //nolint:goerr113
 				}
 			}
 		}
@@ -221,4 +251,29 @@ func processOperation(
 		RequestTypes:    requestTypes,
 		ResponseTypes:   responseTypes,
 	}, types, nil
+}
+
+func processOperationResponseStructured(
+	responseType *v3.MediaType,
+	operationID string,
+	code string,
+	processor Processor,
+) (string, []*Type, error) {
+	types := make([]*Type, 0, 4) //nolint:mnd
+
+	schemaProxy := responseType.Schema
+
+	var name string
+	if schemaProxy.IsReference() {
+		name = getNameFromComponentRef(schemaProxy.GetReference())
+	} else {
+		name = operationID + code
+		t, err := processObject(name, schemaProxy, processor)
+		if err != nil {
+			return "", nil, fmt.Errorf("%s: problem processing inline object: %w", name, err)
+		}
+		types = append(types, t...)
+	}
+
+	return name, types, nil
 }

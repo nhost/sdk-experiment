@@ -6,6 +6,48 @@ import type { ChainFunction, FetchResponse } from "../fetch";
 
 import type { Client } from "./interface";
 
+
+function objectToFormData(obj?: Record<string, any>): FormData {
+  const formData = new FormData();
+
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      const value = obj[key];
+
+      // Check if the value is undefined
+      if (value !== undefined) {
+        if (Array.isArray(value)) {
+          // Handle arrays by appending each item
+          value.forEach((item) => {
+            if (item instanceof Blob || item instanceof File) {
+              // Append Blob or File directly
+              formData.append(key, item);
+            } else if (typeof item === 'object' && item !== null) {
+              // Serialize object to JSON string
+              formData.append(key, JSON.stringify(item));
+            } else {
+              // Append primitive values directly
+              formData.append(key, item);
+            }
+          });
+        } else if (value instanceof Blob || value instanceof File) {
+          // Append Blob or File directly
+          formData.append(key, value);
+        } else if (typeof value === 'object' && value !== null) {
+          // Serialize single object to JSON string
+          formData.append(key, JSON.stringify(value));
+        } else {
+          // Append primitive values directly
+          formData.append(key, value);
+        }
+      }
+    }
+  }
+
+  return formData;
+}
+
+
 {{- define "renderMethod" }}
   /**
    * {{ .Summary }}
@@ -13,11 +55,11 @@ import type { Client } from "./interface";
    * {{ .Description }}
    */
   const {{ .Name }} = async (
-      {{- if .HasArgs }}
-      {{ .ArgumentName }}{{ if not .ArgumentRequired }}?{{ end }}: {{ .ArgumentType }},
-      {{- end }}
       {{ range .PathParameters }}
-      {{ .Name }}: string,
+      {{ .Name }}: {{ .Type }},
+      {{- end }}
+      {{- if not .RequestIsEmpty }}
+      {{ .ArgumentName }}{{ if not .ArgumentRequired }}?{{ end }}: {{ .ArgumentType }},
       {{- end }}
       {{- if .HasQueryParameters }}
       params{{ if not .QueryParametersRequired }}?{{ end }}: {{ ToCamelCase .Name }}Params,
@@ -38,18 +80,24 @@ import type { Client } from "./interface";
 
     const stringifiedParams = normalizedParams.toString();
 
-    baseURL = stringifiedParams.length > 0
+    const url = stringifiedParams.length > 0
       ? baseURL + `{{ .Path }}?${stringifiedParams}`
       : baseURL + `{{ .Path }}`;
 
+    {{- else }}
+    const url = baseURL + `{{ .Path }}`;
     {{- end }}
-    const res = await fetch(baseURL + `{{ .Path }}`, {
-      {{- if .HasArgs }}
-      method: "POST",
+    const res = await fetch(url, {
+      ...options,
+      method: "{{ .Method }}",
+      {{- if .RequestIsJSON }}
       headers: { "Content-Type": "application/json", ...options?.headers },
       body: JSON.stringify({{ .ArgumentName }}),
+      {{- else if .RequestIsMultipart }}
+      body: objectToFormData({{ .ArgumentName }}),
+      {{- else if .RequestIsEmpty }}
       {{- else }}
-      ...options,
+      UNSUPPORTED
       {{- end }}
     });
 
@@ -59,8 +107,12 @@ import type { Client } from "./interface";
       throw new FetchError(payload, res.status, res.headers);
     }
 
+    {{- if eq .ReturnType "Blob" }}
+    const payload: Blob = await res.blob();
+    {{- else }}
     const body = [204, 205, 304].includes(res.status) ? null : await res.text();
     const payload: {{ .ReturnType }} = body ? JSON.parse(body) : {};
+    {{- end }}
 
     return {
       body: payload,
@@ -107,11 +159,8 @@ import type { Client } from "./interface";
   };
 {{- end -}}
 
-{{- define "renderObject" }}
-/**
- * {{ .Schema.Description }}
-{{- range .Properties }}
- * @property {{ .Name }} {{ .Schema.Description }}
+{{ define "renderObjectAttributeHelp" -}}
+  {{ .Schema.Description }}
   {{- if .Example }}
     *    Example - {{ .Example }}
   {{- end }}
@@ -128,9 +177,19 @@ import type { Client } from "./interface";
     *    MaxLength - {{ .MaxLength }}
   {{- end }}
 {{- end -}}
+
+{{- define "renderObject" }}
+/**
+ * {{ .Schema.Description }}
+{{- range .Properties }}
+ * @property {{ .Name }} - {{ template "renderObjectAttributeHelp" . }}
+ {{- end -}}
  */
 export interface {{ .Name }} {
   {{- range .Properties }}
+  /**
+   *{{ template "renderObjectAttributeHelp" . }}
+   */
   {{ .Name }}{{ if not .IsRequired }}?{{ end}}: {{ .Type }};
   {{- end }}
 };
@@ -161,7 +220,7 @@ export enum {{ .Name }} {
 {{ template "renderEnum" . }}
 {{ else if .IsUnion }}
 {{ else }}
-// !!!!!!!!!!!! {{ .Name }} is not supported !!!!!!!!!!!!
+!!!!!!!!!!!! {{ .Name }} is not supported !!!!!!!!!!!!
 {{ end }}
 {{- end }}
 

@@ -19,6 +19,7 @@ paths:
       operationId: getOpenAPISpec
       tags:
         - documentation
+        - excludeme
       responses:
         "200":
           description: "OpenAPI schema definition"
@@ -52,6 +53,7 @@ paths:
       security:
         - Authorization: []
       requestBody:
+        required: true
         content:
           multipart/form-data:
             schema:
@@ -72,6 +74,8 @@ paths:
                   items:
                     type: string
                     format: binary
+              required:
+                - file[]
             encoding:
               file[]:
                 contentType: application/octet-stream
@@ -878,6 +882,7 @@ components:
       name: X-Hasura-Admin-Secret
       in: header
       description: "Hasura admin secret key for backend/administrative operations."
+
   schemas:
     VersionInformation:
       type: object
@@ -887,6 +892,8 @@ components:
           type: string
           description: "The version number of the storage service build."
           example: "1.2.3"
+      additionalProperties: false
+
     FileSummary:
       type: object
       description: "Basic information about a file in storage."
@@ -907,6 +914,8 @@ components:
           type: boolean
           description: "Whether the file has been successfully uploaded."
           example: true
+      additionalProperties: false
+
     FileMetadata:
       type: object
       description: "Comprehensive metadata information about a file in storage."
@@ -958,6 +967,8 @@ components:
           additionalProperties: true
           description: "Custom metadata associated with the file."
           example: { "alt": "Profile picture", "category": "avatar" }
+      additionalProperties: false
+
     UploadFileMetadata:
       type: object
       description: "Metadata provided when uploading a new file."
@@ -975,6 +986,8 @@ components:
           additionalProperties: true
           description: "Custom metadata to associate with the file."
           example: { "alt": "Custom image", "category": "document" }
+      additionalProperties: false
+
     UpdateFileMetadata:
       type: object
       description: "Metadata that can be updated for an existing file."
@@ -988,6 +1001,8 @@ components:
           additionalProperties: true
           description: "Updated custom metadata to associate with the file."
           example: { "alt": "Updated image description", "category": "profile" }
+      additionalProperties: false
+
     PresignedURLResponse:
       type: object
       description: "Contains a presigned URL for direct file operations."
@@ -1000,12 +1015,15 @@ components:
           type: number
           description: "The time in seconds until the URL expires."
           example: 3600
+      additionalProperties: false
+
     ErrorResponse:
       type: object
       description: "Error information returned by the API."
       properties:
         error:
           type: object
+          additionalProperties: false
           description: "Error details."
           properties:
             message:
@@ -1014,3 +1032,4 @@ components:
               example: "File not found"
           required:
             - message
+      additionalProperties: false

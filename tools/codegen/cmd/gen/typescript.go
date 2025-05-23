@@ -12,7 +12,7 @@ func getNameFromComponentRef(ref string) string {
 
 type Processor interface {
 	TemplateName() string
-	TypeName(name string) string
+	TypeName(t string) string
 	PropertyName(prop *Property) string
 	PropertyType(prop *Property) string
 	MethodName(name string) string
@@ -35,9 +35,19 @@ func (p *TypescriptProcessor) nativeType(proxy *base.SchemaProxy) (string, bool)
 	case "integer":
 		return "number", true
 	case "string":
-		return "string", true
+		switch {
+		case proxy.Schema().Format == "binary":
+			return "Blob", true
+
+		case len(proxy.Schema().Enum) > 0:
+			return "", false
+		default:
+			return "string", true
+		}
 	case "boolean":
 		return "boolean", true
+	case "number":
+		return "number", true
 	case "array":
 		item, ok := p.nativeType(proxy.Schema().Items.A)
 		if !ok {
@@ -58,6 +68,9 @@ func (p *TypescriptProcessor) TypeName(name string) string {
 }
 
 func (p *TypescriptProcessor) PropertyName(prop *Property) string {
+	if strings.Contains(prop.name, "-") || strings.Contains(prop.name, "[") {
+		return `"` + prop.name + `"`
+	}
 	return prop.name
 }
 
@@ -89,9 +102,12 @@ func (p *TypescriptProcessor) PropertyType(prop *Property) string { //nolint:cyc
 			name = item.Schema().Type[0]
 		}
 		return name + "[]"
-	default:
-		panic(prop.typ.SchemaName + ": unsupported type " + schema.Type[0])
+	case "string":
+		if len(schema.Enum) > 0 {
+			return prop.parentName + strings.Title(prop.name)
+		}
 	}
+	panic(prop.typ.SchemaName + ": unsupported type " + schema.Type[0])
 }
 
 func (p *TypescriptProcessor) MethodName(name string) string {
@@ -99,7 +115,7 @@ func (p *TypescriptProcessor) MethodName(name string) string {
 }
 
 func (p *TypescriptProcessor) MethodArgumentName(name string) string {
-	return LowerFirstLetter(p.MethodName(name)) + "Request"
+	return LowerFirstLetter(p.MethodName(name)) + "Body"
 }
 
 func (p *TypescriptProcessor) MethodArgumentType(m *Method) string {
@@ -119,8 +135,14 @@ func (p *TypescriptProcessor) MethodReturnType(responseTypes map[string]map[stri
 	successes := make([]string, 0)
 	for code, m := range responseTypes {
 		for _, t := range m {
+			var typ string
+			if t == "application/octet-stream" {
+				typ = "Blob"
+			} else {
+				typ = ToCamelCase(t)
+			}
 			if code < "400" {
-				successes = append(successes, ToCamelCase(t))
+				successes = append(successes, typ)
 			}
 		}
 	}
@@ -133,15 +155,18 @@ func (p *TypescriptProcessor) MethodReturnType(responseTypes map[string]map[stri
 }
 
 func (p *TypescriptProcessor) ParameterName(name string) string {
+	if strings.Contains(name, "-") || strings.Contains(name, "[") {
+		return `"` + name + `"`
+	}
 	return name
 }
 
 func (p *TypescriptProcessor) ParameterType(param *Parameter) string {
 	t, ok := p.nativeType(param.schema.Schema)
-	if !ok {
-		panic("unsupported parameter type: " + param.name)
+	if ok {
+		return t
 	}
-	return t
+	return strings.Title(param.Name())
 }
 
 func (p *TypescriptProcessor) MethodPath(path string) string {

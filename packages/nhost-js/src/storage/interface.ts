@@ -1,6 +1,5 @@
 import type { ChainFunction, FetchResponse } from "../fetch";
 import type {
-  GetOpenAPISpec200,
   VersionInformation,
   UploadFilesBody,
   UploadFiles201,
@@ -24,14 +23,6 @@ export interface Client {
    * @param chainFunction - Middleware function to add
    */
   pushChainFunction: (chainFunction: ChainFunction) => void;
-
-  /**
-   * Returns the OpenAPI schema definition for this API
-   * @summary Get OpenAPI specification
-   */
-  getOpenAPISpec: (
-    options?: RequestInit,
-  ) => Promise<FetchResponse<GetOpenAPISpec200>>;
 
   /**
    * Retrieves build and version information about the storage service

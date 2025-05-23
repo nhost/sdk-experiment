@@ -78,6 +78,9 @@ func (s *Type) Schema() *base.Schema {
 }
 
 func (s *Type) IsObject() bool {
+	if s.SchemaProxy.Schema() == nil {
+		return false
+	}
 	return s.SchemaProxy.Schema().Type[0] == "object"
 }
 
@@ -94,6 +97,9 @@ func (s *Type) Union() []string {
 }
 
 func (s *Type) IsEnum() bool {
+	if s.SchemaProxy.Schema() == nil {
+		return false
+	}
 	return s.SchemaProxy.Schema().Type[0] == "string" && len(s.SchemaProxy.Schema().Enum) > 0
 }
 
@@ -155,6 +161,9 @@ func processObject(
 	schema := schemaProxy.Schema()
 
 	resp := make([]*Type, 0, 10) //nolint:mnd
+	if schema == nil {
+		panic(name + " schema is nil: wtf")
+	}
 
 	union := make([]string, 0, len(schema.AllOf))
 	if len(schema.AllOf) > 0 {
