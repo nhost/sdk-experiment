@@ -57,16 +57,12 @@ func (t *Typescript) TypeEnumValues(values []any) []string {
 		return enumValues
 	}
 
-	f := values[0]
-	if _, ok := f.(string); ok {
-		for i, v := range values {
-			enumValues[i] = fmt.Sprintf("\"%s\"", v)
-		}
-		return enumValues
-	}
-
 	for i, v := range values {
-		enumValues[i] = fmt.Sprintf("%v", v)
+		if s, ok := v.(string); ok {
+			enumValues[i] = fmt.Sprintf("\"%v\"", s)
+		} else {
+			enumValues[i] = fmt.Sprintf("%v", v)
+		}
 	}
 
 	return enumValues

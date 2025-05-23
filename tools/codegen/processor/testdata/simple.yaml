@@ -57,11 +57,20 @@ components:
           example: "active"
         statusCode:
           type: string
-          description: "Status of the object."
+          description: "Status code of the object."
           enum:
             - 0
             - 1
             - 2
+          example: 0
+
+        statusMixed:
+          type: string
+          description: "Some people just want to see the world burn."
+          enum:
+            - 0
+            - "One"
+            - true
           example: 0
         nested:
           type: object
