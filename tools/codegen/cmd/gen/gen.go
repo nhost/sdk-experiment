@@ -5,6 +5,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"text/template"
 
@@ -14,7 +15,9 @@ import (
 )
 
 const (
-	openAPIFile = "../../packages/nhost-js/api/auth.yaml"
+	flagOpenAPIFile = "openapi-file"
+	flagOutputFile  = "output-file"
+	flagGenerator   = "generator"
 )
 
 //go:embed templates/*.tmpl
@@ -25,12 +28,32 @@ func Command() *cli.Command {
 		Name:   "gen",
 		Usage:  "generate code",
 		Action: action,
+		Flags: []cli.Flag{
+			&cli.StringFlag{ //nolint:exhaustruct
+				Name:     flagOpenAPIFile,
+				Usage:    "OpenAPI file to process",
+				Required: true,
+				Sources:  cli.EnvVars("OPENAPI_FILE"),
+			},
+			&cli.StringFlag{ //nolint:exhaustruct
+				Name:     flagOutputFile,
+				Usage:    "Output file to write to",
+				Required: true,
+				Sources:  cli.EnvVars("OUTPUT_FILE"),
+			},
+			&cli.StringFlag{ //nolint:exhaustruct
+				Name:     flagGenerator,
+				Usage:    "Generator to use",
+				Required: true,
+				Sources:  cli.EnvVars("GENERATOR"),
+			},
+		},
 	}
 }
 
-func getModel() (*libopenapi.DocumentModel[v3.Document], error) {
+func getModel(filepath string) (*libopenapi.DocumentModel[v3.Document], error) {
 	// Read OpenAPI file
-	b, err := os.ReadFile(openAPIFile)
+	b, err := os.ReadFile(filepath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read openapi spec: %w", err)
 	}
@@ -52,9 +75,9 @@ func getModel() (*libopenapi.DocumentModel[v3.Document], error) {
 	return docModel, nil
 }
 
-func render(data any) error {
+func render(templateName string, data any, out io.Writer) error {
 	// Load the interface template
-	interfaceTemplateContent, err := templateFS.ReadFile("templates/typescript.tmpl")
+	interfaceTemplateContent, err := templateFS.ReadFile(templateName)
 	if err != nil {
 		return fmt.Errorf("failed to read interface template: %w", err)
 	}
@@ -68,15 +91,15 @@ func render(data any) error {
 	}
 
 	// Execute the template
-	if err := interfaceTemplate.Execute(os.Stdout, data); err != nil {
+	if err := interfaceTemplate.Execute(out, data); err != nil {
 		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
 	return nil
 }
 
-func action(_ context.Context, _ *cli.Command) error {
-	docModel, err := getModel()
+func action(_ context.Context, c *cli.Command) error {
+	docModel, err := getModel(c.String(flagOpenAPIFile))
 	if err != nil {
 		return cli.Exit(fmt.Sprintf("failed to load model: %v", err), 1)
 	}
@@ -86,7 +109,13 @@ func action(_ context.Context, _ *cli.Command) error {
 		Methods: make([]*Method, 0, 100), //nolint:mnd
 	}
 
-	typescriptProcessor := &TypescriptProcessor{}
+	var processor Processor
+	switch c.String(flagGenerator) {
+	case "typescript":
+		processor = &TypescriptProcessor{}
+	default:
+		return cli.Exit(fmt.Sprintf("unknown generator: %s", c.String(flagGenerator)), 1)
+	}
 
 	// Process each schema
 	for schemaPairs := docModel.Model.Components.Schemas.First(); schemaPairs != nil; schemaPairs = schemaPairs.Next() {
@@ -94,7 +123,7 @@ func action(_ context.Context, _ *cli.Command) error {
 		proxy := schemaPairs.Value()
 
 		if proxy.Schema() != nil && len(proxy.Schema().Type) > 0 {
-			data, err := processObject(schemaName, proxy, typescriptProcessor)
+			data, err := processObject(schemaName, proxy, processor)
 			if err != nil {
 				return cli.Exit(fmt.Sprintf("failed to process object schema %s: %v", schemaName, err), 1)
 			}
@@ -108,16 +137,23 @@ func action(_ context.Context, _ *cli.Command) error {
 	for schemaPairs := docModel.Model.Paths.PathItems.First(); schemaPairs != nil; schemaPairs = schemaPairs.Next() {
 		path := schemaPairs.Key()
 
-		methods, types, err := processPathItem(path, schemaPairs.Value(), typescriptProcessor)
+		methods, types, err := processPathItem(path, schemaPairs.Value(), processor)
 		if err != nil {
-			return cli.Exit(fmt.Sprintf("%s: failed to process path item: %w", path, err), 1)
+			return cli.Exit(fmt.Sprintf("%s: failed to process path item: %v", path, err), 1)
 		}
 
 		wrappedSchema.Methods = append(wrappedSchema.Methods, methods...)
 		wrappedSchema.Types = append(wrappedSchema.Types, types...)
 	}
 
-	if err := render(wrappedSchema); err != nil {
+	outf, err := os.OpenFile(
+		c.String(flagOutputFile), os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o644, //nolint:mnd
+	)
+	if err != nil {
+		return cli.Exit(fmt.Sprintf("failed to open output file: %v", err), 1)
+	}
+
+	if err := render(processor.TemplateName(), wrappedSchema, outf); err != nil {
 		return cli.Exit(fmt.Sprintf("failed to render template: %v", err), 1)
 	}
 

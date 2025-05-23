@@ -30,6 +30,7 @@
             (inDirectory "vendor")
             isDirectory
             (nix-filter.lib.matchExt "go")
+            (nix-filter.lib.matchExt "tmpl")
           ];
         };
 

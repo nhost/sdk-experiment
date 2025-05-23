@@ -4,9 +4,10 @@
     nixpkgs.follows = "nixops/nixpkgs";
     flake-utils.follows = "nixops/flake-utils";
     nix-filter.follows = "nixops/nix-filter";
+    codegen.url = "path:./tools/codegen";
   };
 
-  outputs = { self, nixops, nixpkgs, flake-utils, nix-filter }:
+  outputs = { self, nixops, nixpkgs, flake-utils, nix-filter, codegen }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [
@@ -46,6 +47,7 @@
               nhost-cli
               nodejs
               pnpm
+              codegen.packages.${system}.default
             ] ++ checkDeps ++ buildInputs ++ nativeBuildInputs;
           };
         };

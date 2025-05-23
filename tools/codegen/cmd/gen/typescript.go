@@ -11,6 +11,7 @@ func getNameFromComponentRef(ref string) string {
 }
 
 type Processor interface {
+	TemplateName() string
 	TypeName(name string) string
 	PropertyName(prop *Property) string
 	PropertyType(prop *Property) string
@@ -24,6 +25,10 @@ type Processor interface {
 }
 
 type TypescriptProcessor struct{}
+
+func (p *TypescriptProcessor) TemplateName() string {
+	return "templates/typescript.tmpl"
+}
 
 func (p *TypescriptProcessor) nativeType(proxy *base.SchemaProxy) (string, bool) {
 	switch proxy.Schema().Type[0] {
