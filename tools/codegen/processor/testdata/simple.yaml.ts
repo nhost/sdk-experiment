@@ -2,16 +2,16 @@
  * This file is auto-generated. Do not edit manually.
  */
 
-export type EnumStatusEnum = "active" | "inactive" | "pending";
+export type StatusEnum = "active" | "inactive" | "pending";
 
 
-export type EnumSimpleObjectStatus = "active" | "inactive" | "pending";
+export type SimpleObjectStatus = "active" | "inactive" | "pending";
 
 
-export type EnumSimpleObjectStatusCode = 0 | 1 | 2;
+export type SimpleObjectStatusCode = 0 | 1 | 2;
 
 
-export type EnumSimpleObjectStatusMixed = 0 | "One" | true;
+export type SimpleObjectStatusMixed = 0 | "One" | true;
 
 
 export interface SimpleObjectNested {
@@ -30,9 +30,10 @@ export interface SimpleObject {
   tags: string[],
   parent: SimpleObject,
   children: SimpleObject[],
-  status: EnumSimpleObjectStatus,
-  statusCode: EnumSimpleObjectStatusCode,
-  statusMixed: EnumSimpleObjectStatusMixed,
-  statusRef: EnumStatusEnum,
+  relatedObjects: SimpleObject[],
+  status: SimpleObjectStatus,
+  statusCode: SimpleObjectStatusCode,
+  statusMixed: SimpleObjectStatusMixed,
+  statusRef: StatusEnum,
   nested: SimpleObjectNested,
 };

@@ -55,6 +55,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SimpleObject'
+        relatedObjects:
+          description: "Array of related object references."
+          type: array
+          items:
+            $ref: '#/components/schemas/SimpleObject'
         status:
           type: string
           description: "Status of the object."
@@ -71,7 +76,6 @@ components:
             - 1
             - 2
           example: 0
-
         statusMixed:
           type: string
           description: "Some people just want to see the world burn."
@@ -104,3 +108,4 @@ components:
         - metadata
         - data
       additionalProperties: false
+

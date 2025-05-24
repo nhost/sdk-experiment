@@ -2,7 +2,6 @@ package processor
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/nhost/sdk-experiment/tools/codegen/format"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
@@ -12,7 +11,7 @@ type TypeIdentifier string
 
 const (
 	TypeIdentifierObject    TypeIdentifier = "object"
-	TypeIdentifierObjectRef TypeIdentifier = "object"
+	TypeIdentifierObjectRef TypeIdentifier = "objectRef"
 	TypeIdentifierScalar    TypeIdentifier = "scalar"
 	TypeIdentifierArray     TypeIdentifier = "array"
 	TypeIdentifierEnum      TypeIdentifier = "enum"
@@ -151,17 +150,13 @@ func (t *TypeMap) Schema() *base.SchemaProxy {
 	return t.schema
 }
 
-func getNameFromComponentRef(ref string) string {
-	return strings.Split(ref, "/")[3]
-}
-
 func getTypeObject( //nolint:ireturn
 	schema *base.SchemaProxy, derivedName string, p Plugin,
 ) (Type, []Type, error) {
 	if schema.IsReference() {
 		return &TypeObjectRef{
 			schema: schema,
-			name:   getNameFromComponentRef(schema.GetReference()),
+			name:   format.GetNameFromComponentRef(schema.GetReference()),
 			p:      p,
 		}, nil, nil
 	}
@@ -193,7 +188,7 @@ func getTypeArray(schema *base.SchemaProxy, p Plugin) (Type, []Type, error) { //
 			p:      p,
 			Item: &TypeObjectRef{
 				schema: schema,
-				name:   getNameFromComponentRef(item.GetReference()),
+				name:   format.GetNameFromComponentRef(item.GetReference()),
 				p:      p,
 			},
 		}, nil, nil
@@ -214,7 +209,8 @@ func getTypeEnum( //nolint:ireturn
 	if schema.IsReference() {
 		return &TypeEnum{
 			schema: schema,
-			name:   getNameFromComponentRef(schema.GetReference()),
+			name:   format.GetNameFromComponentRef(schema.GetReference()),
+			values: nil, // No values for reference types
 			p:      p,
 		}, nil, nil
 	}
@@ -229,7 +225,7 @@ func getTypeEnum( //nolint:ireturn
 	}
 
 	t := &TypeEnum{
-		name:   derivedName,
+		name:   format.Title(derivedName),
 		schema: schema,
 		values: values,
 		p:      p,

@@ -30,7 +30,7 @@ func (t *Typescript) TypeArrayName(array *processor.TypeArray) string {
 }
 
 func (t *Typescript) TypeEnumName(name string) string {
-	return "Enum" + format.ToCamelCase(name)
+	return format.ToCamelCase(name)
 }
 
 func (t *Typescript) TypeEnumValues(values []any) []string {

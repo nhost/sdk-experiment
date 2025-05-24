@@ -107,49 +107,6 @@ func getModel(filepath string) (*libopenapi.DocumentModel[v3.Document], error) {
 	return docModel, nil
 }
 
-type testPlugin struct{}
-
-func (t *testPlugin) GetTemplate() string {
-	return ""
-}
-
-func (t *testPlugin) TypeObjectName(name string) string {
-	return name
-}
-
-func (t *testPlugin) TypeScalarName(scalar *processor.TypeScalar) string {
-	return scalar.Schema().Schema().Type[0]
-}
-
-func (t *testPlugin) TypeArrayName(array *processor.TypeArray) string {
-	return array.Item.Name() + "[]"
-}
-
-func (t *testPlugin) TypeEnumName(name string) string {
-	return "Enum" + name
-}
-
-func (t *testPlugin) TypeMapName(_ *processor.TypeMap) string {
-	return "Record<string, unknown>"
-}
-
-func (t *testPlugin) TypeEnumValues(values []any) []string {
-	enumValues := make([]string, len(values))
-	if len(values) == 0 {
-		return enumValues
-	}
-
-	for i, v := range values {
-		if s, ok := v.(string); ok {
-			enumValues[i] = fmt.Sprintf("\"%v\"", s)
-		} else {
-			enumValues[i] = fmt.Sprintf("%v", v)
-		}
-	}
-
-	return enumValues
-}
-
 func TestNewInterMediateRepresentation(t *testing.T) {
 	t.Parallel()
 
@@ -162,25 +119,25 @@ func TestNewInterMediateRepresentation(t *testing.T) {
 			expected: ExpectedIR{
 				Types: []ExpectedType{
 					{
-						Name:       "EnumStatusEnum",
+						Name:       "StatusEnum",
 						TypeKind:   processor.TypeIdentifierEnum,
 						Properties: nil,
 						EnumValues: []string{"\"active\"", "\"inactive\"", "\"pending\""},
 					},
 					{
-						Name:       "EnumSimpleObjectStatus",
+						Name:       "SimpleObjectStatus",
 						TypeKind:   processor.TypeIdentifierEnum,
 						Properties: nil,
 						EnumValues: []string{"\"active\"", "\"inactive\"", "\"pending\""},
 					},
 					{
-						Name:       "EnumSimpleObjectStatusCode",
+						Name:       "SimpleObjectStatusCode",
 						TypeKind:   processor.TypeIdentifierEnum,
 						Properties: nil,
 						EnumValues: []string{"0", "1", "2"},
 					},
 					{
-						Name:       "EnumSimpleObjectStatusMixed",
+						Name:       "SimpleObjectStatusMixed",
 						TypeKind:   processor.TypeIdentifierEnum,
 						Properties: nil,
 						EnumValues: []string{"0", "\"One\"", "true"},
@@ -207,10 +164,11 @@ func TestNewInterMediateRepresentation(t *testing.T) {
 							{Name: "tags", Type: "string[]"},
 							{Name: "parent", Type: "SimpleObject"},
 							{Name: "children", Type: "SimpleObject[]"},
-							{Name: "status", Type: "EnumSimpleObjectStatus"},
-							{Name: "statusCode", Type: "EnumSimpleObjectStatusCode"},
-							{Name: "statusMixed", Type: "EnumSimpleObjectStatusMixed"},
-							{Name: "statusRef", Type: "EnumStatusEnum"},
+							{Name: "relatedObjects", Type: "SimpleObject[]"},
+							{Name: "status", Type: "SimpleObjectStatus"},
+							{Name: "statusCode", Type: "SimpleObjectStatusCode"},
+							{Name: "statusMixed", Type: "SimpleObjectStatusMixed"},
+							{Name: "statusRef", Type: "StatusEnum"},
 							{Name: "nested", Type: "SimpleObjectNested"},
 						},
 						EnumValues: nil,
@@ -230,7 +188,7 @@ func TestNewInterMediateRepresentation(t *testing.T) {
 				t.Fatalf("failed to get model: %v", err)
 			}
 
-			ir, err := processor.NewInterMediateRepresentation(doc, &testPlugin{})
+			ir, err := processor.NewInterMediateRepresentation(doc, &typescript.Typescript{})
 			if err != nil {
 				t.Fatalf("failed to create intermediate representation: %v", err)
 			}

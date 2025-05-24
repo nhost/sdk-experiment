@@ -5,6 +5,10 @@ import (
 	"unicode"
 )
 
+func GetNameFromComponentRef(ref string) string {
+	return strings.Split(ref, "/")[3]
+}
+
 // Capitalize the first letter of a string.
 func Title(s string) string {
 	if len(s) == 0 {
