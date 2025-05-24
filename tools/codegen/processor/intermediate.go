@@ -34,12 +34,12 @@ func NewInterMediateRepresentation(
 		proxy := schemaPairs.Value()
 
 		if proxy.Schema() != nil && len(proxy.Schema().Type) > 0 {
-			t, tt, err := NewObject(schemaName, proxy, plugin)
+			_, tt, err := GetType(proxy, schemaName, plugin)
 			if err != nil {
 				return nil, fmt.Errorf("failed to create type %s: %w", schemaName, err)
 			}
 
-			types = append(types, t)
+			// types = append(types, t)
 			types = append(types, tt...)
 		} else {
 			return nil, fmt.Errorf("%w: schema %s is not an object", ErrUnknownType, schemaName)

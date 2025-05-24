@@ -2,6 +2,14 @@ openapi: "3.0.0"
 
 components:
   schemas:
+    StatusEnum:
+      type: string
+      description: "Enumeration of possible status values."
+      enum:
+        - active
+        - inactive
+        - pending
+
     SimpleObject:
       type: object
       description: "This is a simple object schema."
@@ -72,6 +80,9 @@ components:
             - "One"
             - true
           example: 0
+        statusRef:
+          description: "Reference to the status enumeration."
+          $ref: '#/components/schemas/StatusEnum'
         nested:
           type: object
           properties:

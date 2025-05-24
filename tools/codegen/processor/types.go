@@ -211,6 +211,14 @@ func getTypeArray(schema *base.SchemaProxy, p Plugin) (Type, []Type, error) { //
 func getTypeEnum( //nolint:ireturn
 	schema *base.SchemaProxy, derivedName string, p Plugin,
 ) (Type, []Type, error) {
+	if schema.IsReference() {
+		return &TypeEnum{
+			schema: schema,
+			name:   getNameFromComponentRef(schema.GetReference()),
+			p:      p,
+		}, nil, nil
+	}
+
 	values := make([]any, 0, len(schema.Schema().Enum))
 	for _, enum := range schema.Schema().Enum {
 		var v any
@@ -220,7 +228,6 @@ func getTypeEnum( //nolint:ireturn
 		values = append(values, v)
 	}
 
-	// TODO enum ref?
 	t := &TypeEnum{
 		name:   derivedName,
 		schema: schema,
@@ -233,7 +240,7 @@ func getTypeEnum( //nolint:ireturn
 // getType determines the type of the schema and returns the corresponding Type.
 // It also returns a slice of types that may include the main type and any additional types
 // if those may need to be defined globally (e.g., nested objects or enums).
-func getType( //nolint:ireturn
+func GetType( //nolint:ireturn
 	schema *base.SchemaProxy, derivedName string, p Plugin,
 ) (Type, []Type, error) {
 	switch {
@@ -274,7 +281,7 @@ func NewObject(
 		prop := propPairs.Value()
 
 		derivedName := name + format.Title(propName)
-		typ, tt, err := getType(prop, derivedName, p)
+		typ, tt, err := GetType(prop, derivedName, p)
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to get type for property %s: %w", propName, err)
 		}
