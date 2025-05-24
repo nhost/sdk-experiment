@@ -3,28 +3,10 @@ package typescript
 import (
 	_ "embed"
 	"fmt"
-	"strings"
 
+	"github.com/nhost/sdk-experiment/tools/codegen/format"
 	"github.com/nhost/sdk-experiment/tools/codegen/processor"
 )
-
-func ToCamelCase(s string) string {
-	// Split the string by hyphens
-	parts := strings.Split(s, "-")
-	for i := range parts {
-		// Capitalize the first letter of each part
-		parts[i] = strings.Title(parts[i])
-	}
-	// Join the parts together without spaces
-	return strings.Join(parts, "")
-}
-
-func LowerFirstLetter(s string) string {
-	if len(s) == 0 {
-		return s // return empty string if input is empty
-	}
-	return strings.ToLower(string(s[0])) + s[1:]
-}
 
 //go:embed typescript.tmpl
 var templateContents []byte
@@ -36,7 +18,7 @@ func (t *Typescript) GetTemplate() string {
 }
 
 func (t *Typescript) TypeObjectName(name string) string {
-	return ToCamelCase(name)
+	return format.ToCamelCase(name)
 }
 
 func (t *Typescript) TypeScalarName(scalar *processor.TypeScalar) string {
@@ -48,7 +30,7 @@ func (t *Typescript) TypeArrayName(array *processor.TypeArray) string {
 }
 
 func (t *Typescript) TypeEnumName(name string) string {
-	return "Enum" + ToCamelCase(name)
+	return "Enum" + format.ToCamelCase(name)
 }
 
 func (t *Typescript) TypeEnumValues(values []any) []string {

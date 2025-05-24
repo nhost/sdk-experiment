@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/nhost/sdk-experiment/tools/codegen/format"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
 )
 
@@ -165,7 +166,7 @@ func NewObject(
 				}
 			} else {
 				var err error
-				name := name + strings.Title(propName)
+				name := name + format.Title(propName)
 				t, tt, err := NewObject(name, prop, p)
 				if err != nil {
 					return nil, nil, err
@@ -209,7 +210,7 @@ func NewObject(
 			}
 
 			typ = &TypeEnum{
-				name:   name + strings.Title(propName),
+				name:   name + format.Title(propName),
 				schema: schema,
 				values: values,
 				p:      p,
