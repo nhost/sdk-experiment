@@ -136,6 +136,95 @@ func getNameFromComponentRef(ref string) string {
 	return strings.Split(ref, "/")[3]
 }
 
+func getTypeObject( //nolint:ireturn
+	schema *base.SchemaProxy, derivedName string, p Plugin,
+) (Type, []Type, error) {
+	if schema.IsReference() {
+		return &TypeObjectRef{
+			schema: schema,
+			name:   getNameFromComponentRef(schema.GetReference()),
+			p:      p,
+		}, nil, nil
+	}
+
+	t, tt, err := NewObject(derivedName, schema, p)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create object type: %w", err)
+	}
+
+	return t, append(tt, t), nil
+}
+
+func getTypeArray(schema *base.SchemaProxy, p Plugin) (Type, []Type, error) { //nolint:ireturn
+	item := schema.Schema().Items.A
+	if item.IsReference() {
+		return &TypeArray{
+			schema: schema,
+			p:      p,
+			Item: &TypeObjectRef{
+				schema: schema,
+				name:   getNameFromComponentRef(item.GetReference()),
+				p:      p,
+			},
+		}, nil, nil
+	}
+	return &TypeArray{
+		schema: schema,
+		p:      p,
+		Item: &TypeScalar{
+			schema: item,
+			p:      p,
+		},
+	}, nil, nil
+}
+
+func getTypeEnum( //nolint:ireturn
+	schema *base.SchemaProxy, derivedName string, p Plugin,
+) (Type, []Type, error) {
+	values := make([]any, 0, len(schema.Schema().Enum))
+	for _, enum := range schema.Schema().Enum {
+		var v any
+		if err := enum.Decode(&v); err != nil {
+			return nil, nil, fmt.Errorf("failed to decode enum value %v: %w", v, err)
+		}
+		values = append(values, v)
+	}
+
+	// TODO enum ref?
+	t := &TypeEnum{
+		name:   derivedName,
+		schema: schema,
+		values: values,
+		p:      p,
+	}
+	return t, []Type{t}, nil
+}
+
+// getType determines the type of the schema and returns the corresponding Type.
+// It also returns a slice of types that may include the main type and any additional types
+// if those may need to be defined globally (e.g., nested objects or enums).
+func getType( //nolint:ireturn
+	schema *base.SchemaProxy, derivedName string, p Plugin,
+) (Type, []Type, error) {
+	// TODO map
+	switch {
+	case schema.Schema().Type[0] == "object" && schema.Schema().Properties != nil:
+		return getTypeObject(schema, derivedName, p)
+
+	case schema.Schema().Type[0] == "array":
+		return getTypeArray(schema, p)
+
+	case len(schema.Schema().Enum) > 0:
+		return getTypeEnum(schema, derivedName, p)
+
+	default:
+		return &TypeScalar{
+			schema: schema,
+			p:      p,
+		}, nil, nil
+	}
+}
+
 func NewObject(
 	name string,
 	schema *base.SchemaProxy,
@@ -155,75 +244,13 @@ func NewObject(
 		propName := propPairs.Key()
 		prop := propPairs.Value()
 
-		var typ Type
-		switch {
-		case prop.Schema().Type[0] == "object" && prop.Schema().Properties != nil:
-			if prop.IsReference() {
-				typ = &TypeObjectRef{
-					schema: prop,
-					name:   getNameFromComponentRef(prop.GetReference()),
-					p:      p,
-				}
-			} else {
-				var err error
-				name := name + format.Title(propName)
-				t, tt, err := NewObject(name, prop, p)
-				if err != nil {
-					return nil, nil, err
-				}
-				typ = t
-				types = append(types, typ)
-				types = append(types, tt...)
-			}
-
-		case prop.Schema().Type[0] == "array":
-			item := prop.Schema().Items.A
-			if item.IsReference() {
-				typ = &TypeArray{
-					schema: prop,
-					p:      p,
-					Item: &TypeObjectRef{
-						schema: prop,
-						name:   getNameFromComponentRef(item.GetReference()),
-						p:      p,
-					},
-				}
-			} else {
-				typ = &TypeArray{
-					schema: prop,
-					p:      p,
-					Item: &TypeScalar{
-						schema: item,
-						p:      p,
-					},
-				}
-			}
-
-		case len(prop.Schema().Enum) > 0:
-			values := make([]any, 0, len(prop.Schema().Enum))
-			for _, enum := range prop.Schema().Enum {
-				var v any
-				if err := enum.Decode(&v); err != nil {
-					return nil, nil, fmt.Errorf("failed to decode enum value %v: %w", v, err)
-				}
-				values = append(values, v)
-			}
-
-			typ = &TypeEnum{
-				name:   name + format.Title(propName),
-				schema: schema,
-				values: values,
-				p:      p,
-			}
-
-			types = append(types, typ)
-
-		default:
-			typ = &TypeScalar{
-				schema: prop,
-				p:      p,
-			}
+		derivedName := name + format.Title(propName)
+		typ, tt, err := getType(prop, derivedName, p)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to get type for property %s: %w", propName, err)
 		}
+
+		types = append(types, tt...)
 
 		property := &Property{
 			Name:   propName,
