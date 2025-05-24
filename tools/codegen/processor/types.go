@@ -16,6 +16,7 @@ const (
 	TypeIdentifierScalar    TypeIdentifier = "scalar"
 	TypeIdentifierArray     TypeIdentifier = "array"
 	TypeIdentifierEnum      TypeIdentifier = "enum"
+	TypeIdentifierMap       TypeIdentifier = "map"
 )
 
 type Plugin interface {
@@ -25,6 +26,7 @@ type Plugin interface {
 	TypeArrayName(array *TypeArray) string
 	TypeEnumName(name string) string
 	TypeEnumValues(values []any) []string
+	TypeMapName(mapType *TypeMap) string
 }
 
 type Type interface {
@@ -132,6 +134,23 @@ func (t *TypeArray) Schema() *base.SchemaProxy {
 	return t.schema
 }
 
+type TypeMap struct {
+	schema *base.SchemaProxy
+	p      Plugin
+}
+
+func (t *TypeMap) Name() string {
+	return t.p.TypeMapName(t)
+}
+
+func (t *TypeMap) Type() TypeIdentifier {
+	return TypeIdentifierMap
+}
+
+func (t *TypeMap) Schema() *base.SchemaProxy {
+	return t.schema
+}
+
 func getNameFromComponentRef(ref string) string {
 	return strings.Split(ref, "/")[3]
 }
@@ -145,6 +164,17 @@ func getTypeObject( //nolint:ireturn
 			name:   getNameFromComponentRef(schema.GetReference()),
 			p:      p,
 		}, nil, nil
+	}
+
+	if schema.Schema().Properties == nil {
+		if schema.Schema().AdditionalProperties.B {
+			return &TypeMap{
+				schema: schema,
+				p:      p,
+			}, nil, nil
+		}
+		return nil, nil, fmt.Errorf(
+			"%w: object schema %s has no properties and no additional properties", ErrUnknownType, derivedName)
 	}
 
 	t, tt, err := NewObject(derivedName, schema, p)
@@ -206,9 +236,8 @@ func getTypeEnum( //nolint:ireturn
 func getType( //nolint:ireturn
 	schema *base.SchemaProxy, derivedName string, p Plugin,
 ) (Type, []Type, error) {
-	// TODO map
 	switch {
-	case schema.Schema().Type[0] == "object" && schema.Schema().Properties != nil:
+	case schema.Schema().Type[0] == "object":
 		return getTypeObject(schema, derivedName, p)
 
 	case schema.Schema().Type[0] == "array":

@@ -42,8 +42,10 @@ func AssertIR(t *testing.T, actual *processor.InterMediateRepresentation, expect
 		}
 
 		actType := actual.Types[i]
-		assert.Equal(t, expType.Name, actType.Name(), "expected type %d name to be %s", i, expType.Name)
-		assert.Equal(t, expType.TypeKind, actType.Type(), "expected type %d kind to be %s", i, expType.TypeKind)
+		assert.Equal(t, expType.Name, actType.Name(),
+			"expected type %d name to be %s", i, expType.Name)
+		assert.Equal(t, expType.TypeKind, actType.Type(),
+			"expected type %d kind to be %s", i, expType.TypeKind)
 
 		switch actType.Type() { //nolint:exhaustive
 		case processor.TypeIdentifierObject:
@@ -127,6 +129,10 @@ func (t *testPlugin) TypeEnumName(name string) string {
 	return "Enum" + name
 }
 
+func (t *testPlugin) TypeMapName(_ *processor.TypeMap) string {
+	return "Record<string, unknown>"
+}
+
 func (t *testPlugin) TypeEnumValues(values []any) []string {
 	enumValues := make([]string, len(values))
 	if len(values) == 0 {
@@ -163,7 +169,7 @@ func TestNewInterMediateRepresentation(t *testing.T) {
 							{Name: "active", Type: "boolean"},
 							{Name: "age", Type: "number"},
 							{Name: "createdAt", Type: "string"},
-							{Name: "metadata", Type: "object"},
+							{Name: "metadata", Type: "Record<string, unknown>"},
 							{Name: "data", Type: "string"},
 							{Name: "tags", Type: "string[]"},
 							{Name: "parent", Type: "SimpleObject"},

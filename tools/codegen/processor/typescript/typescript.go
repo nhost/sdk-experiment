@@ -49,3 +49,7 @@ func (t *Typescript) TypeEnumValues(values []any) []string {
 
 	return enumValues
 }
+
+func (t *Typescript) TypeMapName(_ *processor.TypeMap) string {
+	return "Record<string, unknown>"
+}

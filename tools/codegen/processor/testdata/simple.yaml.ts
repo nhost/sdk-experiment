@@ -7,7 +7,7 @@ export interface SimpleObject {
   active: boolean,
   age: number,
   createdAt: string,
-  metadata: object,
+  metadata: Record<string, unknown>,
   data: string,
   tags: string[],
   parent: SimpleObject,
