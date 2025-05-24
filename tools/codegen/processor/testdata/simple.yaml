@@ -89,6 +89,7 @@ components:
           $ref: '#/components/schemas/StatusEnum'
         nested:
           type: object
+          description: "Nested object containing additional properties."
           properties:
             nestedId:
               type: string

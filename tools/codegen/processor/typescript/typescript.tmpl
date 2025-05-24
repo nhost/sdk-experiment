@@ -2,9 +2,37 @@
  * This file is auto-generated. Do not edit manually.
  */
 
+{{- define "renderObjectAttributeHelp" -}}
+  {{ .Type.Schema.Schema.Description }}
+  {{- if example .Type }}
+    *    Example - {{ example .Type }}
+  {{- end }}
+  {{- if pattern .Type }}
+    *    Pattern - {{ pattern .Type }}
+  {{- end }}
+  {{- if format .Type }}
+    *    Format - {{ format .Type }}
+  {{- end }}
+  {{- if .Type.Schema.Schema.MinLength }}
+    *    MinLength - {{ .Type.Schema.Schema.MinLength }}
+  {{- end }}
+  {{- if .Type.Schema.Schema.MaxLength }}
+    *    MaxLength - {{ .Type.Schema.Schema.MaxLength }}
+  {{- end }}
+{{- end -}}
+
 {{- define "renderObject" -}}
+/**
+ * {{ .Schema.Schema.Description }}
+{{- range .Properties }}
+ * @property {{ .Name }} - {{ template "renderObjectAttributeHelp" . }}
+ {{- end -}}
+ */
 export interface {{ .Name }} {
 {{- range .Properties }}
+  /**
+   * {{ template "renderObjectAttributeHelp" . }}
+   */
   {{ .Name }}: {{ .Type.Name }},
 {{- end }}
 };
@@ -14,6 +42,9 @@ export interface {{ .Name }} {
 {{ if eq .Type "object" }}
 {{ template "renderObject" . }}
 {{ else if eq .Type "enum" }}
+/**
+ * {{ .Schema.Schema.Description }}
+ */
 export type {{ .Name }} = {{ join .Values " | " }};
 {{ else }}
 ------ NOT IMPLEMENTED

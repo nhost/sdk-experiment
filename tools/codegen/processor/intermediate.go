@@ -1,12 +1,14 @@
 package processor
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
 	"text/template"
 
 	"github.com/pb33f/libopenapi"
+	"github.com/pb33f/libopenapi/datamodel/high/base"
 	v3 "github.com/pb33f/libopenapi/datamodel/high/v3"
 )
 
@@ -54,7 +56,10 @@ func NewInterMediateRepresentation(
 
 func (ir *InterMediateRepresentation) Render(out io.Writer) error {
 	interfaceTemplate, err := template.New("interface.ts.tmpl").Funcs(template.FuncMap{
-		"join": strings.Join,
+		"join":    strings.Join,
+		"example": templateFnExample,
+		"pattern": templateFnPattern,
+		"format":  templateFnFormat,
 	}).Parse(ir.plugin.GetTemplate())
 	if err != nil {
 		return fmt.Errorf("failed to parse interface template: %w", err)
@@ -65,4 +70,34 @@ func (ir *InterMediateRepresentation) Render(out io.Writer) error {
 	}
 
 	return nil
+}
+
+type getSchemaer interface {
+	Schema() *base.SchemaProxy
+}
+
+func templateFnExample(obj getSchemaer) string {
+	if obj.Schema().Schema().Example == nil {
+		return ""
+	}
+
+	var a any
+	if err := obj.Schema().Schema().Example.Decode(&a); err != nil {
+		return fmt.Sprintf("Error decoding example: %v", err)
+	}
+
+	b, err := json.Marshal(a)
+	if err != nil {
+		return fmt.Sprintf("Error marshaling example: %v", err)
+	}
+
+	return string(b)
+}
+
+func templateFnPattern(obj getSchemaer) string {
+	return obj.Schema().Schema().Pattern
+}
+
+func templateFnFormat(obj getSchemaer) string {
+	return obj.Schema().Schema().Format
 }
