@@ -14,6 +14,73 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type ExpectedProperty struct {
+	Name string
+	Type string
+}
+
+type ExpectedType struct {
+	Name       string
+	TypeKind   processor.TypeIdentifier // "object", "scalar", "array", "enum"
+	Properties []ExpectedProperty
+	EnumValues []string
+}
+
+type ExpectedIR struct {
+	Types []ExpectedType
+}
+
+func AssertIR(t *testing.T, actual *processor.InterMediateRepresentation, expected ExpectedIR) {
+	t.Helper()
+
+	assert.Len(t, actual.Types, len(expected.Types), "expected %d types", len(expected.Types))
+
+	for i, expType := range expected.Types {
+		if i >= len(actual.Types) {
+			t.Fatalf("expected type at index %d not found", i)
+			return
+		}
+
+		actType := actual.Types[i]
+		assert.Equal(t, expType.Name, actType.Name(), "expected type %d name to be %s", i, expType.Name)
+		assert.Equal(t, expType.TypeKind, actType.Type(), "expected type %d kind to be %s", i, expType.TypeKind)
+
+		switch actType.Type() { //nolint:exhaustive
+		case processor.TypeIdentifierObject:
+			g, ok := actType.(*processor.TypeObject)
+			if !ok {
+				t.Fatalf("expected type %d to be of kind object", i)
+			}
+
+			assert.Len(t, g.Properties(), len(expType.Properties),
+				"expected %d properties for type %s", len(expType.Properties), actType.Name())
+
+			for j, gProp := range g.Properties() {
+				assert.Equal(t, expType.Properties[j].Name, gProp.Name,
+					"expected property %d name to be %s", j, expType.Properties[j].Name)
+				assert.Equal(t, expType.Properties[j].Type, gProp.Type.Name(),
+					"expected property %d type to be %s", j, gProp.Type.Name())
+
+				assert.Same(t, actType, gProp.Parent,
+					"expected property %d parent to be the same as type %s", j, actType.Name())
+			}
+		case processor.TypeIdentifierEnum:
+			g, ok := actType.(*processor.TypeEnum)
+			if !ok {
+				t.Fatalf("expected type %d to be of kind enum", i)
+			}
+
+			assert.Len(t, g.Values(), len(expType.EnumValues),
+				"expected %d enum values for type %s", len(expType.EnumValues), actType.Name())
+
+			assert.Equal(t, expType.EnumValues, g.Values(),
+				"expected enum values for type %s to match", actType.Name())
+		default:
+			t.Fatalf("unexpected type kind %s for type %s", actType.Type(), actType.Name())
+		}
+	}
+}
+
 func getModel(filepath string) (*libopenapi.DocumentModel[v3.Document], error) {
 	// Read OpenAPI file
 	b, err := os.ReadFile(filepath)
@@ -38,14 +105,106 @@ func getModel(filepath string) (*libopenapi.DocumentModel[v3.Document], error) {
 	return docModel, nil
 }
 
+type testPlugin struct{}
+
+func (t *testPlugin) GetTemplate() string {
+	return ""
+}
+
+func (t *testPlugin) TypeObjectName(name string) string {
+	return name
+}
+
+func (t *testPlugin) TypeScalarName(scalar *processor.TypeScalar) string {
+	return scalar.Schema().Schema().Type[0]
+}
+
+func (t *testPlugin) TypeArrayName(array *processor.TypeArray) string {
+	return array.Item.Name() + "[]"
+}
+
+func (t *testPlugin) TypeEnumName(name string) string {
+	return "Enum" + name
+}
+
+func (t *testPlugin) TypeEnumValues(values []any) []string {
+	enumValues := make([]string, len(values))
+	if len(values) == 0 {
+		return enumValues
+	}
+
+	for i, v := range values {
+		if s, ok := v.(string); ok {
+			enumValues[i] = fmt.Sprintf("\"%v\"", s)
+		} else {
+			enumValues[i] = fmt.Sprintf("%v", v)
+		}
+	}
+
+	return enumValues
+}
+
 func TestNewInterMediateRepresentation(t *testing.T) {
 	t.Parallel()
 
 	cases := []struct {
-		name string
+		name     string
+		expected ExpectedIR
 	}{
 		{
 			name: "simple.yaml",
+			expected: ExpectedIR{
+				Types: []ExpectedType{
+					{
+						Name:     "SimpleObject",
+						TypeKind: processor.TypeIdentifierObject,
+						Properties: []ExpectedProperty{
+							{Name: "id", Type: "string"},
+							{Name: "active", Type: "boolean"},
+							{Name: "age", Type: "number"},
+							{Name: "createdAt", Type: "string"},
+							{Name: "metadata", Type: "object"},
+							{Name: "data", Type: "string"},
+							{Name: "tags", Type: "string[]"},
+							{Name: "parent", Type: "SimpleObject"},
+							{Name: "children", Type: "SimpleObject[]"},
+							{Name: "status", Type: "EnumSimpleObjectStatus"},
+							{Name: "statusCode", Type: "EnumSimpleObjectStatusCode"},
+							{Name: "statusMixed", Type: "EnumSimpleObjectStatusMixed"},
+							{Name: "nested", Type: "SimpleObjectNested"},
+						},
+						EnumValues: nil,
+					},
+					{
+						Name:       "EnumSimpleObjectStatus",
+						TypeKind:   processor.TypeIdentifierEnum,
+						Properties: nil,
+						EnumValues: []string{"\"active\"", "\"inactive\"", "\"pending\""},
+					},
+					{
+						Name:       "EnumSimpleObjectStatusCode",
+						TypeKind:   processor.TypeIdentifierEnum,
+						Properties: nil,
+						EnumValues: []string{"0", "1", "2"},
+					},
+					{
+						Name:       "EnumSimpleObjectStatusMixed",
+						TypeKind:   processor.TypeIdentifierEnum,
+						Properties: nil,
+						EnumValues: []string{"0", "\"One\"", "true"},
+					},
+					{
+						Name:     "SimpleObjectNested",
+						TypeKind: processor.TypeIdentifierObject,
+						Properties: []ExpectedProperty{
+							{Name: "nestedId", Type: "string"},
+							{Name: "nestedData", Type: "string"},
+						},
+						EnumValues: nil,
+					},
+					// You can add the remaining 3 types here as needed
+				},
+			},
 		},
 	}
 
@@ -58,79 +217,13 @@ func TestNewInterMediateRepresentation(t *testing.T) {
 				t.Fatalf("failed to get model: %v", err)
 			}
 
-			ir, err := processor.NewInterMediateRepresentation(doc, nil)
+			ir, err := processor.NewInterMediateRepresentation(doc, &testPlugin{})
 			if err != nil {
 				t.Fatalf("failed to create intermediate representation: %v", err)
 			}
 
-			if !assert.Len(t, ir.Types, 2, "expected 2 types") {
-				t.FailNow()
-			}
-
-			firstType := ir.Types[0]
-			assert.Equal(t, "SimpleObject", firstType.Name(),
-				"expected first type name to be SimpleObject")
-			assert.IsType(t, &processor.TypeObject{}, firstType,
-				"expected first type to be of type TypeObject")
-			firstObject, _ := firstType.(*processor.TypeObject)
-			assert.Len(t, firstObject.Properties(), 11, "expected first type to have 11 properties")
-
-			// Table-driven test for properties
-			expectedProperties := []struct {
-				name string
-				typ  string
-			}{
-				{name: "id", typ: "string"},
-				{name: "active", typ: "boolean"},
-				{name: "age", typ: "number"},
-				{name: "createdAt", typ: "string"},
-				{name: "metadata", typ: "object"},
-				{name: "data", typ: "string"},
-				{name: "tags", typ: "array"},
-				{name: "parent", typ: "SimpleObject"},
-				{name: "children", typ: "array"},
-				{name: "status", typ: "string"},
-				{name: "nested", typ: "SimpleObjectNested"},
-			}
-
-			for i, exp := range expectedProperties {
-				prop := firstObject.Properties()[i]
-				assert.Equal(t, exp.name, prop.Name,
-					"expected property %d name to be %s", i, exp.name)
-				assert.Equal(t, firstObject, prop.Parent,
-					"expected property %d parent to be first type", i)
-				assert.Equal(t, exp.typ, prop.Type.Name(),
-					"expected property %d type to be %s", i, exp.typ)
-			}
-
-			secondType := ir.Types[1]
-			assert.Equal(t, "SimpleObjectNested", secondType.Name(),
-				"expected second type name to be SimpleObjectNested")
-			assert.IsType(
-				t, &processor.TypeObject{}, secondType,
-				"expected second type to be of type TypeObject",
-			)
-			secondObject, _ := secondType.(*processor.TypeObject)
-			assert.Len(t, secondObject.Properties(), 2, "expected second type to have 2 properties")
-
-			// Table-driven test for properties
-			expectedProperties = []struct {
-				name string
-				typ  string
-			}{
-				{name: "nestedId", typ: "string"},
-				{name: "nestedData", typ: "string"},
-			}
-
-			for i, exp := range expectedProperties {
-				prop := secondObject.Properties()[i]
-				assert.Equal(t, exp.name, prop.Name,
-					"expected property %d name to be %s", i, exp.name)
-				assert.Equal(t, secondObject, prop.Parent,
-					"expected property %d parent to be first type", i)
-				assert.Equal(t, exp.typ, prop.Type.Name(),
-					"expected property %d type to be %s", i, exp.typ)
-			}
+			// Assert the IR matches our expectations
+			AssertIR(t, ir, tc.expected)
 		})
 	}
 }
@@ -165,7 +258,15 @@ func TestInterMediateRepresentationRender(t *testing.T) {
 				t.Fatalf("failed to render intermediate representation: %v", err)
 			}
 
-			t.Log("\n", buf.String())
+			output := buf.String()
+
+			b, err := os.ReadFile("testdata/" + tc.name + ".ts")
+			if err != nil {
+				t.Fatalf("failed to read expected output file: %v", err)
+			}
+
+			assert.Equal(t, string(b), output,
+				"rendered output does not match expected output for %s", tc.name)
 		})
 	}
 }

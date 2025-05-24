@@ -3,7 +3,7 @@
  */
 
 {{- define "renderObject" -}}
-export const {{ .Name }} = {
+export interface {{ .Name }} {
 {{- range .Properties }}
   {{ .Name }}: {{ .Type.Name }},
 {{- end }}
