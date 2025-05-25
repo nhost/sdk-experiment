@@ -21,7 +21,7 @@ type ExpectedProperty struct {
 
 type ExpectedType struct {
 	Name       string
-	TypeKind   processor.TypeIdentifier // "object", "scalar", "array", "enum"
+	TypeKind   processor.KindIdentifier // "object", "scalar", "array", "enum"
 	Properties []ExpectedProperty
 	EnumValues []string
 }
@@ -44,11 +44,11 @@ func AssertIR(t *testing.T, actual *processor.InterMediateRepresentation, expect
 		actType := actual.Types[i]
 		assert.Equal(t, expType.Name, actType.Name(),
 			"expected type %d name to be %s", i, expType.Name)
-		assert.Equal(t, expType.TypeKind, actType.Type(),
+		assert.Equal(t, expType.TypeKind, actType.Kind(),
 			"expected type %d kind to be %s", i, expType.TypeKind)
 
-		switch actType.Type() { //nolint:exhaustive
-		case processor.TypeIdentifierObject:
+		switch actType.Kind() { //nolint:exhaustive
+		case processor.KindIdentifierObject:
 			g, ok := actType.(*processor.TypeObject)
 			if !ok {
 				t.Fatalf("expected type %d to be of kind object", i)
@@ -66,7 +66,7 @@ func AssertIR(t *testing.T, actual *processor.InterMediateRepresentation, expect
 				assert.Same(t, actType, gProp.Parent,
 					"expected property %d parent to be the same as type %s", j, actType.Name())
 			}
-		case processor.TypeIdentifierEnum:
+		case processor.KindIdentifierEnum:
 			g, ok := actType.(*processor.TypeEnum)
 			if !ok {
 				t.Fatalf("expected type %d to be of kind enum", i)
@@ -78,7 +78,7 @@ func AssertIR(t *testing.T, actual *processor.InterMediateRepresentation, expect
 			assert.Equal(t, expType.EnumValues, g.Values(),
 				"expected enum values for type %s to match", actType.Name())
 		default:
-			t.Fatalf("unexpected type kind %s for type %s", actType.Type(), actType.Name())
+			t.Fatalf("unexpected type kind %s for type %s", actType.Kind(), actType.Name())
 		}
 	}
 }
@@ -120,31 +120,31 @@ func TestNewInterMediateRepresentation(t *testing.T) {
 				Types: []ExpectedType{
 					{
 						Name:       "StatusEnum",
-						TypeKind:   processor.TypeIdentifierEnum,
+						TypeKind:   processor.KindIdentifierEnum,
 						Properties: nil,
 						EnumValues: []string{"\"active\"", "\"inactive\"", "\"pending\""},
 					},
 					{
 						Name:       "SimpleObjectStatus",
-						TypeKind:   processor.TypeIdentifierEnum,
+						TypeKind:   processor.KindIdentifierEnum,
 						Properties: nil,
 						EnumValues: []string{"\"active\"", "\"inactive\"", "\"pending\""},
 					},
 					{
 						Name:       "SimpleObjectStatusCode",
-						TypeKind:   processor.TypeIdentifierEnum,
+						TypeKind:   processor.KindIdentifierEnum,
 						Properties: nil,
 						EnumValues: []string{"0", "1", "2"},
 					},
 					{
 						Name:       "SimpleObjectStatusMixed",
-						TypeKind:   processor.TypeIdentifierEnum,
+						TypeKind:   processor.KindIdentifierEnum,
 						Properties: nil,
 						EnumValues: []string{"0", "\"One\"", "true"},
 					},
 					{
 						Name:     "SimpleObjectNested",
-						TypeKind: processor.TypeIdentifierObject,
+						TypeKind: processor.KindIdentifierObject,
 						Properties: []ExpectedProperty{
 							{Name: "nestedId", Type: "string"},
 							{Name: "nestedData", Type: "string"},
@@ -153,7 +153,7 @@ func TestNewInterMediateRepresentation(t *testing.T) {
 					},
 					{
 						Name:     "SimpleObject",
-						TypeKind: processor.TypeIdentifierObject,
+						TypeKind: processor.KindIdentifierObject,
 						Properties: []ExpectedProperty{
 							{Name: "id", Type: "string"},
 							{Name: "active", Type: "boolean"},
