@@ -1,0 +1,17 @@
+{{- define "client_interface" }}
+export interface Client {
+{{- range .Methods }}
+  {{- $methodName := .Name }}
+  {{ $methodName }}(
+    {{- range .PathParameters }}
+    {{ .Name }}: string,
+    {{- end }}
+    // body
+    {{- if .HasQueryParameters }}
+    params?: {{ title $methodName }}Params,
+    {{- end }}
+    options?: RequestInit,
+  ): Promise<fixme>;
+{{ end -}}
+};
+{{- end }}

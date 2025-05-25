@@ -206,7 +206,10 @@ func TestInterMediateRepresentationRender(t *testing.T) {
 		name string
 	}{
 		{
-			name: "simple.yaml",
+			name: "types.yaml",
+		},
+		{
+			name: "methods_ref.yaml",
 		},
 	}
 

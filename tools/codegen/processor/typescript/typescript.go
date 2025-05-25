@@ -1,20 +1,22 @@
 package typescript
 
 import (
-	_ "embed"
+	"embed"
 	"fmt"
+	"io/fs"
+	"strings"
 
 	"github.com/nhost/sdk-experiment/tools/codegen/format"
 	"github.com/nhost/sdk-experiment/tools/codegen/processor"
 )
 
-//go:embed typescript.tmpl
-var templateContents []byte
+//go:embed templates/*.tmpl
+var templatesFS embed.FS
 
 type Typescript struct{}
 
-func (t *Typescript) GetTemplate() string {
-	return string(templateContents)
+func (t *Typescript) GetTemplates() fs.FS {
+	return templatesFS
 }
 
 func (t *Typescript) TypeObjectName(name string) string {
@@ -52,4 +54,15 @@ func (t *Typescript) TypeEnumValues(values []any) []string {
 
 func (t *Typescript) TypeMapName(_ *processor.TypeMap) string {
 	return "Record<string, unknown>"
+}
+
+func (t *Typescript) MethodName(name string) string {
+	return format.AntiTitle(format.ToCamelCase(name))
+}
+
+func (t *Typescript) ParameterName(name string) string {
+	if strings.Contains(name, "-") || strings.Contains(name, "[") {
+		return `"` + name + `"`
+	}
+	return name
 }

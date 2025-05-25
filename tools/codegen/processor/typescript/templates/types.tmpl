@@ -1,7 +1,3 @@
-/**
- * This file is auto-generated. Do not edit manually.
- */
-
 {{- define "renderObjectAttributeHelp" -}}
   {{ .Type.Schema.Schema.Description }}
   {{- if example .Type }}
@@ -21,6 +17,10 @@
   {{- end }}
 {{- end -}}
 
+{{- define "renderParamAttributeHelp" -}}
+  {{ .Description }}
+{{- end -}}
+
 {{- define "renderObject" -}}
 /**
  * {{ .Schema.Schema.Description }}
@@ -37,16 +37,3 @@ export interface {{ .Name }} {
 {{- end }}
 };
 {{- end }}
-
-{{- range .Types }}
-{{ if eq .Type "object" }}
-{{ template "renderObject" . }}
-{{ else if eq .Type "enum" }}
-/**
- * {{ .Schema.Schema.Description }}
- */
-export type {{ .Name }} = {{ join .Values " | " }};
-{{ else }}
------- NOT IMPLEMENTED
-{{- end -}}
-{{- end -}}

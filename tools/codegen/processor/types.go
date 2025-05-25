@@ -2,6 +2,7 @@ package processor
 
 import (
 	"fmt"
+	"io/fs"
 
 	"github.com/nhost/sdk-experiment/tools/codegen/format"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
@@ -19,13 +20,15 @@ const (
 )
 
 type Plugin interface {
-	GetTemplate() string
+	GetTemplates() fs.FS
 	TypeObjectName(name string) string
 	TypeScalarName(scalar *TypeScalar) string
 	TypeArrayName(array *TypeArray) string
 	TypeEnumName(name string) string
 	TypeEnumValues(values []any) []string
 	TypeMapName(mapType *TypeMap) string
+	MethodName(name string) string
+	ParameterName(name string) string
 }
 
 type Type interface {
@@ -169,7 +172,10 @@ func getTypeObject( //nolint:ireturn
 			}, nil, nil
 		}
 		return nil, nil, fmt.Errorf(
-			"%w: object schema %s has no properties and no additional properties", ErrUnknownType, derivedName)
+			"%w: object schema %s has no properties and no additional properties",
+			ErrUnknownType,
+			derivedName,
+		)
 	}
 
 	t, tt, err := NewObject(derivedName, schema, p)

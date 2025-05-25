@@ -145,3 +145,7 @@ export interface SimpleObject {
    */
   nested: SimpleObjectNested,
 };
+
+
+
+export interface Client {};

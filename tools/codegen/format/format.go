@@ -19,6 +19,13 @@ func Title(s string) string {
 	return string(r)
 }
 
+func AntiTitle(s string) string {
+	if len(s) == 0 {
+		return s
+	}
+	return strings.ToLower(string(s[0])) + s[1:]
+}
+
 func ToCamelCase(s string) string {
 	splitFunc := func(r rune) bool {
 		return r == ' ' || r == '-'

@@ -1,0 +1,31 @@
+/**
+ * This file is auto-generated. Do not edit manually.
+ */
+
+{{- range .Types }}
+{{ if eq .Type "object" }}
+{{ template "renderObject" . }}
+{{ else if eq .Type "enum" }}
+/**
+ * {{ .Schema.Schema.Description }}
+ */
+export type {{ .Name }} = {{ join .Values " | " }};
+{{ else }}
+------ NOT IMPLEMENTED
+{{- end -}}
+{{- end }}
+
+{{- range .Methods }}
+{{- if .HasQueryParameters }}
+export interface {{ title .Name }}Params {
+{{- range .QueryParameters }}
+  /**
+   * {{ template "renderParamAttributeHelp" .Parameter }}
+   */
+  {{ .Name }}: {{ .Type.Name }};
+{{- end }}
+}
+{{- end }}
+{{- end }}
+
+{{ template "client_interface" . }}
