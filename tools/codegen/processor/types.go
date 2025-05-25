@@ -8,15 +8,16 @@ import (
 	"github.com/pb33f/libopenapi/datamodel/high/base"
 )
 
-type TypeIdentifier string
+type KindIdentifier string
 
 const (
-	TypeIdentifierObject    TypeIdentifier = "object"
-	TypeIdentifierObjectRef TypeIdentifier = "objectRef"
-	TypeIdentifierScalar    TypeIdentifier = "scalar"
-	TypeIdentifierArray     TypeIdentifier = "array"
-	TypeIdentifierEnum      TypeIdentifier = "enum"
-	TypeIdentifierMap       TypeIdentifier = "map"
+	KindIdentifierObject    KindIdentifier = "object"
+	KindIdentifierObjectRef KindIdentifier = "objectRef"
+	KindIdentifierScalar    KindIdentifier = "scalar"
+	KindIdentifierArray     KindIdentifier = "array"
+	KindIdentifierEnum      KindIdentifier = "enum"
+	KindIdentifierMap       KindIdentifier = "map"
+	KindIdentifierAlias     KindIdentifier = "alias"
 )
 
 type Plugin interface {
@@ -33,7 +34,7 @@ type Plugin interface {
 
 type Type interface {
 	Name() string
-	Type() TypeIdentifier
+	Kind() KindIdentifier
 	Schema() *base.SchemaProxy
 }
 
@@ -48,8 +49,8 @@ func (t *TypeObject) Name() string {
 	return t.p.TypeObjectName(t.name)
 }
 
-func (t *TypeObject) Type() TypeIdentifier {
-	return TypeIdentifierObject
+func (t *TypeObject) Kind() KindIdentifier {
+	return KindIdentifierObject
 }
 
 func (t *TypeObject) Schema() *base.SchemaProxy {
@@ -70,8 +71,8 @@ func (t *TypeObjectRef) Name() string {
 	return t.p.TypeObjectName(t.name)
 }
 
-func (t *TypeObjectRef) Type() TypeIdentifier {
-	return TypeIdentifierObjectRef
+func (t *TypeObjectRef) Kind() KindIdentifier {
+	return KindIdentifierObjectRef
 }
 
 func (t *TypeObjectRef) Schema() *base.SchemaProxy {
@@ -93,8 +94,8 @@ func (t *TypeEnum) Values() []string {
 	return t.p.TypeEnumValues(t.values)
 }
 
-func (t *TypeEnum) Type() TypeIdentifier {
-	return TypeIdentifierEnum
+func (t *TypeEnum) Kind() KindIdentifier {
+	return KindIdentifierEnum
 }
 
 func (t *TypeEnum) Schema() *base.SchemaProxy {
@@ -110,8 +111,8 @@ func (t *TypeScalar) Name() string {
 	return t.p.TypeScalarName(t)
 }
 
-func (t *TypeScalar) Type() TypeIdentifier {
-	return TypeIdentifierScalar
+func (t *TypeScalar) Kind() KindIdentifier {
+	return KindIdentifierScalar
 }
 
 func (t *TypeScalar) Schema() *base.SchemaProxy {
@@ -128,8 +129,8 @@ func (t *TypeArray) Name() string {
 	return t.p.TypeArrayName(t)
 }
 
-func (t *TypeArray) Type() TypeIdentifier {
-	return TypeIdentifierArray
+func (t *TypeArray) Kind() KindIdentifier {
+	return KindIdentifierArray
 }
 
 func (t *TypeArray) Schema() *base.SchemaProxy {
@@ -145,8 +146,8 @@ func (t *TypeMap) Name() string {
 	return t.p.TypeMapName(t)
 }
 
-func (t *TypeMap) Type() TypeIdentifier {
-	return TypeIdentifierMap
+func (t *TypeMap) Kind() KindIdentifier {
+	return KindIdentifierMap
 }
 
 func (t *TypeMap) Schema() *base.SchemaProxy {

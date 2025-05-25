@@ -3,9 +3,9 @@
  */
 
 {{- range .Types }}
-{{ if eq .Type "object" }}
+{{ if eq .Kind "object" }}
 {{ template "renderObject" . }}
-{{ else if eq .Type "enum" }}
+{{ else if eq .Kind "enum" }}
 /**
  * {{ .Schema.Schema.Description }}
  */
