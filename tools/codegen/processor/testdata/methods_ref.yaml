@@ -163,67 +163,66 @@ components:
       name: id
       required: true
       in: path
-      description: "Unique identifier of the file"
       schema:
+        description: "Unique identifier of the file"
         type: string
     IfMatch:
       name: if-match
-      description: "Only return the file if the current ETag matches one of the values provided"
       in: header
       schema:
+        description: "Only return the file if the current ETag matches one of the values provided"
         type: string
     IfNoneMatch:
       name: if-none-match
-      description: "Only return the file if the current ETag does not match any of the values provided"
       in: header
       schema:
+        description: "Only return the file if the current ETag does not match any of the values provided"
         type: string
     IfModifiedSince:
       name: if-modified-since
-      description: "Only return the file if it has been modified after the given date"
       in: header
       schema:
+        description: "Only return the file if it has been modified after the given date"
         type: string
         format: date-time
     IfUnmodifiedSince:
       name: if-unmodified-since
-      description: "Only return the file if it has not been modified after the given date"
       in: header
       schema:
+        description: "Only return the file if it has not been modified after the given date"
         type: string
         format: date-time
     ImageQuality:
       name: q
-      description: "Image quality (1-100). Only applies to JPEG, WebP and PNG files"
       in: query
       schema:
+        description: "Image quality (1-100). Only applies to JPEG, WebP and PNG files"
         type: number
         minimum: 1
         maximum: 100
     MaxHeight:
       name: h
-      description: "Maximum height to resize image to while maintaining aspect ratio. Only applies to image files"
       in: query
       schema:
+        description: "Maximum height to resize image to while maintaining aspect ratio. Only applies to image files"
         type: number
         minimum: 1
     MaxWidth:
       name: w
-      description: "Maximum width to resize image to while maintaining aspect ratio. Only applies to image files"
       in: query
       schema:
+        description: "Maximum width to resize image to while maintaining aspect ratio. Only applies to image files"
         type: number
         minimum: 1
     BlurSigma:
       name: b
-      description: "Blur the image using this sigma value. Only applies to image files"
       in: query
       schema:
+        description: "Blur the image using this sigma value. Only applies to image files"
         type: number
         minimum: 0
     OutputFormat:
       name: f
-      description: "Output format for image files. Use 'auto' for content negotiation based on Accept header"
       in: query
       schema:
         type: string

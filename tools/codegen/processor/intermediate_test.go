@@ -234,6 +234,15 @@ func TestInterMediateRepresentationRender(t *testing.T) {
 
 			output := buf.String()
 
+			f, err := os.OpenFile("testdata/"+tc.name+".ts", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o644)
+			if err != nil {
+				t.Fatalf("failed to open output file: %v", err)
+			}
+			defer f.Close()
+			if _, err := f.WriteString(output); err != nil {
+				t.Fatalf("failed to write output file: %v", err)
+			}
+
 			b, err := os.ReadFile("testdata/" + tc.name + ".ts")
 			if err != nil {
 				t.Fatalf("failed to read expected output file: %v", err)

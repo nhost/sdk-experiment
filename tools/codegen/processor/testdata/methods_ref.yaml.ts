@@ -208,91 +208,167 @@ export interface ErrorResponse {
 
 
 /**
+ * Unique identifier of the file
+ */
+export type FileId = string;
+
+
+/**
+ * Only return the file if the current ETag matches one of the values provided
+ */
+export type IfMatch = string;
+
+
+/**
+ * Only return the file if the current ETag does not match any of the values provided
+ */
+export type IfNoneMatch = string;
+
+
+/**
+ * Only return the file if it has been modified after the given date
+ */
+export type IfModifiedSince = string;
+
+
+/**
+ * Only return the file if it has not been modified after the given date
+ */
+export type IfUnmodifiedSince = string;
+
+
+/**
+ * Image quality (1-100). Only applies to JPEG, WebP and PNG files
+ */
+export type ImageQuality = number;
+
+
+/**
+ * Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+ */
+export type MaxHeight = number;
+
+
+/**
+ * Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+ */
+export type MaxWidth = number;
+
+
+/**
+ * Blur the image using this sigma value. Only applies to image files
+ */
+export type BlurSigma = number;
+
+
+/**
  * Format to convert the image to. If 'auto', the format is determined based on the Accept header.
  */
 export type OutputFormat = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
 
-
 /**
- * Format to convert the image to. If 'auto', the format is determined based on the Accept header.
- */
-export type HeadF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
-
-
-/**
- * Format to convert the image to. If 'auto', the format is determined based on the Accept header.
- */
-export type GetF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
-
+ * Parameters for the getFileMetadataHeaders method.
+    * @param q - 
+    *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
+    * @param h - 
+    *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+    * @param w - 
+    *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+    * @param b - 
+    *    Blur the image using this sigma value. Only applies to image files
+    * @param f - 
+    *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.*/
 export interface GetFileMetadataHeadersParams {
   /**
-   * Image quality (1-100). Only applies to JPEG, WebP and PNG files
+   * 
+    *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
    */
-  q: number;
+  q: ImageQuality;
   /**
-   * Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+   * 
+    *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
    */
-  h: number;
+  h: MaxHeight;
   /**
-   * Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+   * 
+    *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
    */
-  w: number;
+  w: MaxWidth;
   /**
-   * Blur the image using this sigma value. Only applies to image files
+   * 
+    *    Blur the image using this sigma value. Only applies to image files
    */
-  b: number;
+  b: BlurSigma;
   /**
-   * Output format for image files. Use 'auto' for content negotiation based on Accept header
+   * 
+    *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.
    */
-  f: HeadF;
+  f: OutputFormat;
 }
+/**
+ * Parameters for the getFile method.
+    * @param q - 
+    *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
+    * @param h - 
+    *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+    * @param w - 
+    *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+    * @param b - 
+    *    Blur the image using this sigma value. Only applies to image files
+    * @param f - 
+    *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.*/
 export interface GetFileParams {
   /**
-   * Image quality (1-100). Only applies to JPEG, WebP and PNG files
+   * 
+    *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
    */
-  q: number;
+  q: ImageQuality;
   /**
-   * Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+   * 
+    *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
    */
-  h: number;
+  h: MaxHeight;
   /**
-   * Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+   * 
+    *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
    */
-  w: number;
+  w: MaxWidth;
   /**
-   * Blur the image using this sigma value. Only applies to image files
+   * 
+    *    Blur the image using this sigma value. Only applies to image files
    */
-  b: number;
+  b: BlurSigma;
   /**
-   * Output format for image files. Use 'auto' for content negotiation based on Accept header
+   * 
+    *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.
    */
-  f: GetF;
+  f: OutputFormat;
 }
 
 
 export interface Client {
   getFileMetadataHeaders(
-    id: string,
+    id: FileId,
     // body
     params?: GetFileMetadataHeadersParams,
     options?: RequestInit,
   ): Promise<fixme>;
 
   getFile(
-    id: string,
+    id: FileId,
     // body
     params?: GetFileParams,
     options?: RequestInit,
   ): Promise<fixme>;
 
   replaceFile(
-    id: string,
+    id: FileId,
     // body
     options?: RequestInit,
   ): Promise<fixme>;
 
   deleteFile(
-    id: string,
+    id: FileId,
     // body
     options?: RequestInit,
   ): Promise<fixme>;

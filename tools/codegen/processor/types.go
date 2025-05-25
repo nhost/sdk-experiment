@@ -11,13 +11,13 @@ import (
 type KindIdentifier string
 
 const (
-	KindIdentifierObject    KindIdentifier = "object"
-	KindIdentifierObjectRef KindIdentifier = "objectRef"
-	KindIdentifierScalar    KindIdentifier = "scalar"
-	KindIdentifierArray     KindIdentifier = "array"
-	KindIdentifierEnum      KindIdentifier = "enum"
-	KindIdentifierMap       KindIdentifier = "map"
-	KindIdentifierAlias     KindIdentifier = "alias"
+	KindIdentifierRef    KindIdentifier = "ref"
+	KindIdentifierObject KindIdentifier = "object"
+	KindIdentifierScalar KindIdentifier = "scalar"
+	KindIdentifierArray  KindIdentifier = "array"
+	KindIdentifierEnum   KindIdentifier = "enum"
+	KindIdentifierMap    KindIdentifier = "map"
+	KindIdentifierAlias  KindIdentifier = "alias"
 )
 
 type Plugin interface {
@@ -61,21 +61,21 @@ func (t *TypeObject) Properties() []*Property {
 	return t.properties
 }
 
-type TypeObjectRef struct {
+type TypeRef struct {
 	name   string
 	schema *base.SchemaProxy
 	p      Plugin
 }
 
-func (t *TypeObjectRef) Name() string {
+func (t *TypeRef) Name() string {
 	return t.p.TypeObjectName(t.name)
 }
 
-func (t *TypeObjectRef) Kind() KindIdentifier {
-	return KindIdentifierObjectRef
+func (t *TypeRef) Kind() KindIdentifier {
+	return KindIdentifierRef
 }
 
-func (t *TypeObjectRef) Schema() *base.SchemaProxy {
+func (t *TypeRef) Schema() *base.SchemaProxy {
 	return t.schema
 }
 
@@ -99,6 +99,29 @@ func (t *TypeEnum) Kind() KindIdentifier {
 }
 
 func (t *TypeEnum) Schema() *base.SchemaProxy {
+	return t.schema
+}
+
+type TypeAlias struct {
+	name   string
+	schema *base.SchemaProxy
+	alias  Type
+	p      Plugin
+}
+
+func (t *TypeAlias) Name() string {
+	return t.p.TypeObjectName(t.name)
+}
+
+func (t *TypeAlias) Alias() Type { //nolint:ireturn
+	return t.alias
+}
+
+func (t *TypeAlias) Kind() KindIdentifier {
+	return KindIdentifierAlias
+}
+
+func (t *TypeAlias) Schema() *base.SchemaProxy {
 	return t.schema
 }
 
@@ -158,7 +181,7 @@ func getTypeObject( //nolint:ireturn
 	schema *base.SchemaProxy, derivedName string, p Plugin,
 ) (Type, []Type, error) {
 	if schema.IsReference() {
-		return &TypeObjectRef{
+		return &TypeRef{
 			schema: schema,
 			name:   format.GetNameFromComponentRef(schema.GetReference()),
 			p:      p,
@@ -193,7 +216,7 @@ func getTypeArray(schema *base.SchemaProxy, p Plugin) (Type, []Type, error) { //
 		return &TypeArray{
 			schema: schema,
 			p:      p,
-			Item: &TypeObjectRef{
+			Item: &TypeRef{
 				schema: schema,
 				name:   format.GetNameFromComponentRef(item.GetReference()),
 				p:      p,
@@ -244,7 +267,7 @@ func getTypeEnum( //nolint:ireturn
 // It also returns a slice of types that may include the main type and any additional types
 // if those may need to be defined globally (e.g., nested objects or enums).
 func GetType( //nolint:ireturn
-	schema *base.SchemaProxy, derivedName string, p Plugin,
+	schema *base.SchemaProxy, derivedName string, p Plugin, isComponent bool,
 ) (Type, []Type, error) {
 	switch {
 	case schema.Schema().Type[0] == "object":
@@ -257,10 +280,20 @@ func GetType( //nolint:ireturn
 		return getTypeEnum(schema, derivedName, p)
 
 	default:
-		return &TypeScalar{
+		s := &TypeScalar{
 			schema: schema,
 			p:      p,
-		}, nil, nil
+		}
+		if isComponent {
+			t := &TypeAlias{
+				name:   derivedName,
+				schema: schema,
+				alias:  s,
+				p:      p,
+			}
+			return t, []Type{t}, nil
+		}
+		return s, nil, nil
 	}
 }
 
@@ -284,7 +317,7 @@ func NewObject(
 		prop := propPairs.Value()
 
 		derivedName := name + format.Title(propName)
-		typ, tt, err := GetType(prop, derivedName, p)
+		typ, tt, err := GetType(prop, derivedName, p, false)
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to get type for property %s: %w", propName, err)
 		}

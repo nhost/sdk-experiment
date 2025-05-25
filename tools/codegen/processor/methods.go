@@ -77,11 +77,22 @@ func GetMethod(
 	params := make([]*Parameter, len(operation.Parameters))
 	types := make([]Type, 0, 10) //nolint:mnd
 	for i, param := range operation.Parameters {
-		t, tt, err := GetType(param.Schema, method+format.Title(param.Name), processor)
-		if err != nil {
-			return nil, nil, fmt.Errorf("failed to get type for parameter %s: %w", param.Name, err)
+		var t Type
+		if param.GoLow().IsReference() {
+			t = &TypeEnum{
+				schema: param.Schema,
+				name:   format.GetNameFromComponentRef(param.GoLow().GetReference()),
+				values: nil, // No values for reference types
+				p:      processor,
+			}
+		} else {
+			t2, tt, err := GetType(param.Schema, method+format.Title(param.Name), processor, false)
+			if err != nil {
+				return nil, nil, fmt.Errorf("failed to get type for parameter %s: %w", param.Name, err)
+			}
+			types = append(types, tt...)
+			t = t2
 		}
-		types = append(types, tt...)
 		params[i] = &Parameter{
 			name:      param.Name,
 			Parameter: param,

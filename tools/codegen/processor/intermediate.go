@@ -89,7 +89,7 @@ func newInterMediateRepresentationComponentsSchemas(
 		proxy := schemaPairs.Value()
 
 		if proxy.Schema() != nil && len(proxy.Schema().Type) > 0 {
-			_, tt, err := GetType(proxy, schemaName, plugin)
+			_, tt, err := GetType(proxy, schemaName, plugin, true)
 			if err != nil {
 				return nil, fmt.Errorf("failed to create type %s: %w", schemaName, err)
 			}
@@ -111,7 +111,7 @@ func newInterMediateRepresentationComponentsParameters(
 		schemaName := paramPairs.Key()
 		proxy := paramPairs.Value()
 
-		_, tt, err := GetType(proxy.Schema, schemaName, plugin)
+		_, tt, err := GetType(proxy.Schema, schemaName, plugin, true)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create type %s: %w", schemaName, err)
 		}

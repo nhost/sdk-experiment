@@ -4,7 +4,7 @@ export interface Client {
   {{- $methodName := .Name }}
   {{ $methodName }}(
     {{- range .PathParameters }}
-    {{ .Name }}: string,
+    {{ .Name }}: {{ .Type.Name }},
     {{- end }}
     // body
     {{- if .HasQueryParameters }}

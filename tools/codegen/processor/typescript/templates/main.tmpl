@@ -10,6 +10,11 @@
  * {{ .Schema.Schema.Description }}
  */
 export type {{ .Name }} = {{ join .Values " | " }};
+{{ else if eq .Kind "alias" }}
+/**
+ * {{ .Alias.Schema.Schema.Description }}
+ */
+export type {{ .Name }} = {{ .Alias.Name }};
 {{ else }}
 ------ NOT IMPLEMENTED
 {{- end -}}
@@ -17,6 +22,12 @@ export type {{ .Name }} = {{ join .Values " | " }};
 
 {{- range .Methods }}
 {{- if .HasQueryParameters }}
+/**
+ * Parameters for the {{ .Name }} method.
+{{- range .QueryParameters }}
+    * @param {{ .Name }} - {{ template "renderParamAttributeHelp" .Parameter }}
+{{- end -}}
+ */
 export interface {{ title .Name }}Params {
 {{- range .QueryParameters }}
   /**

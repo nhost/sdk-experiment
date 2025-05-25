@@ -1,37 +1,42 @@
 {{- define "renderObjectAttributeHelp" -}}
-  {{ .Type.Schema.Schema.Description }}
-  {{- if example .Type }}
-    *    Example - {{ example .Type }}
+  {{ .Schema.Schema.Description }}
+  {{- if example .}}
+    *    Example - {{ example .}}
   {{- end }}
-  {{- if pattern .Type }}
-    *    Pattern - {{ pattern .Type }}
+  {{- if pattern . }}
+    *    Pattern - {{ pattern . }}
   {{- end }}
-  {{- if format .Type }}
-    *    Format - {{ format .Type }}
+  {{- if format . }}
+    *    Format - {{ format . }}
   {{- end }}
-  {{- if .Type.Schema.Schema.MinLength }}
-    *    MinLength - {{ .Type.Schema.Schema.MinLength }}
+  {{- if .Schema.Schema.MinLength }}
+    *    MinLength - {{ .Schema.Schema.MinLength }}
   {{- end }}
-  {{- if .Type.Schema.Schema.MaxLength }}
-    *    MaxLength - {{ .Type.Schema.Schema.MaxLength }}
+  {{- if .Schema.Schema.MaxLength }}
+    *    MaxLength - {{ .Schema.Schema.MaxLength }}
   {{- end }}
 {{- end -}}
 
 {{- define "renderParamAttributeHelp" -}}
-  {{ .Description }}
+  {{- if .Description }}
+  {{- .Description }}
+  {{ end }}
+  {{- if .Schema.Schema.Description }}
+    *    {{ .Schema.Schema.Description }}
+  {{- end }}
 {{- end -}}
 
 {{- define "renderObject" -}}
 /**
  * {{ .Schema.Schema.Description }}
 {{- range .Properties }}
- * @property {{ .Name }} - {{ template "renderObjectAttributeHelp" . }}
+ * @property {{ .Name }} - {{ template "renderObjectAttributeHelp" .Type }}
  {{- end -}}
  */
 export interface {{ .Name }} {
 {{- range .Properties }}
   /**
-   * {{ template "renderObjectAttributeHelp" . }}
+   * {{ template "renderObjectAttributeHelp" .Type }}
    */
   {{ .Name }}: {{ .Type.Name }},
 {{- end }}
