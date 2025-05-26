@@ -68,6 +68,10 @@ func (t *Typescript) MethodName(name string) string {
 	return format.AntiTitle(format.ToCamelCase(name))
 }
 
+func (t *Typescript) MethodPath(name string) string {
+	return strings.ReplaceAll(name, "{", "${")
+}
+
 func (t *Typescript) ParameterName(name string) string {
 	if strings.Contains(name, "-") || strings.Contains(name, "[") {
 		return `"` + name + `"`

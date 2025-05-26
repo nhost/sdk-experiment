@@ -2,7 +2,9 @@ package processor
 
 import (
 	"fmt"
+	"net/http"
 	"slices"
+	"strconv"
 	"strings"
 
 	"github.com/nhost/sdk-experiment/tools/codegen/format"
@@ -25,6 +27,14 @@ type Method struct {
 
 func (m *Method) Name() string {
 	return m.p.MethodName(m.name)
+}
+
+func (m *Method) Method() string {
+	return strings.ToUpper(m.method)
+}
+
+func (m *Method) Path() string {
+	return m.p.MethodPath(m.path)
 }
 
 func (m *Method) PathParameters() []*Parameter {
@@ -69,8 +79,13 @@ func addIfNotPresent[S ~[]E, E comparable](s S, v E) S {
 
 func (m *Method) ReturnType() string {
 	tt := make([]string, 0, 10) //nolint:mnd
-	for code, resp := range m.Responses {
-		if code >= "400" {
+	for c, resp := range m.Responses {
+		code, err := strconv.Atoi(c)
+		if err != nil {
+			panic(fmt.Sprintf("invalid response code %s: %v", c, err))
+		}
+
+		if code >= 300 {
 			continue
 		}
 
@@ -88,6 +103,83 @@ func (m *Method) ReturnType() string {
 		}
 	}
 	return strings.Join(tt, " | ")
+}
+
+func (m *Method) RequestJSON() bool {
+	for m := range m.Bodies {
+		return m == "application/json"
+	}
+	return false
+}
+
+func (m *Method) RequestFormData() bool {
+	for m := range m.Bodies {
+		return m == "multipart/form-data"
+	}
+	return false
+}
+
+func (m *Method) RequestHasBody() bool {
+	return len(m.Bodies) > 0
+}
+
+func (m *Method) ResponseJSON() bool {
+	for c, resp := range m.Responses {
+		code, err := strconv.Atoi(c)
+		if err != nil {
+			panic(fmt.Sprintf("invalid response code %s: %v", c, err))
+		}
+
+		if code >= 300 {
+			continue
+		}
+
+		for media := range resp {
+			return media == "application/json"
+		}
+	}
+	return false
+}
+
+func (m *Method) ResponseBinary() bool {
+	for c, resp := range m.Responses {
+		code, err := strconv.Atoi(c)
+		if err != nil {
+			panic(fmt.Sprintf("invalid response code %s: %v", c, err))
+		}
+
+		if code >= 300 {
+			continue
+		}
+
+		for media := range resp {
+			return media == "application/octet-stream"
+		}
+	}
+	return false
+}
+
+func (m *Method) IsRedirect() bool {
+	for code := range m.Responses {
+		return code == strconv.Itoa(http.StatusFound)
+	}
+	return false
+}
+
+func (m *Method) HasResponseBody() bool {
+	for c, resp := range m.Responses {
+		code, err := strconv.Atoi(c)
+		if err != nil {
+			panic(fmt.Sprintf("invalid response code %s: %v", c, err))
+		}
+
+		if code >= 300 {
+			continue
+		}
+
+		return len(resp) > 0
+	}
+	return false
 }
 
 type Parameter struct {

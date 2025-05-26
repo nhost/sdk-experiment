@@ -30,6 +30,7 @@ type Plugin interface {
 	TypeEnumValues(values []any) []string
 	TypeMapName(mapType *TypeMap) string
 	MethodName(name string) string
+	MethodPath(name string) string
 	ParameterName(name string) string
 	PropertyName(name string) string
 	BinaryType() string

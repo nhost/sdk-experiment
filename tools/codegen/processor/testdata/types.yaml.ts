@@ -148,4 +148,24 @@ export interface SimpleObject {
 
 
 
-export interface Client {};
+export interface Client {
+  baseURL: string;
+  pushChainFunction(chainFunction: ChainFunction): void;};
+
+
+export const createAPIClient = (
+  baseURL: string,
+  chainFunctions: ChainFunction[] = [],
+): Client => {
+  let fetch = createEnhancedFetch(chainFunctions);
+
+  const pushChainFunction = (chainFunction: ChainFunction) => {
+    chainFunctions.push(chainFunction);
+    fetch = createEnhancedFetch(chainFunctions);
+  };
+
+  return {
+    baseURL,
+    pushChainFunction,
+  };
+};

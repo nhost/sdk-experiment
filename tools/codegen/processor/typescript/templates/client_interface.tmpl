@@ -1,8 +1,14 @@
 {{- define "client_interface" }}
 export interface Client {
+  baseURL: string;
+  pushChainFunction(chainFunction: ChainFunction): void;
 {{- range .Methods }}
   {{- $method := . }}
-  {{ $method.Name }}(
+  {{- if .IsRedirect }}
+  {{ .Name }}URL(
+  {{- else }}
+  {{ .Name }}(
+    {{- end }}
     {{- range .PathParameters }}
     {{ .Name }}: {{ .Type.Name }},
     {{- end }}
@@ -13,7 +19,137 @@ export interface Client {
     params?: {{ title $method.Name }}Params,
     {{- end }}
     options?: RequestInit,
+  {{- if .IsRedirect }}
+  ): string;
+  {{- else }}
   ): Promise<{{ .ReturnType }}>;
+  {{- end }}
 {{ end -}}
+};
+{{- end }}
+
+
+{{- define "client" }}
+export const createAPIClient = (
+  baseURL: string,
+  chainFunctions: ChainFunction[] = [],
+): Client => {
+  let fetch = createEnhancedFetch(chainFunctions);
+
+  const pushChainFunction = (chainFunction: ChainFunction) => {
+    chainFunctions.push(chainFunction);
+    fetch = createEnhancedFetch(chainFunctions);
+  };
+
+{{- range .Methods }}
+  {{- $method := . }}
+  {{- if .IsRedirect }}
+    const  {{ .Name }}URL = (
+  {{- else }}
+    const  {{ .Name }} = async (
+  {{- end }}
+    {{- range .PathParameters }}
+    {{ .Name }}: {{ .Type.Name }},
+    {{- end }}
+    {{- range $code, $type := .Bodies }}
+    body{{ if not $method.BodyRequired }}?{{ end }}: {{ $type.Name }},
+    {{- end }}
+    {{- if .HasQueryParameters }}
+    params?: {{ title $method.Name }}Params,
+    {{- end }}
+  {{- if .IsRedirect }}
+  ): string => {
+  {{- else }}
+    options?: RequestInit,
+  ): Promise<FetchResponse<{{ .ReturnType }}>> => {
+  {{- end }}
+  {{- if .HasQueryParameters }}
+    const normalizedParams = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value !== undefined) {
+        normalizedParams.append(
+          key,
+          value === null ? "null" : value.toString(),
+        );
+      }
+    });
+
+    const stringifiedParams = normalizedParams.toString();
+
+    const url =
+      stringifiedParams.length > 0
+        ? baseURL + `{{ .Path }}?${stringifiedParams}`
+        : baseURL + `{{ .Path }}`;
+  {{- else }}
+    const url = baseURL + `{{ .Path }}`;
+  {{- end }}
+  {{- if .IsRedirect }}
+    return url;
+  {{- else }}
+  {{- if .RequestJSON }}
+    const res = await fetch(url, {
+      ...options,
+      method: "{{ .Method }}",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+  {{- else if .RequestFormData }}
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      body: objectToFormData(body),
+    });
+  {{- else if not .RequestHasBody }}
+    const res = await fetch(url, {
+      ...options,
+      method: "{{ .Method }}",
+      headers: {
+        ...options?.headers,
+      },
+    });
+  {{- else }}
+  TODO handle request body
+  {{- end }}
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+    {{ if .ResponseJSON }}
+    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const payload: FetchResponse<{{ .ReturnType }}> = responseBody ? JSON.parse(responseBody) : {};
+    {{ else if .ResponseBinary }}
+    const payload: Blob = await res.blob();
+    {{ else if not .HasResponseBody }}
+    const payload: void = undefined;
+    {{ else }}
+    TODO handle response body
+    {{ end }}
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<{{ .ReturnType }}>;
+{{ end }}
+  };
+{{ end }}
+
+  return {
+    baseURL,
+    pushChainFunction,
+    {{- range .Methods }}
+    {{- if .IsRedirect }}
+      {{ .Name }}URL,
+    {{- else }}
+      {{ .Name }},
+    {{- end }}
+    {{- end }}
+  };
 };
 {{- end }}

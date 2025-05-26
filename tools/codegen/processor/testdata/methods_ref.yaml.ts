@@ -435,7 +435,25 @@ export type OutputFormat = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
 
 
 /**
- * 
+ * Ticket
+ */
+export type TicketQuery = string;
+
+
+/**
+ * Type of the ticket
+ */
+export type TicketTypeQuery = "emailVerify" | "emailConfirmChange" | "signinPasswordless" | "passwordReset";
+
+
+/**
+ * Target URL for the redirect
+ */
+export type RedirectToQuery = string;
+
+
+/**
+ *
  * @property (string) "bucket-id" - Target bucket identifier where files will be stored.
     *    Example - "user-uploads"
  * @property (FileMetadata[]) "metadata[]" - Optional custom metadata for each uploaded file. Must match the order of the file[] array.
@@ -458,7 +476,7 @@ export interface UploadFilesBody {
 
 
 /**
- * 
+ *
  * @property (FileMetadata[]) processedFiles - List of successfully processed files with their metadata.*/
 export interface UploadFilesResponse201 {
   /**
@@ -469,7 +487,7 @@ export interface UploadFilesResponse201 {
 
 
 /**
- * 
+ *
  * @property (UpdateFileMetadata) metadata - Metadata that can be updated for an existing file.
  * @property (Blob) file - New file content to replace the existing file
     *    Format - binary*/
@@ -487,85 +505,109 @@ export interface ReplaceFileBody {
 
 /**
  * Parameters for the getFileMetadataHeaders method.
-    * @param q - 
+    * @param q -
     *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
-    * @param h - 
+    * @param h -
     *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-    * @param w - 
+    * @param w -
     *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-    * @param b - 
+    * @param b -
     *    Blur the image using this sigma value. Only applies to image files
-    * @param f - 
+    * @param f -
     *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.*/
 export interface GetFileMetadataHeadersParams {
   /**
-   * 
+   *
     *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
    */
   q: ImageQuality;
   /**
-   * 
+   *
     *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
    */
   h: MaxHeight;
   /**
-   * 
+   *
     *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
    */
   w: MaxWidth;
   /**
-   * 
+   *
     *    Blur the image using this sigma value. Only applies to image files
    */
   b: BlurSigma;
   /**
-   * 
+   *
     *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.
    */
   f: OutputFormat;
 }
 /**
  * Parameters for the getFile method.
-    * @param q - 
+    * @param q -
     *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
-    * @param h - 
+    * @param h -
     *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-    * @param w - 
+    * @param w -
     *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-    * @param b - 
+    * @param b -
     *    Blur the image using this sigma value. Only applies to image files
-    * @param f - 
+    * @param f -
     *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.*/
 export interface GetFileParams {
   /**
-   * 
+   *
     *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
    */
   q: ImageQuality;
   /**
-   * 
+   *
     *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
    */
   h: MaxHeight;
   /**
-   * 
+   *
     *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
    */
   w: MaxWidth;
   /**
-   * 
+   *
     *    Blur the image using this sigma value. Only applies to image files
    */
   b: BlurSigma;
   /**
-   * 
+   *
     *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.
    */
   f: OutputFormat;
 }
+/**
+ * Parameters for the verifyTicket method.
+    * @param ticket - Ticket
+
+    *    Ticket
+    * @param redirectTo - Target URL for the redirect
+
+    *    Target URL for the redirect*/
+export interface VerifyTicketParams {
+  /**
+   * Ticket
+
+    *    Ticket
+   */
+  ticket: TicketQuery;
+  /**
+   * Target URL for the redirect
+
+    *    Target URL for the redirect
+   */
+  redirectTo: RedirectToQuery;
+}
 
 
 export interface Client {
+  baseURL: string;
+  pushChainFunction(chainFunction: ChainFunction): void;
   refreshToken(
     body: RefreshTokenRequest,
     options?: RequestInit,
@@ -586,7 +628,7 @@ export interface Client {
     id: FileId,
     params?: GetFileParams,
     options?: RequestInit,
-  ): Promise<Blob | void>;
+  ): Promise<Blob>;
 
   replaceFile(
     id: FileId,
@@ -598,4 +640,273 @@ export interface Client {
     id: FileId,
     options?: RequestInit,
   ): Promise<void>;
+
+  verifyTicketURL(
+    params?: VerifyTicketParams,
+    options?: RequestInit,
+  ): string;
+};
+
+
+export const createAPIClient = (
+  baseURL: string,
+  chainFunctions: ChainFunction[] = [],
+): Client => {
+  let fetch = createEnhancedFetch(chainFunctions);
+
+  const pushChainFunction = (chainFunction: ChainFunction) => {
+    chainFunctions.push(chainFunction);
+    fetch = createEnhancedFetch(chainFunctions);
+  };
+    const  refreshToken = async (
+    body: RefreshTokenRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<Session>> => {
+    const url = baseURL + `/token`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const payload: FetchResponse<Session> = responseBody ? JSON.parse(responseBody) : {};
+
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<Session>;
+
+  };
+
+    const  uploadFiles = async (
+    body: UploadFilesBody,
+    options?: RequestInit,
+  ): Promise<FetchResponse<UploadFilesResponse201>> => {
+    const url = baseURL + `/files/`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      body: objectToFormData(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const payload: FetchResponse<UploadFilesResponse201> = responseBody ? JSON.parse(responseBody) : {};
+
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<UploadFilesResponse201>;
+
+  };
+
+    const  getFileMetadataHeaders = async (
+    id: FileId,
+    params?: GetFileMetadataHeadersParams,
+    options?: RequestInit,
+  ): Promise<FetchResponse<void>> => {
+    const normalizedParams = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value !== undefined) {
+        normalizedParams.append(
+          key,
+          value === null ? "null" : value.toString(),
+        );
+      }
+    });
+
+    const stringifiedParams = normalizedParams.toString();
+
+    const url =
+      stringifiedParams.length > 0
+        ? baseURL + `/files/${id}?${stringifiedParams}`
+        : baseURL + `/files/${id}`;
+    const res = await fetch(url, {
+      ...options,
+      method: "HEAD",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const payload: void = undefined;
+
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<void>;
+
+  };
+
+    const  getFile = async (
+    id: FileId,
+    params?: GetFileParams,
+    options?: RequestInit,
+  ): Promise<FetchResponse<Blob>> => {
+    const normalizedParams = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value !== undefined) {
+        normalizedParams.append(
+          key,
+          value === null ? "null" : value.toString(),
+        );
+      }
+    });
+
+    const stringifiedParams = normalizedParams.toString();
+
+    const url =
+      stringifiedParams.length > 0
+        ? baseURL + `/files/${id}?${stringifiedParams}`
+        : baseURL + `/files/${id}`;
+    const res = await fetch(url, {
+      ...options,
+      method: "GET",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const payload: Blob = await res.blob();
+
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<Blob>;
+
+  };
+
+    const  replaceFile = async (
+    id: FileId,
+    body?: ReplaceFileBody,
+    options?: RequestInit,
+  ): Promise<FetchResponse<FileMetadata>> => {
+    const url = baseURL + `/files/${id}`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      body: objectToFormData(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+    const payload: FetchResponse<FileMetadata> = responseBody ? JSON.parse(responseBody) : {};
+
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<FileMetadata>;
+
+  };
+
+    const  deleteFile = async (
+    id: FileId,
+    options?: RequestInit,
+  ): Promise<FetchResponse<void>> => {
+    const url = baseURL + `/files/${id}`;
+    const res = await fetch(url, {
+      ...options,
+      method: "DELETE",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const payload: void = undefined;
+
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<void>;
+
+  };
+
+    const  verifyTicketURL = (
+    params?: VerifyTicketParams,
+  ): string => {
+    const normalizedParams = new URLSearchParams();
+
+    Object.entries(params || {}).forEach(([key, value]) => {
+      if (value !== undefined) {
+        normalizedParams.append(
+          key,
+          value === null ? "null" : value.toString(),
+        );
+      }
+    });
+
+    const stringifiedParams = normalizedParams.toString();
+
+    const url =
+      stringifiedParams.length > 0
+        ? baseURL + `/verify?${stringifiedParams}`
+        : baseURL + `/verify`;
+    return url;
+  };
+
+
+  return {
+    baseURL,
+    pushChainFunction,
+      refreshToken,
+      uploadFiles,
+      getFileMetadataHeaders,
+      getFile,
+      replaceFile,
+      deleteFile,
+      verifyTicketURL,
+  };
 };
