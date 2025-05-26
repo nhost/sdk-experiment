@@ -98,10 +98,32 @@ export const createAPIClient = (
       body: JSON.stringify(body),
     });
   {{- else if .RequestFormData }}
+    const formData = new FormData();
+
+    {{- range .RequestFormData.Properties }}
+    {{- if eq .Type.Kind "scalar" }}
+    if (body[{{ .Name }}] !== undefined) {
+      formData.append({{ .Name }}, body[{{ .Name }}]);
+    }
+    {{- else if eq .Type.Kind "array" }}
+    if (body[{{ .Name }}] !== undefined) {
+      body[{{ .Name }}].forEach((value) =>
+        {{- if eq .Type.Item.Kind "scalar" }}
+          formData.append({{ .Name }}, value),
+        {{- else }}
+          formData.append({{ .Name }}, JSON.stringify(value)),
+        {{- end }}
+      );
+    }
+    {{- else }}
+    TODO {{ .Type.Kind }} {{ .Type.Name }}
+    {{- end }}
+    {{- end }}
+
     const res = await fetch(url, {
       ...options,
       method: "POST",
-      body: objectToFormData(body),
+      body: formData,
     });
   {{- else if not .RequestHasBody }}
     const res = await fetch(url, {

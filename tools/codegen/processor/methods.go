@@ -105,18 +105,22 @@ func (m *Method) ReturnType() string {
 	return strings.Join(tt, " | ")
 }
 
-func (m *Method) RequestJSON() bool {
-	for m := range m.Bodies {
-		return m == "application/json"
+func (m *Method) RequestJSON() Type { //nolint:ireturn
+	for m, t := range m.Bodies {
+		if m == "application/json" {
+			return t
+		}
 	}
-	return false
+	return nil
 }
 
-func (m *Method) RequestFormData() bool {
-	for m := range m.Bodies {
-		return m == "multipart/form-data"
+func (m *Method) RequestFormData() Type { //nolint:ireturn
+	for m, t := range m.Bodies {
+		if m == "multipart/form-data" {
+			return t
+		}
 	}
-	return false
+	return nil
 }
 
 func (m *Method) RequestHasBody() bool {
@@ -130,7 +134,7 @@ func (m *Method) ResponseJSON() bool {
 			panic(fmt.Sprintf("invalid response code %s: %v", c, err))
 		}
 
-		if code >= 300 {
+		if code >= 300 { //nolint:mnd
 			continue
 		}
 

@@ -696,10 +696,25 @@ export const createAPIClient = (
     options?: RequestInit,
   ): Promise<FetchResponse<UploadFilesResponse201>> => {
     const url = baseURL + `/files/`;
+    const formData = new FormData();
+    if (body["bucket-id"] !== undefined) {
+      formData.append("bucket-id", body["bucket-id"]);
+    }
+    if (body["metadata[]"] !== undefined) {
+      body["metadata[]"].forEach((value) =>
+          formData.append("metadata[]", JSON.stringify(value)),
+      );
+    }
+    if (body["file[]"] !== undefined) {
+      body["file[]"].forEach((value) =>
+          formData.append("file[]", value),
+      );
+    }
+
     const res = await fetch(url, {
       ...options,
       method: "POST",
-      body: objectToFormData(body),
+      body: formData,
     });
 
     if (res.status >= 300) {
@@ -820,10 +835,16 @@ export const createAPIClient = (
     options?: RequestInit,
   ): Promise<FetchResponse<FileMetadata>> => {
     const url = baseURL + `/files/${id}`;
+    const formData = new FormData();
+    TODO ref UpdateFileMetadata
+    if (body[file] !== undefined) {
+      formData.append(file, body[file]);
+    }
+
     const res = await fetch(url, {
       ...options,
       method: "POST",
-      body: objectToFormData(body),
+      body: formData,
     });
 
     if (res.status >= 300) {
