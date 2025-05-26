@@ -13,7 +13,8 @@ type Method struct {
 	path       string
 	Parameters []*Parameter
 	// key is the media type (e.g., "application/json")
-	Bodies map[string]Type
+	Bodies       map[string]Type
+	BodyRequired bool
 	// first key is the response code (e.g., "200")
 	// second key is the media type (e.g., "application/json")
 	Responses map[string]map[string]Type
@@ -74,8 +75,47 @@ func GetMethod(
 	operation *v3.Operation,
 	processor Plugin,
 ) (*Method, []Type, error) {
+	params, types, err := getMethodParameters(method, operation, processor)
+	if err != nil {
+		return nil, nil, fmt.Errorf(
+			"failed to get method parameters for %s: %w",
+			operation.OperationId,
+			err,
+		)
+	}
+
+	bodies, tt, err := getMethodBodies(operation, processor)
+	if err != nil {
+		return nil, nil, fmt.Errorf(
+			"failed to get method bodies for %s: %w",
+			operation.OperationId,
+			err,
+		)
+	}
+
+	types = append(types, tt...)
+
+	return &Method{
+		name:       operation.OperationId,
+		method:     method,
+		path:       path,
+		Parameters: params,
+		Bodies:     bodies,
+		BodyRequired: operation.RequestBody != nil && operation.RequestBody.Required != nil &&
+			*operation.RequestBody.Required,
+		Responses: nil,
+		p:         processor,
+	}, types, nil
+}
+
+func getMethodParameters(
+	method string,
+	operation *v3.Operation,
+	processor Plugin,
+) ([]*Parameter, []Type, error) {
 	params := make([]*Parameter, len(operation.Parameters))
 	types := make([]Type, 0, 10) //nolint:mnd
+
 	for i, param := range operation.Parameters {
 		var t Type
 		if param.GoLow().IsReference() {
@@ -101,13 +141,51 @@ func GetMethod(
 		}
 	}
 
-	return &Method{
-		name:       operation.OperationId,
-		method:     method,
-		path:       path,
-		Parameters: params,
-		Bodies:     nil,
-		Responses:  nil,
-		p:          processor,
-	}, types, nil
+	return params, types, nil
+}
+
+func getMethodBodies(
+	operation *v3.Operation,
+	processor Plugin,
+) (map[string]Type, []Type, error) {
+	bodies := make(map[string]Type)
+
+	if operation.RequestBody == nil {
+		return nil, nil, nil
+	}
+
+	pair := operation.RequestBody.Content.First()
+	if pair == nil {
+		return nil, nil, nil
+	}
+
+	if pair.Next() != nil {
+		return nil, nil,
+			fmt.Errorf(
+				"%w: operation %s has multiple request bodies",
+				ErrUnsupportedFeature,
+				operation.OperationId,
+			)
+	}
+
+	var tt []Type
+	for pair := operation.RequestBody.Content.First(); pair != nil; pair = pair.Next() {
+		mediaType := pair.Key()
+		proxy := pair.Value()
+
+		name := operation.OperationId + "Body"
+		var t Type
+		var err error
+		t, tt, err = GetType(proxy.Schema, name, processor, false)
+		if err != nil {
+			return nil, nil, fmt.Errorf(
+				"failed to get type for body with media type %s: %w",
+				mediaType,
+				err,
+			)
+		}
+		bodies[mediaType] = t
+	}
+
+	return bodies, tt, nil
 }

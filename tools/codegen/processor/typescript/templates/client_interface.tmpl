@@ -1,14 +1,16 @@
 {{- define "client_interface" }}
 export interface Client {
 {{- range .Methods }}
-  {{- $methodName := .Name }}
-  {{ $methodName }}(
+  {{- $method := . }}
+  {{ $method.Name }}(
     {{- range .PathParameters }}
     {{ .Name }}: {{ .Type.Name }},
     {{- end }}
-    // body
+    {{- range $code, $type := .Bodies }}
+    body{{ if not $method.BodyRequired }}?{{ end }}: {{ $type.Name }},
+    {{- end }}
     {{- if .HasQueryParameters }}
-    params?: {{ title $methodName }}Params,
+    params?: {{ title $method.Name }}Params,
     {{- end }}
     options?: RequestInit,
   ): Promise<fixme>;

@@ -30,6 +30,7 @@ type Plugin interface {
 	TypeMapName(mapType *TypeMap) string
 	MethodName(name string) string
 	ParameterName(name string) string
+	PropertyName(name string) string
 }
 
 type Type interface {
@@ -77,6 +78,18 @@ func (t *TypeRef) Kind() KindIdentifier {
 
 func (t *TypeRef) Schema() *base.SchemaProxy {
 	return t.schema
+}
+
+func (t *TypeRef) Required() bool {
+	if len(t.schema.Schema().Required) == 0 {
+		return false
+	}
+
+	if t.schema.Schema().Properties == nil {
+		return true
+	}
+
+	return false
 }
 
 type TypeEnum struct {
@@ -325,7 +338,7 @@ func NewObject(
 		types = append(types, tt...)
 
 		property := &Property{
-			Name:   propName,
+			name:   propName,
 			Parent: obj,
 			Type:   typ,
 			p:      p,

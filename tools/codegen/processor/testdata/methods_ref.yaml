@@ -1,6 +1,89 @@
 openapi: "3.0.0"
 
 paths:
+  /token:
+    post:
+      summary: "Refresh access token"
+      description: "Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued."
+      operationId: refreshToken
+      tags:
+        - session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshTokenRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+          description: "Access token successfully refreshed"
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: "An error occurred while processing the request"
+
+  /files/:
+    post:
+      summary: "Upload files"
+      description: "Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none."
+      operationId: uploadFiles
+      tags:
+        - files
+      security:
+        - Authorization: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                bucket-id:
+                  type: string
+                  description: "Target bucket identifier where files will be stored."
+                  example: "user-uploads"
+                metadata[]:
+                  type: array
+                  description: "Optional custom metadata for each uploaded file. Must match the order of the file[] array."
+                  items:
+                    $ref: "#/components/schemas/FileMetadata"
+                file[]:
+                  description: "Array of files to upload."
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+              required:
+                - file[]
+            encoding:
+              file[]:
+                contentType: application/octet-stream
+      responses:
+        "201":
+          description: "Files successfully uploaded"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  processedFiles:
+                    type: array
+                    description: "List of successfully processed files with their metadata."
+                    items:
+                      $ref: "#/components/schemas/FileMetadata"
+        "400":
+          description: "Error occurred during upload"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   /files/{id}:
     head:
       summary: "Check file information"
@@ -108,6 +191,8 @@ paths:
                   description: "New file content to replace the existing file"
                   type: string
                   format: binary
+              required:
+                - file
             encoding:
               file:
                 contentType: application/octet-stream
@@ -406,3 +491,132 @@ components:
           required:
             - message
       additionalProperties: false
+
+    RefreshTokenRequest:
+      type: object
+      description: "Request to refresh an access token"
+      additionalProperties: false
+      properties:
+        refreshToken:
+          description: "Refresh token used to generate a new access token"
+          example: "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+          pattern: \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+          type: string
+      required:
+        - refreshToken
+
+    Session:
+      type: object
+      description: "User authentication session containing tokens and user information"
+      additionalProperties: false
+      properties:
+        accessToken:
+          type: string
+          description: "JWT token for authenticating API requests"
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        accessTokenExpiresIn:
+          type: integer
+          format: int64
+          description: "Expiration time of the access token in seconds"
+          example: 900
+        refreshTokenId:
+          description: "Identifier for the refresh token"
+          example: "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+          pattern: \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+          type: string
+        refreshToken:
+          description: "Token used to refresh the access token"
+          example: "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+          pattern: \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+          description: "Information about the authenticated user"
+      required:
+        - accessToken
+        - accessTokenExpiresIn
+        - refreshToken
+        - refreshTokenId
+
+    User:
+      type: object
+      description: "User profile and account information"
+      additionalProperties: false
+      properties:
+        avatarUrl:
+          type: string
+          description: "URL to the user's profile picture"
+          example: "https://myapp.com/avatars/user123.jpg"
+        createdAt:
+          format: date-time
+          type: string
+          description: "Timestamp when the user account was created"
+          example: "2023-01-15T12:34:56Z"
+        defaultRole:
+          example: "user"
+          type: string
+          description: "Default authorization role for the user"
+        displayName:
+          example: "John Smith"
+          type: string
+          description: "User's display name"
+        email:
+          description: "User's email address"
+          example: "john.smith@nhost.io"
+          format: email
+          type: string
+        emailVerified:
+          type: boolean
+          description: "Whether the user's email has been verified"
+          example: true
+        id:
+          description: "Unique identifier for the user"
+          example: "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+          pattern: \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+          type: string
+        isAnonymous:
+          type: boolean
+          description: "Whether this is an anonymous user account"
+          example: false
+        locale:
+          description: "User's preferred locale (language code)"
+          example: "en"
+          maxLength: 2
+          minLength: 2
+          type: string
+        metadata:
+          type: object
+          additionalProperties: true
+          description: "Custom metadata associated with the user"
+          example:
+            firstName: "John"
+            lastName: "Smith"
+          properties: {}
+        phoneNumber:
+          type: string
+          description: "User's phone number"
+          example: "+12025550123"
+        phoneNumberVerified:
+          type: boolean
+          description: "Whether the user's phone number has been verified"
+          example: false
+        roles:
+          example:
+            - "user"
+            - "customer"
+          type: array
+          description: "List of roles assigned to the user"
+          items:
+            type: string
+      required:
+        - avatarUrl
+        - createdAt
+        - defaultRole
+        - displayName
+        - emailVerified
+        - id
+        - isAnonymous
+        - locale
+        - metadata
+        - phoneNumberVerified
+        - roles

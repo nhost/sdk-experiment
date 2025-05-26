@@ -24,6 +24,14 @@ func (t *Typescript) TypeObjectName(name string) string {
 }
 
 func (t *Typescript) TypeScalarName(scalar *processor.TypeScalar) string {
+	switch scalar.Schema().Schema().Type[0] {
+	case "integer":
+		return "number"
+	case "string":
+		if scalar.Schema().Schema().Format == "binary" {
+			return "Blob"
+		}
+	}
 	return scalar.Schema().Schema().Type[0]
 }
 
@@ -61,6 +69,13 @@ func (t *Typescript) MethodName(name string) string {
 }
 
 func (t *Typescript) ParameterName(name string) string {
+	if strings.Contains(name, "-") || strings.Contains(name, "[") {
+		return `"` + name + `"`
+	}
+	return name
+}
+
+func (t *Typescript) PropertyName(name string) string {
 	if strings.Contains(name, "-") || strings.Contains(name, "[") {
 		return `"` + name + `"`
 	}

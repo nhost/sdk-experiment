@@ -28,9 +28,9 @@ export type SimpleObjectStatusMixed = 0 | "One" | true;
 
 /**
  * Nested object containing additional properties.
- * @property nestedId - Unique identifier for the nested object.
+ * @property (string) nestedId - Unique identifier for the nested object.
     *    Example - "nested123"
- * @property nestedData - Data associated with the nested object.
+ * @property (string) nestedData - Data associated with the nested object.
     *    Example - "Nested data"*/
 export interface SimpleObjectNested {
   /**
@@ -42,37 +42,37 @@ export interface SimpleObjectNested {
    * Data associated with the nested object.
     *    Example - "Nested data"
    */
-  nestedData: string,
+  nestedData?: string,
 };
 
 
 /**
  * This is a simple object schema.
- * @property id - Unique identifier for the object.
+ * @property (string) id - Unique identifier for the object.
     *    Example - "abc123"
- * @property active - Indicates if the object is active.
+ * @property (boolean) active - Indicates if the object is active.
     *    Example - true
- * @property age - Age of the object in years.
+ * @property (number) age - Age of the object in years.
     *    Example - 5
- * @property createdAt - Timestamp when the file was created.
+ * @property (string) createdAt - Timestamp when the file was created.
     *    Example - "2023-01-15T12:34:56Z"
     *    Format - date-time
- * @property metadata - Custom metadata associated with the file.
+ * @property (Record<string, unknown>) metadata - Custom metadata associated with the file.
     *    Example - {"alt":"Profile picture","category":"avatar"}
- * @property data - Base64 encoded data of the file.
+ * @property (Blob) data - Base64 encoded data of the file.
     *    Format - binary
- * @property tags - List of tags associated with the object.
- * @property parent - This is a simple object schema.
- * @property children - List of child object references.
- * @property relatedObjects - Array of related object references.
- * @property status - Status of the object.
+ * @property (string[]) tags - List of tags associated with the object.
+ * @property (SimpleObject) parent - This is a simple object schema.
+ * @property (SimpleObject[]) children - List of child object references.
+ * @property (SimpleObject[]) relatedObjects - Array of related object references.
+ * @property (SimpleObjectStatus) status - Status of the object.
     *    Example - "active"
- * @property statusCode - Status code of the object.
+ * @property (SimpleObjectStatusCode) statusCode - Status code of the object.
     *    Example - 0
- * @property statusMixed - Some people just want to see the world burn.
+ * @property (SimpleObjectStatusMixed) statusMixed - Some people just want to see the world burn.
     *    Example - 0
- * @property statusRef - Enumeration of possible status values.
- * @property nested - Nested object containing additional properties.*/
+ * @property (StatusEnum) statusRef - Enumeration of possible status values.
+ * @property (SimpleObjectNested) nested - Nested object containing additional properties.*/
 export interface SimpleObject {
   /**
    * Unique identifier for the object.
@@ -104,46 +104,46 @@ export interface SimpleObject {
    * Base64 encoded data of the file.
     *    Format - binary
    */
-  data: string,
+  data: Blob,
   /**
    * List of tags associated with the object.
    */
-  tags: string[],
+  tags?: string[],
   /**
    * This is a simple object schema.
    */
-  parent: SimpleObject,
+  parent?: SimpleObject,
   /**
    * List of child object references.
    */
-  children: SimpleObject[],
+  children?: SimpleObject[],
   /**
    * Array of related object references.
    */
-  relatedObjects: SimpleObject[],
+  relatedObjects?: SimpleObject[],
   /**
    * Status of the object.
     *    Example - "active"
    */
-  status: SimpleObjectStatus,
+  status?: SimpleObjectStatus,
   /**
    * Status code of the object.
     *    Example - 0
    */
-  statusCode: SimpleObjectStatusCode,
+  statusCode?: SimpleObjectStatusCode,
   /**
    * Some people just want to see the world burn.
     *    Example - 0
    */
-  statusMixed: SimpleObjectStatusMixed,
+  statusMixed?: SimpleObjectStatusMixed,
   /**
    * Enumeration of possible status values.
    */
-  statusRef: StatusEnum,
+  statusRef?: StatusEnum,
   /**
    * Nested object containing additional properties.
    */
-  nested: SimpleObjectNested,
+  nested?: SimpleObjectNested,
 };
 
 
