@@ -459,6 +459,17 @@ export interface UploadFilesBody {
 
 /**
  * 
+ * @property (FileMetadata[]) processedFiles - List of successfully processed files with their metadata.*/
+export interface UploadFilesResponse201 {
+  /**
+   * List of successfully processed files with their metadata.
+   */
+  processedFiles?: FileMetadata[],
+};
+
+
+/**
+ * 
  * @property (UpdateFileMetadata) metadata - Metadata that can be updated for an existing file.
  * @property (Blob) file - New file content to replace the existing file
     *    Format - binary*/
@@ -558,33 +569,33 @@ export interface Client {
   refreshToken(
     body: RefreshTokenRequest,
     options?: RequestInit,
-  ): Promise<fixme>;
+  ): Promise<Session>;
 
   uploadFiles(
     body: UploadFilesBody,
     options?: RequestInit,
-  ): Promise<fixme>;
+  ): Promise<UploadFilesResponse201>;
 
   getFileMetadataHeaders(
     id: FileId,
     params?: GetFileMetadataHeadersParams,
     options?: RequestInit,
-  ): Promise<fixme>;
+  ): Promise<void>;
 
   getFile(
     id: FileId,
     params?: GetFileParams,
     options?: RequestInit,
-  ): Promise<fixme>;
+  ): Promise<Blob | void>;
 
   replaceFile(
     id: FileId,
     body?: ReplaceFileBody,
     options?: RequestInit,
-  ): Promise<fixme>;
+  ): Promise<FileMetadata>;
 
   deleteFile(
     id: FileId,
     options?: RequestInit,
-  ): Promise<fixme>;
+  ): Promise<void>;
 };

@@ -2,6 +2,8 @@ package processor
 
 import (
 	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/nhost/sdk-experiment/tools/codegen/format"
 	v3 "github.com/pb33f/libopenapi/datamodel/high/v3"
@@ -58,6 +60,36 @@ func (m *Method) QueryParametersTypeName() string {
 	return m.p.TypeObjectName(m.Name() + "Parameters")
 }
 
+func addIfNotPresent[S ~[]E, E comparable](s S, v E) S {
+	if !slices.Contains(s, v) {
+		return append(s, v)
+	}
+	return s
+}
+
+func (m *Method) ReturnType() string {
+	tt := make([]string, 0, 10) //nolint:mnd
+	for code, resp := range m.Responses {
+		if code >= "400" {
+			continue
+		}
+
+		if len(resp) == 0 {
+			tt = addIfNotPresent(tt, "void")
+		}
+
+		for media, typ := range resp {
+			switch media {
+			case "application/json":
+				tt = addIfNotPresent(tt, typ.Name())
+			case "application/octet-stream":
+				tt = addIfNotPresent(tt, m.p.BinaryType())
+			}
+		}
+	}
+	return strings.Join(tt, " | ")
+}
+
 type Parameter struct {
 	name      string
 	Parameter *v3.Parameter
@@ -73,9 +105,9 @@ func GetMethod(
 	path string,
 	method string,
 	operation *v3.Operation,
-	processor Plugin,
+	p Plugin,
 ) (*Method, []Type, error) {
-	params, types, err := getMethodParameters(method, operation, processor)
+	params, types, err := getMethodParameters(method, operation, p)
 	if err != nil {
 		return nil, nil, fmt.Errorf(
 			"failed to get method parameters for %s: %w",
@@ -84,13 +116,18 @@ func GetMethod(
 		)
 	}
 
-	bodies, tt, err := getMethodBodies(operation, processor)
+	bodies, tt, err := getMethodBodies(operation, p)
 	if err != nil {
-		return nil, nil, fmt.Errorf(
-			"failed to get method bodies for %s: %w",
-			operation.OperationId,
-			err,
-		)
+		return nil, nil,
+			fmt.Errorf("failed to get method bodies for %s: %w", operation.OperationId, err)
+	}
+
+	types = append(types, tt...)
+
+	responses, tt, err := getMethodResponses(operation, p)
+	if err != nil {
+		return nil, nil,
+			fmt.Errorf("failed to get method responses for %s: %w", operation.OperationId, err)
 	}
 
 	types = append(types, tt...)
@@ -103,15 +140,15 @@ func GetMethod(
 		Bodies:     bodies,
 		BodyRequired: operation.RequestBody != nil && operation.RequestBody.Required != nil &&
 			*operation.RequestBody.Required,
-		Responses: nil,
-		p:         processor,
+		Responses: responses,
+		p:         p,
 	}, types, nil
 }
 
 func getMethodParameters(
 	method string,
 	operation *v3.Operation,
-	processor Plugin,
+	p Plugin,
 ) ([]*Parameter, []Type, error) {
 	params := make([]*Parameter, len(operation.Parameters))
 	types := make([]Type, 0, 10) //nolint:mnd
@@ -123,10 +160,10 @@ func getMethodParameters(
 				schema: param.Schema,
 				name:   format.GetNameFromComponentRef(param.GoLow().GetReference()),
 				values: nil, // No values for reference types
-				p:      processor,
+				p:      p,
 			}
 		} else {
-			t2, tt, err := GetType(param.Schema, method+format.Title(param.Name), processor, false)
+			t2, tt, err := GetType(param.Schema, method+format.Title(param.Name), p, false)
 			if err != nil {
 				return nil, nil, fmt.Errorf("failed to get type for parameter %s: %w", param.Name, err)
 			}
@@ -137,7 +174,7 @@ func getMethodParameters(
 			name:      param.Name,
 			Parameter: param,
 			Type:      t,
-			p:         processor,
+			p:         p,
 		}
 	}
 
@@ -146,7 +183,7 @@ func getMethodParameters(
 
 func getMethodBodies(
 	operation *v3.Operation,
-	processor Plugin,
+	p Plugin,
 ) (map[string]Type, []Type, error) {
 	bodies := make(map[string]Type)
 
@@ -176,7 +213,7 @@ func getMethodBodies(
 		name := operation.OperationId + "Body"
 		var t Type
 		var err error
-		t, tt, err = GetType(proxy.Schema, name, processor, false)
+		t, tt, err = GetType(proxy.Schema, name, p, false)
 		if err != nil {
 			return nil, nil, fmt.Errorf(
 				"failed to get type for body with media type %s: %w",
@@ -188,4 +225,57 @@ func getMethodBodies(
 	}
 
 	return bodies, tt, nil
+}
+
+func getMethodResponses(
+	operation *v3.Operation,
+	p Plugin,
+) (map[string]map[string]Type, []Type, error) {
+	responses := make(map[string]map[string]Type)
+	types := make([]Type, 0, 10) //nolint:mnd
+
+	for pcodes := operation.Responses.Codes.First(); pcodes != nil; pcodes = pcodes.Next() {
+		code := pcodes.Key()
+		response := pcodes.Value()
+
+		responses[code] = make(map[string]Type)
+
+		if response == nil || response.Content == nil {
+			continue
+		}
+
+		pcontent := response.Content.First()
+		if pcontent == nil {
+			continue
+		}
+
+		if pcontent.Next() != nil {
+			return nil, nil, fmt.Errorf(
+				"%w: operation %s has multiple response bodies for code %s",
+				ErrUnsupportedFeature, operation.OperationId, code)
+		}
+
+		mediaType := pcontent.Key()
+		proxy := pcontent.Value()
+
+		// some types may not have a schema defined, e.g., for 204 No Content responses or binary responses
+		if proxy.Schema == nil {
+			responses[code][mediaType] = nil
+			continue
+		}
+
+		name := operation.OperationId + "Response" + code
+		t, tt, err := GetType(proxy.Schema, name, p, false)
+		if err != nil {
+			return nil, nil, fmt.Errorf(
+				"failed to get type for response with media type %s: %w",
+				mediaType,
+				err,
+			)
+		}
+		responses[code][mediaType] = t
+		types = append(types, tt...)
+	}
+
+	return responses, types, nil
 }

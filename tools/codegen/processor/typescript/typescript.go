@@ -81,3 +81,7 @@ func (t *Typescript) PropertyName(name string) string {
 	}
 	return name
 }
+
+func (t *Typescript) BinaryType() string {
+	return "Blob"
+}

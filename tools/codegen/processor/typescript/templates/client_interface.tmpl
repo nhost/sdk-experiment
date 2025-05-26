@@ -13,7 +13,7 @@ export interface Client {
     params?: {{ title $method.Name }}Params,
     {{- end }}
     options?: RequestInit,
-  ): Promise<fixme>;
+  ): Promise<{{ .ReturnType }}>;
 {{ end -}}
 };
 {{- end }}
