@@ -5,7 +5,6 @@
 import { FetchError, createEnhancedFetch } from "../fetch";
 import type { ChainFunction, FetchResponse } from "../fetch";
 
-import type { Client } from "./interface";
 
 {{- range .Types }}
 {{ if eq .Kind "object" }}
@@ -30,7 +29,7 @@ export type {{ .Name }} = {{ .Alias.Name }};
 /**
  * Parameters for the {{ .Name }} method.
 {{- range .QueryParameters }}
-    * @param {{ .Name }} - {{ template "renderParamAttributeHelp" .Parameter }}
+    @property {{ .Name }}{{ if not .Required}}?{{ end }} ({{ .Type.Name }}) - {{ template "renderParamAttributeHelp" .Parameter }}
 {{- end -}}
  */
 export interface {{ title .Name }}Params {

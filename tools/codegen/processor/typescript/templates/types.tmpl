@@ -1,7 +1,7 @@
 {{- define "renderObjectAttributeHelp" -}}
   {{ .Schema.Schema.Description }}
   {{- if example .}}
-    *    Example - {{ example .}}
+    *    Example - `{{ example .}}`
   {{- end }}
   {{- if pattern . }}
     *    Pattern - {{ pattern . }}
@@ -29,6 +29,9 @@
 {{- define "renderObject" -}}
 /**
  * {{ .Schema.Schema.Description }}
+{{- range .Properties }}
+ @property {{ .Name }}{{ if not .Required}}?{{ end }} ({{ .Type.Name }}) - {{ template "renderObjectAttributeHelp" .Type }}
+ {{- end -}}
  */
 export interface {{ .Name }} {
 {{- range .Properties }}

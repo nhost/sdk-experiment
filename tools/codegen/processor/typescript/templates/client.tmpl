@@ -4,9 +4,30 @@ export interface Client {
   pushChainFunction(chainFunction: ChainFunction): void;
 {{- range .Methods }}
   {{- $method := . }}
+    /**
+     {{- if .Operation.Summary }}
+     Summary: {{ .Operation.Summary }}
+     {{- end }}
+     {{ .Operation.Description }}
   {{- if .IsRedirect }}
+
+     As this method is a redirect, it returns a URL string instead of a Promise
+     */
   {{ .Name }}URL(
   {{- else }}
+
+     This method may return different T based on the response code:
+
+     {{- range $code, $codeMap := .Responses }}
+     {{- if $codeMap }}
+     {{- range $media, $type := $codeMap }}
+     - {{ $code }}: {{ if $type }}{{ $type.Name }}{{ else }}void{{ end }}
+     {{- end }}
+     {{- else }}
+     - {{ $code }}: void
+     {{- end }}
+     {{- end }}
+     */
   {{ .Name }}(
     {{- end }}
     {{- range .PathParameters }}

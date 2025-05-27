@@ -48,8 +48,6 @@ try {
 
 ### Client
 
-Storage client interface providing methods for file operations
-
 #### Properties
 
 ##### baseURL
@@ -58,15 +56,13 @@ Storage client interface providing methods for file operations
 baseURL: string;
 ```
 
-Base URL for the storage service
+#### Methods
 
 ##### deleteFile()
 
 ```ts
-deleteFile: (id: string, options?: RequestInit) => Promise<FetchResponse<void>>;
+deleteFile(id: string, options?: RequestInit): Promise<FetchResponse<void>>;
 ```
-
-Delete a file
 
 ###### Parameters
 
@@ -82,11 +78,11 @@ Delete a file
 ##### getFile()
 
 ```ts
-getFile: (id: string, params?: GetFileParams, options?: RequestInit) =>
-  Promise<FetchResponse<Blob>>;
+getFile(
+   id: string,
+   params?: GetFileParams,
+   options?: RequestInit): Promise<FetchResponse<Blob>>;
 ```
-
-Download a file
 
 ###### Parameters
 
@@ -103,14 +99,11 @@ Download a file
 ##### getFileMetadataHeaders()
 
 ```ts
-getFileMetadataHeaders: (
-  id: string,
-  params?: GetFileMetadataHeadersParams,
-  options?: RequestInit,
-) => Promise<FetchResponse<void>>;
+getFileMetadataHeaders(
+   id: string,
+   params?: GetFileMetadataHeadersParams,
+   options?: RequestInit): Promise<FetchResponse<void>>;
 ```
-
-Retrieve file metadata using HTTP HEAD method
 
 ###### Parameters
 
@@ -127,11 +120,8 @@ Retrieve file metadata using HTTP HEAD method
 ##### getVersion()
 
 ```ts
-getVersion: (options?: RequestInit) =>
-  Promise<FetchResponse<VersionInformation>>;
+getVersion(options?: RequestInit): Promise<FetchResponse<VersionInformation>>;
 ```
-
-Retrieves build and version information about the storage service
 
 ###### Parameters
 
@@ -146,16 +136,14 @@ Retrieves build and version information about the storage service
 ##### pushChainFunction()
 
 ```ts
-pushChainFunction: (chainFunction: ChainFunction) => void;
+pushChainFunction(chainFunction: ChainFunction): void;
 ```
-
-Add a middleware function to the request chain
 
 ###### Parameters
 
-| Parameter       | Type                                       | Description                |
-| --------------- | ------------------------------------------ | -------------------------- |
-| `chainFunction` | [`ChainFunction`](fetch#chainfunction) | Middleware function to add |
+| Parameter       | Type                                       |
+| --------------- | ------------------------------------------ |
+| `chainFunction` | [`ChainFunction`](fetch#chainfunction) |
 
 ###### Returns
 
@@ -164,22 +152,19 @@ Add a middleware function to the request chain
 ##### replaceFile()
 
 ```ts
-replaceFile: (
-  id: string,
-  replaceFileBody: ReplaceFileBody,
-  options?: RequestInit,
-) => Promise<FetchResponse<FileMetadata>>;
+replaceFile(
+   id: string,
+   body: ReplaceFileBody,
+   options?: RequestInit): Promise<FetchResponse<FileMetadata>>;
 ```
-
-Replace an existing file
 
 ###### Parameters
 
-| Parameter         | Type                                  |
-| ----------------- | ------------------------------------- |
-| `id`              | `string`                              |
-| `replaceFileBody` | [`ReplaceFileBody`](#replacefilebody) |
-| `options?`        | `RequestInit`                         |
+| Parameter  | Type                                  |
+| ---------- | ------------------------------------- |
+| `id`       | `string`                              |
+| `body`     | [`ReplaceFileBody`](#replacefilebody) |
+| `options?` | `RequestInit`                         |
 
 ###### Returns
 
@@ -188,18 +173,15 @@ Replace an existing file
 ##### uploadFiles()
 
 ```ts
-uploadFiles: (uploadFilesBody: UploadFilesBody, options?: RequestInit) =>
-  Promise<FetchResponse<UploadFilesResponse201>>;
+uploadFiles(body: UploadFilesBody, options?: RequestInit): Promise<FetchResponse<UploadFilesResponse201>>;
 ```
-
-Upload one or more files to storage
 
 ###### Parameters
 
-| Parameter         | Type                                  |
-| ----------------- | ------------------------------------- |
-| `uploadFilesBody` | [`UploadFilesBody`](#uploadfilesbody) |
-| `options?`        | `RequestInit`                         |
+| Parameter  | Type                                  |
+| ---------- | ------------------------------------- |
+| `body`     | [`UploadFilesBody`](#uploadfilesbody) |
+| `options?` | `RequestInit`                         |
 
 ###### Returns
 
@@ -236,7 +218,8 @@ message: string;
 ```
 
 Human-readable error message.
-Example - "File not found"
+
+- Example - `"File not found"`
 
 ---
 
@@ -253,7 +236,8 @@ optional bucketId: string;
 ```
 
 ID of the bucket containing the file.
-Example - "users-bucket"
+
+- Example - `"users-bucket"`
 
 ##### createdAt?
 
@@ -262,8 +246,9 @@ optional createdAt: string;
 ```
 
 Timestamp when the file was created.
-Example - "2023-01-15T12:34:56Z"
-Format - date-time
+
+- Example - `"2023-01-15T12:34:56Z"`
+- Format - date-time
 
 ##### etag?
 
@@ -272,7 +257,8 @@ optional etag: string;
 ```
 
 Entity tag for cache validation.
-Example - "\"a1b2c3d4e5f6\""
+
+- Example - `"\"a1b2c3d4e5f6\""`
 
 ##### id?
 
@@ -281,7 +267,8 @@ optional id: string;
 ```
 
 Unique identifier for the file.
-Example - "d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"
+
+- Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
 
 ##### isUploaded?
 
@@ -290,7 +277,8 @@ optional isUploaded: boolean;
 ```
 
 Whether the file has been successfully uploaded.
-Example - true
+
+- Example - `true`
 
 ##### metadata?
 
@@ -299,7 +287,8 @@ optional metadata: Record<string, unknown>;
 ```
 
 Custom metadata associated with the file.
-Example - {"alt":"Profile picture","category":"avatar"}
+
+- Example - `{"alt":"Profile picture","category":"avatar"}`
 
 ##### mimeType?
 
@@ -308,7 +297,8 @@ optional mimeType: string;
 ```
 
 MIME type of the file.
-Example - "image/jpeg"
+
+- Example - `"image/jpeg"`
 
 ##### name?
 
@@ -317,7 +307,8 @@ optional name: string;
 ```
 
 Name of the file including extension.
-Example - "profile-picture.jpg"
+
+- Example - `"profile-picture.jpg"`
 
 ##### size?
 
@@ -326,7 +317,8 @@ optional size: number;
 ```
 
 Size of the file in bytes.
-Example - 245678
+
+- Example - `245678`
 
 ##### updatedAt?
 
@@ -335,8 +327,9 @@ optional updatedAt: string;
 ```
 
 Timestamp when the file was last updated.
-Example - "2023-01-16T09:45:32Z"
-Format - date-time
+
+- Example - `"2023-01-16T09:45:32Z"`
+- Format - date-time
 
 ##### uploadedByUserId?
 
@@ -345,7 +338,8 @@ optional uploadedByUserId: string;
 ```
 
 ID of the user who uploaded the file.
-Example - "abc123def456"
+
+- Example - `"abc123def456"`
 
 ---
 
@@ -362,7 +356,8 @@ optional bucketId: string;
 ```
 
 ID of the bucket containing the file.
-Example - "users-bucket"
+
+- Example - `"users-bucket"`
 
 ##### id?
 
@@ -371,7 +366,8 @@ optional id: string;
 ```
 
 Unique identifier for the file.
-Example - "d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"
+
+- Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
 
 ##### isUploaded?
 
@@ -380,7 +376,8 @@ optional isUploaded: boolean;
 ```
 
 Whether the file has been successfully uploaded.
-Example - true
+
+- Example - `true`
 
 ##### name?
 
@@ -389,43 +386,14 @@ optional name: string;
 ```
 
 Name of the file including extension.
-Example - "profile-picture.jpg"
+
+- Example - `"profile-picture.jpg"`
 
 ---
 
 ### GetFileMetadataHeadersParams
 
 Parameters for the getFileMetadataHeaders method.
-
--
-
-#### Param
-
-Image quality (1-100). Only applies to JPEG, WebP and PNG files
-
--
-
-#### Param
-
-Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-
--
-
-#### Param
-
-Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-
--
-
-#### Param
-
-Blur the image using this sigma value. Only applies to image files
-
--
-
-#### Param
-
-Output format for image files. Use 'auto' for content negotiation based on Accept header
 
 #### Properties
 
@@ -474,36 +442,6 @@ Maximum width to resize image to while maintaining aspect ratio. Only applies to
 ### GetFileParams
 
 Parameters for the getFile method.
-
--
-
-#### Param
-
-Image quality (1-100). Only applies to JPEG, WebP and PNG files
-
--
-
-#### Param
-
-Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-
--
-
-#### Param
-
-Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-
--
-
-#### Param
-
-Blur the image using this sigma value. Only applies to image files
-
--
-
-#### Param
-
-Output format for image files. Use 'auto' for content negotiation based on Accept header
 
 #### Properties
 
@@ -562,7 +500,8 @@ optional expiration: number;
 ```
 
 The time in seconds until the URL expires.
-Example - 3600
+
+- Example - `3600`
 
 ##### url?
 
@@ -571,7 +510,8 @@ optional url: string;
 ```
 
 The presigned URL for file operations.
-Example - "https://storage.example.com/files/abc123?signature=xyz"
+
+- Example - `"https://storage.example.com/files/abc123?signature=xyz"`
 
 ---
 
@@ -586,7 +526,8 @@ optional file: Blob;
 ```
 
 New file content to replace the existing file
-Format - binary
+
+- Format - binary
 
 ##### metadata?
 
@@ -611,7 +552,8 @@ optional metadata: Record<string, unknown>;
 ```
 
 Updated custom metadata to associate with the file.
-Example - {"alt":"Updated image description","category":"profile"}
+
+- Example - `{"alt":"Updated image description","category":"profile"}`
 
 ##### name?
 
@@ -620,7 +562,8 @@ optional name: string;
 ```
 
 New name to assign to the file.
-Example - "renamed-file.jpg"
+
+- Example - `"renamed-file.jpg"`
 
 ---
 
@@ -637,7 +580,8 @@ optional id: string;
 ```
 
 Optional custom ID for the file. If not provided, a UUID will be generated.
-Example - "custom-id-123"
+
+- Example - `"custom-id-123"`
 
 ##### metadata?
 
@@ -646,7 +590,8 @@ optional metadata: Record<string, unknown>;
 ```
 
 Custom metadata to associate with the file.
-Example - {"alt":"Custom image","category":"document"}
+
+- Example - `{"alt":"Custom image","category":"document"}`
 
 ##### name?
 
@@ -655,7 +600,8 @@ optional name: string;
 ```
 
 Name to assign to the file. If not provided, the original filename will be used.
-Example - "custom-filename.png"
+
+- Example - `"custom-filename.png"`
 
 ---
 
@@ -670,7 +616,8 @@ optional bucket-id: string;
 ```
 
 Target bucket identifier where files will be stored.
-Example - "user-uploads"
+
+- Example - `"user-uploads"`
 
 ##### file\[\]
 
@@ -717,7 +664,8 @@ optional buildVersion: string;
 ```
 
 The version number of the storage service build.
-Example - "1.2.3"
+
+- Example - `"1.2.3"`
 
 ## Type Aliases
 

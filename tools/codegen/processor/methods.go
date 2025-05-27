@@ -15,6 +15,7 @@ type Method struct {
 	name       string
 	method     string
 	path       string
+	Operation  *v3.Operation
 	Parameters []*Parameter
 	// key is the media type (e.g., "application/json")
 	Bodies       map[string]Type
@@ -244,6 +245,7 @@ func GetMethod(
 		path:       path,
 		Parameters: params,
 		Bodies:     bodies,
+		Operation:  operation,
 		BodyRequired: operation.RequestBody != nil && operation.RequestBody.Required != nil &&
 			*operation.RequestBody.Required,
 		Responses: responses,

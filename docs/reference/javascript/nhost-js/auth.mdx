@@ -53,8 +53,6 @@ try {
 
 ### Client
 
-Authentication client interface providing methods for user sign-in, sign-up, and session management
-
 #### Properties
 
 ##### baseURL
@@ -63,25 +61,20 @@ Authentication client interface providing methods for user sign-in, sign-up, and
 baseURL: string;
 ```
 
-Base URL for the authentication service
+#### Methods
 
 ##### changeUserEmail()
 
 ```ts
-changeUserEmail: (
-  userEmailChangeRequest: UserEmailChangeRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+changeUserEmail(body: UserEmailChangeRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
-
-Change user email
 
 ###### Parameters
 
-| Parameter                | Type                                                |
-| ------------------------ | --------------------------------------------------- |
-| `userEmailChangeRequest` | [`UserEmailChangeRequest`](#useremailchangerequest) |
-| `options?`               | `RequestInit`                                       |
+| Parameter  | Type                                                |
+| ---------- | --------------------------------------------------- |
+| `body`     | [`UserEmailChangeRequest`](#useremailchangerequest) |
+| `options?` | `RequestInit`                                       |
 
 ###### Returns
 
@@ -90,11 +83,8 @@ Change user email
 ##### changeUserMfa()
 
 ```ts
-changeUserMfa: (options?: RequestInit) =>
-  Promise<FetchResponse<TotpGenerateResponse>>;
+changeUserMfa(options?: RequestInit): Promise<FetchResponse<TotpGenerateResponse>>;
 ```
-
-Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication
 
 ###### Parameters
 
@@ -109,18 +99,15 @@ Generate a Time-based One-Time Password (TOTP) secret for setting up multi-facto
 ##### changeUserMfaVerify()
 
 ```ts
-changeUserMfaVerify: (userMfaRequest: UserMfaRequest, options?: RequestInit) =>
-  Promise<FetchResponse<"OK">>;
+changeUserMfaVerify(body: UserMfaRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
-
-Activate or deactivate multi-factor authentication for the authenticated user
 
 ###### Parameters
 
-| Parameter        | Type                                |
-| ---------------- | ----------------------------------- |
-| `userMfaRequest` | [`UserMfaRequest`](#usermfarequest) |
-| `options?`       | `RequestInit`                       |
+| Parameter  | Type                                |
+| ---------- | ----------------------------------- |
+| `body`     | [`UserMfaRequest`](#usermfarequest) |
+| `options?` | `RequestInit`                       |
 
 ###### Returns
 
@@ -129,20 +116,15 @@ Activate or deactivate multi-factor authentication for the authenticated user
 ##### changeUserPassword()
 
 ```ts
-changeUserPassword: (
-  userPasswordRequest: UserPasswordRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+changeUserPassword(body: UserPasswordRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
-
-Change user password
 
 ###### Parameters
 
-| Parameter             | Type                                          |
-| --------------------- | --------------------------------------------- |
-| `userPasswordRequest` | [`UserPasswordRequest`](#userpasswordrequest) |
-| `options?`            | `RequestInit`                                 |
+| Parameter  | Type                                          |
+| ---------- | --------------------------------------------- |
+| `body`     | [`UserPasswordRequest`](#userpasswordrequest) |
+| `options?` | `RequestInit`                                 |
 
 ###### Returns
 
@@ -151,18 +133,15 @@ Change user password
 ##### createPAT()
 
 ```ts
-createPAT: (createPATRequest: CreatePATRequest, options?: RequestInit) =>
-  Promise<FetchResponse<CreatePATResponse>>;
+createPAT(body: CreatePATRequest, options?: RequestInit): Promise<FetchResponse<CreatePATResponse>>;
 ```
-
-Create a Personal Access Token (PAT)
 
 ###### Parameters
 
-| Parameter          | Type                                    |
-| ------------------ | --------------------------------------- |
-| `createPATRequest` | [`CreatePATRequest`](#createpatrequest) |
-| `options?`         | `RequestInit`                           |
+| Parameter  | Type                                    |
+| ---------- | --------------------------------------- |
+| `body`     | [`CreatePATRequest`](#createpatrequest) |
+| `options?` | `RequestInit`                           |
 
 ###### Returns
 
@@ -171,20 +150,15 @@ Create a Personal Access Token (PAT)
 ##### deanonymizeUser()
 
 ```ts
-deanonymizeUser: (
-  userDeanonymizeRequest: UserDeanonymizeRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+deanonymizeUser(body: UserDeanonymizeRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
-
-Deanonymize an anonymous user by adding missing email or email+password
 
 ###### Parameters
 
-| Parameter                | Type                                                |
-| ------------------------ | --------------------------------------------------- |
-| `userDeanonymizeRequest` | [`UserDeanonymizeRequest`](#userdeanonymizerequest) |
-| `options?`               | `RequestInit`                                       |
+| Parameter  | Type                                                |
+| ---------- | --------------------------------------------------- |
+| `body`     | [`UserDeanonymizeRequest`](#userdeanonymizerequest) |
+| `options?` | `RequestInit`                                       |
 
 ###### Returns
 
@@ -193,10 +167,8 @@ Deanonymize an anonymous user by adding missing email or email+password
 ##### getJWKs()
 
 ```ts
-getJWKs: (options?: RequestInit) => Promise<FetchResponse<JWKSet>>;
+getJWKs(options?: RequestInit): Promise<FetchResponse<JWKSet>>;
 ```
-
-Get public keys for JWT verification in JWK Set format
 
 ###### Parameters
 
@@ -211,11 +183,8 @@ Get public keys for JWT verification in JWK Set format
 ##### getVersion()
 
 ```ts
-getVersion: (options?: RequestInit) =>
-  Promise<FetchResponse<GetVersionResponse200>>;
+getVersion(options?: RequestInit): Promise<FetchResponse<GetVersionResponse200>>;
 ```
-
-Retrieve version information about the authentication service
 
 ###### Parameters
 
@@ -230,10 +199,8 @@ Retrieve version information about the authentication service
 ##### healthCheckGet()
 
 ```ts
-healthCheckGet: (options?: RequestInit) => Promise<FetchResponse<"OK">>;
+healthCheckGet(options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
-
-Verify if the authentication service is operational using GET method
 
 ###### Parameters
 
@@ -248,10 +215,8 @@ Verify if the authentication service is operational using GET method
 ##### healthCheckHead()
 
 ```ts
-healthCheckHead: (options?: RequestInit) => Promise<FetchResponse<void>>;
+healthCheckHead(options?: RequestInit): Promise<FetchResponse<void>>;
 ```
-
-Verify if the authentication service is operational using HEAD method
 
 ###### Parameters
 
@@ -266,18 +231,15 @@ Verify if the authentication service is operational using HEAD method
 ##### linkIdToken()
 
 ```ts
-linkIdToken: (linkIdTokenRequest: LinkIdTokenRequest, options?: RequestInit) =>
-  Promise<FetchResponse<"OK">>;
+linkIdToken(body: LinkIdTokenRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
-
-Link a user account with the provider's account using an id token
 
 ###### Parameters
 
-| Parameter            | Type                                        |
-| -------------------- | ------------------------------------------- |
-| `linkIdTokenRequest` | [`LinkIdTokenRequest`](#linkidtokenrequest) |
-| `options?`           | `RequestInit`                               |
+| Parameter  | Type                                        |
+| ---------- | ------------------------------------------- |
+| `body`     | [`LinkIdTokenRequest`](#linkidtokenrequest) |
+| `options?` | `RequestInit`                               |
 
 ###### Returns
 
@@ -286,16 +248,14 @@ Link a user account with the provider's account using an id token
 ##### pushChainFunction()
 
 ```ts
-pushChainFunction: (chainFunction: ChainFunction) => void;
+pushChainFunction(chainFunction: ChainFunction): void;
 ```
-
-Add a middleware function to the request chain
 
 ###### Parameters
 
-| Parameter       | Type                                       | Description                |
-| --------------- | ------------------------------------------ | -------------------------- |
-| `chainFunction` | [`ChainFunction`](fetch#chainfunction) | Middleware function to add |
+| Parameter       | Type                                       |
+| --------------- | ------------------------------------------ |
+| `chainFunction` | [`ChainFunction`](fetch#chainfunction) |
 
 ###### Returns
 
@@ -304,20 +264,15 @@ Add a middleware function to the request chain
 ##### refreshToken()
 
 ```ts
-refreshToken: (
-  refreshTokenRequest: RefreshTokenRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<Session>>;
+refreshToken(body: RefreshTokenRequest, options?: RequestInit): Promise<FetchResponse<Session>>;
 ```
-
-Generate a new JWT access token using a valid refresh token
 
 ###### Parameters
 
-| Parameter             | Type                                          |
-| --------------------- | --------------------------------------------- |
-| `refreshTokenRequest` | [`RefreshTokenRequest`](#refreshtokenrequest) |
-| `options?`            | `RequestInit`                                 |
+| Parameter  | Type                                          |
+| ---------- | --------------------------------------------- |
+| `body`     | [`RefreshTokenRequest`](#refreshtokenrequest) |
+| `options?` | `RequestInit`                                 |
 
 ###### Returns
 
@@ -326,20 +281,15 @@ Generate a new JWT access token using a valid refresh token
 ##### sendPasswordResetEmail()
 
 ```ts
-sendPasswordResetEmail: (
-  userPasswordResetRequest: UserPasswordResetRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+sendPasswordResetEmail(body: UserPasswordResetRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
-
-Request a password reset
 
 ###### Parameters
 
-| Parameter                  | Type                                                    |
-| -------------------------- | ------------------------------------------------------- |
-| `userPasswordResetRequest` | [`UserPasswordResetRequest`](#userpasswordresetrequest) |
-| `options?`                 | `RequestInit`                                           |
+| Parameter  | Type                                                    |
+| ---------- | ------------------------------------------------------- |
+| `body`     | [`UserPasswordResetRequest`](#userpasswordresetrequest) |
+| `options?` | `RequestInit`                                           |
 
 ###### Returns
 
@@ -348,20 +298,15 @@ Request a password reset
 ##### sendVerificationEmail()
 
 ```ts
-sendVerificationEmail: (
-  userEmailSendVerificationEmailRequest: UserEmailSendVerificationEmailRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+sendVerificationEmail(body: UserEmailSendVerificationEmailRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
-
-Send verification email
 
 ###### Parameters
 
-| Parameter                               | Type                                                                              |
-| --------------------------------------- | --------------------------------------------------------------------------------- |
-| `userEmailSendVerificationEmailRequest` | [`UserEmailSendVerificationEmailRequest`](#useremailsendverificationemailrequest) |
-| `options?`                              | `RequestInit`                                                                     |
+| Parameter  | Type                                                                              |
+| ---------- | --------------------------------------------------------------------------------- |
+| `body`     | [`UserEmailSendVerificationEmailRequest`](#useremailsendverificationemailrequest) |
+| `options?` | `RequestInit`                                                                     |
 
 ###### Returns
 
@@ -370,20 +315,15 @@ Send verification email
 ##### signInAnonymous()
 
 ```ts
-signInAnonymous: (
-  signinAnonymousRequest?: SignInAnonymousRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<SessionPayload>>;
+signInAnonymous(body?: SignInAnonymousRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
 ```
-
-Sign in anonymously
 
 ###### Parameters
 
-| Parameter                 | Type                                                |
-| ------------------------- | --------------------------------------------------- |
-| `signinAnonymousRequest?` | [`SignInAnonymousRequest`](#signinanonymousrequest) |
-| `options?`                | `RequestInit`                                       |
+| Parameter  | Type                                                |
+| ---------- | --------------------------------------------------- |
+| `body?`    | [`SignInAnonymousRequest`](#signinanonymousrequest) |
+| `options?` | `RequestInit`                                       |
 
 ###### Returns
 
@@ -392,20 +332,15 @@ Sign in anonymously
 ##### signInEmailPassword()
 
 ```ts
-signInEmailPassword: (
-  signInEmailPasswordRequest: SignInEmailPasswordRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<SignInEmailPasswordResponse>>;
+signInEmailPassword(body: SignInEmailPasswordRequest, options?: RequestInit): Promise<FetchResponse<SignInEmailPasswordResponse>>;
 ```
-
-Authenticate a user with their email and password
 
 ###### Parameters
 
-| Parameter                    | Type                                                        |
-| ---------------------------- | ----------------------------------------------------------- |
-| `signInEmailPasswordRequest` | [`SignInEmailPasswordRequest`](#signinemailpasswordrequest) |
-| `options?`                   | `RequestInit`                                               |
+| Parameter  | Type                                                        |
+| ---------- | ----------------------------------------------------------- |
+| `body`     | [`SignInEmailPasswordRequest`](#signinemailpasswordrequest) |
+| `options?` | `RequestInit`                                               |
 
 ###### Returns
 
@@ -414,20 +349,15 @@ Authenticate a user with their email and password
 ##### signInIdToken()
 
 ```ts
-signInIdToken: (
-  signInIdTokenRequest: SignInIdTokenRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<SessionPayload>>;
+signInIdToken(body: SignInIdTokenRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
 ```
-
-Sign in with an id token
 
 ###### Parameters
 
-| Parameter              | Type                                            |
-| ---------------------- | ----------------------------------------------- |
-| `signInIdTokenRequest` | [`SignInIdTokenRequest`](#signinidtokenrequest) |
-| `options?`             | `RequestInit`                                   |
+| Parameter  | Type                                            |
+| ---------- | ----------------------------------------------- |
+| `body`     | [`SignInIdTokenRequest`](#signinidtokenrequest) |
+| `options?` | `RequestInit`                                   |
 
 ###### Returns
 
@@ -436,20 +366,15 @@ Sign in with an id token
 ##### signInOTPEmail()
 
 ```ts
-signInOTPEmail: (
-  signInOTPEmailRequest: SignInOTPEmailRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+signInOTPEmail(body: SignInOTPEmailRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
-
-Sign in with a one time password sent to user's email
 
 ###### Parameters
 
-| Parameter               | Type                                              |
-| ----------------------- | ------------------------------------------------- |
-| `signInOTPEmailRequest` | [`SignInOTPEmailRequest`](#signinotpemailrequest) |
-| `options?`              | `RequestInit`                                     |
+| Parameter  | Type                                              |
+| ---------- | ------------------------------------------------- |
+| `body`     | [`SignInOTPEmailRequest`](#signinotpemailrequest) |
+| `options?` | `RequestInit`                                     |
 
 ###### Returns
 
@@ -458,20 +383,15 @@ Sign in with a one time password sent to user's email
 ##### signInPasswordlessEmail()
 
 ```ts
-signInPasswordlessEmail: (
-  signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<"OK">>;
+signInPasswordlessEmail(body: SignInPasswordlessEmailRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
-
-Initiate passwordless authentication by sending a magic link to the user's email
 
 ###### Parameters
 
-| Parameter                        | Type                                                                |
-| -------------------------------- | ------------------------------------------------------------------- |
-| `signInPasswordlessEmailRequest` | [`SignInPasswordlessEmailRequest`](#signinpasswordlessemailrequest) |
-| `options?`                       | `RequestInit`                                                       |
+| Parameter  | Type                                                                |
+| ---------- | ------------------------------------------------------------------- |
+| `body`     | [`SignInPasswordlessEmailRequest`](#signinpasswordlessemailrequest) |
+| `options?` | `RequestInit`                                                       |
 
 ###### Returns
 
@@ -480,18 +400,15 @@ Initiate passwordless authentication by sending a magic link to the user's email
 ##### signInPAT()
 
 ```ts
-signInPAT: (signInPATRequest: SignInPATRequest, options?: RequestInit) =>
-  Promise<FetchResponse<SessionPayload>>;
+signInPAT(body: SignInPATRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
 ```
-
-Sign in with Personal Access Token (PAT)
 
 ###### Parameters
 
-| Parameter          | Type                                    |
-| ------------------ | --------------------------------------- |
-| `signInPATRequest` | [`SignInPATRequest`](#signinpatrequest) |
-| `options?`         | `RequestInit`                           |
+| Parameter  | Type                                    |
+| ---------- | --------------------------------------- |
+| `body`     | [`SignInPATRequest`](#signinpatrequest) |
+| `options?` | `RequestInit`                           |
 
 ###### Returns
 
@@ -500,22 +417,19 @@ Sign in with Personal Access Token (PAT)
 ##### signInProviderURL()
 
 ```ts
-signInProviderURL: (
-  provider: "apple" | "github" | "google" | "linkedin" | "discord" | "spotify",
-  params?: SignInProviderParams,
-  options?: RequestInit,
-) => string;
+signInProviderURL(
+   provider: SignInProvider,
+   params?: SignInProviderParams,
+   options?: RequestInit): string;
 ```
-
-This method returns a redirect URL to send the user to for signing in with an OAuth2 provider.
 
 ###### Parameters
 
-| Parameter  | Type                                                                                |
-| ---------- | ----------------------------------------------------------------------------------- |
-| `provider` | `"apple"` \| `"github"` \| `"google"` \| `"linkedin"` \| `"discord"` \| `"spotify"` |
-| `params?`  | [`SignInProviderParams`](#signinproviderparams)                                     |
-| `options?` | `RequestInit`                                                                       |
+| Parameter  | Type                                            |
+| ---------- | ----------------------------------------------- |
+| `provider` | [`SignInProvider`](#signinprovider)             |
+| `params?`  | [`SignInProviderParams`](#signinproviderparams) |
+| `options?` | `RequestInit`                                   |
 
 ###### Returns
 
@@ -524,20 +438,15 @@ This method returns a redirect URL to send the user to for signing in with an OA
 ##### signInVerifyMfaTotp()
 
 ```ts
-signInVerifyMfaTotp: (
-  signInMfaTotpRequest: SignInMfaTotpRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<SessionPayload>>;
+signInVerifyMfaTotp(body: SignInMfaTotpRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
 ```
-
-Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP)
 
 ###### Parameters
 
-| Parameter              | Type                                            |
-| ---------------------- | ----------------------------------------------- |
-| `signInMfaTotpRequest` | [`SignInMfaTotpRequest`](#signinmfatotprequest) |
-| `options?`             | `RequestInit`                                   |
+| Parameter  | Type                                            |
+| ---------- | ----------------------------------------------- |
+| `body`     | [`SignInMfaTotpRequest`](#signinmfatotprequest) |
+| `options?` | `RequestInit`                                   |
 
 ###### Returns
 
@@ -546,18 +455,15 @@ Complete the multi-factor authentication by verifying a Time-based One-Time Pass
 ##### signOut()
 
 ```ts
-signOut: (signOutSchema: SignOutSchema, options?: RequestInit) =>
-  Promise<FetchResponse<"OK">>;
+signOut(body: SignOutSchema, options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
-
-Sign out the current user
 
 ###### Parameters
 
-| Parameter       | Type                              |
-| --------------- | --------------------------------- |
-| `signOutSchema` | [`SignOutSchema`](#signoutschema) |
-| `options?`      | `RequestInit`                     |
+| Parameter  | Type                              |
+| ---------- | --------------------------------- |
+| `body`     | [`SignOutSchema`](#signoutschema) |
+| `options?` | `RequestInit`                     |
 
 ###### Returns
 
@@ -566,20 +472,15 @@ Sign out the current user
 ##### signUpEmailPassword()
 
 ```ts
-signUpEmailPassword: (
-  signUpEmailPasswordRequest: SignUpEmailPasswordRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<SessionPayload>>;
+signUpEmailPassword(body: SignUpEmailPasswordRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
 ```
-
-Register a new user account with email and password
 
 ###### Parameters
 
-| Parameter                    | Type                                                        |
-| ---------------------------- | ----------------------------------------------------------- |
-| `signUpEmailPasswordRequest` | [`SignUpEmailPasswordRequest`](#signupemailpasswordrequest) |
-| `options?`                   | `RequestInit`                                               |
+| Parameter  | Type                                                        |
+| ---------- | ----------------------------------------------------------- |
+| `body`     | [`SignUpEmailPasswordRequest`](#signupemailpasswordrequest) |
+| `options?` | `RequestInit`                                               |
 
 ###### Returns
 
@@ -588,20 +489,15 @@ Register a new user account with email and password
 ##### verifySignInOTPEmail()
 
 ```ts
-verifySignInOTPEmail: (
-  signInOTPEmailVerifyRequest: SignInOTPEmailVerifyRequest,
-  options?: RequestInit,
-) => Promise<FetchResponse<SignInOTPEmailVerifyResponse>>;
+verifySignInOTPEmail(body: SignInOTPEmailVerifyRequest, options?: RequestInit): Promise<FetchResponse<SignInOTPEmailVerifyResponse>>;
 ```
-
-Verify OTP and return a session if validation is successful
 
 ###### Parameters
 
-| Parameter                     | Type                                                          |
-| ----------------------------- | ------------------------------------------------------------- |
-| `signInOTPEmailVerifyRequest` | [`SignInOTPEmailVerifyRequest`](#signinotpemailverifyrequest) |
-| `options?`                    | `RequestInit`                                                 |
+| Parameter  | Type                                                          |
+| ---------- | ------------------------------------------------------------- |
+| `body`     | [`SignInOTPEmailVerifyRequest`](#signinotpemailverifyrequest) |
+| `options?` | `RequestInit`                                                 |
 
 ###### Returns
 
@@ -610,18 +506,14 @@ Verify OTP and return a session if validation is successful
 ##### verifyTicketURL()
 
 ```ts
-verifyTicketURL: (params: VerifyTicketParams, options?: RequestInit) => string;
+verifyTicketURL(params?: VerifyTicketParams, options?: RequestInit): string;
 ```
-
-Verify tickets created by email verification, magic link, or password reset
-
-This method returns a redirect URL to send the user to after verifying the ticket.
 
 ###### Parameters
 
 | Parameter  | Type                                        |
 | ---------- | ------------------------------------------- |
-| `params`   | [`VerifyTicketParams`](#verifyticketparams) |
+| `params?`  | [`VerifyTicketParams`](#verifyticketparams) |
 | `options?` | `RequestInit`                               |
 
 ###### Returns
@@ -641,7 +533,8 @@ expiresAt: string;
 ```
 
 Expiration date of the PAT
-Format - date-time
+
+- Format - date-time
 
 ##### metadata?
 
@@ -649,7 +542,7 @@ Format - date-time
 optional metadata: Record<string, unknown>;
 ```
 
-Example - {"name":"my-pat","used-by":"my-app-cli"}
+- Example - {"name":"my-pat","used-by":"my-app-cli"}
 
 ---
 
@@ -664,8 +557,9 @@ id: string;
 ```
 
 ID of the PAT
-Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### personalAccessToken
 
@@ -674,8 +568,9 @@ personalAccessToken: string;
 ```
 
 PAT
-Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ---
 
@@ -700,7 +595,8 @@ message: string;
 ```
 
 Human-friendly error message
-Example - "Invalid email format"
+
+- Example - "Invalid email format"
 
 ##### status
 
@@ -709,7 +605,8 @@ status: number;
 ```
 
 HTTP status error code
-Example - 400
+
+- Example - 400
 
 ---
 
@@ -724,7 +621,8 @@ version: string;
 ```
 
 The version of the authentication service
-Example - "1.2.3"
+
+- Example - "1.2.3"
 
 ---
 
@@ -741,7 +639,8 @@ alg: string;
 ```
 
 Algorithm used with this key
-Example - "RS256"
+
+- Example - "RS256"
 
 ##### e
 
@@ -750,7 +649,8 @@ e: string;
 ```
 
 RSA public exponent
-Example - "AQAB"
+
+- Example - "AQAB"
 
 ##### kid
 
@@ -759,7 +659,8 @@ kid: string;
 ```
 
 Key ID
-Example - "key-id-1"
+
+- Example - "key-id-1"
 
 ##### kty
 
@@ -768,7 +669,8 @@ kty: string;
 ```
 
 Key type
-Example - "RSA"
+
+- Example - "RSA"
 
 ##### n
 
@@ -777,7 +679,8 @@ n: string;
 ```
 
 RSA modulus
-Example - "abcd1234..."
+
+- Example - "abcd1234..."
 
 ##### use
 
@@ -786,7 +689,8 @@ use: string;
 ```
 
 Key usage
-Example - "sig"
+
+- Example - "sig"
 
 ---
 
@@ -847,7 +751,8 @@ ticket: string;
 ```
 
 Ticket to use when completing the MFA challenge
-Example - "mfaTotp:abc123def456"
+
+- Example - "mfaTotp:abc123def456"
 
 ---
 
@@ -861,8 +766,8 @@ Example - "mfaTotp:abc123def456"
 optional redirectTo: string;
 ```
 
-Example - "https://my-app.com/catch-redirection"
-Format - uri
+- Example - "https://my-app.com/catch-redirection"
+- Format - uri
 
 ---
 
@@ -879,8 +784,9 @@ refreshToken: string;
 ```
 
 Refresh token used to generate a new access token
-Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ---
 
@@ -897,7 +803,8 @@ accessToken: string;
 ```
 
 JWT token for authenticating API requests
-Example - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+- Example - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 
 ##### accessTokenExpiresIn
 
@@ -906,8 +813,9 @@ accessTokenExpiresIn: number;
 ```
 
 Expiration time of the access token in seconds
-Example - 900
-Format - int64
+
+- Example - 900
+- Format - int64
 
 ##### refreshToken
 
@@ -916,8 +824,9 @@ refreshToken: string;
 ```
 
 Token used to refresh the access token
-Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### refreshTokenId
 
@@ -926,8 +835,9 @@ refreshTokenId: string;
 ```
 
 Identifier for the refresh token
-Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### user?
 
@@ -965,7 +875,7 @@ User authentication session containing tokens and user information
 optional displayName: string;
 ```
 
-Example - "John Smith"
+- Example - "John Smith"
 
 ##### locale?
 
@@ -974,9 +884,10 @@ optional locale: string;
 ```
 
 A two-characters locale
-Example - "en"
-MinLength - 2
-MaxLength - 2
+
+- Example - "en"
+- MinLength - 2
+- MaxLength - 2
 
 ##### metadata?
 
@@ -984,7 +895,7 @@ MaxLength - 2
 optional metadata: Record<string, unknown>;
 ```
 
-Example - {"firstName":"John","lastName":"Smith"}
+- Example - {"firstName":"John","lastName":"Smith"}
 
 ---
 
@@ -1001,8 +912,9 @@ email: string;
 ```
 
 User's email address
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### password
 
@@ -1011,9 +923,10 @@ password: string;
 ```
 
 User's password
-Example - "Str0ngPassw#ord-94|%"
-MinLength - 3
-MaxLength - 50
+
+- Example - "Str0ngPassw#ord-94|%"
+- MinLength - 3
+- MaxLength - 50
 
 ---
 
@@ -1094,7 +1007,8 @@ ticket: string;
 ```
 
 Ticket
-Pattern - ^mfaTotp:.\*$
+
+- Pattern - ^mfaTotp:.\*$
 
 ---
 
@@ -1109,8 +1023,9 @@ email: string;
 ```
 
 A valid email
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
@@ -1131,8 +1046,9 @@ email: string;
 ```
 
 A valid email
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### otp
 
@@ -1169,8 +1085,9 @@ email: string;
 ```
 
 A valid email
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
@@ -1191,8 +1108,9 @@ personalAccessToken: string;
 ```
 
 PAT
-Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ---
 
@@ -1313,8 +1231,9 @@ optional email: string;
 ```
 
 A valid email
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ---
 
@@ -1335,8 +1254,9 @@ optional email: string;
 ```
 
 A valid email. Deprecated, no longer used
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ---
 
@@ -1375,8 +1295,9 @@ email: string;
 ```
 
 Email address for the new user account
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
@@ -1391,9 +1312,10 @@ password: string;
 ```
 
 Password for the new user account
-Example - "Str0ngPassw#ord-94|%"
-MinLength - 3
-MaxLength - 50
+
+- Example - "Str0ngPassw#ord-94|%"
+- MinLength - 3
+- MaxLength - 50
 
 ---
 
@@ -1407,7 +1329,7 @@ MaxLength - 50
 optional allowedRoles: string[];
 ```
 
-Example - ["me","user"]
+- Example - ["me","user"]
 
 ##### defaultRole?
 
@@ -1415,7 +1337,7 @@ Example - ["me","user"]
 optional defaultRole: string;
 ```
 
-Example - "user"
+- Example - "user"
 
 ##### displayName?
 
@@ -1423,9 +1345,9 @@ Example - "user"
 optional displayName: string;
 ```
 
-Example - "John Smith"
-Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-MaxLength - 32
+- Example - "John Smith"
+- Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
+- MaxLength - 32
 
 ##### locale?
 
@@ -1434,9 +1356,10 @@ optional locale: string;
 ```
 
 A two-characters locale
-Example - "en"
-MinLength - 2
-MaxLength - 2
+
+- Example - "en"
+- MinLength - 2
+- MaxLength - 2
 
 ##### metadata?
 
@@ -1444,7 +1367,7 @@ MaxLength - 2
 optional metadata: Record<string, unknown>;
 ```
 
-Example - {"firstName":"John","lastName":"Smith"}
+- Example - {"firstName":"John","lastName":"Smith"}
 
 ##### redirectTo?
 
@@ -1452,8 +1375,8 @@ Example - {"firstName":"John","lastName":"Smith"}
 optional redirectTo: string;
 ```
 
-Example - "https://my-app.com/catch-redirection"
-Format - uri
+- Example - "https://my-app.com/catch-redirection"
+- Format - uri
 
 ---
 
@@ -1468,8 +1391,9 @@ email: string;
 ```
 
 A valid email
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
@@ -1492,7 +1416,8 @@ imageUrl: string;
 ```
 
 URL to QR code image for scanning with an authenticator app
-Example - "data:image/png;base64,iVBORw0KGg..."
+
+- Example - "data:image/png;base64,iVBORw0KGg..."
 
 ##### totpSecret
 
@@ -1501,7 +1426,8 @@ totpSecret: string;
 ```
 
 TOTP secret key for manual setup with an authenticator app
-Example - "ABCDEFGHIJK23456"
+
+- Example - "ABCDEFGHIJK23456"
 
 ---
 
@@ -1518,7 +1444,8 @@ avatarUrl: string;
 ```
 
 URL to the user's profile picture
-Example - "https://myapp.com/avatars/user123.jpg"
+
+- Example - "https://myapp.com/avatars/user123.jpg"
 
 ##### createdAt
 
@@ -1527,8 +1454,9 @@ createdAt: string;
 ```
 
 Timestamp when the user account was created
-Example - "2023-01-15T12:34:56Z"
-Format - date-time
+
+- Example - "2023-01-15T12:34:56Z"
+- Format - date-time
 
 ##### defaultRole
 
@@ -1537,7 +1465,8 @@ defaultRole: string;
 ```
 
 Default authorization role for the user
-Example - "user"
+
+- Example - "user"
 
 ##### displayName
 
@@ -1546,7 +1475,8 @@ displayName: string;
 ```
 
 User's display name
-Example - "John Smith"
+
+- Example - "John Smith"
 
 ##### email?
 
@@ -1555,8 +1485,9 @@ optional email: string;
 ```
 
 User's email address
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### emailVerified
 
@@ -1565,7 +1496,8 @@ emailVerified: boolean;
 ```
 
 Whether the user's email has been verified
-Example - true
+
+- Example - true
 
 ##### id
 
@@ -1574,8 +1506,9 @@ id: string;
 ```
 
 Unique identifier for the user
-Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### isAnonymous
 
@@ -1584,7 +1517,8 @@ isAnonymous: boolean;
 ```
 
 Whether this is an anonymous user account
-Example - false
+
+- Example - false
 
 ##### locale
 
@@ -1593,9 +1527,10 @@ locale: string;
 ```
 
 User's preferred locale (language code)
-Example - "en"
-MinLength - 2
-MaxLength - 2
+
+- Example - "en"
+- MinLength - 2
+- MaxLength - 2
 
 ##### metadata
 
@@ -1604,7 +1539,8 @@ metadata: Record<string, unknown>;
 ```
 
 Custom metadata associated with the user
-Example - {"firstName":"John","lastName":"Smith"}
+
+- Example - {"firstName":"John","lastName":"Smith"}
 
 ##### phoneNumber?
 
@@ -1613,7 +1549,8 @@ optional phoneNumber: string;
 ```
 
 User's phone number
-Example - "+12025550123"
+
+- Example - "+12025550123"
 
 ##### phoneNumberVerified
 
@@ -1622,7 +1559,8 @@ phoneNumberVerified: boolean;
 ```
 
 Whether the user's phone number has been verified
-Example - false
+
+- Example - false
 
 ##### roles
 
@@ -1631,7 +1569,8 @@ roles: string[];
 ```
 
 List of roles assigned to the user
-Example - ["user","customer"]
+
+- Example - ["user","customer"]
 
 ---
 
@@ -1654,8 +1593,9 @@ email: string;
 ```
 
 A valid email
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
@@ -1670,9 +1610,10 @@ optional password: string;
 ```
 
 A password of minimum 3 characters
-Example - "Str0ngPassw#ord-94|%"
-MinLength - 3
-MaxLength - 50
+
+- Example - "Str0ngPassw#ord-94|%"
+- MinLength - 3
+- MaxLength - 50
 
 ##### signInMethod
 
@@ -1695,8 +1636,9 @@ newEmail: string;
 ```
 
 A valid email
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
@@ -1717,8 +1659,9 @@ email: string;
 ```
 
 A valid email
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
@@ -1741,7 +1684,8 @@ optional activeMfaType: UserMfaRequestActiveMfaType;
 ```
 
 Type of MFA to activate. Use empty string to disable MFA.
-Example - "totp"
+
+- Example - "totp"
 
 ##### code
 
@@ -1750,7 +1694,8 @@ code: string;
 ```
 
 Verification code from the authenticator app when activating MFA
-Example - "123456"
+
+- Example - "123456"
 
 ---
 
@@ -1765,9 +1710,10 @@ newPassword: string;
 ```
 
 A password of minimum 3 characters
-Example - "Str0ngPassw#ord-94|%"
-MinLength - 3
-MaxLength - 50
+
+- Example - "Str0ngPassw#ord-94|%"
+- MinLength - 3
+- MaxLength - 50
 
 ##### ticket?
 
@@ -1776,7 +1722,8 @@ optional ticket: string;
 ```
 
 Ticket to reset the password, required if the user is not authenticated
-Pattern - ^passwordReset\:.\*$
+
+- Pattern - ^passwordReset\:.\*$
 
 ---
 
@@ -1791,8 +1738,9 @@ email: string;
 ```
 
 A valid email
-Example - "john.smith@nhost.io"
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 

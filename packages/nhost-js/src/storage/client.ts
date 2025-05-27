@@ -5,175 +5,216 @@
 import { FetchError, createEnhancedFetch } from "../fetch";
 import type { ChainFunction, FetchResponse } from "../fetch";
 
-import type { Client } from "./interface";
-
 /**
  * Contains version information about the storage service.
- */
+ @property buildVersion? (string) - The version number of the storage service build.
+    *    Example - `"1.2.3"`*/
 export interface VersionInformation {
   /**
    * The version number of the storage service build.
-   *    Example - "1.2.3"
+   *    Example - `"1.2.3"`
    */
   buildVersion?: string;
 }
 
 /**
  * Basic information about a file in storage.
- */
+ @property id? (string) - Unique identifier for the file.
+    *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+ @property name? (string) - Name of the file including extension.
+    *    Example - `"profile-picture.jpg"`
+ @property bucketId? (string) - ID of the bucket containing the file.
+    *    Example - `"users-bucket"`
+ @property isUploaded? (boolean) - Whether the file has been successfully uploaded.
+    *    Example - `true`*/
 export interface FileSummary {
   /**
    * Unique identifier for the file.
-   *    Example - "d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"
+   *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
    */
   id?: string;
   /**
    * Name of the file including extension.
-   *    Example - "profile-picture.jpg"
+   *    Example - `"profile-picture.jpg"`
    */
   name?: string;
   /**
    * ID of the bucket containing the file.
-   *    Example - "users-bucket"
+   *    Example - `"users-bucket"`
    */
   bucketId?: string;
   /**
    * Whether the file has been successfully uploaded.
-   *    Example - true
+   *    Example - `true`
    */
   isUploaded?: boolean;
 }
 
 /**
  * Comprehensive metadata information about a file in storage.
- */
+ @property id? (string) - Unique identifier for the file.
+    *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+ @property name? (string) - Name of the file including extension.
+    *    Example - `"profile-picture.jpg"`
+ @property size? (number) - Size of the file in bytes.
+    *    Example - `245678`
+ @property bucketId? (string) - ID of the bucket containing the file.
+    *    Example - `"users-bucket"`
+ @property etag? (string) - Entity tag for cache validation.
+    *    Example - `"\"a1b2c3d4e5f6\""`
+ @property createdAt? (string) - Timestamp when the file was created.
+    *    Example - `"2023-01-15T12:34:56Z"`
+    *    Format - date-time
+ @property updatedAt? (string) - Timestamp when the file was last updated.
+    *    Example - `"2023-01-16T09:45:32Z"`
+    *    Format - date-time
+ @property isUploaded? (boolean) - Whether the file has been successfully uploaded.
+    *    Example - `true`
+ @property mimeType? (string) - MIME type of the file.
+    *    Example - `"image/jpeg"`
+ @property uploadedByUserId? (string) - ID of the user who uploaded the file.
+    *    Example - `"abc123def456"`
+ @property metadata? (Record<string, unknown>) - Custom metadata associated with the file.
+    *    Example - `{"alt":"Profile picture","category":"avatar"}`*/
 export interface FileMetadata {
   /**
    * Unique identifier for the file.
-   *    Example - "d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"
+   *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
    */
   id?: string;
   /**
    * Name of the file including extension.
-   *    Example - "profile-picture.jpg"
+   *    Example - `"profile-picture.jpg"`
    */
   name?: string;
   /**
    * Size of the file in bytes.
-   *    Example - 245678
+   *    Example - `245678`
    */
   size?: number;
   /**
    * ID of the bucket containing the file.
-   *    Example - "users-bucket"
+   *    Example - `"users-bucket"`
    */
   bucketId?: string;
   /**
    * Entity tag for cache validation.
-   *    Example - "\"a1b2c3d4e5f6\""
+   *    Example - `"\"a1b2c3d4e5f6\""`
    */
   etag?: string;
   /**
    * Timestamp when the file was created.
-   *    Example - "2023-01-15T12:34:56Z"
+   *    Example - `"2023-01-15T12:34:56Z"`
    *    Format - date-time
    */
   createdAt?: string;
   /**
    * Timestamp when the file was last updated.
-   *    Example - "2023-01-16T09:45:32Z"
+   *    Example - `"2023-01-16T09:45:32Z"`
    *    Format - date-time
    */
   updatedAt?: string;
   /**
    * Whether the file has been successfully uploaded.
-   *    Example - true
+   *    Example - `true`
    */
   isUploaded?: boolean;
   /**
    * MIME type of the file.
-   *    Example - "image/jpeg"
+   *    Example - `"image/jpeg"`
    */
   mimeType?: string;
   /**
    * ID of the user who uploaded the file.
-   *    Example - "abc123def456"
+   *    Example - `"abc123def456"`
    */
   uploadedByUserId?: string;
   /**
    * Custom metadata associated with the file.
-   *    Example - {"alt":"Profile picture","category":"avatar"}
+   *    Example - `{"alt":"Profile picture","category":"avatar"}`
    */
   metadata?: Record<string, unknown>;
 }
 
 /**
  * Metadata provided when uploading a new file.
- */
+ @property id? (string) - Optional custom ID for the file. If not provided, a UUID will be generated.
+    *    Example - `"custom-id-123"`
+ @property name? (string) - Name to assign to the file. If not provided, the original filename will be used.
+    *    Example - `"custom-filename.png"`
+ @property metadata? (Record<string, unknown>) - Custom metadata to associate with the file.
+    *    Example - `{"alt":"Custom image","category":"document"}`*/
 export interface UploadFileMetadata {
   /**
    * Optional custom ID for the file. If not provided, a UUID will be generated.
-   *    Example - "custom-id-123"
+   *    Example - `"custom-id-123"`
    */
   id?: string;
   /**
    * Name to assign to the file. If not provided, the original filename will be used.
-   *    Example - "custom-filename.png"
+   *    Example - `"custom-filename.png"`
    */
   name?: string;
   /**
    * Custom metadata to associate with the file.
-   *    Example - {"alt":"Custom image","category":"document"}
+   *    Example - `{"alt":"Custom image","category":"document"}`
    */
   metadata?: Record<string, unknown>;
 }
 
 /**
  * Metadata that can be updated for an existing file.
- */
+ @property name? (string) - New name to assign to the file.
+    *    Example - `"renamed-file.jpg"`
+ @property metadata? (Record<string, unknown>) - Updated custom metadata to associate with the file.
+    *    Example - `{"alt":"Updated image description","category":"profile"}`*/
 export interface UpdateFileMetadata {
   /**
    * New name to assign to the file.
-   *    Example - "renamed-file.jpg"
+   *    Example - `"renamed-file.jpg"`
    */
   name?: string;
   /**
    * Updated custom metadata to associate with the file.
-   *    Example - {"alt":"Updated image description","category":"profile"}
+   *    Example - `{"alt":"Updated image description","category":"profile"}`
    */
   metadata?: Record<string, unknown>;
 }
 
 /**
  * Contains a presigned URL for direct file operations.
- */
+ @property url? (string) - The presigned URL for file operations.
+    *    Example - `"https://storage.example.com/files/abc123?signature=xyz"`
+ @property expiration? (number) - The time in seconds until the URL expires.
+    *    Example - `3600`*/
 export interface PresignedURLResponse {
   /**
    * The presigned URL for file operations.
-   *    Example - "https://storage.example.com/files/abc123?signature=xyz"
+   *    Example - `"https://storage.example.com/files/abc123?signature=xyz"`
    */
   url?: string;
   /**
    * The time in seconds until the URL expires.
-   *    Example - 3600
+   *    Example - `3600`
    */
   expiration?: number;
 }
 
 /**
  * Error details.
- */
+ @property message (string) - Human-readable error message.
+    *    Example - `"File not found"`*/
 export interface ErrorResponseError {
   /**
    * Human-readable error message.
-   *    Example - "File not found"
+   *    Example - `"File not found"`
    */
   message: string;
 }
 
 /**
  * Error information returned by the API.
- */
+ @property error? (ErrorResponseError) - Error details.*/
 export interface ErrorResponse {
   /**
    * Error details.
@@ -182,12 +223,15 @@ export interface ErrorResponse {
 }
 
 /**
- *
- */
+ * 
+ @property bucket-id? (string) - Target bucket identifier where files will be stored.
+    *    Example - `"user-uploads"`
+ @property metadata[]? (UploadFileMetadata[]) - Optional custom metadata for each uploaded file. Must match the order of the file[] array.
+ @property file[] (Blob[]) - Array of files to upload.*/
 export interface UploadFilesBody {
   /**
    * Target bucket identifier where files will be stored.
-   *    Example - "user-uploads"
+   *    Example - `"user-uploads"`
    */
   "bucket-id"?: string;
   /**
@@ -201,8 +245,8 @@ export interface UploadFilesBody {
 }
 
 /**
- *
- */
+ * 
+ @property processedFiles? (FileMetadata[]) - List of successfully processed files with their metadata.*/
 export interface UploadFilesResponse201 {
   /**
    * List of successfully processed files with their metadata.
@@ -221,8 +265,10 @@ export type HeadF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
 export type GetF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
 
 /**
- *
- */
+ * 
+ @property metadata? (UpdateFileMetadata) - Metadata that can be updated for an existing file.
+ @property file? (Blob) - New file content to replace the existing file
+    *    Format - binary*/
 export interface ReplaceFileBody {
   /**
    * Metadata that can be updated for an existing file.
@@ -237,81 +283,163 @@ export interface ReplaceFileBody {
 
 /**
  * Parameters for the getFileMetadataHeaders method.
-    * @param q - Image quality (1-100). Only applies to JPEG, WebP and PNG files
-
-    * @param h - Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-
-    * @param w - Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-
-    * @param b - Blur the image using this sigma value. Only applies to image files
-
-    * @param f - Output format for image files. Use 'auto' for content negotiation based on Accept header
+    @property q? (number) - Image quality (1-100). Only applies to JPEG, WebP and PNG files
+  
+    @property h? (number) - Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+  
+    @property w? (number) - Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+  
+    @property b? (number) - Blur the image using this sigma value. Only applies to image files
+  
+    @property f? (HeadF) - Output format for image files. Use 'auto' for content negotiation based on Accept header
   */
 export interface GetFileMetadataHeadersParams {
   /**
    * Image quality (1-100). Only applies to JPEG, WebP and PNG files
-
+  
    */
   q?: number;
   /**
    * Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-
+  
    */
   h?: number;
   /**
    * Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-
+  
    */
   w?: number;
   /**
    * Blur the image using this sigma value. Only applies to image files
-
+  
    */
   b?: number;
   /**
    * Output format for image files. Use 'auto' for content negotiation based on Accept header
-
+  
    */
   f?: HeadF;
 }
 /**
  * Parameters for the getFile method.
-    * @param q - Image quality (1-100). Only applies to JPEG, WebP and PNG files
-
-    * @param h - Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-
-    * @param w - Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-
-    * @param b - Blur the image using this sigma value. Only applies to image files
-
-    * @param f - Output format for image files. Use 'auto' for content negotiation based on Accept header
+    @property q? (number) - Image quality (1-100). Only applies to JPEG, WebP and PNG files
+  
+    @property h? (number) - Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+  
+    @property w? (number) - Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+  
+    @property b? (number) - Blur the image using this sigma value. Only applies to image files
+  
+    @property f? (GetF) - Output format for image files. Use 'auto' for content negotiation based on Accept header
   */
 export interface GetFileParams {
   /**
    * Image quality (1-100). Only applies to JPEG, WebP and PNG files
-
+  
    */
   q?: number;
   /**
    * Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-
+  
    */
   h?: number;
   /**
    * Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-
+  
    */
   w?: number;
   /**
    * Blur the image using this sigma value. Only applies to image files
-
+  
    */
   b?: number;
   /**
    * Output format for image files. Use 'auto' for content negotiation based on Accept header
-
+  
    */
   f?: GetF;
+}
+
+export interface Client {
+  baseURL: string;
+  pushChainFunction(chainFunction: ChainFunction): void;
+  /**
+     Summary: Get service version information
+     Retrieves build and version information about the storage service. Useful for monitoring and debugging.
+     This method may return different T based on the response code:
+     - 200: VersionInformation
+     */
+  getVersion(options?: RequestInit): Promise<FetchResponse<VersionInformation>>;
+
+  /**
+     Summary: Upload files
+     Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
+     This method may return different T based on the response code:
+     - 201: UploadFilesResponse201
+     - 400: ErrorResponse
+     */
+  uploadFiles(
+    body: UploadFilesBody,
+    options?: RequestInit,
+  ): Promise<FetchResponse<UploadFilesResponse201>>;
+
+  /**
+     Summary: Check file information
+     Retrieve file metadata headers without downloading the file content. Supports conditional requests and provides caching information.
+     This method may return different T based on the response code:
+     - 200: void
+     - 304: void
+     - 400: void
+     - 412: void
+     */
+  getFileMetadataHeaders(
+    id: string,
+    params?: GetFileMetadataHeadersParams,
+    options?: RequestInit,
+  ): Promise<FetchResponse<void>>;
+
+  /**
+     Summary: Download file
+     Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
+     This method may return different T based on the response code:
+     - 200: void
+     - 304: void
+     - 400: void
+     - 412: void
+     */
+  getFile(
+    id: string,
+    params?: GetFileParams,
+    options?: RequestInit,
+  ): Promise<FetchResponse<Blob>>;
+
+  /**
+     Summary: Replace file
+     Replace an existing file with new content while preserving the file ID. The operation follows these steps:
+1. The isUploaded flag is set to false to mark the file as being updated
+2. The file content is replaced in the storage backend
+3. File metadata is updated (size, mime-type, isUploaded, etc.)
+
+Each step is atomic, but if a step fails, previous steps will not be automatically rolled back.
+
+     This method may return different T based on the response code:
+     - 200: FileMetadata
+     - 400: ErrorResponse
+     */
+  replaceFile(
+    id: string,
+    body: ReplaceFileBody,
+    options?: RequestInit,
+  ): Promise<FetchResponse<FileMetadata>>;
+
+  /**
+     Summary: Delete file
+     Permanently delete a file from storage. This removes both the file content and its associated metadata.
+     This method may return different T based on the response code:
+     - 204: void
+     - 400: ErrorResponse
+     */
+  deleteFile(id: string, options?: RequestInit): Promise<FetchResponse<void>>;
 }
 
 export const createAPIClient = (
