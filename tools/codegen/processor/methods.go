@@ -197,6 +197,16 @@ func (p *Parameter) Name() string {
 	return p.p.ParameterName(p.name)
 }
 
+func (p *Parameter) Required() bool {
+	if p.Parameter.Required != nil {
+		return *p.Parameter.Required
+	}
+	if p.Parameter.In == "path" {
+		return true
+	}
+	return false
+}
+
 func GetMethod(
 	path string,
 	method string,

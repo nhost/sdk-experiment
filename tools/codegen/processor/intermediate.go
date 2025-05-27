@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"maps"
+	"slices"
 	"strings"
 	"text/template"
 
@@ -131,6 +133,10 @@ func newInterMediateRepresentationPaths(
 		item := pathPairs.Value()
 
 		for opPairs := item.GetOperations().First(); opPairs != nil; opPairs = opPairs.Next() {
+			if slices.Contains(opPairs.Value().Tags, "excludeme") {
+				continue
+			}
+
 			m, tt, err := GetMethod(path, opPairs.Key(), opPairs.Value(), plugin)
 			if err != nil {
 				return nil, nil, fmt.Errorf("failed to create method for path %s: %w", path, err)
@@ -158,13 +164,16 @@ func (ir *InterMediateRepresentation) Render(out io.Writer) error {
 		}
 	}
 
-	tmpl, err := template.New("").Funcs(template.FuncMap{
+	funcs := template.FuncMap{
 		"title":   format.Title,
 		"join":    strings.Join,
 		"example": templateFnExample,
 		"pattern": templateFnPattern,
 		"format":  templateFnFormat,
-	}).ParseFS(templatesFS, filenames...)
+	}
+	maps.Copy(funcs, ir.plugin.GetFuncMap())
+
+	tmpl, err := template.New("").Funcs(funcs).ParseFS(templatesFS, filenames...)
 	if err != nil {
 		return fmt.Errorf("failed to parse interface template: %w", err)
 	}

@@ -12,7 +12,6 @@ import (
 type KindIdentifier string
 
 const (
-	KindIdentifierRef    KindIdentifier = "ref"
 	KindIdentifierObject KindIdentifier = "object"
 	KindIdentifierScalar KindIdentifier = "scalar"
 	KindIdentifierArray  KindIdentifier = "array"
@@ -21,8 +20,9 @@ const (
 	KindIdentifierAlias  KindIdentifier = "alias"
 )
 
-type Plugin interface {
+type Plugin interface { //nolint:interfacebloat
 	GetTemplates() fs.FS
+	GetFuncMap() map[string]any
 	TypeObjectName(name string) string
 	TypeScalarName(scalar *TypeScalar) string
 	TypeArrayName(array *TypeArray) string
@@ -84,36 +84,6 @@ func (p *Property) Required() bool {
 		p.Parent.Schema().Schema().Required,
 		p.name,
 	)
-}
-
-type TypeRef struct {
-	name   string
-	schema *base.SchemaProxy
-	p      Plugin
-}
-
-func (t *TypeRef) Name() string {
-	return t.p.TypeObjectName(t.name)
-}
-
-func (t *TypeRef) Kind() KindIdentifier {
-	return KindIdentifierRef
-}
-
-func (t *TypeRef) Schema() *base.SchemaProxy {
-	return t.schema
-}
-
-func (t *TypeRef) Required() bool {
-	if len(t.schema.Schema().Required) == 0 {
-		return false
-	}
-
-	if t.schema.Schema().Properties == nil {
-		return true
-	}
-
-	return false
 }
 
 type TypeEnum struct {
@@ -218,11 +188,7 @@ func getTypeObject( //nolint:ireturn
 	schema *base.SchemaProxy, derivedName string, p Plugin,
 ) (Type, []Type, error) {
 	if schema.IsReference() {
-		return &TypeRef{
-			schema: schema,
-			name:   format.GetNameFromComponentRef(schema.GetReference()),
-			p:      p,
-		}, nil, nil
+		derivedName = format.GetNameFromComponentRef(schema.GetReference())
 	}
 
 	if schema.Schema().Properties == nil {
@@ -244,20 +210,24 @@ func getTypeObject( //nolint:ireturn
 		return nil, nil, fmt.Errorf("failed to create object type: %w", err)
 	}
 
+	if schema.IsReference() {
+		return t, nil, nil
+	}
+
 	return t, append(tt, t), nil
 }
 
 func getTypeArray(schema *base.SchemaProxy, p Plugin) (Type, []Type, error) { //nolint:ireturn
 	item := schema.Schema().Items.A
 	if item.IsReference() {
+		t, _, err := GetType(item, format.GetNameFromComponentRef(item.GetReference()), p, false)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to get type for array item: %w", err)
+		}
 		return &TypeArray{
 			schema: schema,
 			p:      p,
-			Item: &TypeRef{
-				schema: schema,
-				name:   format.GetNameFromComponentRef(item.GetReference()),
-				p:      p,
-			},
+			Item:   t,
 		}, nil, nil
 	}
 	return &TypeArray{

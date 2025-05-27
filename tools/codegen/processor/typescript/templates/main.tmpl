@@ -2,6 +2,11 @@
  * This file is auto-generated. Do not edit manually.
  */
 
+import { FetchError, createEnhancedFetch } from "../fetch";
+import type { ChainFunction, FetchResponse } from "../fetch";
+
+import type { Client } from "./interface";
+
 {{- range .Types }}
 {{ if eq .Kind "object" }}
 {{ template "renderObject" . }}
@@ -33,7 +38,7 @@ export interface {{ title .Name }}Params {
   /**
    * {{ template "renderParamAttributeHelp" .Parameter }}
    */
-  {{ .Name }}: {{ .Type.Name }};
+  {{ .Name }}{{ if not .Required}}?{{ end }}: {{ .Type.Name }};
 {{- end }}
 }
 {{- end }}

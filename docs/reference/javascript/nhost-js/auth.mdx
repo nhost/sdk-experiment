@@ -49,141 +49,6 @@ try {
   // error handling...
 ```
 
-## Enumerations
-
-### ErrorResponseError
-
-Error code identifying the specific application error
-
-#### Enumeration Members
-
-| Enumeration Member                                                             | Value                                     |
-| ------------------------------------------------------------------------------ | ----------------------------------------- |
-| <a id="defaultrolemustbeinallowedroles"></a> `DefaultRoleMustBeInAllowedRoles` | `"default-role-must-be-in-allowed-roles"` |
-| <a id="disabledendpoint"></a> `DisabledEndpoint`                               | `"disabled-endpoint"`                     |
-| <a id="disabledmfatotp"></a> `DisabledMfaTotp`                                 | `"disabled-mfa-totp"`                     |
-| <a id="disableduser"></a> `DisabledUser`                                       | `"disabled-user"`                         |
-| <a id="emailalreadyinuse"></a> `EmailAlreadyInUse`                             | `"email-already-in-use"`                  |
-| <a id="emailalreadyverified"></a> `EmailAlreadyVerified`                       | `"email-already-verified"`                |
-| <a id="forbiddenanonymous"></a> `ForbiddenAnonymous`                           | `"forbidden-anonymous"`                   |
-| <a id="internalservererror"></a> `InternalServerError`                         | `"internal-server-error"`                 |
-| <a id="invalidemailpassword"></a> `InvalidEmailPassword`                       | `"invalid-email-password"`                |
-| <a id="invalidpat"></a> `InvalidPat`                                           | `"invalid-pat"`                           |
-| <a id="invalidrefreshtoken"></a> `InvalidRefreshToken`                         | `"invalid-refresh-token"`                 |
-| <a id="invalidrequest"></a> `InvalidRequest`                                   | `"invalid-request"`                       |
-| <a id="invalidticket"></a> `InvalidTicket`                                     | `"invalid-ticket"`                        |
-| <a id="invalidtotp"></a> `InvalidTotp`                                         | `"invalid-totp"`                          |
-| <a id="localenotallowed"></a> `LocaleNotAllowed`                               | `"locale-not-allowed"`                    |
-| <a id="mfatypenotfound"></a> `MfaTypeNotFound`                                 | `"mfa-type-not-found"`                    |
-| <a id="nototpsecret"></a> `NoTotpSecret`                                       | `"no-totp-secret"`                        |
-| <a id="passwordinhibpdatabase"></a> `PasswordInHibpDatabase`                   | `"password-in-hibp-database"`             |
-| <a id="passwordtooshort"></a> `PasswordTooShort`                               | `"password-too-short"`                    |
-| <a id="redirecttonotallowed"></a> `RedirectToNotAllowed`                       | `"redirectTo-not-allowed"`                |
-| <a id="rolenotallowed"></a> `RoleNotAllowed`                                   | `"role-not-allowed"`                      |
-| <a id="signupdisabled"></a> `SignupDisabled`                                   | `"signup-disabled"`                       |
-| <a id="totpalreadyactive"></a> `TotpAlreadyActive`                             | `"totp-already-active"`                   |
-| <a id="unverifieduser"></a> `UnverifiedUser`                                   | `"unverified-user"`                       |
-| <a id="usernotanonymous"></a> `UserNotAnonymous`                               | `"user-not-anonymous"`                    |
-
----
-
-### IdTokenProvider
-
-#### Enumeration Members
-
-| Enumeration Member           | Value      |
-| ---------------------------- | ---------- |
-| <a id="apple"></a> `Apple`   | `"apple"`  |
-| <a id="google"></a> `Google` | `"google"` |
-
----
-
-### LinkIdTokenRequestProvider
-
-#### Enumeration Members
-
-| Enumeration Member             | Value      |
-| ------------------------------ | ---------- |
-| <a id="apple-1"></a> `Apple`   | `"apple"`  |
-| <a id="google-1"></a> `Google` | `"google"` |
-
----
-
-### OKResponse
-
-#### Enumeration Members
-
-| Enumeration Member   | Value  |
-| -------------------- | ------ |
-| <a id="ok"></a> `OK` | `"OK"` |
-
----
-
-### Provider
-
-#### Enumeration Members
-
-| Enumeration Member               | Value        |
-| -------------------------------- | ------------ |
-| <a id="apple-2"></a> `Apple`     | `"apple"`    |
-| <a id="discord"></a> `Discord`   | `"discord"`  |
-| <a id="github"></a> `Github`     | `"github"`   |
-| <a id="google-2"></a> `Google`   | `"google"`   |
-| <a id="linkedin"></a> `Linkedin` | `"linkedin"` |
-| <a id="spotify"></a> `Spotify`   | `"spotify"`  |
-
----
-
-### SignInIdTokenRequestProvider
-
-#### Enumeration Members
-
-| Enumeration Member             | Value      |
-| ------------------------------ | ---------- |
-| <a id="apple-3"></a> `Apple`   | `"apple"`  |
-| <a id="google-3"></a> `Google` | `"google"` |
-
----
-
-### Type
-
-Type of the ticket
-
-#### Enumeration Members
-
-| Enumeration Member                                   | Value                  |
-| ---------------------------------------------------- | ---------------------- |
-| <a id="emailconfirmchange"></a> `EmailConfirmChange` | `"emailConfirmChange"` |
-| <a id="emailverify"></a> `EmailVerify`               | `"emailVerify"`        |
-| <a id="passwordreset"></a> `PasswordReset`           | `"passwordReset"`      |
-| <a id="signinpasswordless"></a> `SigninPasswordless` | `"signinPasswordless"` |
-
----
-
-### UserDeanonymizeRequestSignInMethod
-
-Which sign-in method to use
-
-#### Enumeration Members
-
-| Enumeration Member                         | Value              |
-| ------------------------------------------ | ------------------ |
-| <a id="emailpassword"></a> `EmailPassword` | `"email-password"` |
-| <a id="passwordless"></a> `Passwordless`   | `"passwordless"`   |
-
----
-
-### UserMfaRequestActiveMfaType
-
-Type of MFA to activate. Use empty string to disable MFA.
-
-#### Enumeration Members
-
-| Enumeration Member         | Value    |
-| -------------------------- | -------- |
-| <a id="empty"></a> `Empty` | `""`     |
-| <a id="totp"></a> `Totp`   | `"totp"` |
-
 ## Interfaces
 
 ### Client
@@ -206,7 +71,7 @@ Base URL for the authentication service
 changeUserEmail: (
   userEmailChangeRequest: UserEmailChangeRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<OK>>;
+) => Promise<FetchResponse<"OK">>;
 ```
 
 Change user email
@@ -220,7 +85,7 @@ Change user email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`OK`](#ok)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### changeUserMfa()
 
@@ -245,7 +110,7 @@ Generate a Time-based One-Time Password (TOTP) secret for setting up multi-facto
 
 ```ts
 changeUserMfaVerify: (userMfaRequest: UserMfaRequest, options?: RequestInit) =>
-  Promise<FetchResponse<OK>>;
+  Promise<FetchResponse<"OK">>;
 ```
 
 Activate or deactivate multi-factor authentication for the authenticated user
@@ -259,7 +124,7 @@ Activate or deactivate multi-factor authentication for the authenticated user
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`OK`](#ok)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### changeUserPassword()
 
@@ -267,7 +132,7 @@ Activate or deactivate multi-factor authentication for the authenticated user
 changeUserPassword: (
   userPasswordRequest: UserPasswordRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<OK>>;
+) => Promise<FetchResponse<"OK">>;
 ```
 
 Change user password
@@ -281,7 +146,7 @@ Change user password
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`OK`](#ok)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### createPAT()
 
@@ -309,7 +174,7 @@ Create a Personal Access Token (PAT)
 deanonymizeUser: (
   userDeanonymizeRequest: UserDeanonymizeRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<OK>>;
+) => Promise<FetchResponse<"OK">>;
 ```
 
 Deanonymize an anonymous user by adding missing email or email+password
@@ -323,7 +188,7 @@ Deanonymize an anonymous user by adding missing email or email+password
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`OK`](#ok)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### getJWKs()
 
@@ -346,7 +211,8 @@ Get public keys for JWT verification in JWK Set format
 ##### getVersion()
 
 ```ts
-getVersion: (options?: RequestInit) => Promise<FetchResponse<GetVersion200>>;
+getVersion: (options?: RequestInit) =>
+  Promise<FetchResponse<GetVersionResponse200>>;
 ```
 
 Retrieve version information about the authentication service
@@ -359,12 +225,12 @@ Retrieve version information about the authentication service
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`GetVersion200`](#getversion200)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`GetVersionResponse200`](#getversionresponse200)&gt;&gt;
 
 ##### healthCheckGet()
 
 ```ts
-healthCheckGet: (options?: RequestInit) => Promise<FetchResponse<OK>>;
+healthCheckGet: (options?: RequestInit) => Promise<FetchResponse<"OK">>;
 ```
 
 Verify if the authentication service is operational using GET method
@@ -377,7 +243,7 @@ Verify if the authentication service is operational using GET method
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`OK`](#ok)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### healthCheckHead()
 
@@ -401,7 +267,7 @@ Verify if the authentication service is operational using HEAD method
 
 ```ts
 linkIdToken: (linkIdTokenRequest: LinkIdTokenRequest, options?: RequestInit) =>
-  Promise<FetchResponse<OK>>;
+  Promise<FetchResponse<"OK">>;
 ```
 
 Link a user account with the provider's account using an id token
@@ -415,7 +281,7 @@ Link a user account with the provider's account using an id token
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`OK`](#ok)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### pushChainFunction()
 
@@ -463,7 +329,7 @@ Generate a new JWT access token using a valid refresh token
 sendPasswordResetEmail: (
   userPasswordResetRequest: UserPasswordResetRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<OK>>;
+) => Promise<FetchResponse<"OK">>;
 ```
 
 Request a password reset
@@ -477,7 +343,7 @@ Request a password reset
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`OK`](#ok)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### sendVerificationEmail()
 
@@ -485,7 +351,7 @@ Request a password reset
 sendVerificationEmail: (
   userEmailSendVerificationEmailRequest: UserEmailSendVerificationEmailRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<OK>>;
+) => Promise<FetchResponse<"OK">>;
 ```
 
 Send verification email
@@ -499,7 +365,7 @@ Send verification email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`OK`](#ok)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### signInAnonymous()
 
@@ -573,7 +439,7 @@ Sign in with an id token
 signInOTPEmail: (
   signInOTPEmailRequest: SignInOTPEmailRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<OK>>;
+) => Promise<FetchResponse<"OK">>;
 ```
 
 Sign in with a one time password sent to user's email
@@ -587,7 +453,7 @@ Sign in with a one time password sent to user's email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`OK`](#ok)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### signInPasswordlessEmail()
 
@@ -595,7 +461,7 @@ Sign in with a one time password sent to user's email
 signInPasswordlessEmail: (
   signInPasswordlessEmailRequest: SignInPasswordlessEmailRequest,
   options?: RequestInit,
-) => Promise<FetchResponse<OK>>;
+) => Promise<FetchResponse<"OK">>;
 ```
 
 Initiate passwordless authentication by sending a magic link to the user's email
@@ -609,7 +475,7 @@ Initiate passwordless authentication by sending a magic link to the user's email
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`OK`](#ok)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### signInPAT()
 
@@ -631,10 +497,10 @@ Sign in with Personal Access Token (PAT)
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
-##### signInProvider()
+##### signInProviderURL()
 
 ```ts
-signInProvider: (
+signInProviderURL: (
   provider: "apple" | "github" | "google" | "linkedin" | "discord" | "spotify",
   params?: SignInProviderParams,
   options?: RequestInit,
@@ -681,7 +547,7 @@ Complete the multi-factor authentication by verifying a Time-based One-Time Pass
 
 ```ts
 signOut: (signOutSchema: SignOutSchema, options?: RequestInit) =>
-  Promise<FetchResponse<OK>>;
+  Promise<FetchResponse<"OK">>;
 ```
 
 Sign out the current user
@@ -695,7 +561,7 @@ Sign out the current user
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`OK`](#ok)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### signUpEmailPassword()
 
@@ -741,10 +607,10 @@ Verify OTP and return a session if validation is successful
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInOTPEmailVerifyResponse`](#signinotpemailverifyresponse)&gt;&gt;
 
-##### verifyTicket()
+##### verifyTicketURL()
 
 ```ts
-verifyTicket: (params: VerifyTicketParams, options?: RequestInit) => string;
+verifyTicketURL: (params: VerifyTicketParams, options?: RequestInit) => string;
 ```
 
 Verify tickets created by email verification, magic link, or password reset
@@ -775,13 +641,16 @@ expiresAt: string;
 ```
 
 Expiration date of the PAT
-Format - date-time
+
+- Format - date-time
 
 ##### metadata?
 
 ```ts
-optional metadata: Record<string, any>;
+optional metadata: Record<string, unknown>;
 ```
+
+- Example - {"name":"my-pat","used-by":"my-app-cli"}
 
 ---
 
@@ -796,8 +665,9 @@ id: string;
 ```
 
 ID of the PAT
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### personalAccessToken
 
@@ -806,8 +676,9 @@ personalAccessToken: string;
 ```
 
 PAT
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ---
 
@@ -832,7 +703,8 @@ message: string;
 ```
 
 Human-friendly error message
-Example - Invalid email format
+
+- Example - "Invalid email format"
 
 ##### status
 
@@ -841,11 +713,12 @@ status: number;
 ```
 
 HTTP status error code
-Example - 400
+
+- Example - 400
 
 ---
 
-### GetVersion200
+### GetVersionResponse200
 
 #### Properties
 
@@ -856,7 +729,8 @@ version: string;
 ```
 
 The version of the authentication service
-Example - 1.2.3
+
+- Example - "1.2.3"
 
 ---
 
@@ -873,7 +747,8 @@ alg: string;
 ```
 
 Algorithm used with this key
-Example - RS256
+
+- Example - "RS256"
 
 ##### e
 
@@ -882,7 +757,8 @@ e: string;
 ```
 
 RSA public exponent
-Example - AQAB
+
+- Example - "AQAB"
 
 ##### kid
 
@@ -891,7 +767,8 @@ kid: string;
 ```
 
 Key ID
-Example - key-id-1
+
+- Example - "key-id-1"
 
 ##### kty
 
@@ -900,7 +777,8 @@ kty: string;
 ```
 
 Key type
-Example - RSA
+
+- Example - "RSA"
 
 ##### n
 
@@ -909,7 +787,8 @@ n: string;
 ```
 
 RSA modulus
-Example - abcd1234...
+
+- Example - "abcd1234..."
 
 ##### use
 
@@ -918,7 +797,8 @@ use: string;
 ```
 
 Key usage
-Example - sig
+
+- Example - "sig"
 
 ---
 
@@ -961,7 +841,7 @@ Nonce used during sign in process
 ##### provider
 
 ```ts
-provider: LinkIdTokenRequestProvider;
+provider: IdTokenProvider;
 ```
 
 ---
@@ -979,7 +859,8 @@ ticket: string;
 ```
 
 Ticket to use when completing the MFA challenge
-Example - mfaTotp:abc123def456
+
+- Example - "mfaTotp:abc123def456"
 
 ---
 
@@ -993,8 +874,8 @@ Example - mfaTotp:abc123def456
 optional redirectTo: string;
 ```
 
-Example - https://my-app.com/catch-redirection
-Format - uri
+- Example - "https://my-app.com/catch-redirection"
+- Format - uri
 
 ---
 
@@ -1011,8 +892,9 @@ refreshToken: string;
 ```
 
 Refresh token used to generate a new access token
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ---
 
@@ -1029,7 +911,8 @@ accessToken: string;
 ```
 
 JWT token for authenticating API requests
-Example - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+- Example - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 
 ##### accessTokenExpiresIn
 
@@ -1038,8 +921,9 @@ accessTokenExpiresIn: number;
 ```
 
 Expiration time of the access token in seconds
-Example - 900
-Format - int64
+
+- Example - 900
+- Format - int64
 
 ##### refreshToken
 
@@ -1048,8 +932,9 @@ refreshToken: string;
 ```
 
 Token used to refresh the access token
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### refreshTokenId
 
@@ -1058,8 +943,9 @@ refreshTokenId: string;
 ```
 
 Identifier for the refresh token
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### user?
 
@@ -1087,317 +973,6 @@ User authentication session containing tokens and user information
 
 ---
 
-### SessionPayloadSession
-
-User authentication session containing tokens and user information
-
-#### Properties
-
-##### accessToken
-
-```ts
-accessToken: string;
-```
-
-JWT token for authenticating API requests
-Example - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-##### accessTokenExpiresIn
-
-```ts
-accessTokenExpiresIn: number;
-```
-
-Expiration time of the access token in seconds
-Example - 900
-Format - int64
-
-##### refreshToken
-
-```ts
-refreshToken: string;
-```
-
-Token used to refresh the access token
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
-
-##### refreshTokenId
-
-```ts
-refreshTokenId: string;
-```
-
-Identifier for the refresh token
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
-
-##### user?
-
-```ts
-optional user: User;
-```
-
-User profile and account information
-
----
-
-### SessionPayloadSessionUser
-
-User profile and account information
-
-#### Properties
-
-##### avatarUrl
-
-```ts
-avatarUrl: string;
-```
-
-URL to the user's profile picture
-Example - https://myapp.com/avatars/user123.jpg
-
-##### createdAt
-
-```ts
-createdAt: string;
-```
-
-Timestamp when the user account was created
-Example - 2023-01-15T12:34:56Z
-Format - date-time
-
-##### defaultRole
-
-```ts
-defaultRole: string;
-```
-
-Default authorization role for the user
-Example - user
-
-##### displayName
-
-```ts
-displayName: string;
-```
-
-User's display name
-Example - John Smith
-
-##### email?
-
-```ts
-optional email: string;
-```
-
-User's email address
-Example - john.smith@nhost.io
-Format - email
-
-##### emailVerified
-
-```ts
-emailVerified: boolean;
-```
-
-Whether the user's email has been verified
-Example - true
-
-##### id
-
-```ts
-id: string;
-```
-
-Unique identifier for the user
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
-
-##### isAnonymous
-
-```ts
-isAnonymous: boolean;
-```
-
-Whether this is an anonymous user account
-Example - false
-
-##### locale
-
-```ts
-locale: string;
-```
-
-User's preferred locale (language code)
-Example - en
-MinLength - 2
-MaxLength - 2
-
-##### metadata
-
-```ts
-metadata: Record<string, any>;
-```
-
-Custom metadata associated with the user
-
-##### phoneNumber?
-
-```ts
-optional phoneNumber: string;
-```
-
-User's phone number
-Example - +12025550123
-
-##### phoneNumberVerified
-
-```ts
-phoneNumberVerified: boolean;
-```
-
-Whether the user's phone number has been verified
-Example - false
-
-##### roles
-
-```ts
-roles: string[];
-```
-
-List of roles assigned to the user
-
----
-
-### SessionUser
-
-User profile and account information
-
-#### Properties
-
-##### avatarUrl
-
-```ts
-avatarUrl: string;
-```
-
-URL to the user's profile picture
-Example - https://myapp.com/avatars/user123.jpg
-
-##### createdAt
-
-```ts
-createdAt: string;
-```
-
-Timestamp when the user account was created
-Example - 2023-01-15T12:34:56Z
-Format - date-time
-
-##### defaultRole
-
-```ts
-defaultRole: string;
-```
-
-Default authorization role for the user
-Example - user
-
-##### displayName
-
-```ts
-displayName: string;
-```
-
-User's display name
-Example - John Smith
-
-##### email?
-
-```ts
-optional email: string;
-```
-
-User's email address
-Example - john.smith@nhost.io
-Format - email
-
-##### emailVerified
-
-```ts
-emailVerified: boolean;
-```
-
-Whether the user's email has been verified
-Example - true
-
-##### id
-
-```ts
-id: string;
-```
-
-Unique identifier for the user
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
-
-##### isAnonymous
-
-```ts
-isAnonymous: boolean;
-```
-
-Whether this is an anonymous user account
-Example - false
-
-##### locale
-
-```ts
-locale: string;
-```
-
-User's preferred locale (language code)
-Example - en
-MinLength - 2
-MaxLength - 2
-
-##### metadata
-
-```ts
-metadata: Record<string, any>;
-```
-
-Custom metadata associated with the user
-
-##### phoneNumber?
-
-```ts
-optional phoneNumber: string;
-```
-
-User's phone number
-Example - +12025550123
-
-##### phoneNumberVerified
-
-```ts
-phoneNumberVerified: boolean;
-```
-
-Whether the user's phone number has been verified
-Example - false
-
-##### roles
-
-```ts
-roles: string[];
-```
-
-List of roles assigned to the user
-
----
-
 ### SignInAnonymousRequest
 
 #### Properties
@@ -1408,7 +983,7 @@ List of roles assigned to the user
 optional displayName: string;
 ```
 
-Example - John Smith
+- Example - "John Smith"
 
 ##### locale?
 
@@ -1417,15 +992,18 @@ optional locale: string;
 ```
 
 A two-characters locale
-Example - en
-MinLength - 2
-MaxLength - 2
+
+- Example - "en"
+- MinLength - 2
+- MaxLength - 2
 
 ##### metadata?
 
 ```ts
-optional metadata: Record<string, any>;
+optional metadata: Record<string, unknown>;
 ```
+
+- Example - {"firstName":"John","lastName":"Smith"}
 
 ---
 
@@ -1442,8 +1020,9 @@ email: string;
 ```
 
 User's email address
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### password
 
@@ -1452,9 +1031,10 @@ password: string;
 ```
 
 User's password
-Example - Str0ngPassw#ord-94|%
-MinLength - 3
-MaxLength - 50
+
+- Example - "Str0ngPassw#ord-94|%"
+- MinLength - 3
+- MaxLength - 50
 
 ---
 
@@ -1479,206 +1059,6 @@ optional session: Session;
 ```
 
 User authentication session containing tokens and user information
-
----
-
-### SignInEmailPasswordResponseMfa
-
-Challenge payload for multi-factor authentication
-
-#### Properties
-
-##### ticket
-
-```ts
-ticket: string;
-```
-
-Ticket to use when completing the MFA challenge
-Example - mfaTotp:abc123def456
-
----
-
-### SignInEmailPasswordResponseSession
-
-User authentication session containing tokens and user information
-
-#### Properties
-
-##### accessToken
-
-```ts
-accessToken: string;
-```
-
-JWT token for authenticating API requests
-Example - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-##### accessTokenExpiresIn
-
-```ts
-accessTokenExpiresIn: number;
-```
-
-Expiration time of the access token in seconds
-Example - 900
-Format - int64
-
-##### refreshToken
-
-```ts
-refreshToken: string;
-```
-
-Token used to refresh the access token
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
-
-##### refreshTokenId
-
-```ts
-refreshTokenId: string;
-```
-
-Identifier for the refresh token
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
-
-##### user?
-
-```ts
-optional user: User;
-```
-
-User profile and account information
-
----
-
-### SignInEmailPasswordResponseSessionUser
-
-User profile and account information
-
-#### Properties
-
-##### avatarUrl
-
-```ts
-avatarUrl: string;
-```
-
-URL to the user's profile picture
-Example - https://myapp.com/avatars/user123.jpg
-
-##### createdAt
-
-```ts
-createdAt: string;
-```
-
-Timestamp when the user account was created
-Example - 2023-01-15T12:34:56Z
-Format - date-time
-
-##### defaultRole
-
-```ts
-defaultRole: string;
-```
-
-Default authorization role for the user
-Example - user
-
-##### displayName
-
-```ts
-displayName: string;
-```
-
-User's display name
-Example - John Smith
-
-##### email?
-
-```ts
-optional email: string;
-```
-
-User's email address
-Example - john.smith@nhost.io
-Format - email
-
-##### emailVerified
-
-```ts
-emailVerified: boolean;
-```
-
-Whether the user's email has been verified
-Example - true
-
-##### id
-
-```ts
-id: string;
-```
-
-Unique identifier for the user
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
-
-##### isAnonymous
-
-```ts
-isAnonymous: boolean;
-```
-
-Whether this is an anonymous user account
-Example - false
-
-##### locale
-
-```ts
-locale: string;
-```
-
-User's preferred locale (language code)
-Example - en
-MinLength - 2
-MaxLength - 2
-
-##### metadata
-
-```ts
-metadata: Record<string, any>;
-```
-
-Custom metadata associated with the user
-
-##### phoneNumber?
-
-```ts
-optional phoneNumber: string;
-```
-
-User's phone number
-Example - +12025550123
-
-##### phoneNumberVerified
-
-```ts
-phoneNumberVerified: boolean;
-```
-
-Whether the user's phone number has been verified
-Example - false
-
-##### roles
-
-```ts
-roles: string[];
-```
-
-List of roles assigned to the user
 
 ---
 
@@ -1711,64 +1091,8 @@ optional options: SignUpOptions;
 ##### provider
 
 ```ts
-provider: SignInIdTokenRequestProvider;
+provider: IdTokenProvider;
 ```
-
----
-
-### SignInIdTokenRequestOptions
-
-#### Properties
-
-##### allowedRoles?
-
-```ts
-optional allowedRoles: string[];
-```
-
-##### defaultRole?
-
-```ts
-optional defaultRole: string;
-```
-
-Example - user
-
-##### displayName?
-
-```ts
-optional displayName: string;
-```
-
-Example - John Smith
-Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-MaxLength - 32
-
-##### locale?
-
-```ts
-optional locale: string;
-```
-
-A two-characters locale
-Example - en
-MinLength - 2
-MaxLength - 2
-
-##### metadata?
-
-```ts
-optional metadata: Record<string, any>;
-```
-
-##### redirectTo?
-
-```ts
-optional redirectTo: string;
-```
-
-Example - https://my-app.com/catch-redirection
-Format - uri
 
 ---
 
@@ -1791,7 +1115,8 @@ ticket: string;
 ```
 
 Ticket
-Pattern - ^mfaTotp:.\*$
+
+- Pattern - ^mfaTotp:.\*$
 
 ---
 
@@ -1806,70 +1131,15 @@ email: string;
 ```
 
 A valid email
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
 ```ts
 optional options: SignUpOptions;
 ```
-
----
-
-### SignInOTPEmailRequestOptions
-
-#### Properties
-
-##### allowedRoles?
-
-```ts
-optional allowedRoles: string[];
-```
-
-##### defaultRole?
-
-```ts
-optional defaultRole: string;
-```
-
-Example - user
-
-##### displayName?
-
-```ts
-optional displayName: string;
-```
-
-Example - John Smith
-Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-MaxLength - 32
-
-##### locale?
-
-```ts
-optional locale: string;
-```
-
-A two-characters locale
-Example - en
-MinLength - 2
-MaxLength - 2
-
-##### metadata?
-
-```ts
-optional metadata: Record<string, any>;
-```
-
-##### redirectTo?
-
-```ts
-optional redirectTo: string;
-```
-
-Example - https://my-app.com/catch-redirection
-Format - uri
 
 ---
 
@@ -1884,8 +1154,9 @@ email: string;
 ```
 
 A valid email
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### otp
 
@@ -1911,189 +1182,6 @@ User authentication session containing tokens and user information
 
 ---
 
-### SignInOTPEmailVerifyResponseSession
-
-User authentication session containing tokens and user information
-
-#### Properties
-
-##### accessToken
-
-```ts
-accessToken: string;
-```
-
-JWT token for authenticating API requests
-Example - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-##### accessTokenExpiresIn
-
-```ts
-accessTokenExpiresIn: number;
-```
-
-Expiration time of the access token in seconds
-Example - 900
-Format - int64
-
-##### refreshToken
-
-```ts
-refreshToken: string;
-```
-
-Token used to refresh the access token
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
-
-##### refreshTokenId
-
-```ts
-refreshTokenId: string;
-```
-
-Identifier for the refresh token
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
-
-##### user?
-
-```ts
-optional user: User;
-```
-
-User profile and account information
-
----
-
-### SignInOTPEmailVerifyResponseSessionUser
-
-User profile and account information
-
-#### Properties
-
-##### avatarUrl
-
-```ts
-avatarUrl: string;
-```
-
-URL to the user's profile picture
-Example - https://myapp.com/avatars/user123.jpg
-
-##### createdAt
-
-```ts
-createdAt: string;
-```
-
-Timestamp when the user account was created
-Example - 2023-01-15T12:34:56Z
-Format - date-time
-
-##### defaultRole
-
-```ts
-defaultRole: string;
-```
-
-Default authorization role for the user
-Example - user
-
-##### displayName
-
-```ts
-displayName: string;
-```
-
-User's display name
-Example - John Smith
-
-##### email?
-
-```ts
-optional email: string;
-```
-
-User's email address
-Example - john.smith@nhost.io
-Format - email
-
-##### emailVerified
-
-```ts
-emailVerified: boolean;
-```
-
-Whether the user's email has been verified
-Example - true
-
-##### id
-
-```ts
-id: string;
-```
-
-Unique identifier for the user
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
-
-##### isAnonymous
-
-```ts
-isAnonymous: boolean;
-```
-
-Whether this is an anonymous user account
-Example - false
-
-##### locale
-
-```ts
-locale: string;
-```
-
-User's preferred locale (language code)
-Example - en
-MinLength - 2
-MaxLength - 2
-
-##### metadata
-
-```ts
-metadata: Record<string, any>;
-```
-
-Custom metadata associated with the user
-
-##### phoneNumber?
-
-```ts
-optional phoneNumber: string;
-```
-
-User's phone number
-Example - +12025550123
-
-##### phoneNumberVerified
-
-```ts
-phoneNumberVerified: boolean;
-```
-
-Whether the user's phone number has been verified
-Example - false
-
-##### roles
-
-```ts
-roles: string[];
-```
-
-List of roles assigned to the user
-
----
-
 ### SignInPasswordlessEmailRequest
 
 #### Properties
@@ -2105,70 +1193,15 @@ email: string;
 ```
 
 A valid email
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
 ```ts
 optional options: SignUpOptions;
 ```
-
----
-
-### SignInPasswordlessEmailRequestOptions
-
-#### Properties
-
-##### allowedRoles?
-
-```ts
-optional allowedRoles: string[];
-```
-
-##### defaultRole?
-
-```ts
-optional defaultRole: string;
-```
-
-Example - user
-
-##### displayName?
-
-```ts
-optional displayName: string;
-```
-
-Example - John Smith
-Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-MaxLength - 32
-
-##### locale?
-
-```ts
-optional locale: string;
-```
-
-A two-characters locale
-Example - en
-MinLength - 2
-MaxLength - 2
-
-##### metadata?
-
-```ts
-optional metadata: Record<string, any>;
-```
-
-##### redirectTo?
-
-```ts
-optional redirectTo: string;
-```
-
-Example - https://my-app.com/catch-redirection
-Format - uri
 
 ---
 
@@ -2183,12 +1216,57 @@ personalAccessToken: string;
 ```
 
 PAT
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ---
 
 ### SignInProviderParams
+
+Parameters for the signInProvider method.
+
+-
+
+#### Param
+
+Array of allowed roles for the user
+
+-
+
+#### Param
+
+Default role for the user
+
+-
+
+#### Param
+
+Display name for the user
+
+-
+
+#### Param
+
+A two-characters locale
+
+-
+
+#### Param
+
+Additional metadata for the user
+
+-
+
+#### Param
+
+URI to redirect to
+
+-
+
+#### Param
+
+If set, this means that the user is already authenticated and wants to link their account. This needs to be a valid JWT access token.
 
 #### Properties
 
@@ -2198,11 +1276,15 @@ Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 optional allowedRoles: string[];
 ```
 
+Array of allowed roles for the user
+
 ##### connect?
 
 ```ts
 optional connect: string;
 ```
+
+If set, this means that the user is already authenticated and wants to link their account. This needs to be a valid JWT access token.
 
 ##### defaultRole?
 
@@ -2210,11 +1292,15 @@ optional connect: string;
 optional defaultRole: string;
 ```
 
+Default role for the user
+
 ##### displayName?
 
 ```ts
 optional displayName: string;
 ```
+
+Display name for the user
 
 ##### locale?
 
@@ -2222,17 +1308,23 @@ optional displayName: string;
 optional locale: string;
 ```
 
+A two-characters locale
+
 ##### metadata?
 
 ```ts
-optional metadata: Record<string, any>;
+optional metadata: Record<string, unknown>;
 ```
+
+Additional metadata for the user
 
 ##### redirectTo?
 
 ```ts
 optional redirectTo: string;
 ```
+
+URI to redirect to
 
 ---
 
@@ -2247,12 +1339,9 @@ optional email: string;
 ```
 
 A valid email
-Example - john.smith@nhost.io
-Format - email
 
----
-
-### SignInWebauthnResponse
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ---
 
@@ -2263,7 +1352,7 @@ Format - email
 ##### credential
 
 ```ts
-credential: Record<string, any>;
+credential: Record<string, unknown>;
 ```
 
 ##### email?
@@ -2273,8 +1362,9 @@ optional email: string;
 ```
 
 A valid email. Deprecated, no longer used
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ---
 
@@ -2313,8 +1403,9 @@ email: string;
 ```
 
 Email address for the new user account
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
@@ -2329,65 +1420,10 @@ password: string;
 ```
 
 Password for the new user account
-Example - Str0ngPassw#ord-94|%
-MinLength - 3
-MaxLength - 50
 
----
-
-### SignUpEmailPasswordRequestOptions
-
-#### Properties
-
-##### allowedRoles?
-
-```ts
-optional allowedRoles: string[];
-```
-
-##### defaultRole?
-
-```ts
-optional defaultRole: string;
-```
-
-Example - user
-
-##### displayName?
-
-```ts
-optional displayName: string;
-```
-
-Example - John Smith
-Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-MaxLength - 32
-
-##### locale?
-
-```ts
-optional locale: string;
-```
-
-A two-characters locale
-Example - en
-MinLength - 2
-MaxLength - 2
-
-##### metadata?
-
-```ts
-optional metadata: Record<string, any>;
-```
-
-##### redirectTo?
-
-```ts
-optional redirectTo: string;
-```
-
-Example - https://my-app.com/catch-redirection
-Format - uri
+- Example - "Str0ngPassw#ord-94|%"
+- MinLength - 3
+- MaxLength - 50
 
 ---
 
@@ -2401,13 +1437,15 @@ Format - uri
 optional allowedRoles: string[];
 ```
 
+- Example - ["me","user"]
+
 ##### defaultRole?
 
 ```ts
 optional defaultRole: string;
 ```
 
-Example - user
+- Example - "user"
 
 ##### displayName?
 
@@ -2415,9 +1453,9 @@ Example - user
 optional displayName: string;
 ```
 
-Example - John Smith
-Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-MaxLength - 32
+- Example - "John Smith"
+- Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
+- MaxLength - 32
 
 ##### locale?
 
@@ -2426,15 +1464,18 @@ optional locale: string;
 ```
 
 A two-characters locale
-Example - en
-MinLength - 2
-MaxLength - 2
+
+- Example - "en"
+- MinLength - 2
+- MaxLength - 2
 
 ##### metadata?
 
 ```ts
-optional metadata: Record<string, any>;
+optional metadata: Record<string, unknown>;
 ```
+
+- Example - {"firstName":"John","lastName":"Smith"}
 
 ##### redirectTo?
 
@@ -2442,8 +1483,8 @@ optional metadata: Record<string, any>;
 optional redirectTo: string;
 ```
 
-Example - https://my-app.com/catch-redirection
-Format - uri
+- Example - "https://my-app.com/catch-redirection"
+- Format - uri
 
 ---
 
@@ -2458,103 +1499,14 @@ email: string;
 ```
 
 A valid email
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
 ```ts
 optional options: SignUpOptions;
-```
-
----
-
-### SignUpWebauthnRequestOptions
-
-#### Properties
-
-##### allowedRoles?
-
-```ts
-optional allowedRoles: string[];
-```
-
-##### defaultRole?
-
-```ts
-optional defaultRole: string;
-```
-
-Example - user
-
-##### displayName?
-
-```ts
-optional displayName: string;
-```
-
-Example - John Smith
-Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-MaxLength - 32
-
-##### locale?
-
-```ts
-optional locale: string;
-```
-
-A two-characters locale
-Example - en
-MinLength - 2
-MaxLength - 2
-
-##### metadata?
-
-```ts
-optional metadata: Record<string, any>;
-```
-
-##### redirectTo?
-
-```ts
-optional redirectTo: string;
-```
-
-Example - https://my-app.com/catch-redirection
-Format - uri
-
----
-
-### SignUpWebauthnResponse
-
----
-
-### SignUpWebauthnVerifyRequest
-
-#### Properties
-
-##### credential?
-
-```ts
-optional credential: Record<string, any>;
-```
-
-##### options?
-
-```ts
-optional options: SignUpWebauthnVerifyRequestOptions;
-```
-
----
-
-### SignUpWebauthnVerifyRequestOptionsAllOf1
-
-#### Properties
-
-##### nickname?
-
-```ts
-optional nickname: string;
 ```
 
 ---
@@ -2572,7 +1524,8 @@ imageUrl: string;
 ```
 
 URL to QR code image for scanning with an authenticator app
-Example - data:image/png;base64,iVBORw0KGg...
+
+- Example - "data:image/png;base64,iVBORw0KGg..."
 
 ##### totpSecret
 
@@ -2581,7 +1534,8 @@ totpSecret: string;
 ```
 
 TOTP secret key for manual setup with an authenticator app
-Example - ABCDEFGHIJK23456
+
+- Example - "ABCDEFGHIJK23456"
 
 ---
 
@@ -2598,7 +1552,8 @@ avatarUrl: string;
 ```
 
 URL to the user's profile picture
-Example - https://myapp.com/avatars/user123.jpg
+
+- Example - "https://myapp.com/avatars/user123.jpg"
 
 ##### createdAt
 
@@ -2607,8 +1562,9 @@ createdAt: string;
 ```
 
 Timestamp when the user account was created
-Example - 2023-01-15T12:34:56Z
-Format - date-time
+
+- Example - "2023-01-15T12:34:56Z"
+- Format - date-time
 
 ##### defaultRole
 
@@ -2617,7 +1573,8 @@ defaultRole: string;
 ```
 
 Default authorization role for the user
-Example - user
+
+- Example - "user"
 
 ##### displayName
 
@@ -2626,7 +1583,8 @@ displayName: string;
 ```
 
 User's display name
-Example - John Smith
+
+- Example - "John Smith"
 
 ##### email?
 
@@ -2635,8 +1593,9 @@ optional email: string;
 ```
 
 User's email address
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### emailVerified
 
@@ -2645,7 +1604,8 @@ emailVerified: boolean;
 ```
 
 Whether the user's email has been verified
-Example - true
+
+- Example - true
 
 ##### id
 
@@ -2654,8 +1614,9 @@ id: string;
 ```
 
 Unique identifier for the user
-Example - 2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24
-Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### isAnonymous
 
@@ -2664,7 +1625,8 @@ isAnonymous: boolean;
 ```
 
 Whether this is an anonymous user account
-Example - false
+
+- Example - false
 
 ##### locale
 
@@ -2673,17 +1635,20 @@ locale: string;
 ```
 
 User's preferred locale (language code)
-Example - en
-MinLength - 2
-MaxLength - 2
+
+- Example - "en"
+- MinLength - 2
+- MaxLength - 2
 
 ##### metadata
 
 ```ts
-metadata: Record<string, any>;
+metadata: Record<string, unknown>;
 ```
 
 Custom metadata associated with the user
+
+- Example - {"firstName":"John","lastName":"Smith"}
 
 ##### phoneNumber?
 
@@ -2692,7 +1657,8 @@ optional phoneNumber: string;
 ```
 
 User's phone number
-Example - +12025550123
+
+- Example - "+12025550123"
 
 ##### phoneNumberVerified
 
@@ -2701,7 +1667,8 @@ phoneNumberVerified: boolean;
 ```
 
 Whether the user's phone number has been verified
-Example - false
+
+- Example - false
 
 ##### roles
 
@@ -2710,6 +1677,8 @@ roles: string[];
 ```
 
 List of roles assigned to the user
+
+- Example - ["user","customer"]
 
 ---
 
@@ -2732,8 +1701,9 @@ email: string;
 ```
 
 A valid email
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
@@ -2748,9 +1718,10 @@ optional password: string;
 ```
 
 A password of minimum 3 characters
-Example - Str0ngPassw#ord-94|%
-MinLength - 3
-MaxLength - 50
+
+- Example - "Str0ngPassw#ord-94|%"
+- MinLength - 3
+- MaxLength - 50
 
 ##### signInMethod
 
@@ -2759,62 +1730,6 @@ signInMethod: UserDeanonymizeRequestSignInMethod;
 ```
 
 Which sign-in method to use
-
----
-
-### UserDeanonymizeRequestOptions
-
-#### Properties
-
-##### allowedRoles?
-
-```ts
-optional allowedRoles: string[];
-```
-
-##### defaultRole?
-
-```ts
-optional defaultRole: string;
-```
-
-Example - user
-
-##### displayName?
-
-```ts
-optional displayName: string;
-```
-
-Example - John Smith
-Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-MaxLength - 32
-
-##### locale?
-
-```ts
-optional locale: string;
-```
-
-A two-characters locale
-Example - en
-MinLength - 2
-MaxLength - 2
-
-##### metadata?
-
-```ts
-optional metadata: Record<string, any>;
-```
-
-##### redirectTo?
-
-```ts
-optional redirectTo: string;
-```
-
-Example - https://my-app.com/catch-redirection
-Format - uri
 
 ---
 
@@ -2829,29 +1744,15 @@ newEmail: string;
 ```
 
 A valid email
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
 ```ts
 optional options: OptionsRedirectTo;
 ```
-
----
-
-### UserEmailChangeRequestOptions
-
-#### Properties
-
-##### redirectTo?
-
-```ts
-optional redirectTo: string;
-```
-
-Example - https://my-app.com/catch-redirection
-Format - uri
 
 ---
 
@@ -2866,29 +1767,15 @@ email: string;
 ```
 
 A valid email
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
 ```ts
 optional options: OptionsRedirectTo;
 ```
-
----
-
-### UserEmailSendVerificationEmailRequestOptions
-
-#### Properties
-
-##### redirectTo?
-
-```ts
-optional redirectTo: string;
-```
-
-Example - https://my-app.com/catch-redirection
-Format - uri
 
 ---
 
@@ -2905,7 +1792,8 @@ optional activeMfaType: UserMfaRequestActiveMfaType;
 ```
 
 Type of MFA to activate. Use empty string to disable MFA.
-Example - totp
+
+- Example - "totp"
 
 ##### code
 
@@ -2914,7 +1802,8 @@ code: string;
 ```
 
 Verification code from the authenticator app when activating MFA
-Example - 123456
+
+- Example - "123456"
 
 ---
 
@@ -2929,9 +1818,10 @@ newPassword: string;
 ```
 
 A password of minimum 3 characters
-Example - Str0ngPassw#ord-94|%
-MinLength - 3
-MaxLength - 50
+
+- Example - "Str0ngPassw#ord-94|%"
+- MinLength - 3
+- MaxLength - 50
 
 ##### ticket?
 
@@ -2940,7 +1830,8 @@ optional ticket: string;
 ```
 
 Ticket to reset the password, required if the user is not authenticated
-Pattern - ^passwordReset\:.\*$
+
+- Pattern - ^passwordReset\:.\*$
 
 ---
 
@@ -2955,8 +1846,9 @@ email: string;
 ```
 
 A valid email
-Example - john.smith@nhost.io
-Format - email
+
+- Example - "john.smith@nhost.io"
+- Format - email
 
 ##### options?
 
@@ -2966,22 +1858,31 @@ optional options: OptionsRedirectTo;
 
 ---
 
-### UserPasswordResetRequestOptions
-
-#### Properties
-
-##### redirectTo?
-
-```ts
-optional redirectTo: string;
-```
-
-Example - https://my-app.com/catch-redirection
-Format - uri
-
----
-
 ### VerifyTicketParams
+
+Parameters for the verifyTicket method.
+
+-
+
+#### Param
+
+Ticket
+
+- Ticket
+-
+
+#### Param
+
+Type of the ticket. Deprecated, no longer used
+
+- Type of the ticket
+-
+
+#### Param
+
+Target URL for the redirect
+
+- Target URL for the redirect
 
 #### Properties
 
@@ -2991,27 +1892,148 @@ Format - uri
 redirectTo: string;
 ```
 
+Target URL for the redirect
+
+- Target URL for the redirect
+
 ##### ticket
 
 ```ts
 ticket: string;
 ```
 
+Ticket
+
+- Ticket
+
 ##### type?
 
 ```ts
-optional type: Type;
+optional type: TicketTypeQuery;
 ```
+
+Type of the ticket. Deprecated, no longer used
+
+- Type of the ticket
 
 ## Type Aliases
 
-### SignUpWebauthnVerifyRequestOptions
+### ErrorResponseError
 
 ```ts
-type SignUpWebauthnVerifyRequestOptions = SignUpOptions &
-  SignUpWebauthnVerifyRequestOptionsAllOf1 &
-  object;
+type ErrorResponseError =
+  | "default-role-must-be-in-allowed-roles"
+  | "disabled-endpoint"
+  | "disabled-user"
+  | "email-already-in-use"
+  | "email-already-verified"
+  | "forbidden-anonymous"
+  | "internal-server-error"
+  | "invalid-email-password"
+  | "invalid-request"
+  | "locale-not-allowed"
+  | "password-too-short"
+  | "password-in-hibp-database"
+  | "redirectTo-not-allowed"
+  | "role-not-allowed"
+  | "signup-disabled"
+  | "unverified-user"
+  | "user-not-anonymous"
+  | "invalid-pat"
+  | "invalid-refresh-token"
+  | "invalid-ticket"
+  | "disabled-mfa-totp"
+  | "no-totp-secret"
+  | "invalid-totp"
+  | "mfa-type-not-found"
+  | "totp-already-active";
 ```
+
+Error code identifying the specific application error
+
+---
+
+### IdTokenProvider
+
+```ts
+type IdTokenProvider = "apple" | "google";
+```
+
+---
+
+### OKResponse
+
+```ts
+type OKResponse = "OK";
+```
+
+---
+
+### RedirectToQuery
+
+```ts
+type RedirectToQuery = string;
+```
+
+Target URL for the redirect
+
+---
+
+### SignInProvider
+
+```ts
+type SignInProvider =
+  | "apple"
+  | "github"
+  | "google"
+  | "linkedin"
+  | "discord"
+  | "spotify";
+```
+
+---
+
+### TicketQuery
+
+```ts
+type TicketQuery = string;
+```
+
+Ticket
+
+---
+
+### TicketTypeQuery
+
+```ts
+type TicketTypeQuery =
+  | "emailVerify"
+  | "emailConfirmChange"
+  | "signinPasswordless"
+  | "passwordReset";
+```
+
+Type of the ticket
+
+---
+
+### UserDeanonymizeRequestSignInMethod
+
+```ts
+type UserDeanonymizeRequestSignInMethod = "email-password" | "passwordless";
+```
+
+Which sign-in method to use
+
+---
+
+### UserMfaRequestActiveMfaType
+
+```ts
+type UserMfaRequestActiveMfaType = "totp" | "";
+```
+
+Type of MFA to activate. Use empty string to disable MFA.
 
 ## Functions
 

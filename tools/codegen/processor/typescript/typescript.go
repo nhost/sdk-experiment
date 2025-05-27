@@ -19,6 +19,19 @@ func (t *Typescript) GetTemplates() fs.FS {
 	return templatesFS
 }
 
+func quotePropertyIfNeeded(name string) string {
+	if strings.Contains(name, "-") || strings.Contains(name, "[") {
+		return fmt.Sprintf("\"%s\"", name)
+	}
+	return name
+}
+
+func (t *Typescript) GetFuncMap() map[string]any {
+	return map[string]any{
+		"quotePropertyIfNeeded": quotePropertyIfNeeded,
+	}
+}
+
 func (t *Typescript) TypeObjectName(name string) string {
 	return format.ToCamelCase(name)
 }
@@ -73,16 +86,10 @@ func (t *Typescript) MethodPath(name string) string {
 }
 
 func (t *Typescript) ParameterName(name string) string {
-	if strings.Contains(name, "-") || strings.Contains(name, "[") {
-		return `"` + name + `"`
-	}
 	return name
 }
 
 func (t *Typescript) PropertyName(name string) string {
-	if strings.Contains(name, "-") || strings.Contains(name, "[") {
-		return `"` + name + `"`
-	}
 	return name
 }
 

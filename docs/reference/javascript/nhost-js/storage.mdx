@@ -44,21 +44,6 @@ try {
   // error handling...
 ```
 
-## Enumerations
-
-### F
-
-#### Enumeration Members
-
-| Enumeration Member       | Value    |
-| ------------------------ | -------- |
-| <a id="auto"></a> `Auto` | `"auto"` |
-| <a id="avif"></a> `Avif` | `"avif"` |
-| <a id="jpeg"></a> `Jpeg` | `"jpeg"` |
-| <a id="png"></a> `Png`   | `"png"`  |
-| <a id="same"></a> `Same` | `"same"` |
-| <a id="webp"></a> `Webp` | `"webp"` |
-
 ## Interfaces
 
 ### Client
@@ -204,7 +189,7 @@ Replace an existing file
 
 ```ts
 uploadFiles: (uploadFilesBody: UploadFilesBody, options?: RequestInit) =>
-  Promise<FetchResponse<UploadFiles201>>;
+  Promise<FetchResponse<UploadFilesResponse201>>;
 ```
 
 Upload one or more files to storage
@@ -218,7 +203,7 @@ Upload one or more files to storage
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`UploadFilesResponse201`](#uploadfilesresponse201)&gt;&gt;
 
 ---
 
@@ -251,7 +236,7 @@ message: string;
 ```
 
 Human-readable error message.
-Example - File not found
+Example - "File not found"
 
 ---
 
@@ -268,7 +253,7 @@ optional bucketId: string;
 ```
 
 ID of the bucket containing the file.
-Example - users-bucket
+Example - "users-bucket"
 
 ##### createdAt?
 
@@ -277,7 +262,7 @@ optional createdAt: string;
 ```
 
 Timestamp when the file was created.
-Example - 2023-01-15T12:34:56Z
+Example - "2023-01-15T12:34:56Z"
 Format - date-time
 
 ##### etag?
@@ -287,7 +272,7 @@ optional etag: string;
 ```
 
 Entity tag for cache validation.
-Example - "a1b2c3d4e5f6"
+Example - "\"a1b2c3d4e5f6\""
 
 ##### id?
 
@@ -296,7 +281,7 @@ optional id: string;
 ```
 
 Unique identifier for the file.
-Example - d5e76ceb-77a2-4153-b7da-1f7c115b2ff2
+Example - "d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"
 
 ##### isUploaded?
 
@@ -310,10 +295,11 @@ Example - true
 ##### metadata?
 
 ```ts
-optional metadata: Record<string, any>;
+optional metadata: Record<string, unknown>;
 ```
 
 Custom metadata associated with the file.
+Example - {"alt":"Profile picture","category":"avatar"}
 
 ##### mimeType?
 
@@ -322,7 +308,7 @@ optional mimeType: string;
 ```
 
 MIME type of the file.
-Example - image/jpeg
+Example - "image/jpeg"
 
 ##### name?
 
@@ -331,7 +317,7 @@ optional name: string;
 ```
 
 Name of the file including extension.
-Example - profile-picture.jpg
+Example - "profile-picture.jpg"
 
 ##### size?
 
@@ -349,7 +335,7 @@ optional updatedAt: string;
 ```
 
 Timestamp when the file was last updated.
-Example - 2023-01-16T09:45:32Z
+Example - "2023-01-16T09:45:32Z"
 Format - date-time
 
 ##### uploadedByUserId?
@@ -359,7 +345,7 @@ optional uploadedByUserId: string;
 ```
 
 ID of the user who uploaded the file.
-Example - abc123def456
+Example - "abc123def456"
 
 ---
 
@@ -376,7 +362,7 @@ optional bucketId: string;
 ```
 
 ID of the bucket containing the file.
-Example - users-bucket
+Example - "users-bucket"
 
 ##### id?
 
@@ -385,7 +371,7 @@ optional id: string;
 ```
 
 Unique identifier for the file.
-Example - d5e76ceb-77a2-4153-b7da-1f7c115b2ff2
+Example - "d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"
 
 ##### isUploaded?
 
@@ -403,12 +389,44 @@ optional name: string;
 ```
 
 Name of the file including extension.
-Example - profile-picture.jpg
+Example - "profile-picture.jpg"
 
 ---
 
 ### GetFileMetadataHeadersParams
 
+Parameters for the getFileMetadataHeaders method.
+
+-
+
+#### Param
+
+Image quality (1-100). Only applies to JPEG, WebP and PNG files
+
+-
+
+#### Param
+
+Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+
+-
+
+#### Param
+
+Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+
+-
+
+#### Param
+
+Blur the image using this sigma value. Only applies to image files
+
+-
+
+#### Param
+
+Output format for image files. Use 'auto' for content negotiation based on Accept header
+
 #### Properties
 
 ##### b?
@@ -417,11 +435,15 @@ Example - profile-picture.jpg
 optional b: number;
 ```
 
+Blur the image using this sigma value. Only applies to image files
+
 ##### f?
 
 ```ts
-optional f: F;
+optional f: HeadF;
 ```
+
+Output format for image files. Use 'auto' for content negotiation based on Accept header
 
 ##### h?
 
@@ -429,29 +451,7 @@ optional f: F;
 optional h: number;
 ```
 
-##### if-match?
-
-```ts
-optional if-match: string;
-```
-
-##### if-modified-since?
-
-```ts
-optional if-modified-since: string;
-```
-
-##### if-none-match?
-
-```ts
-optional if-none-match: string;
-```
-
-##### if-unmodified-since?
-
-```ts
-optional if-unmodified-since: string;
-```
+Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
 
 ##### q?
 
@@ -459,16 +459,52 @@ optional if-unmodified-since: string;
 optional q: number;
 ```
 
+Image quality (1-100). Only applies to JPEG, WebP and PNG files
+
 ##### w?
 
 ```ts
 optional w: number;
 ```
+
+Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
 
 ---
 
 ### GetFileParams
 
+Parameters for the getFile method.
+
+-
+
+#### Param
+
+Image quality (1-100). Only applies to JPEG, WebP and PNG files
+
+-
+
+#### Param
+
+Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+
+-
+
+#### Param
+
+Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+
+-
+
+#### Param
+
+Blur the image using this sigma value. Only applies to image files
+
+-
+
+#### Param
+
+Output format for image files. Use 'auto' for content negotiation based on Accept header
+
 #### Properties
 
 ##### b?
@@ -477,11 +513,15 @@ optional w: number;
 optional b: number;
 ```
 
+Blur the image using this sigma value. Only applies to image files
+
 ##### f?
 
 ```ts
-optional f: F;
+optional f: GetF;
 ```
+
+Output format for image files. Use 'auto' for content negotiation based on Accept header
 
 ##### h?
 
@@ -489,29 +529,7 @@ optional f: F;
 optional h: number;
 ```
 
-##### if-match?
-
-```ts
-optional if-match: string;
-```
-
-##### if-modified-since?
-
-```ts
-optional if-modified-since: string;
-```
-
-##### if-none-match?
-
-```ts
-optional if-none-match: string;
-```
-
-##### if-unmodified-since?
-
-```ts
-optional if-unmodified-since: string;
-```
+Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
 
 ##### q?
 
@@ -519,11 +537,15 @@ optional if-unmodified-since: string;
 optional q: number;
 ```
 
+Image quality (1-100). Only applies to JPEG, WebP and PNG files
+
 ##### w?
 
 ```ts
 optional w: number;
 ```
+
+Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
 
 ---
 
@@ -549,7 +571,7 @@ optional url: string;
 ```
 
 The presigned URL for file operations.
-Example - https://storage.example.com/files/abc123?signature=xyz
+Example - "https://storage.example.com/files/abc123?signature=xyz"
 
 ---
 
@@ -576,31 +598,6 @@ Metadata that can be updated for an existing file.
 
 ---
 
-### ReplaceFileBodyMetadata
-
-Metadata that can be updated for an existing file.
-
-#### Properties
-
-##### metadata?
-
-```ts
-optional metadata: Record<string, any>;
-```
-
-Updated custom metadata to associate with the file.
-
-##### name?
-
-```ts
-optional name: string;
-```
-
-New name to assign to the file.
-Example - renamed-file.jpg
-
----
-
 ### UpdateFileMetadata
 
 Metadata that can be updated for an existing file.
@@ -610,10 +607,11 @@ Metadata that can be updated for an existing file.
 ##### metadata?
 
 ```ts
-optional metadata: Record<string, any>;
+optional metadata: Record<string, unknown>;
 ```
 
 Updated custom metadata to associate with the file.
+Example - {"alt":"Updated image description","category":"profile"}
 
 ##### name?
 
@@ -622,7 +620,7 @@ optional name: string;
 ```
 
 New name to assign to the file.
-Example - renamed-file.jpg
+Example - "renamed-file.jpg"
 
 ---
 
@@ -639,15 +637,16 @@ optional id: string;
 ```
 
 Optional custom ID for the file. If not provided, a UUID will be generated.
-Example - custom-id-123
+Example - "custom-id-123"
 
 ##### metadata?
 
 ```ts
-optional metadata: Record<string, any>;
+optional metadata: Record<string, unknown>;
 ```
 
 Custom metadata to associate with the file.
+Example - {"alt":"Custom image","category":"document"}
 
 ##### name?
 
@@ -656,21 +655,7 @@ optional name: string;
 ```
 
 Name to assign to the file. If not provided, the original filename will be used.
-Example - custom-filename.png
-
----
-
-### UploadFiles201
-
-#### Properties
-
-##### processedFiles?
-
-```ts
-optional processedFiles: FileMetadata[];
-```
-
-List of successfully processed files with their metadata.
+Example - "custom-filename.png"
 
 ---
 
@@ -685,7 +670,7 @@ optional bucket-id: string;
 ```
 
 Target bucket identifier where files will be stored.
-Example - user-uploads
+Example - "user-uploads"
 
 ##### file\[\]
 
@@ -705,6 +690,20 @@ Optional custom metadata for each uploaded file. Must match the order of the fil
 
 ---
 
+### UploadFilesResponse201
+
+#### Properties
+
+##### processedFiles?
+
+```ts
+optional processedFiles: FileMetadata[];
+```
+
+List of successfully processed files with their metadata.
+
+---
+
 ### VersionInformation
 
 Contains version information about the storage service.
@@ -718,7 +717,23 @@ optional buildVersion: string;
 ```
 
 The version number of the storage service build.
-Example - 1.2.3
+Example - "1.2.3"
+
+## Type Aliases
+
+### GetF
+
+```ts
+type GetF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
+```
+
+---
+
+### HeadF
+
+```ts
+type HeadF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
+```
 
 ## Functions
 

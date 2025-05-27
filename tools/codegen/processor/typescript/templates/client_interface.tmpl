@@ -22,7 +22,7 @@ export interface Client {
   {{- if .IsRedirect }}
   ): string;
   {{- else }}
-  ): Promise<{{ .ReturnType }}>;
+  ): Promise<FetchResponse<{{ .ReturnType }}>>;
   {{- end }}
 {{ end -}}
 };
@@ -52,7 +52,9 @@ export const createAPIClient = (
     {{ .Name }}: {{ .Type.Name }},
     {{- end }}
     {{- range $code, $type := .Bodies }}
+  {{- if not $method.IsRedirect }}
     body{{ if not $method.BodyRequired }}?{{ end }}: {{ $type.Name }},
+  {{- end }}
     {{- end }}
     {{- if .HasQueryParameters }}
     params?: {{ title $method.Name }}Params,
@@ -102,27 +104,33 @@ export const createAPIClient = (
 
     {{- range .RequestFormData.Properties }}
     {{- if eq .Type.Kind "scalar" }}
-    if (body[{{ .Name }}] !== undefined) {
-      formData.append({{ .Name }}, body[{{ .Name }}]);
+    if (body["{{ .Name }}"] !== undefined) {
+      formData.append("{{ .Name }}", body["{{ .Name }}"]);
     }
     {{- else if eq .Type.Kind "array" }}
-    if (body[{{ .Name }}] !== undefined) {
-      body[{{ .Name }}].forEach((value) =>
+    if (body["{{ .Name }}"] !== undefined) {
+      body["{{ .Name }}"].forEach((value) =>
         {{- if eq .Type.Item.Kind "scalar" }}
-          formData.append({{ .Name }}, value),
+          formData.append("{{ .Name }}", value),
+        {{- else if eq .Type.Item.Kind "object" }}
+          formData.append("{{ .Name }}", JSON.stringify(value)),
         {{- else }}
-          formData.append({{ .Name }}, JSON.stringify(value)),
+          TODO {{ .Type.Kind }} {{ .Type.Schema.Schema.Type }}
         {{- end }}
       );
     }
+    {{- else if eq .Type.Kind "object" }}
+    if (body["{{ .Name }}"] !== undefined) {
+      formData.append("{{ .Name }}", JSON.stringify(body["{{ .Name }}"]));
+    }
     {{- else }}
-    TODO {{ .Type.Kind }} {{ .Type.Name }}
+    TODO {{ .Type.Kind }} {{ .Type.Schema.Schema.Type }}
     {{- end }}
     {{- end }}
 
     const res = await fetch(url, {
       ...options,
-      method: "POST",
+      method: "{{ .Method }}",
       body: formData,
     });
   {{- else if not .RequestHasBody }}
@@ -144,7 +152,7 @@ export const createAPIClient = (
     }
     {{ if .ResponseJSON }}
     const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: FetchResponse<{{ .ReturnType }}> = responseBody ? JSON.parse(responseBody) : {};
+    const payload: {{ .ReturnType }} = responseBody ? JSON.parse(responseBody) : {};
     {{ else if .ResponseBinary }}
     const payload: Blob = await res.blob();
     {{ else if not .HasResponseBody }}

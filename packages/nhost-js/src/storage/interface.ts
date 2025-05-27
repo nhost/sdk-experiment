@@ -2,7 +2,7 @@ import type { ChainFunction, FetchResponse } from "../fetch";
 import type {
   VersionInformation,
   UploadFilesBody,
-  UploadFiles201,
+  UploadFilesResponse201,
   GetFileMetadataHeadersParams,
   GetFileParams,
   ReplaceFileBody,
@@ -39,7 +39,7 @@ export interface Client {
   uploadFiles: (
     uploadFilesBody: UploadFilesBody,
     options?: RequestInit,
-  ) => Promise<FetchResponse<UploadFiles201>>;
+  ) => Promise<FetchResponse<UploadFilesResponse201>>;
 
   /**
    * Retrieve file metadata using HTTP HEAD method

@@ -1,7 +1,7 @@
 import type {
   CreatePATRequest,
   CreatePATResponse,
-  GetVersion200,
+  GetVersionResponse200,
   JWKSet,
   LinkIdTokenRequest,
   OKResponse,
@@ -64,7 +64,9 @@ export interface Client {
    * Retrieve version information about the authentication service
    * @summary Get service version
    */
-  getVersion: (options?: RequestInit) => Promise<FetchResponse<GetVersion200>>;
+  getVersion: (
+    options?: RequestInit,
+  ) => Promise<FetchResponse<GetVersionResponse200>>;
 
   /**
    * Generate a new JWT access token using a valid refresh token
@@ -258,14 +260,17 @@ export interface Client {
    *
    * @summary Verify ticket
    */
-  verifyTicket: (params: VerifyTicketParams, options?: RequestInit) => string;
+  verifyTicketURL: (
+    params: VerifyTicketParams,
+    options?: RequestInit,
+  ) => string;
 
   /**
    * This method returns a redirect URL to send the user to for signing in with an OAuth2 provider.
    *
    * @summary Sign in with an oauth2 provider
    */
-  signInProvider: (
+  signInProviderURL: (
     provider:
       | "apple"
       | "github"
