@@ -151,7 +151,7 @@ export async function getProviderSignInUrl(provider: "github") {
     const nhost = await createNhostClient();
 
     // Get provider URL
-    const url = nhost.auth.signInProvider(provider, {
+    const url = nhost.auth.signInProviderURL(provider, {
       redirectTo,
     });
 

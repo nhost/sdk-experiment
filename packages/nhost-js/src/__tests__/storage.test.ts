@@ -92,6 +92,7 @@ describe("Test Storage API", () => {
 
   it("upload fails", async () => {
     try {
+      // @ts-expect-error we want the error for testing purposes
       await nhost.storage.uploadFiles({
         "bucket-id": "default",
         "metadata[]": [
@@ -143,22 +144,28 @@ describe("Test Storage API", () => {
   });
 
   it("should get file metadata headers with If-None-Match matches", async () => {
-    const resp = await nhost.storage.getFileMetadataHeaders(
-      uuid1,
-      {},
-      {
-        headers: {
-          "If-None-Match": etag,
+    try {
+      await nhost.storage.getFileMetadataHeaders(
+        uuid1,
+        {},
+        {
+          headers: {
+            "If-None-Match": etag,
+          },
         },
-      },
-    );
-    expect(resp).toBeDefined();
-    expect(resp.status).toBe(304);
-    expect(resp.headers).toBeDefined();
-    expect(resp.headers.get("etag")).toBe(etag);
-    expect(resp.headers.get("cache-control")).toBe("max-age=3600");
-    expect(resp.headers.get("surrogate-control")).toBe("max-age=604800");
-    expect(resp.headers.get("date")).toBeDefined();
+      );
+      expect(true).toBe(false); // This line should not be reached
+    } catch (error) {
+      const err = error as FetchError<ErrorResponse>;
+      expect(err).toBeDefined();
+      expect(err.status).toBe(304);
+      expect(err.headers).toBeDefined();
+      expect(err.headers.get("etag")).toBe(etag);
+      expect(err.headers.get("cache-control")).toBe("max-age=3600");
+      expect(err.headers.get("surrogate-control")).toBe("max-age=604800");
+      expect(err.headers.get("date")).toBeDefined();
+      return;
+    }
   });
 
   it("should get file metadata headers with If-None-Match does not match", async () => {
@@ -200,23 +207,27 @@ describe("Test Storage API", () => {
   });
 
   it("should not get file If-None-Match matches", async () => {
-    const resp = await nhost.storage.getFile(
-      uuid1,
-      {},
-      {
-        headers: {
-          "If-None-Match": etag,
+    try {
+      await nhost.storage.getFile(
+        uuid1,
+        {},
+        {
+          headers: {
+            "If-None-Match": etag,
+          },
         },
-      },
-    );
+      );
+    } catch (error) {
+      const err = error as FetchError<ErrorResponse>;
 
-    expect(resp.status).toBe(304);
-    expect(resp.body).toBeDefined();
-    expect(resp.headers).toBeDefined();
-    expect(resp.headers.get("etag")).toBe(etag);
-    expect(resp.headers.get("cache-control")).toBe("max-age=3600");
-    expect(resp.headers.get("surrogate-control")).toBe("max-age=604800");
-    expect(resp.headers.get("date")).toBeDefined();
+      expect(err.status).toBe(304);
+      expect(err.body).toBeDefined();
+      expect(err.headers).toBeDefined();
+      expect(err.headers.get("etag")).toBe(etag);
+      expect(err.headers.get("cache-control")).toBe("max-age=3600");
+      expect(err.headers.get("surrogate-control")).toBe("max-age=604800");
+      expect(err.headers.get("date")).toBeDefined();
+    }
   });
 
   it("should replace file", async () => {

@@ -48,8 +48,6 @@ try {
 
 ### Client
 
-Storage client interface providing methods for file operations
-
 #### Properties
 
 ##### baseURL
@@ -58,15 +56,21 @@ Storage client interface providing methods for file operations
 baseURL: string;
 ```
 
-Base URL for the storage service
+#### Methods
 
 ##### deleteFile()
 
 ```ts
-deleteFile: (id: string, options?: RequestInit) => Promise<FetchResponse<void>>;
+deleteFile(id: string, options?: RequestInit): Promise<FetchResponse<void>>;
 ```
 
-Delete a file
+Summary: Delete file
+Permanently delete a file from storage. This removes both the file content and its associated metadata.
+
+This method may return different T based on the response code:
+
+- 204: void
+- 400: ErrorResponse
 
 ###### Parameters
 
@@ -82,11 +86,21 @@ Delete a file
 ##### getFile()
 
 ```ts
-getFile: (id: string, params?: GetFileParams, options?: RequestInit) =>
-  Promise<FetchResponse<Blob>>;
+getFile(
+   id: string,
+   params?: GetFileParams,
+   options?: RequestInit): Promise<FetchResponse<Blob>>;
 ```
 
-Download a file
+Summary: Download file
+Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
+
+This method may return different T based on the response code:
+
+- 200: void
+- 304: void
+- 400: void
+- 412: void
 
 ###### Parameters
 
@@ -103,14 +117,21 @@ Download a file
 ##### getFileMetadataHeaders()
 
 ```ts
-getFileMetadataHeaders: (
-  id: string,
-  params?: GetFileMetadataHeadersParams,
-  options?: RequestInit,
-) => Promise<FetchResponse<void>>;
+getFileMetadataHeaders(
+   id: string,
+   params?: GetFileMetadataHeadersParams,
+   options?: RequestInit): Promise<FetchResponse<void>>;
 ```
 
-Retrieve file metadata using HTTP HEAD method
+Summary: Check file information
+Retrieve file metadata headers without downloading the file content. Supports conditional requests and provides caching information.
+
+This method may return different T based on the response code:
+
+- 200: void
+- 304: void
+- 400: void
+- 412: void
 
 ###### Parameters
 
@@ -124,33 +145,18 @@ Retrieve file metadata using HTTP HEAD method
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`void`&gt;&gt;
 
-##### getOpenAPISpec()
-
-```ts
-getOpenAPISpec: (options?: RequestInit) =>
-  Promise<FetchResponse<GetOpenAPISpec200>>;
-```
-
-Returns the OpenAPI schema definition for this API
-
-###### Parameters
-
-| Parameter  | Type          |
-| ---------- | ------------- |
-| `options?` | `RequestInit` |
-
-###### Returns
-
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`GetOpenAPISpec200`](#getopenapispec200)&gt;&gt;
-
 ##### getVersion()
 
 ```ts
-getVersion: (options?: RequestInit) =>
-  Promise<FetchResponse<VersionInformation>>;
+getVersion(options?: RequestInit): Promise<FetchResponse<VersionInformation>>;
 ```
 
-Retrieves build and version information about the storage service
+Summary: Get service version information
+Retrieves build and version information about the storage service. Useful for monitoring and debugging.
+
+This method may return different T based on the response code:
+
+- 200: VersionInformation
 
 ###### Parameters
 
@@ -165,16 +171,14 @@ Retrieves build and version information about the storage service
 ##### pushChainFunction()
 
 ```ts
-pushChainFunction: (chainFunction: ChainFunction) => void;
+pushChainFunction(chainFunction: ChainFunction): void;
 ```
-
-Add a middleware function to the request chain
 
 ###### Parameters
 
-| Parameter       | Type                                       | Description                |
-| --------------- | ------------------------------------------ | -------------------------- |
-| `chainFunction` | [`ChainFunction`](fetch#chainfunction) | Middleware function to add |
+| Parameter       | Type                                       |
+| --------------- | ------------------------------------------ |
+| `chainFunction` | [`ChainFunction`](fetch#chainfunction) |
 
 ###### Returns
 
@@ -183,22 +187,33 @@ Add a middleware function to the request chain
 ##### replaceFile()
 
 ```ts
-replaceFile: (
-  id: string,
-  replaceFileBody: ReplaceFileBody,
-  options?: RequestInit,
-) => Promise<FetchResponse<FileMetadata>>;
+replaceFile(
+   id: string,
+   body: ReplaceFileBody,
+   options?: RequestInit): Promise<FetchResponse<FileMetadata>>;
 ```
 
-Replace an existing file
+Summary: Replace file
+Replace an existing file with new content while preserving the file ID. The operation follows these steps:
+
+1. The isUploaded flag is set to false to mark the file as being updated
+2. The file content is replaced in the storage backend
+3. File metadata is updated (size, mime-type, isUploaded, etc.)
+
+Each step is atomic, but if a step fails, previous steps will not be automatically rolled back.
+
+This method may return different T based on the response code:
+
+- 200: FileMetadata
+- 400: ErrorResponse
 
 ###### Parameters
 
-| Parameter         | Type                                  |
-| ----------------- | ------------------------------------- |
-| `id`              | `string`                              |
-| `replaceFileBody` | [`ReplaceFileBody`](#replacefilebody) |
-| `options?`        | `RequestInit`                         |
+| Parameter  | Type                                  |
+| ---------- | ------------------------------------- |
+| `id`       | `string`                              |
+| `body`     | [`ReplaceFileBody`](#replacefilebody) |
+| `options?` | `RequestInit`                         |
 
 ###### Returns
 
@@ -207,22 +222,27 @@ Replace an existing file
 ##### uploadFiles()
 
 ```ts
-uploadFiles: (uploadFilesBody: UploadFilesBody, options?: RequestInit) =>
-  Promise<FetchResponse<UploadFiles201>>;
+uploadFiles(body: UploadFilesBody, options?: RequestInit): Promise<FetchResponse<UploadFilesResponse201>>;
 ```
 
-Upload one or more files to storage
+Summary: Upload files
+Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
+
+This method may return different T based on the response code:
+
+- 201: UploadFilesResponse201
+- 400: ErrorResponse
 
 ###### Parameters
 
-| Parameter         | Type                                  |
-| ----------------- | ------------------------------------- |
-| `uploadFilesBody` | [`UploadFilesBody`](#uploadfilesbody) |
-| `options?`        | `RequestInit`                         |
+| Parameter  | Type                                  |
+| ---------- | ------------------------------------- |
+| `body`     | [`UploadFilesBody`](#uploadfilesbody) |
+| `options?` | `RequestInit`                         |
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`UploadFiles201`](#uploadfiles201)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`UploadFilesResponse201`](#uploadfilesresponse201)&gt;&gt;
 
 ---
 
@@ -242,6 +262,24 @@ Error details.
 
 ---
 
+### ErrorResponseError
+
+Error details.
+
+#### Properties
+
+##### message
+
+```ts
+message: string;
+```
+
+(`string`) - Human-readable error message.
+
+- Example - `"File not found"`
+
+---
+
 ### FileMetadata
 
 Comprehensive metadata information about a file in storage.
@@ -255,6 +293,7 @@ optional bucketId: string;
 ```
 
 ID of the bucket containing the file.
+Example - `"users-bucket"`
 
 ##### createdAt?
 
@@ -263,6 +302,8 @@ optional createdAt: string;
 ```
 
 Timestamp when the file was created.
+Example - `"2023-01-15T12:34:56Z"`
+Format - date-time
 
 ##### etag?
 
@@ -271,6 +312,7 @@ optional etag: string;
 ```
 
 Entity tag for cache validation.
+Example - `"\"a1b2c3d4e5f6\""`
 
 ##### id?
 
@@ -279,6 +321,7 @@ optional id: string;
 ```
 
 Unique identifier for the file.
+Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
 
 ##### isUploaded?
 
@@ -287,14 +330,16 @@ optional isUploaded: boolean;
 ```
 
 Whether the file has been successfully uploaded.
+Example - `true`
 
 ##### metadata?
 
 ```ts
-optional metadata: FileMetadataMetadata;
+optional metadata: Record<string, unknown>;
 ```
 
 Custom metadata associated with the file.
+Example - `{"alt":"Profile picture","category":"avatar"}`
 
 ##### mimeType?
 
@@ -303,6 +348,7 @@ optional mimeType: string;
 ```
 
 MIME type of the file.
+Example - `"image/jpeg"`
 
 ##### name?
 
@@ -311,6 +357,7 @@ optional name: string;
 ```
 
 Name of the file including extension.
+Example - `"profile-picture.jpg"`
 
 ##### size?
 
@@ -319,6 +366,7 @@ optional size: number;
 ```
 
 Size of the file in bytes.
+Example - `245678`
 
 ##### updatedAt?
 
@@ -327,6 +375,8 @@ optional updatedAt: string;
 ```
 
 Timestamp when the file was last updated.
+Example - `"2023-01-16T09:45:32Z"`
+Format - date-time
 
 ##### uploadedByUserId?
 
@@ -335,6 +385,7 @@ optional uploadedByUserId: string;
 ```
 
 ID of the user who uploaded the file.
+Example - `"abc123def456"`
 
 ---
 
@@ -351,6 +402,7 @@ optional bucketId: string;
 ```
 
 ID of the bucket containing the file.
+Example - `"users-bucket"`
 
 ##### id?
 
@@ -359,6 +411,7 @@ optional id: string;
 ```
 
 Unique identifier for the file.
+Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
 
 ##### isUploaded?
 
@@ -367,6 +420,7 @@ optional isUploaded: boolean;
 ```
 
 Whether the file has been successfully uploaded.
+Example - `true`
 
 ##### name?
 
@@ -375,6 +429,103 @@ optional name: string;
 ```
 
 Name of the file including extension.
+Example - `"profile-picture.jpg"`
+
+---
+
+### GetFileMetadataHeadersParams
+
+Parameters for the getFileMetadataHeaders method.
+
+#### Properties
+
+##### b?
+
+```ts
+optional b: number;
+```
+
+Blur the image using this sigma value. Only applies to image files
+
+##### f?
+
+```ts
+optional f: HeadF;
+```
+
+Output format for image files. Use 'auto' for content negotiation based on Accept header
+
+##### h?
+
+```ts
+optional h: number;
+```
+
+Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+
+##### q?
+
+```ts
+optional q: number;
+```
+
+Image quality (1-100). Only applies to JPEG, WebP and PNG files
+
+##### w?
+
+```ts
+optional w: number;
+```
+
+Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+
+---
+
+### GetFileParams
+
+Parameters for the getFile method.
+
+#### Properties
+
+##### b?
+
+```ts
+optional b: number;
+```
+
+Blur the image using this sigma value. Only applies to image files
+
+##### f?
+
+```ts
+optional f: GetF;
+```
+
+Output format for image files. Use 'auto' for content negotiation based on Accept header
+
+##### h?
+
+```ts
+optional h: number;
+```
+
+Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+
+##### q?
+
+```ts
+optional q: number;
+```
+
+Image quality (1-100). Only applies to JPEG, WebP and PNG files
+
+##### w?
+
+```ts
+optional w: number;
+```
+
+Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
 
 ---
 
@@ -391,6 +542,7 @@ optional expiration: number;
 ```
 
 The time in seconds until the URL expires.
+Example - `3600`
 
 ##### url?
 
@@ -399,6 +551,30 @@ optional url: string;
 ```
 
 The presigned URL for file operations.
+Example - `"https://storage.example.com/files/abc123?signature=xyz"`
+
+---
+
+### ReplaceFileBody
+
+#### Properties
+
+##### file?
+
+```ts
+optional file: Blob;
+```
+
+New file content to replace the existing file
+Format - binary
+
+##### metadata?
+
+```ts
+optional metadata: UpdateFileMetadata;
+```
+
+Metadata that can be updated for an existing file.
 
 ---
 
@@ -411,10 +587,11 @@ Metadata that can be updated for an existing file.
 ##### metadata?
 
 ```ts
-optional metadata: UpdateFileMetadataMetadata;
+optional metadata: Record<string, unknown>;
 ```
 
 Updated custom metadata to associate with the file.
+Example - `{"alt":"Updated image description","category":"profile"}`
 
 ##### name?
 
@@ -423,6 +600,7 @@ optional name: string;
 ```
 
 New name to assign to the file.
+Example - `"renamed-file.jpg"`
 
 ---
 
@@ -439,14 +617,16 @@ optional id: string;
 ```
 
 Optional custom ID for the file. If not provided, a UUID will be generated.
+Example - `"custom-id-123"`
 
 ##### metadata?
 
 ```ts
-optional metadata: UploadFileMetadataMetadata;
+optional metadata: Record<string, unknown>;
 ```
 
 Custom metadata to associate with the file.
+Example - `{"alt":"Custom image","category":"document"}`
 
 ##### name?
 
@@ -455,6 +635,52 @@ optional name: string;
 ```
 
 Name to assign to the file. If not provided, the original filename will be used.
+Example - `"custom-filename.png"`
+
+---
+
+### UploadFilesBody
+
+#### Properties
+
+##### bucket-id?
+
+```ts
+optional bucket-id: string;
+```
+
+Target bucket identifier where files will be stored.
+Example - `"user-uploads"`
+
+##### file\[\]
+
+```ts
+file[]: Blob[];
+```
+
+(`Blob[]`) - Array of files to upload.
+
+##### metadata\[\]?
+
+```ts
+optional metadata[]: UploadFileMetadata[];
+```
+
+Optional custom metadata for each uploaded file. Must match the order of the file[] array.
+
+---
+
+### UploadFilesResponse201
+
+#### Properties
+
+##### processedFiles?
+
+```ts
+optional processedFiles: FileMetadata[];
+```
+
+List of successfully processed files with their metadata.
 
 ---
 
@@ -471,187 +697,23 @@ optional buildVersion: string;
 ```
 
 The version number of the storage service build.
+Example - `"1.2.3"`
 
 ## Type Aliases
 
-### ErrorResponseError
+### GetF
 
 ```ts
-type ErrorResponseError = object;
-```
-
-Error details.
-
-#### Properties
-
-| Property                       | Type     | Description                   |
-| ------------------------------ | -------- | ----------------------------- |
-| <a id="message"></a> `message` | `string` | Human-readable error message. |
-
----
-
-### FileMetadataMetadata
-
-```ts
-type FileMetadataMetadata = object;
-```
-
-Custom metadata associated with the file.
-
-#### Index Signature
-
-```ts
-[key: string]: unknown
+type GetF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
 ```
 
 ---
 
-### GetFileF
+### HeadF
 
 ```ts
-type GetFileF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
+type HeadF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
 ```
-
----
-
-### GetFileMetadataHeadersF
-
-```ts
-type GetFileMetadataHeadersF =
-  | "auto"
-  | "same"
-  | "jpeg"
-  | "webp"
-  | "png"
-  | "avif";
-```
-
----
-
-### GetFileMetadataHeadersParams
-
-```ts
-type GetFileMetadataHeadersParams = object;
-```
-
-#### Properties
-
-| Property            | Type                                                  | Description                                                                                   |
-| ------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| <a id="b"></a> `b?` | `number`                                              | Blur the image using this sigma value. Only applies to image files                            |
-| <a id="f"></a> `f?` | [`GetFileMetadataHeadersF`](#getfilemetadataheadersf) | Output format for image files. Use 'auto' for content negotiation based on Accept header      |
-| <a id="h"></a> `h?` | `number`                                              | Maximum height to resize image to while maintaining aspect ratio. Only applies to image files |
-| <a id="q"></a> `q?` | `number`                                              | Image quality (1-100). Only applies to JPEG, WebP and PNG files                               |
-| <a id="w"></a> `w?` | `number`                                              | Maximum width to resize image to while maintaining aspect ratio. Only applies to image files  |
-
----
-
-### GetFileParams
-
-```ts
-type GetFileParams = object;
-```
-
-#### Properties
-
-| Property              | Type                    | Description                                                                                   |
-| --------------------- | ----------------------- | --------------------------------------------------------------------------------------------- |
-| <a id="b-1"></a> `b?` | `number`                | Blur the image using this sigma value. Only applies to image files                            |
-| <a id="f-1"></a> `f?` | [`GetFileF`](#getfilef) | Output format for image files. Use 'auto' for content negotiation based on Accept header      |
-| <a id="h-1"></a> `h?` | `number`                | Maximum height to resize image to while maintaining aspect ratio. Only applies to image files |
-| <a id="q-1"></a> `q?` | `number`                | Image quality (1-100). Only applies to JPEG, WebP and PNG files                               |
-| <a id="w-1"></a> `w?` | `number`                | Maximum width to resize image to while maintaining aspect ratio. Only applies to image files  |
-
----
-
-### GetOpenAPISpec200
-
-```ts
-type GetOpenAPISpec200 = object;
-```
-
-#### Index Signature
-
-```ts
-[key: string]: unknown
-```
-
----
-
-### ReplaceFileBody
-
-```ts
-type ReplaceFileBody = object;
-```
-
-#### Properties
-
-| Property                            | Type                                        | Description                                   |
-| ----------------------------------- | ------------------------------------------- | --------------------------------------------- |
-| <a id="file"></a> `file?`           | `Blob`                                      | New file content to replace the existing file |
-| <a id="metadata-1"></a> `metadata?` | [`UpdateFileMetadata`](#updatefilemetadata) | Optional metadata to update for the file      |
-
----
-
-### UpdateFileMetadataMetadata
-
-```ts
-type UpdateFileMetadataMetadata = object;
-```
-
-Updated custom metadata to associate with the file.
-
-#### Index Signature
-
-```ts
-[key: string]: unknown
-```
-
----
-
-### UploadFileMetadataMetadata
-
-```ts
-type UploadFileMetadataMetadata = object;
-```
-
-Custom metadata to associate with the file.
-
-#### Index Signature
-
-```ts
-[key: string]: unknown
-```
-
----
-
-### UploadFiles201
-
-```ts
-type UploadFiles201 = object;
-```
-
-#### Properties
-
-| Property                                      | Type                              | Description                                               |
-| --------------------------------------------- | --------------------------------- | --------------------------------------------------------- |
-| <a id="processedfiles"></a> `processedFiles?` | [`FileMetadata`](#filemetadata)[] | List of successfully processed files with their metadata. |
-
----
-
-### UploadFilesBody
-
-```ts
-type UploadFilesBody = object;
-```
-
-#### Properties
-
-| Property                              | Type                                          | Description                                                                                |
-| ------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| <a id="bucket-id"></a> `bucket-id?`   | `string`                                      | Target bucket identifier where files will be stored.                                       |
-| <a id="file-1"></a> `file[]?`         | `Blob`[]                                      | Array of files to upload.                                                                  |
-| <a id="metadata-4"></a> `metadata[]?` | [`UploadFileMetadata`](#uploadfilemetadata)[] | Optional custom metadata for each uploaded file. Must match the order of the file[] array. |
 
 ## Functions
 

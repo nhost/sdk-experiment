@@ -18,14 +18,9 @@ const nhostClientFromCookies = (req: Request) => {
     region: "local",
     storage: {
       get: (): Session | null => {
-        const s = req.cookies.nhostSession || null;
-        if (!s) {
-          return null;
-        }
-        const session = JSON.parse(s) as Session;
-        return session;
+        return (req.cookies.nhostSession || null) as Session | null;
       },
-      set: (_value: Session) => {
+      set: () => {
         throw new Error("It is easier to handle the session in the client");
       },
       remove: () => {
@@ -60,7 +55,7 @@ const nhostClientFromAuthHeader = (req: Request) => {
         const session = { accessToken: token } as Session;
         return session;
       },
-      set: (_value: Session) => {
+      set: () => {
         throw new Error("It is easier to handle the session in the client");
       },
       remove: () => {
