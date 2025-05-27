@@ -9,6 +9,11 @@ import type { ChainFunction, FetchResponse } from "../fetch";
 {{- range .Types }}
 {{ if eq .Kind "object" }}
 {{ template "renderObject" . }}
+{{ else if eq .Kind "allOf" }}
+/**
+ * {{ .Schema.Schema.Description }}
+ */
+export type {{ .Name }} = {{ join .TypeNames " & " }};
 {{ else if eq .Kind "enum" }}
 /**
  * {{ .Schema.Schema.Description }}

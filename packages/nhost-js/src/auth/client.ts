@@ -797,6 +797,37 @@ export interface SignInWebauthnVerifyRequest {
 
 /**
  * 
+ @property nickname? (`string`) - */
+export interface SignUpWebauthnVerifyRequestOptionsAllOf1 {
+  /**
+   *
+   */
+  nickname?: string;
+}
+
+/**
+ *
+ */
+export type SignUpWebauthnVerifyRequestOptions = SignUpOptions &
+  SignUpWebauthnVerifyRequestOptionsAllOf1;
+
+/**
+ * 
+ @property credential? (`Record<string, unknown>`) - 
+ @property options? (`SignUpWebauthnVerifyRequestOptions`) - */
+export interface SignUpWebauthnVerifyRequest {
+  /**
+   *
+   */
+  credential?: Record<string, unknown>;
+  /**
+   *
+   */
+  options?: SignUpWebauthnVerifyRequestOptions;
+}
+
+/**
+ * 
  @property provider (`IdTokenProvider`) - 
  @property idToken (`string`) - Apple ID token
  @property nonce? (`string`) - Nonce used during sign in process
@@ -1333,6 +1364,54 @@ export interface Client {
     params?: SignInProviderParams,
     options?: RequestInit,
   ): string;
+
+  /**
+     Summary: Sign in with WebAuthn
+     Initiate a WebAuthn sign-in process by sending a challenge to the user's device. The user must have previously registered a WebAuthn credential.
+
+     This method may return different T based on the response code:
+     - 200: Record<string, unknown>
+     */
+  signInWebAuthn(
+    body: SignInWebauthnRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<Record<string, unknown>>>;
+
+  /**
+     Summary: Verify WebAuthn sign-in
+     Complete the WebAuthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
+
+     This method may return different T based on the response code:
+     - 200: SessionPayload
+     */
+  signInWebAuthnVerify(
+    body: SignInWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>>;
+
+  /**
+     Summary: Sign up with WebAuthn
+     Initiate a WebAuthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
+
+     This method may return different T based on the response code:
+     - 200: Record<string, unknown>
+     */
+  signUpWebAuthn(
+    body: SignUpWebauthnRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<Record<string, unknown>>>;
+
+  /**
+     Summary: Verify WebAuthn sign-up
+     Complete the WebAuthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
+
+     This method may return different T based on the response code:
+     - 200: SessionPayload
+     */
+  signUpWebAuthnVerify(
+    body: SignUpWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>>;
 }
 
 export const createAPIClient = (
@@ -2184,6 +2263,146 @@ export const createAPIClient = (
     return url;
   };
 
+  const signInWebAuthn = async (
+    body: SignInWebauthnRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<Record<string, unknown>>> => {
+    const url = baseURL + `/signin/webauthn`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: Record<string, unknown> = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<Record<string, unknown>>;
+  };
+
+  const signInWebAuthnVerify = async (
+    body: SignInWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const url = baseURL + `/signin/webauthn/verify`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+  };
+
+  const signUpWebAuthn = async (
+    body: SignUpWebauthnRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<Record<string, unknown>>> => {
+    const url = baseURL + `/signup/webauthn`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: Record<string, unknown> = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<Record<string, unknown>>;
+  };
+
+  const signUpWebAuthnVerify = async (
+    body: SignUpWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const url = baseURL + `/signup/webauthn/verify`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+  };
+
   return {
     baseURL,
     pushChainFunction,
@@ -2213,5 +2432,9 @@ export const createAPIClient = (
     sendPasswordResetEmail,
     verifyTicketURL,
     signInProviderURL,
+    signInWebAuthn,
+    signInWebAuthnVerify,
+    signUpWebAuthn,
+    signUpWebAuthnVerify,
   };
 };

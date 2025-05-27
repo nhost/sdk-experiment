@@ -97,3 +97,15 @@ components:
         - data
       additionalProperties: false
 
+    SimpleObjectExtended:
+      type: object
+      description: "Extended version of the simple object schema with additional properties."
+      additionalProperties: true
+      allOf:
+        - $ref: "#/components/schemas/SimpleObject"
+        - type: object
+          additionalProperties: false
+          properties:
+            nickname:
+              description: "Nickname of the object."
+              type: string

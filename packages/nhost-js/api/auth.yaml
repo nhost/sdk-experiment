@@ -873,6 +873,112 @@ paths:
               $ref: "#/components/headers/RedirectLocation"
           content: {}
 
+  /signin/webauthn:
+    post:
+      summary: Sign in with WebAuthn
+      description: >-
+        Initiate a WebAuthn sign-in process by sending a challenge to the user's device.
+        The user must have previously registered a WebAuthn credential.
+      operationId: signInWebAuthn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInWebauthnRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInWebauthnResponse"
+          description: >-
+            Challenge sent
+
+      tags:
+        - signin
+        - webauthn
+
+  /signin/webauthn/verify:
+    post:
+      summary: Verify WebAuthn sign-in
+      description: >-
+        Complete the WebAuthn sign-in process by verifying the response from the user's device.
+        Returns a session if validation is successful.
+      operationId: signInWebAuthnVerify
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInWebauthnVerifyRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionPayload"
+          description: >-
+            Sign in successful
+
+      tags:
+        - signin
+        - webauthn
+        - verify
+
+  /signup/webauthn:
+    post:
+      summary: Sign up with WebAuthn
+      description: >-
+        Initiate a WebAuthn sign-up process by sending a challenge to the user's device.
+        The user must not have an existing account.
+      operationId: signUpWebAuthn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpWebauthnRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignUpWebauthnResponse"
+          description: >-
+            Challenge sent
+
+      tags:
+        - signup
+        - webauthn
+
+  /signup/webauthn/verify:
+    post:
+      summary: Verify WebAuthn sign-up
+      description: >-
+        Complete the WebAuthn sign-up process by verifying the response from the user's device.
+        Returns a session if validation is successful.
+      operationId: signUpWebAuthnVerify
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignUpWebauthnVerifyRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionPayload"
+          description: >-
+            Sign up successful
+
+      tags:
+        - signup
+        - webauthn
+        - verify
+
 components:
   securitySchemes:
     BearerAuth:
@@ -1507,7 +1613,7 @@ components:
 
     SignInWebauthnVerifyRequest:
       type: object
-      additionalProperties: true
+      additionalProperties: false
       properties:
         email:
           description: A valid email. Deprecated, no longer used
@@ -1525,27 +1631,27 @@ components:
       required:
         - credential
 
-    # SignUpWebauthnVerifyRequest:
-    #   type: object
-    #   additionalProperties: true
-    #   properties:
-    #     credential:
-    #       type: object
-    #       additionalProperties: true
-    #       x-go-type-import:
-    #         name: protocol
-    #         path: github.com/go-webauthn/webauthn/protocol
-    #       x-go-type: protocol.CredentialCreationResponse
-    #     options:
-    #       type: object
-    #       additionalProperties: false
-    #       allOf:
-    #         - $ref: "#/components/schemas/SignUpOptions"
-    #         - type: object
-    #           additionalProperties: false
-    #           properties:
-    #             nickname:
-    #               type: string
+    SignUpWebauthnVerifyRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        credential:
+          type: object
+          additionalProperties: true
+          x-go-type-import:
+            name: protocol
+            path: github.com/go-webauthn/webauthn/protocol
+          x-go-type: protocol.CredentialCreationResponse
+        options:
+          type: object
+          additionalProperties: false
+          allOf:
+            - $ref: "#/components/schemas/SignUpOptions"
+            - type: object
+              additionalProperties: false
+              properties:
+                nickname:
+                  type: string
 
     SignInIdTokenRequest:
       type: object
