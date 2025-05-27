@@ -11,6 +11,12 @@ import (
 	v3 "github.com/pb33f/libopenapi/datamodel/high/v3"
 )
 
+const (
+	minStatusForError           = 300
+	mediaApplicationJSON        = "application/json"
+	mediaApplicationOctetStream = "application/octet-stream"
+)
+
 type Method struct {
 	name       string
 	method     string
@@ -86,7 +92,7 @@ func (m *Method) ReturnType() string {
 			panic(fmt.Sprintf("invalid response code %s: %v", c, err))
 		}
 
-		if code >= 300 {
+		if code >= minStatusForError {
 			continue
 		}
 
@@ -96,9 +102,9 @@ func (m *Method) ReturnType() string {
 
 		for media, typ := range resp {
 			switch media {
-			case "application/json":
+			case mediaApplicationJSON:
 				tt = addIfNotPresent(tt, typ.Name())
-			case "application/octet-stream":
+			case mediaApplicationOctetStream:
 				tt = addIfNotPresent(tt, m.p.BinaryType())
 			}
 		}
@@ -108,7 +114,7 @@ func (m *Method) ReturnType() string {
 
 func (m *Method) RequestJSON() Type { //nolint:ireturn
 	for m, t := range m.Bodies {
-		if m == "application/json" {
+		if m == mediaApplicationJSON {
 			return t
 		}
 	}
@@ -135,12 +141,12 @@ func (m *Method) ResponseJSON() bool {
 			panic(fmt.Sprintf("invalid response code %s: %v", c, err))
 		}
 
-		if code >= 300 { //nolint:mnd
+		if code >= minStatusForError {
 			continue
 		}
 
 		for media := range resp {
-			return media == "application/json"
+			return media == mediaApplicationJSON
 		}
 	}
 	return false
@@ -153,12 +159,12 @@ func (m *Method) ResponseBinary() bool {
 			panic(fmt.Sprintf("invalid response code %s: %v", c, err))
 		}
 
-		if code >= 300 {
+		if code >= minStatusForError {
 			continue
 		}
 
 		for media := range resp {
-			return media == "application/octet-stream"
+			return media == mediaApplicationOctetStream
 		}
 	}
 	return false
@@ -178,7 +184,7 @@ func (m *Method) HasResponseBody() bool {
 			panic(fmt.Sprintf("invalid response code %s: %v", c, err))
 		}
 
-		if code >= 300 {
+		if code >= minStatusForError {
 			continue
 		}
 
