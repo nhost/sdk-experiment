@@ -7,7 +7,7 @@ import type { ChainFunction, FetchResponse } from "../fetch";
 
 /**
  * JSON Web Key Set for verifying JWT signatures
- @property keys (JWK[]) - Array of public keys*/
+ @property keys (`JWK[]`) - Array of public keys*/
 export interface JWKSet {
   /**
    * Array of public keys
@@ -18,17 +18,17 @@ export interface JWKSet {
 
 /**
  * JSON Web Key for JWT verification
- @property alg (string) - Algorithm used with this key
+ @property alg (`string`) - Algorithm used with this key
     *    Example - `"RS256"`
- @property e (string) - RSA public exponent
+ @property e (`string`) - RSA public exponent
     *    Example - `"AQAB"`
- @property kid (string) - Key ID
+ @property kid (`string`) - Key ID
     *    Example - `"key-id-1"`
- @property kty (string) - Key type
+ @property kty (`string`) - Key type
     *    Example - `"RSA"`
- @property n (string) - RSA modulus
+ @property n (`string`) - RSA modulus
     *    Example - `"abcd1234..."`
- @property use (string) - Key usage
+ @property use (`string`) - Key usage
     *    Example - `"sig"`*/
 export interface JWK {
   /**
@@ -66,7 +66,7 @@ export interface JWK {
 
 /**
  * Request to refresh an access token
- @property refreshToken (string) - Refresh token used to generate a new access token
+ @property refreshToken (`string`) - Refresh token used to generate a new access token
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b*/
 export interface RefreshTokenRequest {
@@ -81,8 +81,8 @@ export interface RefreshTokenRequest {
 
 /**
  * 
- @property refreshToken (string) - Refresh token for the current session
- @property all? (boolean) - Sign out from all connected devices*/
+ @property refreshToken (`string`) - Refresh token for the current session
+ @property all? (`boolean`) - Sign out from all connected devices*/
 export interface SignOutSchema {
   /**
    * Refresh token for the current session
@@ -97,9 +97,9 @@ export interface SignOutSchema {
 
 /**
  * 
- @property expiresAt (string) - Expiration date of the PAT
+ @property expiresAt (`string`) - Expiration date of the PAT
     *    Format - date-time
- @property metadata? (Record<string, unknown>) - 
+ @property metadata? (`Record<string, unknown>`) - 
     *    Example - `{"name":"my-pat","used-by":"my-app-cli"}`*/
 export interface CreatePATRequest {
   /**
@@ -117,10 +117,10 @@ export interface CreatePATRequest {
 
 /**
  * 
- @property id (string) - ID of the PAT
+ @property id (`string`) - ID of the PAT
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
- @property personalAccessToken (string) - PAT
+ @property personalAccessToken (`string`) - PAT
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b*/
 export interface CreatePATResponse {
@@ -147,11 +147,11 @@ export type ErrorResponseError = "default-role-must-be-in-allowed-roles" | "disa
 
 /**
  * Standardized error response
- @property status (number) - HTTP status error code
+ @property status (`number`) - HTTP status error code
     *    Example - `400`
- @property message (string) - Human-friendly error message
+ @property message (`string`) - Human-friendly error message
     *    Example - `"Invalid email format"`
- @property error (ErrorResponseError) - Error code identifying the specific application error*/
+ @property error (`ErrorResponseError`) - Error code identifying the specific application error*/
 export interface ErrorResponse {
   /**
    * HTTP status error code
@@ -172,8 +172,8 @@ export interface ErrorResponse {
 
 /**
  * Response for email-password authentication that may include a session or MFA challenge
- @property session? (Session) - User authentication session containing tokens and user information
- @property mfa? (MFAChallengePayload) - Challenge payload for multi-factor authentication*/
+ @property session? (`Session`) - User authentication session containing tokens and user information
+ @property mfa? (`MFAChallengePayload`) - Challenge payload for multi-factor authentication*/
 export interface SignInEmailPasswordResponse {
   /**
    * User authentication session containing tokens and user information
@@ -188,7 +188,7 @@ export interface SignInEmailPasswordResponse {
 
 /**
  * Challenge payload for multi-factor authentication
- @property ticket (string) - Ticket to use when completing the MFA challenge
+ @property ticket (`string`) - Ticket to use when completing the MFA challenge
     *    Example - `"mfaTotp:abc123def456"`*/
 export interface MFAChallengePayload {
   /**
@@ -201,7 +201,7 @@ export interface MFAChallengePayload {
 
 /**
  * Container for session information
- @property session? (Session) - User authentication session containing tokens and user information*/
+ @property session? (`Session`) - User authentication session containing tokens and user information*/
 export interface SessionPayload {
   /**
    * User authentication session containing tokens and user information
@@ -212,18 +212,18 @@ export interface SessionPayload {
 
 /**
  * User authentication session containing tokens and user information
- @property accessToken (string) - JWT token for authenticating API requests
+ @property accessToken (`string`) - JWT token for authenticating API requests
     *    Example - `"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
- @property accessTokenExpiresIn (number) - Expiration time of the access token in seconds
+ @property accessTokenExpiresIn (`number`) - Expiration time of the access token in seconds
     *    Example - `900`
     *    Format - int64
- @property refreshTokenId (string) - Identifier for the refresh token
+ @property refreshTokenId (`string`) - Identifier for the refresh token
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
- @property refreshToken (string) - Token used to refresh the access token
+ @property refreshToken (`string`) - Token used to refresh the access token
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
- @property user? (User) - User profile and account information*/
+ @property user? (`User`) - User profile and account information*/
 export interface Session {
   /**
    * JWT token for authenticating API requests
@@ -257,7 +257,7 @@ export interface Session {
 
 /**
  * 
- @property personalAccessToken (string) - PAT
+ @property personalAccessToken (`string`) - PAT
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b*/
 export interface SignInPATRequest {
@@ -272,36 +272,36 @@ export interface SignInPATRequest {
 
 /**
  * User profile and account information
- @property avatarUrl (string) - URL to the user's profile picture
+ @property avatarUrl (`string`) - URL to the user's profile picture
     *    Example - `"https://myapp.com/avatars/user123.jpg"`
- @property createdAt (string) - Timestamp when the user account was created
+ @property createdAt (`string`) - Timestamp when the user account was created
     *    Example - `"2023-01-15T12:34:56Z"`
     *    Format - date-time
- @property defaultRole (string) - Default authorization role for the user
+ @property defaultRole (`string`) - Default authorization role for the user
     *    Example - `"user"`
- @property displayName (string) - User's display name
+ @property displayName (`string`) - User's display name
     *    Example - `"John Smith"`
- @property email? (string) - User's email address
+ @property email? (`string`) - User's email address
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property emailVerified (boolean) - Whether the user's email has been verified
+ @property emailVerified (`boolean`) - Whether the user's email has been verified
     *    Example - `true`
- @property id (string) - Unique identifier for the user
+ @property id (`string`) - Unique identifier for the user
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
- @property isAnonymous (boolean) - Whether this is an anonymous user account
+ @property isAnonymous (`boolean`) - Whether this is an anonymous user account
     *    Example - `false`
- @property locale (string) - User's preferred locale (language code)
+ @property locale (`string`) - User's preferred locale (language code)
     *    Example - `"en"`
     *    MinLength - 2
     *    MaxLength - 2
- @property metadata (Record<string, unknown>) - Custom metadata associated with the user
+ @property metadata (`Record<string, unknown>`) - Custom metadata associated with the user
     *    Example - `{"firstName":"John","lastName":"Smith"}`
- @property phoneNumber? (string) - User's phone number
+ @property phoneNumber? (`string`) - User's phone number
     *    Example - `"+12025550123"`
- @property phoneNumberVerified (boolean) - Whether the user's phone number has been verified
+ @property phoneNumberVerified (`boolean`) - Whether the user's phone number has been verified
     *    Example - `false`
- @property roles (string[]) - List of roles assigned to the user
+ @property roles (`string[]`) - List of roles assigned to the user
     *    Example - `["user","customer"]`*/
 export interface User {
   /**
@@ -385,16 +385,16 @@ export type UserDeanonymizeRequestSignInMethod = "email-password" | "passwordles
 
 /**
  * 
- @property signInMethod (UserDeanonymizeRequestSignInMethod) - Which sign-in method to use
- @property email (string) - A valid email
+ @property signInMethod (`UserDeanonymizeRequestSignInMethod`) - Which sign-in method to use
+ @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property password? (string) - A password of minimum 3 characters
+ @property password? (`string`) - A password of minimum 3 characters
     *    Example - `"Str0ngPassw#ord-94|%"`
     *    MinLength - 3
     *    MaxLength - 50
- @property connection? (string) - Deprecated, will be ignored
- @property options? (SignUpOptions) - */
+ @property connection? (`string`) - Deprecated, will be ignored
+ @property options? (`SignUpOptions`) - */
 export interface UserDeanonymizeRequest {
   /**
    * Which sign-in method to use
@@ -426,10 +426,10 @@ export interface UserDeanonymizeRequest {
 
 /**
  * 
- @property newEmail (string) - A valid email
+ @property newEmail (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property options? (OptionsRedirectTo) - */
+ @property options? (`OptionsRedirectTo`) - */
 export interface UserEmailChangeRequest {
   /**
    * A valid email
@@ -446,10 +446,10 @@ export interface UserEmailChangeRequest {
 
 /**
  * 
- @property email (string) - A valid email
+ @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property options? (OptionsRedirectTo) - */
+ @property options? (`OptionsRedirectTo`) - */
 export interface UserEmailSendVerificationEmailRequest {
   /**
    * A valid email
@@ -466,10 +466,10 @@ export interface UserEmailSendVerificationEmailRequest {
 
 /**
  * 
- @property email (string) - A valid email
+ @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property options? (OptionsRedirectTo) - */
+ @property options? (`OptionsRedirectTo`) - */
 export interface UserPasswordResetRequest {
   /**
    * A valid email
@@ -486,11 +486,11 @@ export interface UserPasswordResetRequest {
 
 /**
  * 
- @property newPassword (string) - A password of minimum 3 characters
+ @property newPassword (`string`) - A password of minimum 3 characters
     *    Example - `"Str0ngPassw#ord-94|%"`
     *    MinLength - 3
     *    MaxLength - 50
- @property ticket? (string) - Ticket to reset the password, required if the user is not authenticated
+ @property ticket? (`string`) - Ticket to reset the password, required if the user is not authenticated
     *    Pattern - ^passwordReset\:.*$*/
 export interface UserPasswordRequest {
   /**
@@ -516,7 +516,7 @@ export type OKResponse = "OK";
 
 /**
  * 
- @property redirectTo? (string) - 
+ @property redirectTo? (`string`) - 
     *    Example - `"https://my-app.com/catch-redirection"`
     *    Format - uri*/
 export interface OptionsRedirectTo {
@@ -531,13 +531,13 @@ export interface OptionsRedirectTo {
 
 /**
  * 
- @property displayName? (string) - 
+ @property displayName? (`string`) - 
     *    Example - `"John Smith"`
- @property locale? (string) - A two-characters locale
+ @property locale? (`string`) - A two-characters locale
     *    Example - `"en"`
     *    MinLength - 2
     *    MaxLength - 2
- @property metadata? (Record<string, unknown>) - 
+ @property metadata? (`Record<string, unknown>`) - 
     *    Example - `{"firstName":"John","lastName":"Smith"}`*/
 export interface SignInAnonymousRequest {
   /**
@@ -562,10 +562,10 @@ export interface SignInAnonymousRequest {
 
 /**
  * Request to authenticate using email and password
- @property email (string) - User's email address
+ @property email (`string`) - User's email address
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property password (string) - User's password
+ @property password (`string`) - User's password
     *    Example - `"Str0ngPassw#ord-94|%"`
     *    MinLength - 3
     *    MaxLength - 50*/
@@ -588,10 +588,10 @@ export interface SignInEmailPasswordRequest {
 
 /**
  * 
- @property email (string) - A valid email
+ @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property options? (SignUpOptions) - */
+ @property options? (`SignUpOptions`) - */
 export interface SignInPasswordlessEmailRequest {
   /**
    * A valid email
@@ -608,10 +608,10 @@ export interface SignInPasswordlessEmailRequest {
 
 /**
  * 
- @property email (string) - A valid email
+ @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property options? (SignUpOptions) - */
+ @property options? (`SignUpOptions`) - */
 export interface SignInOTPEmailRequest {
   /**
    * A valid email
@@ -628,8 +628,8 @@ export interface SignInOTPEmailRequest {
 
 /**
  * 
- @property otp (string) - One time password
- @property email (string) - A valid email
+ @property otp (`string`) - One time password
+ @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email*/
 export interface SignInOTPEmailVerifyRequest {
@@ -648,7 +648,7 @@ export interface SignInOTPEmailVerifyRequest {
 
 /**
  * 
- @property session? (Session) - User authentication session containing tokens and user information*/
+ @property session? (`Session`) - User authentication session containing tokens and user information*/
 export interface SignInOTPEmailVerifyResponse {
   /**
    * User authentication session containing tokens and user information
@@ -659,14 +659,14 @@ export interface SignInOTPEmailVerifyResponse {
 
 /**
  * Request to register a new user with email and password
- @property email (string) - Email address for the new user account
+ @property email (`string`) - Email address for the new user account
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property password (string) - Password for the new user account
+ @property password (`string`) - Password for the new user account
     *    Example - `"Str0ngPassw#ord-94|%"`
     *    MinLength - 3
     *    MaxLength - 50
- @property options? (SignUpOptions) - */
+ @property options? (`SignUpOptions`) - */
 export interface SignUpEmailPasswordRequest {
   /**
    * Email address for the new user account
@@ -690,21 +690,21 @@ export interface SignUpEmailPasswordRequest {
 
 /**
  * 
- @property allowedRoles? (string[]) - 
+ @property allowedRoles? (`string[]`) - 
     *    Example - `["me","user"]`
- @property defaultRole? (string) - 
+ @property defaultRole? (`string`) - 
     *    Example - `"user"`
- @property displayName? (string) - 
+ @property displayName? (`string`) - 
     *    Example - `"John Smith"`
     *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
     *    MaxLength - 32
- @property locale? (string) - A two-characters locale
+ @property locale? (`string`) - A two-characters locale
     *    Example - `"en"`
     *    MinLength - 2
     *    MaxLength - 2
- @property metadata? (Record<string, unknown>) - 
+ @property metadata? (`Record<string, unknown>`) - 
     *    Example - `{"firstName":"John","lastName":"Smith"}`
- @property redirectTo? (string) - 
+ @property redirectTo? (`string`) - 
     *    Example - `"https://my-app.com/catch-redirection"`
     *    Format - uri*/
 export interface SignUpOptions {
@@ -748,7 +748,7 @@ export interface SignUpOptions {
 
 /**
  * 
- @property email? (string) - A valid email
+ @property email? (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email*/
 export interface SignInWebauthnRequest {
@@ -763,10 +763,10 @@ export interface SignInWebauthnRequest {
 
 /**
  * 
- @property email (string) - A valid email
+ @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property options? (SignUpOptions) - */
+ @property options? (`SignUpOptions`) - */
 export interface SignUpWebauthnRequest {
   /**
    * A valid email
@@ -783,10 +783,10 @@ export interface SignUpWebauthnRequest {
 
 /**
  * 
- @property email? (string) - A valid email. Deprecated, no longer used
+ @property email? (`string`) - A valid email. Deprecated, no longer used
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property credential (Record<string, unknown>) - */
+ @property credential (`Record<string, unknown>`) - */
 export interface SignInWebauthnVerifyRequest {
   /**
    * A valid email. Deprecated, no longer used
@@ -803,10 +803,10 @@ export interface SignInWebauthnVerifyRequest {
 
 /**
  * 
- @property provider (IdTokenProvider) - 
- @property idToken (string) - Apple ID token
- @property nonce? (string) - Nonce used during sign in process
- @property options? (SignUpOptions) - */
+ @property provider (`IdTokenProvider`) - 
+ @property idToken (`string`) - Apple ID token
+ @property nonce? (`string`) - Nonce used during sign in process
+ @property options? (`SignUpOptions`) - */
 export interface SignInIdTokenRequest {
   /**
    * 
@@ -829,9 +829,9 @@ export interface SignInIdTokenRequest {
 
 /**
  * 
- @property ticket (string) - Ticket
+ @property ticket (`string`) - Ticket
     *    Pattern - ^mfaTotp:.*$
- @property otp (string) - One time password*/
+ @property otp (`string`) - One time password*/
 export interface SignInMfaTotpRequest {
   /**
    * Ticket
@@ -853,9 +853,9 @@ export type IdTokenProvider = "apple" | "google";
 
 /**
  * 
- @property provider (IdTokenProvider) - 
- @property idToken (string) - Apple ID token
- @property nonce? (string) - Nonce used during sign in process*/
+ @property provider (`IdTokenProvider`) - 
+ @property idToken (`string`) - Apple ID token
+ @property nonce? (`string`) - Nonce used during sign in process*/
 export interface LinkIdTokenRequest {
   /**
    * 
@@ -880,9 +880,9 @@ export type UserMfaRequestActiveMfaType = "totp" | "";
 
 /**
  * Request to activate or deactivate multi-factor authentication
- @property code (string) - Verification code from the authenticator app when activating MFA
+ @property code (`string`) - Verification code from the authenticator app when activating MFA
     *    Example - `"123456"`
- @property activeMfaType? (UserMfaRequestActiveMfaType) - Type of MFA to activate. Use empty string to disable MFA.
+ @property activeMfaType? (`UserMfaRequestActiveMfaType`) - Type of MFA to activate. Use empty string to disable MFA.
     *    Example - `"totp"`*/
 export interface UserMfaRequest {
   /**
@@ -900,9 +900,9 @@ export interface UserMfaRequest {
 
 /**
  * Response containing TOTP setup information for MFA
- @property imageUrl (string) - URL to QR code image for scanning with an authenticator app
+ @property imageUrl (`string`) - URL to QR code image for scanning with an authenticator app
     *    Example - `"data:image/png;base64,iVBORw0KGg..."`
- @property totpSecret (string) - TOTP secret key for manual setup with an authenticator app
+ @property totpSecret (`string`) - TOTP secret key for manual setup with an authenticator app
     *    Example - `"ABCDEFGHIJK23456"`*/
 export interface TotpGenerateResponse {
   /**
@@ -944,7 +944,7 @@ export type RedirectToQuery = string;
 
 /**
  * 
- @property version (string) - The version of the authentication service
+ @property version (`string`) - The version of the authentication service
     *    Example - `"1.2.3"`*/
 export interface GetVersionResponse200 {
   /**

@@ -64,6 +64,13 @@ baseURL: string;
 deleteFile(id: string, options?: RequestInit): Promise<FetchResponse<void>>;
 ```
 
+Summary: Delete file
+Permanently delete a file from storage. This removes both the file content and its associated metadata.
+This method may return different T based on the response code:
+
+- 204: void
+- 400: ErrorResponse
+
 ###### Parameters
 
 | Parameter  | Type          |
@@ -83,6 +90,15 @@ getFile(
    params?: GetFileParams,
    options?: RequestInit): Promise<FetchResponse<Blob>>;
 ```
+
+Summary: Download file
+Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
+This method may return different T based on the response code:
+
+- 200: void
+- 304: void
+- 400: void
+- 412: void
 
 ###### Parameters
 
@@ -105,6 +121,15 @@ getFileMetadataHeaders(
    options?: RequestInit): Promise<FetchResponse<void>>;
 ```
 
+Summary: Check file information
+Retrieve file metadata headers without downloading the file content. Supports conditional requests and provides caching information.
+This method may return different T based on the response code:
+
+- 200: void
+- 304: void
+- 400: void
+- 412: void
+
 ###### Parameters
 
 | Parameter  | Type                                                            |
@@ -122,6 +147,12 @@ getFileMetadataHeaders(
 ```ts
 getVersion(options?: RequestInit): Promise<FetchResponse<VersionInformation>>;
 ```
+
+Summary: Get service version information
+Retrieves build and version information about the storage service. Useful for monitoring and debugging.
+This method may return different T based on the response code:
+
+- 200: VersionInformation
 
 ###### Parameters
 
@@ -158,6 +189,20 @@ replaceFile(
    options?: RequestInit): Promise<FetchResponse<FileMetadata>>;
 ```
 
+Summary: Replace file
+Replace an existing file with new content while preserving the file ID. The operation follows these steps:
+
+1. The isUploaded flag is set to false to mark the file as being updated
+2. The file content is replaced in the storage backend
+3. File metadata is updated (size, mime-type, isUploaded, etc.)
+
+Each step is atomic, but if a step fails, previous steps will not be automatically rolled back.
+
+This method may return different T based on the response code:
+
+- 200: FileMetadata
+- 400: ErrorResponse
+
 ###### Parameters
 
 | Parameter  | Type                                  |
@@ -175,6 +220,13 @@ replaceFile(
 ```ts
 uploadFiles(body: UploadFilesBody, options?: RequestInit): Promise<FetchResponse<UploadFilesResponse201>>;
 ```
+
+Summary: Upload files
+Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
+This method may return different T based on the response code:
+
+- 201: UploadFilesResponse201
+- 400: ErrorResponse
 
 ###### Parameters
 
@@ -217,7 +269,7 @@ Error details.
 message: string;
 ```
 
-Human-readable error message.
+(string) - Human-readable error message.
 
 - Example - `"File not found"`
 
@@ -236,8 +288,7 @@ optional bucketId: string;
 ```
 
 ID of the bucket containing the file.
-
-- Example - `"users-bucket"`
+Example - `"users-bucket"`
 
 ##### createdAt?
 
@@ -246,9 +297,8 @@ optional createdAt: string;
 ```
 
 Timestamp when the file was created.
-
-- Example - `"2023-01-15T12:34:56Z"`
-- Format - date-time
+Example - `"2023-01-15T12:34:56Z"`
+Format - date-time
 
 ##### etag?
 
@@ -257,8 +307,7 @@ optional etag: string;
 ```
 
 Entity tag for cache validation.
-
-- Example - `"\"a1b2c3d4e5f6\""`
+Example - `"\"a1b2c3d4e5f6\""`
 
 ##### id?
 
@@ -267,8 +316,7 @@ optional id: string;
 ```
 
 Unique identifier for the file.
-
-- Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
 
 ##### isUploaded?
 
@@ -277,8 +325,7 @@ optional isUploaded: boolean;
 ```
 
 Whether the file has been successfully uploaded.
-
-- Example - `true`
+Example - `true`
 
 ##### metadata?
 
@@ -287,8 +334,7 @@ optional metadata: Record<string, unknown>;
 ```
 
 Custom metadata associated with the file.
-
-- Example - `{"alt":"Profile picture","category":"avatar"}`
+Example - `{"alt":"Profile picture","category":"avatar"}`
 
 ##### mimeType?
 
@@ -297,8 +343,7 @@ optional mimeType: string;
 ```
 
 MIME type of the file.
-
-- Example - `"image/jpeg"`
+Example - `"image/jpeg"`
 
 ##### name?
 
@@ -307,8 +352,7 @@ optional name: string;
 ```
 
 Name of the file including extension.
-
-- Example - `"profile-picture.jpg"`
+Example - `"profile-picture.jpg"`
 
 ##### size?
 
@@ -317,8 +361,7 @@ optional size: number;
 ```
 
 Size of the file in bytes.
-
-- Example - `245678`
+Example - `245678`
 
 ##### updatedAt?
 
@@ -327,9 +370,8 @@ optional updatedAt: string;
 ```
 
 Timestamp when the file was last updated.
-
-- Example - `"2023-01-16T09:45:32Z"`
-- Format - date-time
+Example - `"2023-01-16T09:45:32Z"`
+Format - date-time
 
 ##### uploadedByUserId?
 
@@ -338,8 +380,7 @@ optional uploadedByUserId: string;
 ```
 
 ID of the user who uploaded the file.
-
-- Example - `"abc123def456"`
+Example - `"abc123def456"`
 
 ---
 
@@ -356,8 +397,7 @@ optional bucketId: string;
 ```
 
 ID of the bucket containing the file.
-
-- Example - `"users-bucket"`
+Example - `"users-bucket"`
 
 ##### id?
 
@@ -366,8 +406,7 @@ optional id: string;
 ```
 
 Unique identifier for the file.
-
-- Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
 
 ##### isUploaded?
 
@@ -376,8 +415,7 @@ optional isUploaded: boolean;
 ```
 
 Whether the file has been successfully uploaded.
-
-- Example - `true`
+Example - `true`
 
 ##### name?
 
@@ -386,8 +424,7 @@ optional name: string;
 ```
 
 Name of the file including extension.
-
-- Example - `"profile-picture.jpg"`
+Example - `"profile-picture.jpg"`
 
 ---
 
@@ -500,8 +537,7 @@ optional expiration: number;
 ```
 
 The time in seconds until the URL expires.
-
-- Example - `3600`
+Example - `3600`
 
 ##### url?
 
@@ -510,8 +546,7 @@ optional url: string;
 ```
 
 The presigned URL for file operations.
-
-- Example - `"https://storage.example.com/files/abc123?signature=xyz"`
+Example - `"https://storage.example.com/files/abc123?signature=xyz"`
 
 ---
 
@@ -526,8 +561,7 @@ optional file: Blob;
 ```
 
 New file content to replace the existing file
-
-- Format - binary
+Format - binary
 
 ##### metadata?
 
@@ -552,8 +586,7 @@ optional metadata: Record<string, unknown>;
 ```
 
 Updated custom metadata to associate with the file.
-
-- Example - `{"alt":"Updated image description","category":"profile"}`
+Example - `{"alt":"Updated image description","category":"profile"}`
 
 ##### name?
 
@@ -562,8 +595,7 @@ optional name: string;
 ```
 
 New name to assign to the file.
-
-- Example - `"renamed-file.jpg"`
+Example - `"renamed-file.jpg"`
 
 ---
 
@@ -580,8 +612,7 @@ optional id: string;
 ```
 
 Optional custom ID for the file. If not provided, a UUID will be generated.
-
-- Example - `"custom-id-123"`
+Example - `"custom-id-123"`
 
 ##### metadata?
 
@@ -590,8 +621,7 @@ optional metadata: Record<string, unknown>;
 ```
 
 Custom metadata to associate with the file.
-
-- Example - `{"alt":"Custom image","category":"document"}`
+Example - `{"alt":"Custom image","category":"document"}`
 
 ##### name?
 
@@ -600,8 +630,7 @@ optional name: string;
 ```
 
 Name to assign to the file. If not provided, the original filename will be used.
-
-- Example - `"custom-filename.png"`
+Example - `"custom-filename.png"`
 
 ---
 
@@ -616,8 +645,7 @@ optional bucket-id: string;
 ```
 
 Target bucket identifier where files will be stored.
-
-- Example - `"user-uploads"`
+Example - `"user-uploads"`
 
 ##### file\[\]
 
@@ -625,7 +653,7 @@ Target bucket identifier where files will be stored.
 file[]: Blob[];
 ```
 
-Array of files to upload.
+(Blob[]) - Array of files to upload.
 
 ##### metadata\[\]?
 
@@ -664,8 +692,7 @@ optional buildVersion: string;
 ```
 
 The version number of the storage service build.
-
-- Example - `"1.2.3"`
+Example - `"1.2.3"`
 
 ## Type Aliases
 

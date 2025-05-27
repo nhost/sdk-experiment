@@ -2,14 +2,17 @@
  * This file is auto-generated. Do not edit manually.
  */
 
+import { FetchError, createEnhancedFetch } from "../fetch";
+import type { ChainFunction, FetchResponse } from "../fetch";
+
 /**
  * Contains version information about the storage service.
- * @property (string) buildVersion - The version number of the storage service build.
-    *    Example - "1.2.3"*/
+ @property buildVersion? (string) - The version number of the storage service build.
+    *    Example - `"1.2.3"`*/
 export interface VersionInformation {
   /**
    * The version number of the storage service build.
-    *    Example - "1.2.3"
+    *    Example - `"1.2.3"`
    */
   buildVersion?: string,
 };
@@ -17,33 +20,33 @@ export interface VersionInformation {
 
 /**
  * Basic information about a file in storage.
- * @property (string) id - Unique identifier for the file.
-    *    Example - "d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"
- * @property (string) name - Name of the file including extension.
-    *    Example - "profile-picture.jpg"
- * @property (string) bucketId - ID of the bucket containing the file.
-    *    Example - "users-bucket"
- * @property (boolean) isUploaded - Whether the file has been successfully uploaded.
-    *    Example - true*/
+ @property id? (string) - Unique identifier for the file.
+    *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+ @property name? (string) - Name of the file including extension.
+    *    Example - `"profile-picture.jpg"`
+ @property bucketId? (string) - ID of the bucket containing the file.
+    *    Example - `"users-bucket"`
+ @property isUploaded? (boolean) - Whether the file has been successfully uploaded.
+    *    Example - `true`*/
 export interface FileSummary {
   /**
    * Unique identifier for the file.
-    *    Example - "d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"
+    *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
    */
   id?: string,
   /**
    * Name of the file including extension.
-    *    Example - "profile-picture.jpg"
+    *    Example - `"profile-picture.jpg"`
    */
   name?: string,
   /**
    * ID of the bucket containing the file.
-    *    Example - "users-bucket"
+    *    Example - `"users-bucket"`
    */
   bucketId?: string,
   /**
    * Whether the file has been successfully uploaded.
-    *    Example - true
+    *    Example - `true`
    */
   isUploaded?: boolean,
 };
@@ -51,86 +54,86 @@ export interface FileSummary {
 
 /**
  * Comprehensive metadata information about a file in storage.
- * @property (string) id - Unique identifier for the file.
-    *    Example - "d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"
- * @property (string) name - Name of the file including extension.
-    *    Example - "profile-picture.jpg"
- * @property (number) size - Size of the file in bytes.
-    *    Example - 245678
- * @property (string) bucketId - ID of the bucket containing the file.
-    *    Example - "users-bucket"
- * @property (string) etag - Entity tag for cache validation.
-    *    Example - "\"a1b2c3d4e5f6\""
- * @property (string) createdAt - Timestamp when the file was created.
-    *    Example - "2023-01-15T12:34:56Z"
+ @property id? (string) - Unique identifier for the file.
+    *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+ @property name? (string) - Name of the file including extension.
+    *    Example - `"profile-picture.jpg"`
+ @property size? (number) - Size of the file in bytes.
+    *    Example - `245678`
+ @property bucketId? (string) - ID of the bucket containing the file.
+    *    Example - `"users-bucket"`
+ @property etag? (string) - Entity tag for cache validation.
+    *    Example - `"\"a1b2c3d4e5f6\""`
+ @property createdAt? (string) - Timestamp when the file was created.
+    *    Example - `"2023-01-15T12:34:56Z"`
     *    Format - date-time
- * @property (string) updatedAt - Timestamp when the file was last updated.
-    *    Example - "2023-01-16T09:45:32Z"
+ @property updatedAt? (string) - Timestamp when the file was last updated.
+    *    Example - `"2023-01-16T09:45:32Z"`
     *    Format - date-time
- * @property (boolean) isUploaded - Whether the file has been successfully uploaded.
-    *    Example - true
- * @property (string) mimeType - MIME type of the file.
-    *    Example - "image/jpeg"
- * @property (string) uploadedByUserId - ID of the user who uploaded the file.
-    *    Example - "abc123def456"
- * @property (Record<string, unknown>) metadata - Custom metadata associated with the file.
-    *    Example - {"alt":"Profile picture","category":"avatar"}*/
+ @property isUploaded? (boolean) - Whether the file has been successfully uploaded.
+    *    Example - `true`
+ @property mimeType? (string) - MIME type of the file.
+    *    Example - `"image/jpeg"`
+ @property uploadedByUserId? (string) - ID of the user who uploaded the file.
+    *    Example - `"abc123def456"`
+ @property metadata? (Record<string, unknown>) - Custom metadata associated with the file.
+    *    Example - `{"alt":"Profile picture","category":"avatar"}`*/
 export interface FileMetadata {
   /**
    * Unique identifier for the file.
-    *    Example - "d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"
+    *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
    */
   id?: string,
   /**
    * Name of the file including extension.
-    *    Example - "profile-picture.jpg"
+    *    Example - `"profile-picture.jpg"`
    */
   name?: string,
   /**
    * Size of the file in bytes.
-    *    Example - 245678
+    *    Example - `245678`
    */
   size?: number,
   /**
    * ID of the bucket containing the file.
-    *    Example - "users-bucket"
+    *    Example - `"users-bucket"`
    */
   bucketId?: string,
   /**
    * Entity tag for cache validation.
-    *    Example - "\"a1b2c3d4e5f6\""
+    *    Example - `"\"a1b2c3d4e5f6\""`
    */
   etag?: string,
   /**
    * Timestamp when the file was created.
-    *    Example - "2023-01-15T12:34:56Z"
+    *    Example - `"2023-01-15T12:34:56Z"`
     *    Format - date-time
    */
   createdAt?: string,
   /**
    * Timestamp when the file was last updated.
-    *    Example - "2023-01-16T09:45:32Z"
+    *    Example - `"2023-01-16T09:45:32Z"`
     *    Format - date-time
    */
   updatedAt?: string,
   /**
    * Whether the file has been successfully uploaded.
-    *    Example - true
+    *    Example - `true`
    */
   isUploaded?: boolean,
   /**
    * MIME type of the file.
-    *    Example - "image/jpeg"
+    *    Example - `"image/jpeg"`
    */
   mimeType?: string,
   /**
    * ID of the user who uploaded the file.
-    *    Example - "abc123def456"
+    *    Example - `"abc123def456"`
    */
   uploadedByUserId?: string,
   /**
    * Custom metadata associated with the file.
-    *    Example - {"alt":"Profile picture","category":"avatar"}
+    *    Example - `{"alt":"Profile picture","category":"avatar"}`
    */
   metadata?: Record<string, unknown>,
 };
@@ -138,26 +141,26 @@ export interface FileMetadata {
 
 /**
  * Metadata provided when uploading a new file.
- * @property (string) id - Optional custom ID for the file. If not provided, a UUID will be generated.
-    *    Example - "custom-id-123"
- * @property (string) name - Name to assign to the file. If not provided, the original filename will be used.
-    *    Example - "custom-filename.png"
- * @property (Record<string, unknown>) metadata - Custom metadata to associate with the file.
-    *    Example - {"alt":"Custom image","category":"document"}*/
+ @property id? (string) - Optional custom ID for the file. If not provided, a UUID will be generated.
+    *    Example - `"custom-id-123"`
+ @property name? (string) - Name to assign to the file. If not provided, the original filename will be used.
+    *    Example - `"custom-filename.png"`
+ @property metadata? (Record<string, unknown>) - Custom metadata to associate with the file.
+    *    Example - `{"alt":"Custom image","category":"document"}`*/
 export interface UploadFileMetadata {
   /**
    * Optional custom ID for the file. If not provided, a UUID will be generated.
-    *    Example - "custom-id-123"
+    *    Example - `"custom-id-123"`
    */
   id?: string,
   /**
    * Name to assign to the file. If not provided, the original filename will be used.
-    *    Example - "custom-filename.png"
+    *    Example - `"custom-filename.png"`
    */
   name?: string,
   /**
    * Custom metadata to associate with the file.
-    *    Example - {"alt":"Custom image","category":"document"}
+    *    Example - `{"alt":"Custom image","category":"document"}`
    */
   metadata?: Record<string, unknown>,
 };
@@ -165,19 +168,19 @@ export interface UploadFileMetadata {
 
 /**
  * Metadata that can be updated for an existing file.
- * @property (string) name - New name to assign to the file.
-    *    Example - "renamed-file.jpg"
- * @property (Record<string, unknown>) metadata - Updated custom metadata to associate with the file.
-    *    Example - {"alt":"Updated image description","category":"profile"}*/
+ @property name? (string) - New name to assign to the file.
+    *    Example - `"renamed-file.jpg"`
+ @property metadata? (Record<string, unknown>) - Updated custom metadata to associate with the file.
+    *    Example - `{"alt":"Updated image description","category":"profile"}`*/
 export interface UpdateFileMetadata {
   /**
    * New name to assign to the file.
-    *    Example - "renamed-file.jpg"
+    *    Example - `"renamed-file.jpg"`
    */
   name?: string,
   /**
    * Updated custom metadata to associate with the file.
-    *    Example - {"alt":"Updated image description","category":"profile"}
+    *    Example - `{"alt":"Updated image description","category":"profile"}`
    */
   metadata?: Record<string, unknown>,
 };
@@ -185,12 +188,12 @@ export interface UpdateFileMetadata {
 
 /**
  * Error details.
- * @property (string) message - Human-readable error message.
-    *    Example - "File not found"*/
+ @property message (string) - Human-readable error message.
+    *    Example - `"File not found"`*/
 export interface ErrorResponseError {
   /**
    * Human-readable error message.
-    *    Example - "File not found"
+    *    Example - `"File not found"`
    */
   message: string,
 };
@@ -198,7 +201,7 @@ export interface ErrorResponseError {
 
 /**
  * Error information returned by the API.
- * @property (ErrorResponseError) error - Error details.*/
+ @property error? (ErrorResponseError) - Error details.*/
 export interface ErrorResponse {
   /**
    * Error details.
@@ -209,13 +212,13 @@ export interface ErrorResponse {
 
 /**
  * Request to refresh an access token
- * @property (string) refreshToken - Refresh token used to generate a new access token
-    *    Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+ @property refreshToken (string) - Refresh token used to generate a new access token
+    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b*/
 export interface RefreshTokenRequest {
   /**
    * Refresh token used to generate a new access token
-    *    Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
   refreshToken: string,
@@ -224,39 +227,39 @@ export interface RefreshTokenRequest {
 
 /**
  * User authentication session containing tokens and user information
- * @property (string) accessToken - JWT token for authenticating API requests
-    *    Example - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
- * @property (number) accessTokenExpiresIn - Expiration time of the access token in seconds
-    *    Example - 900
+ @property accessToken (string) - JWT token for authenticating API requests
+    *    Example - `"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
+ @property accessTokenExpiresIn (number) - Expiration time of the access token in seconds
+    *    Example - `900`
     *    Format - int64
- * @property (string) refreshTokenId - Identifier for the refresh token
-    *    Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+ @property refreshTokenId (string) - Identifier for the refresh token
+    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
- * @property (string) refreshToken - Token used to refresh the access token
-    *    Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+ @property refreshToken (string) - Token used to refresh the access token
+    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
- * @property (User) user - User profile and account information*/
+ @property user? (User) - User profile and account information*/
 export interface Session {
   /**
    * JWT token for authenticating API requests
-    *    Example - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    *    Example - `"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
    */
   accessToken: string,
   /**
    * Expiration time of the access token in seconds
-    *    Example - 900
+    *    Example - `900`
     *    Format - int64
    */
   accessTokenExpiresIn: number,
   /**
    * Identifier for the refresh token
-    *    Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
   refreshTokenId: string,
   /**
    * Token used to refresh the access token
-    *    Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
   refreshToken: string,
@@ -269,106 +272,106 @@ export interface Session {
 
 /**
  * User profile and account information
- * @property (string) avatarUrl - URL to the user's profile picture
-    *    Example - "https://myapp.com/avatars/user123.jpg"
- * @property (string) createdAt - Timestamp when the user account was created
-    *    Example - "2023-01-15T12:34:56Z"
+ @property avatarUrl (string) - URL to the user's profile picture
+    *    Example - `"https://myapp.com/avatars/user123.jpg"`
+ @property createdAt (string) - Timestamp when the user account was created
+    *    Example - `"2023-01-15T12:34:56Z"`
     *    Format - date-time
- * @property (string) defaultRole - Default authorization role for the user
-    *    Example - "user"
- * @property (string) displayName - User's display name
-    *    Example - "John Smith"
- * @property (string) email - User's email address
-    *    Example - "john.smith@nhost.io"
+ @property defaultRole (string) - Default authorization role for the user
+    *    Example - `"user"`
+ @property displayName (string) - User's display name
+    *    Example - `"John Smith"`
+ @property email? (string) - User's email address
+    *    Example - `"john.smith@nhost.io"`
     *    Format - email
- * @property (boolean) emailVerified - Whether the user's email has been verified
-    *    Example - true
- * @property (string) id - Unique identifier for the user
-    *    Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+ @property emailVerified (boolean) - Whether the user's email has been verified
+    *    Example - `true`
+ @property id (string) - Unique identifier for the user
+    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
- * @property (boolean) isAnonymous - Whether this is an anonymous user account
-    *    Example - false
- * @property (string) locale - User's preferred locale (language code)
-    *    Example - "en"
+ @property isAnonymous (boolean) - Whether this is an anonymous user account
+    *    Example - `false`
+ @property locale (string) - User's preferred locale (language code)
+    *    Example - `"en"`
     *    MinLength - 2
     *    MaxLength - 2
- * @property (Record<string, unknown>) metadata - Custom metadata associated with the user
-    *    Example - {"firstName":"John","lastName":"Smith"}
- * @property (string) phoneNumber - User's phone number
-    *    Example - "+12025550123"
- * @property (boolean) phoneNumberVerified - Whether the user's phone number has been verified
-    *    Example - false
- * @property (string[]) roles - List of roles assigned to the user
-    *    Example - ["user","customer"]*/
+ @property metadata (Record<string, unknown>) - Custom metadata associated with the user
+    *    Example - `{"firstName":"John","lastName":"Smith"}`
+ @property phoneNumber? (string) - User's phone number
+    *    Example - `"+12025550123"`
+ @property phoneNumberVerified (boolean) - Whether the user's phone number has been verified
+    *    Example - `false`
+ @property roles (string[]) - List of roles assigned to the user
+    *    Example - `["user","customer"]`*/
 export interface User {
   /**
    * URL to the user's profile picture
-    *    Example - "https://myapp.com/avatars/user123.jpg"
+    *    Example - `"https://myapp.com/avatars/user123.jpg"`
    */
   avatarUrl: string,
   /**
    * Timestamp when the user account was created
-    *    Example - "2023-01-15T12:34:56Z"
+    *    Example - `"2023-01-15T12:34:56Z"`
     *    Format - date-time
    */
   createdAt: string,
   /**
    * Default authorization role for the user
-    *    Example - "user"
+    *    Example - `"user"`
    */
   defaultRole: string,
   /**
    * User's display name
-    *    Example - "John Smith"
+    *    Example - `"John Smith"`
    */
   displayName: string,
   /**
    * User's email address
-    *    Example - "john.smith@nhost.io"
+    *    Example - `"john.smith@nhost.io"`
     *    Format - email
    */
   email?: string,
   /**
    * Whether the user's email has been verified
-    *    Example - true
+    *    Example - `true`
    */
   emailVerified: boolean,
   /**
    * Unique identifier for the user
-    *    Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
   id: string,
   /**
    * Whether this is an anonymous user account
-    *    Example - false
+    *    Example - `false`
    */
   isAnonymous: boolean,
   /**
    * User's preferred locale (language code)
-    *    Example - "en"
+    *    Example - `"en"`
     *    MinLength - 2
     *    MaxLength - 2
    */
   locale: string,
   /**
    * Custom metadata associated with the user
-    *    Example - {"firstName":"John","lastName":"Smith"}
+    *    Example - `{"firstName":"John","lastName":"Smith"}`
    */
   metadata: Record<string, unknown>,
   /**
    * User's phone number
-    *    Example - "+12025550123"
+    *    Example - `"+12025550123"`
    */
   phoneNumber?: string,
   /**
    * Whether the user's phone number has been verified
-    *    Example - false
+    *    Example - `false`
    */
   phoneNumberVerified: boolean,
   /**
    * List of roles assigned to the user
-    *    Example - ["user","customer"]
+    *    Example - `["user","customer"]`
    */
   roles: string[],
 };
@@ -453,15 +456,15 @@ export type RedirectToQuery = string;
 
 
 /**
- *
- * @property (string) "bucket-id" - Target bucket identifier where files will be stored.
-    *    Example - "user-uploads"
- * @property (FileMetadata[]) "metadata[]" - Optional custom metadata for each uploaded file. Must match the order of the file[] array.
- * @property (Blob[]) "file[]" - Array of files to upload.*/
+ * 
+ @property bucket-id? (string) - Target bucket identifier where files will be stored.
+    *    Example - `"user-uploads"`
+ @property metadata[]? (FileMetadata[]) - Optional custom metadata for each uploaded file. Must match the order of the file[] array.
+ @property file[] (Blob[]) - Array of files to upload.*/
 export interface UploadFilesBody {
   /**
    * Target bucket identifier where files will be stored.
-    *    Example - "user-uploads"
+    *    Example - `"user-uploads"`
    */
   "bucket-id"?: string,
   /**
@@ -476,8 +479,8 @@ export interface UploadFilesBody {
 
 
 /**
- *
- * @property (FileMetadata[]) processedFiles - List of successfully processed files with their metadata.*/
+ * 
+ @property processedFiles? (FileMetadata[]) - List of successfully processed files with their metadata.*/
 export interface UploadFilesResponse201 {
   /**
    * List of successfully processed files with their metadata.
@@ -487,9 +490,9 @@ export interface UploadFilesResponse201 {
 
 
 /**
- *
- * @property (UpdateFileMetadata) metadata - Metadata that can be updated for an existing file.
- * @property (Blob) file - New file content to replace the existing file
+ * 
+ @property metadata? (UpdateFileMetadata) - Metadata that can be updated for an existing file.
+ @property file (Blob) - New file content to replace the existing file
     *    Format - binary*/
 export interface ReplaceFileBody {
   /**
@@ -505,100 +508,100 @@ export interface ReplaceFileBody {
 
 /**
  * Parameters for the getFileMetadataHeaders method.
-    * @param q -
+    @property q? (ImageQuality) - 
     *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
-    * @param h -
+    @property h? (MaxHeight) - 
     *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-    * @param w -
+    @property w? (MaxWidth) - 
     *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-    * @param b -
+    @property b? (BlurSigma) - 
     *    Blur the image using this sigma value. Only applies to image files
-    * @param f -
+    @property f? (OutputFormat) - 
     *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.*/
 export interface GetFileMetadataHeadersParams {
   /**
-   *
+   * 
     *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
    */
-  q: ImageQuality;
+  q?: ImageQuality;
   /**
-   *
+   * 
     *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
    */
-  h: MaxHeight;
+  h?: MaxHeight;
   /**
-   *
+   * 
     *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
    */
-  w: MaxWidth;
+  w?: MaxWidth;
   /**
-   *
+   * 
     *    Blur the image using this sigma value. Only applies to image files
    */
-  b: BlurSigma;
+  b?: BlurSigma;
   /**
-   *
+   * 
     *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.
    */
-  f: OutputFormat;
+  f?: OutputFormat;
 }
 /**
  * Parameters for the getFile method.
-    * @param q -
+    @property q? (ImageQuality) - 
     *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
-    * @param h -
+    @property h? (MaxHeight) - 
     *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-    * @param w -
+    @property w? (MaxWidth) - 
     *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-    * @param b -
+    @property b? (BlurSigma) - 
     *    Blur the image using this sigma value. Only applies to image files
-    * @param f -
+    @property f? (OutputFormat) - 
     *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.*/
 export interface GetFileParams {
   /**
-   *
+   * 
     *    Image quality (1-100). Only applies to JPEG, WebP and PNG files
    */
-  q: ImageQuality;
+  q?: ImageQuality;
   /**
-   *
+   * 
     *    Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
    */
-  h: MaxHeight;
+  h?: MaxHeight;
   /**
-   *
+   * 
     *    Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
    */
-  w: MaxWidth;
+  w?: MaxWidth;
   /**
-   *
+   * 
     *    Blur the image using this sigma value. Only applies to image files
    */
-  b: BlurSigma;
+  b?: BlurSigma;
   /**
-   *
+   * 
     *    Format to convert the image to. If 'auto', the format is determined based on the Accept header.
    */
-  f: OutputFormat;
+  f?: OutputFormat;
 }
 /**
  * Parameters for the verifyTicket method.
-    * @param ticket - Ticket
-
+    @property ticket (TicketQuery) - Ticket
+  
     *    Ticket
-    * @param redirectTo - Target URL for the redirect
-
+    @property redirectTo (RedirectToQuery) - Target URL for the redirect
+  
     *    Target URL for the redirect*/
 export interface VerifyTicketParams {
   /**
    * Ticket
-
+  
     *    Ticket
    */
   ticket: TicketQuery;
   /**
    * Target URL for the redirect
-
+  
     *    Target URL for the redirect
    */
   redirectTo: RedirectToQuery;
@@ -608,39 +611,102 @@ export interface VerifyTicketParams {
 export interface Client {
   baseURL: string;
   pushChainFunction(chainFunction: ChainFunction): void;
+    /**
+     Summary: Refresh access token
+     Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued.
+
+     This method may return different T based on the response code:
+     - 200: Session
+     */
   refreshToken(
     body: RefreshTokenRequest,
     options?: RequestInit,
-  ): Promise<Session>;
+  ): Promise<FetchResponse<Session>>;
 
+    /**
+     Summary: Upload files
+     Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
+
+     This method may return different T based on the response code:
+     - 201: UploadFilesResponse201
+     - 400: ErrorResponse
+     */
   uploadFiles(
     body: UploadFilesBody,
     options?: RequestInit,
-  ): Promise<UploadFilesResponse201>;
+  ): Promise<FetchResponse<UploadFilesResponse201>>;
 
+    /**
+     Summary: Check file information
+     Retrieve file metadata headers without downloading the file content. Supports conditional requests and provides caching information.
+
+     This method may return different T based on the response code:
+     - 200: void
+     - 304: void
+     - 400: void
+     - 412: void
+     */
   getFileMetadataHeaders(
     id: FileId,
     params?: GetFileMetadataHeadersParams,
     options?: RequestInit,
-  ): Promise<void>;
+  ): Promise<FetchResponse<void>>;
 
+    /**
+     Summary: Download file
+     Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
+
+     This method may return different T based on the response code:
+     - 200: void
+     - 304: void
+     - 400: void
+     - 412: void
+     */
   getFile(
     id: FileId,
     params?: GetFileParams,
     options?: RequestInit,
-  ): Promise<Blob>;
+  ): Promise<FetchResponse<Blob>>;
 
+    /**
+     Summary: Replace file
+     Replace an existing file with new content while preserving the file ID. The operation follows these steps:
+1. The isUploaded flag is set to false to mark the file as being updated
+2. The file content is replaced in the storage backend
+3. File metadata is updated (size, mime-type, isUploaded, etc.)
+
+Each step is atomic, but if a step fails, previous steps will not be automatically rolled back.
+
+
+     This method may return different T based on the response code:
+     - 200: FileMetadata
+     - 400: ErrorResponse
+     */
   replaceFile(
     id: FileId,
     body?: ReplaceFileBody,
     options?: RequestInit,
-  ): Promise<FileMetadata>;
+  ): Promise<FetchResponse<FileMetadata>>;
 
+    /**
+     Summary: Delete file
+     Permanently delete a file from storage. This removes both the file content and its associated metadata.
+
+     This method may return different T based on the response code:
+     - 204: void
+     - 400: ErrorResponse
+     */
   deleteFile(
     id: FileId,
     options?: RequestInit,
-  ): Promise<void>;
+  ): Promise<FetchResponse<void>>;
 
+    /**
+     Summary: Verify tickets created by email verification, email passwordless authentication (magic link), or password reset
+     
+
+     As this method is a redirect, it returns a URL string instead of a Promise
+     */
   verifyTicketURL(
     params?: VerifyTicketParams,
     options?: RequestInit,
@@ -678,10 +744,10 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-
+    
     const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: FetchResponse<Session> = responseBody ? JSON.parse(responseBody) : {};
-
+    const payload: Session = responseBody ? JSON.parse(responseBody) : {};
+    
 
     return {
       body: payload,
@@ -722,10 +788,10 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-
+    
     const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: FetchResponse<UploadFilesResponse201> = responseBody ? JSON.parse(responseBody) : {};
-
+    const payload: UploadFilesResponse201 = responseBody ? JSON.parse(responseBody) : {};
+    
 
     return {
       body: payload,
@@ -770,9 +836,9 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-
+    
     const payload: void = undefined;
-
+    
 
     return {
       body: payload,
@@ -817,9 +883,9 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-
+    
     const payload: Blob = await res.blob();
-
+    
 
     return {
       body: payload,
@@ -836,14 +902,16 @@ export const createAPIClient = (
   ): Promise<FetchResponse<FileMetadata>> => {
     const url = baseURL + `/files/${id}`;
     const formData = new FormData();
-    TODO ref UpdateFileMetadata
-    if (body[file] !== undefined) {
-      formData.append(file, body[file]);
+    if (body["metadata"] !== undefined) {
+      formData.append("metadata", JSON.stringify(body["metadata"]));
+    }
+    if (body["file"] !== undefined) {
+      formData.append("file", body["file"]);
     }
 
     const res = await fetch(url, {
       ...options,
-      method: "POST",
+      method: "PUT",
       body: formData,
     });
 
@@ -852,10 +920,10 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-
+    
     const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: FetchResponse<FileMetadata> = responseBody ? JSON.parse(responseBody) : {};
-
+    const payload: FileMetadata = responseBody ? JSON.parse(responseBody) : {};
+    
 
     return {
       body: payload,
@@ -883,9 +951,9 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-
+    
     const payload: void = undefined;
-
+    
 
     return {
       body: payload,
