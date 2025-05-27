@@ -59,7 +59,7 @@ export default function SignUp(): JSX.Element {
     const redirectUrl = `${origin}/verify`;
 
     // Sign in with the specified provider
-    const url = nhost.auth.signInProvider(provider, {
+    const url = nhost.auth.signInProviderURL(provider, {
       redirectTo: redirectUrl,
     });
 

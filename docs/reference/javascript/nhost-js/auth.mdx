@@ -641,8 +641,7 @@ expiresAt: string;
 ```
 
 Expiration date of the PAT
-
-- Format - date-time
+Format - date-time
 
 ##### metadata?
 
@@ -650,7 +649,7 @@ Expiration date of the PAT
 optional metadata: Record<string, unknown>;
 ```
 
-- Example - {"name":"my-pat","used-by":"my-app-cli"}
+Example - {"name":"my-pat","used-by":"my-app-cli"}
 
 ---
 
@@ -665,9 +664,8 @@ id: string;
 ```
 
 ID of the PAT
-
-- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### personalAccessToken
 
@@ -676,9 +674,8 @@ personalAccessToken: string;
 ```
 
 PAT
-
-- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ---
 
@@ -703,8 +700,7 @@ message: string;
 ```
 
 Human-friendly error message
-
-- Example - "Invalid email format"
+Example - "Invalid email format"
 
 ##### status
 
@@ -713,8 +709,7 @@ status: number;
 ```
 
 HTTP status error code
-
-- Example - 400
+Example - 400
 
 ---
 
@@ -729,8 +724,7 @@ version: string;
 ```
 
 The version of the authentication service
-
-- Example - "1.2.3"
+Example - "1.2.3"
 
 ---
 
@@ -747,8 +741,7 @@ alg: string;
 ```
 
 Algorithm used with this key
-
-- Example - "RS256"
+Example - "RS256"
 
 ##### e
 
@@ -757,8 +750,7 @@ e: string;
 ```
 
 RSA public exponent
-
-- Example - "AQAB"
+Example - "AQAB"
 
 ##### kid
 
@@ -767,8 +759,7 @@ kid: string;
 ```
 
 Key ID
-
-- Example - "key-id-1"
+Example - "key-id-1"
 
 ##### kty
 
@@ -777,8 +768,7 @@ kty: string;
 ```
 
 Key type
-
-- Example - "RSA"
+Example - "RSA"
 
 ##### n
 
@@ -787,8 +777,7 @@ n: string;
 ```
 
 RSA modulus
-
-- Example - "abcd1234..."
+Example - "abcd1234..."
 
 ##### use
 
@@ -797,8 +786,7 @@ use: string;
 ```
 
 Key usage
-
-- Example - "sig"
+Example - "sig"
 
 ---
 
@@ -859,8 +847,7 @@ ticket: string;
 ```
 
 Ticket to use when completing the MFA challenge
-
-- Example - "mfaTotp:abc123def456"
+Example - "mfaTotp:abc123def456"
 
 ---
 
@@ -874,8 +861,8 @@ Ticket to use when completing the MFA challenge
 optional redirectTo: string;
 ```
 
-- Example - "https://my-app.com/catch-redirection"
-- Format - uri
+Example - "https://my-app.com/catch-redirection"
+Format - uri
 
 ---
 
@@ -892,9 +879,8 @@ refreshToken: string;
 ```
 
 Refresh token used to generate a new access token
-
-- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ---
 
@@ -911,8 +897,7 @@ accessToken: string;
 ```
 
 JWT token for authenticating API requests
-
-- Example - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+Example - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 
 ##### accessTokenExpiresIn
 
@@ -921,9 +906,8 @@ accessTokenExpiresIn: number;
 ```
 
 Expiration time of the access token in seconds
-
-- Example - 900
-- Format - int64
+Example - 900
+Format - int64
 
 ##### refreshToken
 
@@ -932,9 +916,8 @@ refreshToken: string;
 ```
 
 Token used to refresh the access token
-
-- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### refreshTokenId
 
@@ -943,9 +926,8 @@ refreshTokenId: string;
 ```
 
 Identifier for the refresh token
-
-- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### user?
 
@@ -983,7 +965,7 @@ User authentication session containing tokens and user information
 optional displayName: string;
 ```
 
-- Example - "John Smith"
+Example - "John Smith"
 
 ##### locale?
 
@@ -992,10 +974,9 @@ optional locale: string;
 ```
 
 A two-characters locale
-
-- Example - "en"
-- MinLength - 2
-- MaxLength - 2
+Example - "en"
+MinLength - 2
+MaxLength - 2
 
 ##### metadata?
 
@@ -1003,7 +984,7 @@ A two-characters locale
 optional metadata: Record<string, unknown>;
 ```
 
-- Example - {"firstName":"John","lastName":"Smith"}
+Example - {"firstName":"John","lastName":"Smith"}
 
 ---
 
@@ -1020,9 +1001,8 @@ email: string;
 ```
 
 User's email address
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ##### password
 
@@ -1031,10 +1011,9 @@ password: string;
 ```
 
 User's password
-
-- Example - "Str0ngPassw#ord-94|%"
-- MinLength - 3
-- MaxLength - 50
+Example - "Str0ngPassw#ord-94|%"
+MinLength - 3
+MaxLength - 50
 
 ---
 
@@ -1115,8 +1094,7 @@ ticket: string;
 ```
 
 Ticket
-
-- Pattern - ^mfaTotp:.\*$
+Pattern - ^mfaTotp:.\*$
 
 ---
 
@@ -1131,9 +1109,8 @@ email: string;
 ```
 
 A valid email
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ##### options?
 
@@ -1154,9 +1131,8 @@ email: string;
 ```
 
 A valid email
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ##### otp
 
@@ -1193,9 +1169,8 @@ email: string;
 ```
 
 A valid email
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ##### options?
 
@@ -1216,9 +1191,8 @@ personalAccessToken: string;
 ```
 
 PAT
-
-- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ---
 
@@ -1339,9 +1313,8 @@ optional email: string;
 ```
 
 A valid email
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ---
 
@@ -1362,9 +1335,8 @@ optional email: string;
 ```
 
 A valid email. Deprecated, no longer used
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ---
 
@@ -1403,9 +1375,8 @@ email: string;
 ```
 
 Email address for the new user account
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ##### options?
 
@@ -1420,10 +1391,9 @@ password: string;
 ```
 
 Password for the new user account
-
-- Example - "Str0ngPassw#ord-94|%"
-- MinLength - 3
-- MaxLength - 50
+Example - "Str0ngPassw#ord-94|%"
+MinLength - 3
+MaxLength - 50
 
 ---
 
@@ -1437,7 +1407,7 @@ Password for the new user account
 optional allowedRoles: string[];
 ```
 
-- Example - ["me","user"]
+Example - ["me","user"]
 
 ##### defaultRole?
 
@@ -1445,7 +1415,7 @@ optional allowedRoles: string[];
 optional defaultRole: string;
 ```
 
-- Example - "user"
+Example - "user"
 
 ##### displayName?
 
@@ -1453,9 +1423,9 @@ optional defaultRole: string;
 optional displayName: string;
 ```
 
-- Example - "John Smith"
-- Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-- MaxLength - 32
+Example - "John Smith"
+Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
+MaxLength - 32
 
 ##### locale?
 
@@ -1464,10 +1434,9 @@ optional locale: string;
 ```
 
 A two-characters locale
-
-- Example - "en"
-- MinLength - 2
-- MaxLength - 2
+Example - "en"
+MinLength - 2
+MaxLength - 2
 
 ##### metadata?
 
@@ -1475,7 +1444,7 @@ A two-characters locale
 optional metadata: Record<string, unknown>;
 ```
 
-- Example - {"firstName":"John","lastName":"Smith"}
+Example - {"firstName":"John","lastName":"Smith"}
 
 ##### redirectTo?
 
@@ -1483,8 +1452,8 @@ optional metadata: Record<string, unknown>;
 optional redirectTo: string;
 ```
 
-- Example - "https://my-app.com/catch-redirection"
-- Format - uri
+Example - "https://my-app.com/catch-redirection"
+Format - uri
 
 ---
 
@@ -1499,9 +1468,8 @@ email: string;
 ```
 
 A valid email
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ##### options?
 
@@ -1524,8 +1492,7 @@ imageUrl: string;
 ```
 
 URL to QR code image for scanning with an authenticator app
-
-- Example - "data:image/png;base64,iVBORw0KGg..."
+Example - "data:image/png;base64,iVBORw0KGg..."
 
 ##### totpSecret
 
@@ -1534,8 +1501,7 @@ totpSecret: string;
 ```
 
 TOTP secret key for manual setup with an authenticator app
-
-- Example - "ABCDEFGHIJK23456"
+Example - "ABCDEFGHIJK23456"
 
 ---
 
@@ -1552,8 +1518,7 @@ avatarUrl: string;
 ```
 
 URL to the user's profile picture
-
-- Example - "https://myapp.com/avatars/user123.jpg"
+Example - "https://myapp.com/avatars/user123.jpg"
 
 ##### createdAt
 
@@ -1562,9 +1527,8 @@ createdAt: string;
 ```
 
 Timestamp when the user account was created
-
-- Example - "2023-01-15T12:34:56Z"
-- Format - date-time
+Example - "2023-01-15T12:34:56Z"
+Format - date-time
 
 ##### defaultRole
 
@@ -1573,8 +1537,7 @@ defaultRole: string;
 ```
 
 Default authorization role for the user
-
-- Example - "user"
+Example - "user"
 
 ##### displayName
 
@@ -1583,8 +1546,7 @@ displayName: string;
 ```
 
 User's display name
-
-- Example - "John Smith"
+Example - "John Smith"
 
 ##### email?
 
@@ -1593,9 +1555,8 @@ optional email: string;
 ```
 
 User's email address
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ##### emailVerified
 
@@ -1604,8 +1565,7 @@ emailVerified: boolean;
 ```
 
 Whether the user's email has been verified
-
-- Example - true
+Example - true
 
 ##### id
 
@@ -1614,9 +1574,8 @@ id: string;
 ```
 
 Unique identifier for the user
-
-- Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
-- Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+Example - "2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"
+Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
 
 ##### isAnonymous
 
@@ -1625,8 +1584,7 @@ isAnonymous: boolean;
 ```
 
 Whether this is an anonymous user account
-
-- Example - false
+Example - false
 
 ##### locale
 
@@ -1635,10 +1593,9 @@ locale: string;
 ```
 
 User's preferred locale (language code)
-
-- Example - "en"
-- MinLength - 2
-- MaxLength - 2
+Example - "en"
+MinLength - 2
+MaxLength - 2
 
 ##### metadata
 
@@ -1647,8 +1604,7 @@ metadata: Record<string, unknown>;
 ```
 
 Custom metadata associated with the user
-
-- Example - {"firstName":"John","lastName":"Smith"}
+Example - {"firstName":"John","lastName":"Smith"}
 
 ##### phoneNumber?
 
@@ -1657,8 +1613,7 @@ optional phoneNumber: string;
 ```
 
 User's phone number
-
-- Example - "+12025550123"
+Example - "+12025550123"
 
 ##### phoneNumberVerified
 
@@ -1667,8 +1622,7 @@ phoneNumberVerified: boolean;
 ```
 
 Whether the user's phone number has been verified
-
-- Example - false
+Example - false
 
 ##### roles
 
@@ -1677,8 +1631,7 @@ roles: string[];
 ```
 
 List of roles assigned to the user
-
-- Example - ["user","customer"]
+Example - ["user","customer"]
 
 ---
 
@@ -1701,9 +1654,8 @@ email: string;
 ```
 
 A valid email
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ##### options?
 
@@ -1718,10 +1670,9 @@ optional password: string;
 ```
 
 A password of minimum 3 characters
-
-- Example - "Str0ngPassw#ord-94|%"
-- MinLength - 3
-- MaxLength - 50
+Example - "Str0ngPassw#ord-94|%"
+MinLength - 3
+MaxLength - 50
 
 ##### signInMethod
 
@@ -1744,9 +1695,8 @@ newEmail: string;
 ```
 
 A valid email
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ##### options?
 
@@ -1767,9 +1717,8 @@ email: string;
 ```
 
 A valid email
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ##### options?
 
@@ -1792,8 +1741,7 @@ optional activeMfaType: UserMfaRequestActiveMfaType;
 ```
 
 Type of MFA to activate. Use empty string to disable MFA.
-
-- Example - "totp"
+Example - "totp"
 
 ##### code
 
@@ -1802,8 +1750,7 @@ code: string;
 ```
 
 Verification code from the authenticator app when activating MFA
-
-- Example - "123456"
+Example - "123456"
 
 ---
 
@@ -1818,10 +1765,9 @@ newPassword: string;
 ```
 
 A password of minimum 3 characters
-
-- Example - "Str0ngPassw#ord-94|%"
-- MinLength - 3
-- MaxLength - 50
+Example - "Str0ngPassw#ord-94|%"
+MinLength - 3
+MaxLength - 50
 
 ##### ticket?
 
@@ -1830,8 +1776,7 @@ optional ticket: string;
 ```
 
 Ticket to reset the password, required if the user is not authenticated
-
-- Pattern - ^passwordReset\:.\*$
+Pattern - ^passwordReset\:.\*$
 
 ---
 
@@ -1846,9 +1791,8 @@ email: string;
 ```
 
 A valid email
-
-- Example - "john.smith@nhost.io"
-- Format - email
+Example - "john.smith@nhost.io"
+Format - email
 
 ##### options?
 

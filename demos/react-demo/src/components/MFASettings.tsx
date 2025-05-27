@@ -1,9 +1,6 @@
 import { useState, useEffect, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import {
-  type ErrorResponse,
-  UserMfaRequestActiveMfaType,
-} from "@nhost/nhost-js/auth";
+import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 
 interface MFASettingsProps {
@@ -71,7 +68,7 @@ export default function MFASettings({
     try {
       // Verify and activate MFA
       await nhost.auth.changeUserMfaVerify({
-        activeMfaType: UserMfaRequestActiveMfaType.Totp,
+        activeMfaType: "totp",
         code: verificationCode,
       });
 
@@ -107,7 +104,7 @@ export default function MFASettings({
     try {
       // Disable MFA by setting activeMfaType to empty string
       await nhost.auth.changeUserMfaVerify({
-        activeMfaType: UserMfaRequestActiveMfaType.Empty,
+        activeMfaType: "",
         code: disableVerificationCode,
       });
 
