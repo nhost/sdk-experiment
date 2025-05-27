@@ -12,9 +12,8 @@ export interface JWKSet {
   /**
    * Array of public keys
    */
-  keys: JWK[],
-};
-
+  keys: JWK[];
+}
 
 /**
  * JSON Web Key for JWT verification
@@ -33,36 +32,35 @@ export interface JWKSet {
 export interface JWK {
   /**
    * Algorithm used with this key
-    *    Example - `"RS256"`
+   *    Example - `"RS256"`
    */
-  alg: string,
+  alg: string;
   /**
    * RSA public exponent
-    *    Example - `"AQAB"`
+   *    Example - `"AQAB"`
    */
-  e: string,
+  e: string;
   /**
    * Key ID
-    *    Example - `"key-id-1"`
+   *    Example - `"key-id-1"`
    */
-  kid: string,
+  kid: string;
   /**
    * Key type
-    *    Example - `"RSA"`
+   *    Example - `"RSA"`
    */
-  kty: string,
+  kty: string;
   /**
    * RSA modulus
-    *    Example - `"abcd1234..."`
+   *    Example - `"abcd1234..."`
    */
-  n: string,
+  n: string;
   /**
    * Key usage
-    *    Example - `"sig"`
+   *    Example - `"sig"`
    */
-  use: string,
-};
-
+  use: string;
+}
 
 /**
  * Request to refresh an access token
@@ -72,12 +70,11 @@ export interface JWK {
 export interface RefreshTokenRequest {
   /**
    * Refresh token used to generate a new access token
-    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
-    *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+   *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
+   *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
-  refreshToken: string,
-};
-
+  refreshToken: string;
+}
 
 /**
  * 
@@ -87,13 +84,12 @@ export interface SignOutSchema {
   /**
    * Refresh token for the current session
    */
-  refreshToken: string,
+  refreshToken: string;
   /**
    * Sign out from all connected devices
    */
-  all?: boolean,
-};
-
+  all?: boolean;
+}
 
 /**
  * 
@@ -104,16 +100,15 @@ export interface SignOutSchema {
 export interface CreatePATRequest {
   /**
    * Expiration date of the PAT
-    *    Format - date-time
+   *    Format - date-time
    */
-  expiresAt: string,
+  expiresAt: string;
   /**
-   * 
-    *    Example - `{"name":"my-pat","used-by":"my-app-cli"}`
+   *
+   *    Example - `{"name":"my-pat","used-by":"my-app-cli"}`
    */
-  metadata?: Record<string, unknown>,
-};
-
+  metadata?: Record<string, unknown>;
+}
 
 /**
  * 
@@ -126,24 +121,47 @@ export interface CreatePATRequest {
 export interface CreatePATResponse {
   /**
    * ID of the PAT
-    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
-    *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+   *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
+   *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
-  id: string,
+  id: string;
   /**
    * PAT
-    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
-    *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+   *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
+   *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
-  personalAccessToken: string,
-};
-
+  personalAccessToken: string;
+}
 
 /**
  * Error code identifying the specific application error
  */
-export type ErrorResponseError = "default-role-must-be-in-allowed-roles" | "disabled-endpoint" | "disabled-user" | "email-already-in-use" | "email-already-verified" | "forbidden-anonymous" | "internal-server-error" | "invalid-email-password" | "invalid-request" | "locale-not-allowed" | "password-too-short" | "password-in-hibp-database" | "redirectTo-not-allowed" | "role-not-allowed" | "signup-disabled" | "unverified-user" | "user-not-anonymous" | "invalid-pat" | "invalid-refresh-token" | "invalid-ticket" | "disabled-mfa-totp" | "no-totp-secret" | "invalid-totp" | "mfa-type-not-found" | "totp-already-active";
-
+export type ErrorResponseError =
+  | "default-role-must-be-in-allowed-roles"
+  | "disabled-endpoint"
+  | "disabled-user"
+  | "email-already-in-use"
+  | "email-already-verified"
+  | "forbidden-anonymous"
+  | "internal-server-error"
+  | "invalid-email-password"
+  | "invalid-request"
+  | "locale-not-allowed"
+  | "password-too-short"
+  | "password-in-hibp-database"
+  | "redirectTo-not-allowed"
+  | "role-not-allowed"
+  | "signup-disabled"
+  | "unverified-user"
+  | "user-not-anonymous"
+  | "invalid-pat"
+  | "invalid-refresh-token"
+  | "invalid-ticket"
+  | "disabled-mfa-totp"
+  | "no-totp-secret"
+  | "invalid-totp"
+  | "mfa-type-not-found"
+  | "totp-already-active";
 
 /**
  * Standardized error response
@@ -155,20 +173,19 @@ export type ErrorResponseError = "default-role-must-be-in-allowed-roles" | "disa
 export interface ErrorResponse {
   /**
    * HTTP status error code
-    *    Example - `400`
+   *    Example - `400`
    */
-  status: number,
+  status: number;
   /**
    * Human-friendly error message
-    *    Example - `"Invalid email format"`
+   *    Example - `"Invalid email format"`
    */
-  message: string,
+  message: string;
   /**
    * Error code identifying the specific application error
    */
-  error: ErrorResponseError,
-};
-
+  error: ErrorResponseError;
+}
 
 /**
  * Response for email-password authentication that may include a session or MFA challenge
@@ -178,13 +195,12 @@ export interface SignInEmailPasswordResponse {
   /**
    * User authentication session containing tokens and user information
    */
-  session?: Session,
+  session?: Session;
   /**
    * Challenge payload for multi-factor authentication
    */
-  mfa?: MFAChallengePayload,
-};
-
+  mfa?: MFAChallengePayload;
+}
 
 /**
  * Challenge payload for multi-factor authentication
@@ -193,11 +209,10 @@ export interface SignInEmailPasswordResponse {
 export interface MFAChallengePayload {
   /**
    * Ticket to use when completing the MFA challenge
-    *    Example - `"mfaTotp:abc123def456"`
+   *    Example - `"mfaTotp:abc123def456"`
    */
-  ticket: string,
-};
-
+  ticket: string;
+}
 
 /**
  * Container for session information
@@ -206,9 +221,8 @@ export interface SessionPayload {
   /**
    * User authentication session containing tokens and user information
    */
-  session?: Session,
-};
-
+  session?: Session;
+}
 
 /**
  * User authentication session containing tokens and user information
@@ -227,33 +241,32 @@ export interface SessionPayload {
 export interface Session {
   /**
    * JWT token for authenticating API requests
-    *    Example - `"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
+   *    Example - `"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
    */
-  accessToken: string,
+  accessToken: string;
   /**
    * Expiration time of the access token in seconds
-    *    Example - `900`
-    *    Format - int64
+   *    Example - `900`
+   *    Format - int64
    */
-  accessTokenExpiresIn: number,
+  accessTokenExpiresIn: number;
   /**
    * Identifier for the refresh token
-    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
-    *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+   *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
+   *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
-  refreshTokenId: string,
+  refreshTokenId: string;
   /**
    * Token used to refresh the access token
-    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
-    *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+   *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
+   *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
-  refreshToken: string,
+  refreshToken: string;
   /**
    * User profile and account information
    */
-  user?: User,
-};
-
+  user?: User;
+}
 
 /**
  * 
@@ -263,12 +276,11 @@ export interface Session {
 export interface SignInPATRequest {
   /**
    * PAT
-    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
-    *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+   *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
+   *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
-  personalAccessToken: string,
-};
-
+  personalAccessToken: string;
+}
 
 /**
  * User profile and account information
@@ -306,82 +318,82 @@ export interface SignInPATRequest {
 export interface User {
   /**
    * URL to the user's profile picture
-    *    Example - `"https://myapp.com/avatars/user123.jpg"`
+   *    Example - `"https://myapp.com/avatars/user123.jpg"`
    */
-  avatarUrl: string,
+  avatarUrl: string;
   /**
    * Timestamp when the user account was created
-    *    Example - `"2023-01-15T12:34:56Z"`
-    *    Format - date-time
+   *    Example - `"2023-01-15T12:34:56Z"`
+   *    Format - date-time
    */
-  createdAt: string,
+  createdAt: string;
   /**
    * Default authorization role for the user
-    *    Example - `"user"`
+   *    Example - `"user"`
    */
-  defaultRole: string,
+  defaultRole: string;
   /**
    * User's display name
-    *    Example - `"John Smith"`
+   *    Example - `"John Smith"`
    */
-  displayName: string,
+  displayName: string;
   /**
    * User's email address
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email?: string,
+  email?: string;
   /**
    * Whether the user's email has been verified
-    *    Example - `true`
+   *    Example - `true`
    */
-  emailVerified: boolean,
+  emailVerified: boolean;
   /**
    * Unique identifier for the user
-    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
-    *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+   *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
+   *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
    */
-  id: string,
+  id: string;
   /**
    * Whether this is an anonymous user account
-    *    Example - `false`
+   *    Example - `false`
    */
-  isAnonymous: boolean,
+  isAnonymous: boolean;
   /**
    * User's preferred locale (language code)
-    *    Example - `"en"`
-    *    MinLength - 2
-    *    MaxLength - 2
+   *    Example - `"en"`
+   *    MinLength - 2
+   *    MaxLength - 2
    */
-  locale: string,
+  locale: string;
   /**
    * Custom metadata associated with the user
-    *    Example - `{"firstName":"John","lastName":"Smith"}`
+   *    Example - `{"firstName":"John","lastName":"Smith"}`
    */
-  metadata: Record<string, unknown>,
+  metadata: Record<string, unknown>;
   /**
    * User's phone number
-    *    Example - `"+12025550123"`
+   *    Example - `"+12025550123"`
    */
-  phoneNumber?: string,
+  phoneNumber?: string;
   /**
    * Whether the user's phone number has been verified
-    *    Example - `false`
+   *    Example - `false`
    */
-  phoneNumberVerified: boolean,
+  phoneNumberVerified: boolean;
   /**
    * List of roles assigned to the user
-    *    Example - `["user","customer"]`
+   *    Example - `["user","customer"]`
    */
-  roles: string[],
-};
-
+  roles: string[];
+}
 
 /**
  * Which sign-in method to use
  */
-export type UserDeanonymizeRequestSignInMethod = "email-password" | "passwordless";
-
+export type UserDeanonymizeRequestSignInMethod =
+  | "email-password"
+  | "passwordless";
 
 /**
  * 
@@ -399,30 +411,29 @@ export interface UserDeanonymizeRequest {
   /**
    * Which sign-in method to use
    */
-  signInMethod: UserDeanonymizeRequestSignInMethod,
+  signInMethod: UserDeanonymizeRequestSignInMethod;
   /**
    * A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email: string,
+  email: string;
   /**
    * A password of minimum 3 characters
-    *    Example - `"Str0ngPassw#ord-94|%"`
-    *    MinLength - 3
-    *    MaxLength - 50
+   *    Example - `"Str0ngPassw#ord-94|%"`
+   *    MinLength - 3
+   *    MaxLength - 50
    */
-  password?: string,
+  password?: string;
   /**
    * Deprecated, will be ignored
    */
-  connection?: string,
+  connection?: string;
   /**
-   * 
+   *
    */
-  options?: SignUpOptions,
-};
-
+  options?: SignUpOptions;
+}
 
 /**
  * 
@@ -433,16 +444,15 @@ export interface UserDeanonymizeRequest {
 export interface UserEmailChangeRequest {
   /**
    * A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  newEmail: string,
+  newEmail: string;
   /**
-   * 
+   *
    */
-  options?: OptionsRedirectTo,
-};
-
+  options?: OptionsRedirectTo;
+}
 
 /**
  * 
@@ -453,16 +463,15 @@ export interface UserEmailChangeRequest {
 export interface UserEmailSendVerificationEmailRequest {
   /**
    * A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email: string,
+  email: string;
   /**
-   * 
+   *
    */
-  options?: OptionsRedirectTo,
-};
-
+  options?: OptionsRedirectTo;
+}
 
 /**
  * 
@@ -473,16 +482,15 @@ export interface UserEmailSendVerificationEmailRequest {
 export interface UserPasswordResetRequest {
   /**
    * A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email: string,
+  email: string;
   /**
-   * 
+   *
    */
-  options?: OptionsRedirectTo,
-};
-
+  options?: OptionsRedirectTo;
+}
 
 /**
  * 
@@ -495,24 +503,22 @@ export interface UserPasswordResetRequest {
 export interface UserPasswordRequest {
   /**
    * A password of minimum 3 characters
-    *    Example - `"Str0ngPassw#ord-94|%"`
-    *    MinLength - 3
-    *    MaxLength - 50
+   *    Example - `"Str0ngPassw#ord-94|%"`
+   *    MinLength - 3
+   *    MaxLength - 50
    */
-  newPassword: string,
+  newPassword: string;
   /**
    * Ticket to reset the password, required if the user is not authenticated
-    *    Pattern - ^passwordReset\:.*$
+   *    Pattern - ^passwordReset\:.*$
    */
-  ticket?: string,
-};
-
+  ticket?: string;
+}
 
 /**
- * 
+ *
  */
 export type OKResponse = "OK";
-
 
 /**
  * 
@@ -521,13 +527,12 @@ export type OKResponse = "OK";
     *    Format - uri*/
 export interface OptionsRedirectTo {
   /**
-   * 
-    *    Example - `"https://my-app.com/catch-redirection"`
-    *    Format - uri
+   *
+   *    Example - `"https://my-app.com/catch-redirection"`
+   *    Format - uri
    */
-  redirectTo?: string,
-};
-
+  redirectTo?: string;
+}
 
 /**
  * 
@@ -541,24 +546,23 @@ export interface OptionsRedirectTo {
     *    Example - `{"firstName":"John","lastName":"Smith"}`*/
 export interface SignInAnonymousRequest {
   /**
-   * 
-    *    Example - `"John Smith"`
+   *
+   *    Example - `"John Smith"`
    */
-  displayName?: string,
+  displayName?: string;
   /**
    * A two-characters locale
-    *    Example - `"en"`
-    *    MinLength - 2
-    *    MaxLength - 2
+   *    Example - `"en"`
+   *    MinLength - 2
+   *    MaxLength - 2
    */
-  locale?: string,
+  locale?: string;
   /**
-   * 
-    *    Example - `{"firstName":"John","lastName":"Smith"}`
+   *
+   *    Example - `{"firstName":"John","lastName":"Smith"}`
    */
-  metadata?: Record<string, unknown>,
-};
-
+  metadata?: Record<string, unknown>;
+}
 
 /**
  * Request to authenticate using email and password
@@ -572,19 +576,18 @@ export interface SignInAnonymousRequest {
 export interface SignInEmailPasswordRequest {
   /**
    * User's email address
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email: string,
+  email: string;
   /**
    * User's password
-    *    Example - `"Str0ngPassw#ord-94|%"`
-    *    MinLength - 3
-    *    MaxLength - 50
+   *    Example - `"Str0ngPassw#ord-94|%"`
+   *    MinLength - 3
+   *    MaxLength - 50
    */
-  password: string,
-};
-
+  password: string;
+}
 
 /**
  * 
@@ -595,16 +598,15 @@ export interface SignInEmailPasswordRequest {
 export interface SignInPasswordlessEmailRequest {
   /**
    * A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email: string,
+  email: string;
   /**
-   * 
+   *
    */
-  options?: SignUpOptions,
-};
-
+  options?: SignUpOptions;
+}
 
 /**
  * 
@@ -615,16 +617,15 @@ export interface SignInPasswordlessEmailRequest {
 export interface SignInOTPEmailRequest {
   /**
    * A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email: string,
+  email: string;
   /**
-   * 
+   *
    */
-  options?: SignUpOptions,
-};
-
+  options?: SignUpOptions;
+}
 
 /**
  * 
@@ -636,15 +637,14 @@ export interface SignInOTPEmailVerifyRequest {
   /**
    * One time password
    */
-  otp: string,
+  otp: string;
   /**
    * A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email: string,
-};
-
+  email: string;
+}
 
 /**
  * 
@@ -653,9 +653,8 @@ export interface SignInOTPEmailVerifyResponse {
   /**
    * User authentication session containing tokens and user information
    */
-  session?: Session,
-};
-
+  session?: Session;
+}
 
 /**
  * Request to register a new user with email and password
@@ -670,23 +669,22 @@ export interface SignInOTPEmailVerifyResponse {
 export interface SignUpEmailPasswordRequest {
   /**
    * Email address for the new user account
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email: string,
+  email: string;
   /**
    * Password for the new user account
-    *    Example - `"Str0ngPassw#ord-94|%"`
-    *    MinLength - 3
-    *    MaxLength - 50
+   *    Example - `"Str0ngPassw#ord-94|%"`
+   *    MinLength - 3
+   *    MaxLength - 50
    */
-  password: string,
+  password: string;
   /**
-   * 
+   *
    */
-  options?: SignUpOptions,
-};
-
+  options?: SignUpOptions;
+}
 
 /**
  * 
@@ -709,42 +707,41 @@ export interface SignUpEmailPasswordRequest {
     *    Format - uri*/
 export interface SignUpOptions {
   /**
-   * 
-    *    Example - `["me","user"]`
+   *
+   *    Example - `["me","user"]`
    */
-  allowedRoles?: string[],
+  allowedRoles?: string[];
   /**
-   * 
-    *    Example - `"user"`
+   *
+   *    Example - `"user"`
    */
-  defaultRole?: string,
+  defaultRole?: string;
   /**
-   * 
-    *    Example - `"John Smith"`
-    *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-    *    MaxLength - 32
+   *
+   *    Example - `"John Smith"`
+   *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
+   *    MaxLength - 32
    */
-  displayName?: string,
+  displayName?: string;
   /**
    * A two-characters locale
-    *    Example - `"en"`
-    *    MinLength - 2
-    *    MaxLength - 2
+   *    Example - `"en"`
+   *    MinLength - 2
+   *    MaxLength - 2
    */
-  locale?: string,
+  locale?: string;
   /**
-   * 
-    *    Example - `{"firstName":"John","lastName":"Smith"}`
+   *
+   *    Example - `{"firstName":"John","lastName":"Smith"}`
    */
-  metadata?: Record<string, unknown>,
+  metadata?: Record<string, unknown>;
   /**
-   * 
-    *    Example - `"https://my-app.com/catch-redirection"`
-    *    Format - uri
+   *
+   *    Example - `"https://my-app.com/catch-redirection"`
+   *    Format - uri
    */
-  redirectTo?: string,
-};
-
+  redirectTo?: string;
+}
 
 /**
  * 
@@ -754,12 +751,11 @@ export interface SignUpOptions {
 export interface SignInWebauthnRequest {
   /**
    * A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email?: string,
-};
-
+  email?: string;
+}
 
 /**
  * 
@@ -770,16 +766,15 @@ export interface SignInWebauthnRequest {
 export interface SignUpWebauthnRequest {
   /**
    * A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email: string,
+  email: string;
   /**
-   * 
+   *
    */
-  options?: SignUpOptions,
-};
-
+  options?: SignUpOptions;
+}
 
 /**
  * 
@@ -790,16 +785,15 @@ export interface SignUpWebauthnRequest {
 export interface SignInWebauthnVerifyRequest {
   /**
    * A valid email. Deprecated, no longer used
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
    */
-  email?: string,
+  email?: string;
   /**
-   * 
+   *
    */
-  credential: Record<string, unknown>,
-};
-
+  credential: Record<string, unknown>;
+}
 
 /**
  * 
@@ -809,23 +803,22 @@ export interface SignInWebauthnVerifyRequest {
  @property options? (`SignUpOptions`) - */
 export interface SignInIdTokenRequest {
   /**
-   * 
+   *
    */
-  provider: IdTokenProvider,
+  provider: IdTokenProvider;
   /**
    * Apple ID token
    */
-  idToken: string,
+  idToken: string;
   /**
    * Nonce used during sign in process
    */
-  nonce?: string,
+  nonce?: string;
   /**
-   * 
+   *
    */
-  options?: SignUpOptions,
-};
-
+  options?: SignUpOptions;
+}
 
 /**
  * 
@@ -835,21 +828,19 @@ export interface SignInIdTokenRequest {
 export interface SignInMfaTotpRequest {
   /**
    * Ticket
-    *    Pattern - ^mfaTotp:.*$
+   *    Pattern - ^mfaTotp:.*$
    */
-  ticket: string,
+  ticket: string;
   /**
    * One time password
    */
-  otp: string,
-};
-
+  otp: string;
+}
 
 /**
- * 
+ *
  */
 export type IdTokenProvider = "apple" | "google";
-
 
 /**
  * 
@@ -858,25 +849,23 @@ export type IdTokenProvider = "apple" | "google";
  @property nonce? (`string`) - Nonce used during sign in process*/
 export interface LinkIdTokenRequest {
   /**
-   * 
+   *
    */
-  provider: IdTokenProvider,
+  provider: IdTokenProvider;
   /**
    * Apple ID token
    */
-  idToken: string,
+  idToken: string;
   /**
    * Nonce used during sign in process
    */
-  nonce?: string,
-};
-
+  nonce?: string;
+}
 
 /**
  * Type of MFA to activate. Use empty string to disable MFA.
  */
 export type UserMfaRequestActiveMfaType = "totp" | "";
-
 
 /**
  * Request to activate or deactivate multi-factor authentication
@@ -887,16 +876,15 @@ export type UserMfaRequestActiveMfaType = "totp" | "";
 export interface UserMfaRequest {
   /**
    * Verification code from the authenticator app when activating MFA
-    *    Example - `"123456"`
+   *    Example - `"123456"`
    */
-  code: string,
+  code: string;
   /**
    * Type of MFA to activate. Use empty string to disable MFA.
-    *    Example - `"totp"`
+   *    Example - `"totp"`
    */
-  activeMfaType?: UserMfaRequestActiveMfaType,
-};
-
+  activeMfaType?: UserMfaRequestActiveMfaType;
+}
 
 /**
  * Response containing TOTP setup information for MFA
@@ -907,40 +895,45 @@ export interface UserMfaRequest {
 export interface TotpGenerateResponse {
   /**
    * URL to QR code image for scanning with an authenticator app
-    *    Example - `"data:image/png;base64,iVBORw0KGg..."`
+   *    Example - `"data:image/png;base64,iVBORw0KGg..."`
    */
-  imageUrl: string,
+  imageUrl: string;
   /**
    * TOTP secret key for manual setup with an authenticator app
-    *    Example - `"ABCDEFGHIJK23456"`
+   *    Example - `"ABCDEFGHIJK23456"`
    */
-  totpSecret: string,
-};
-
+  totpSecret: string;
+}
 
 /**
- * 
+ *
  */
-export type SignInProvider = "apple" | "github" | "google" | "linkedin" | "discord" | "spotify";
-
+export type SignInProvider =
+  | "apple"
+  | "github"
+  | "google"
+  | "linkedin"
+  | "discord"
+  | "spotify";
 
 /**
  * Ticket
  */
 export type TicketQuery = string;
 
-
 /**
  * Type of the ticket
  */
-export type TicketTypeQuery = "emailVerify" | "emailConfirmChange" | "signinPasswordless" | "passwordReset";
-
+export type TicketTypeQuery =
+  | "emailVerify"
+  | "emailConfirmChange"
+  | "signinPasswordless"
+  | "passwordReset";
 
 /**
  * Target URL for the redirect
  */
 export type RedirectToQuery = string;
-
 
 /**
  * 
@@ -949,10 +942,10 @@ export type RedirectToQuery = string;
 export interface GetVersionResponse200 {
   /**
    * The version of the authentication service
-    *    Example - `"1.2.3"`
+   *    Example - `"1.2.3"`
    */
-  version: string,
-};
+  version: string;
+}
 
 /**
  * Parameters for the verifyTicket method.
@@ -1039,33 +1032,28 @@ export interface SignInProviderParams {
   connect?: string;
 }
 
-
 export interface Client {
   baseURL: string;
   pushChainFunction(chainFunction: ChainFunction): void;
-    /**
+  /**
      Summary: Health check (HEAD)
      Verify if the authentication service is operational using HEAD method
 
      This method may return different T based on the response code:
      - 200: void
      */
-  healthCheckHead(
-    options?: RequestInit,
-  ): Promise<FetchResponse<void>>;
+  healthCheckHead(options?: RequestInit): Promise<FetchResponse<void>>;
 
-    /**
+  /**
      Summary: Health check (GET)
      Verify if the authentication service is operational using GET method
 
      This method may return different T based on the response code:
      - 200: OKResponse
      */
-  healthCheckGet(
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>>;
+  healthCheckGet(options?: RequestInit): Promise<FetchResponse<OKResponse>>;
 
-    /**
+  /**
      Summary: Get service version
      Retrieve version information about the authentication service
 
@@ -1076,7 +1064,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<GetVersionResponse200>>;
 
-    /**
+  /**
      Summary: Refresh access token
      Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued.
 
@@ -1088,7 +1076,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<Session>>;
 
-    /**
+  /**
      Summary: Sign out
      
 
@@ -1100,7 +1088,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
-    /**
+  /**
      Summary: Sign in with email and password
      Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
 
@@ -1112,7 +1100,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<SignInEmailPasswordResponse>>;
 
-    /**
+  /**
      Summary: Verify TOTP for MFA
      Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
 
@@ -1124,7 +1112,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
 
-    /**
+  /**
      Summary: Sign in with magic link email
      Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options.
 
@@ -1136,7 +1124,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
-    /**
+  /**
      Summary: Sign up with email and password
      Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session.
 
@@ -1150,7 +1138,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
 
-    /**
+  /**
      Summary: Manage multi-factor authentication
      Activate or deactivate multi-factor authentication for the authenticated user
 
@@ -1162,7 +1150,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
-    /**
+  /**
      Summary: Generate TOTP secret
      Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication
 
@@ -1173,18 +1161,16 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<TotpGenerateResponse>>;
 
-    /**
+  /**
      Summary: Get public keys for JWT verification in JWK Set format
      
 
      This method may return different T based on the response code:
      - 200: JWKSet
      */
-  getJWKs(
-    options?: RequestInit,
-  ): Promise<FetchResponse<JWKSet>>;
+  getJWKs(options?: RequestInit): Promise<FetchResponse<JWKSet>>;
 
-    /**
+  /**
      Summary: Create a Personal Access Token (PAT)
      
 
@@ -1196,7 +1182,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<CreatePATResponse>>;
 
-    /**
+  /**
      Summary: Sign in anonymously
      
 
@@ -1208,7 +1194,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
 
-    /**
+  /**
      Summary: Sign in with a one time password sent to user's email. If the user doesn't exist, it will be created. The options object is optional and can be used to configure the user's when signing up a new user. It is ignored if the user already exists.
      
 
@@ -1220,7 +1206,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
-    /**
+  /**
      Summary: Verify OTP and return a session if validation is successful
      
 
@@ -1232,7 +1218,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<SignInOTPEmailVerifyResponse>>;
 
-    /**
+  /**
      Summary: Sign in with Personal Access Token (PAT)
      
 
@@ -1244,7 +1230,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
 
-    /**
+  /**
      Summary: Sign in with in an id token
      
 
@@ -1256,7 +1242,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
 
-    /**
+  /**
      Summary: Link a user account with the provider's account using an id token
      
 
@@ -1268,7 +1254,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
-    /**
+  /**
      Summary: Deanonymize an anonymous user in adding missing email or email+password, depending on the chosen authentication method. Will send a confirmation email if the server is configured to do so
      
 
@@ -1280,7 +1266,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
-    /**
+  /**
      Summary: Change user email
      
 
@@ -1292,7 +1278,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
-    /**
+  /**
      Summary: Send verification email
      
 
@@ -1304,7 +1290,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
-    /**
+  /**
      Summary: Change user password. The user must be authenticated or provide a ticket
      
 
@@ -1316,7 +1302,7 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
-    /**
+  /**
      Summary: Request a password reset. An email with a verification link will be sent to the user's address
      
 
@@ -1328,18 +1314,15 @@ export interface Client {
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
-    /**
+  /**
      Summary: Verify tickets created by email verification, email passwordless authentication (magic link), or password reset
      
 
      As this method is a redirect, it returns a URL string instead of a Promise
      */
-  verifyTicketURL(
-    params?: VerifyTicketParams,
-    options?: RequestInit,
-  ): string;
+  verifyTicketURL(params?: VerifyTicketParams, options?: RequestInit): string;
 
-    /**
+  /**
      Summary: Sign in with an oauth2 provider
      
 
@@ -1350,8 +1333,7 @@ export interface Client {
     params?: SignInProviderParams,
     options?: RequestInit,
   ): string;
-};
-
+}
 
 export const createAPIClient = (
   baseURL: string,
@@ -1363,7 +1345,7 @@ export const createAPIClient = (
     chainFunctions.push(chainFunction);
     fetch = createEnhancedFetch(chainFunctions);
   };
-    const  healthCheckHead = async (
+  const healthCheckHead = async (
     options?: RequestInit,
   ): Promise<FetchResponse<void>> => {
     const url = baseURL + `/healthz`;
@@ -1380,19 +1362,17 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
+
     const payload: void = undefined;
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<void>;
-
   };
 
-    const  healthCheckGet = async (
+  const healthCheckGet = async (
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
     const url = baseURL + `/healthz`;
@@ -1409,20 +1389,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-
   };
 
-    const  getVersion = async (
+  const getVersion = async (
     options?: RequestInit,
   ): Promise<FetchResponse<GetVersionResponse200>> => {
     const url = baseURL + `/version`;
@@ -1439,20 +1419,22 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: GetVersionResponse200 = responseBody ? JSON.parse(responseBody) : {};
-    
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: GetVersionResponse200 = responseBody
+      ? JSON.parse(responseBody)
+      : {};
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<GetVersionResponse200>;
-
   };
 
-    const  refreshToken = async (
+  const refreshToken = async (
     body: RefreshTokenRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<Session>> => {
@@ -1472,20 +1454,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: Session = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<Session>;
-
   };
 
-    const  signOut = async (
+  const signOut = async (
     body: SignOutSchema,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -1505,20 +1487,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-
   };
 
-    const  signInEmailPassword = async (
+  const signInEmailPassword = async (
     body: SignInEmailPasswordRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SignInEmailPasswordResponse>> => {
@@ -1538,20 +1520,22 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: SignInEmailPasswordResponse = responseBody ? JSON.parse(responseBody) : {};
-    
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SignInEmailPasswordResponse = responseBody
+      ? JSON.parse(responseBody)
+      : {};
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<SignInEmailPasswordResponse>;
-
   };
 
-    const  signInVerifyMfaTotp = async (
+  const signInVerifyMfaTotp = async (
     body: SignInMfaTotpRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
@@ -1571,20 +1555,22 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: SessionPayload = responseBody ? JSON.parse(responseBody) : {};
-    
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<SessionPayload>;
-
   };
 
-    const  signInPasswordlessEmail = async (
+  const signInPasswordlessEmail = async (
     body: SignInPasswordlessEmailRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -1604,20 +1590,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-
   };
 
-    const  signUpEmailPassword = async (
+  const signUpEmailPassword = async (
     body: SignUpEmailPasswordRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
@@ -1637,20 +1623,22 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: SessionPayload = responseBody ? JSON.parse(responseBody) : {};
-    
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<SessionPayload>;
-
   };
 
-    const  changeUserMfaVerify = async (
+  const changeUserMfaVerify = async (
     body: UserMfaRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -1670,20 +1658,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-
   };
 
-    const  changeUserMfa = async (
+  const changeUserMfa = async (
     options?: RequestInit,
   ): Promise<FetchResponse<TotpGenerateResponse>> => {
     const url = baseURL + `/mfa/totp/generate`;
@@ -1700,20 +1688,22 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: TotpGenerateResponse = responseBody ? JSON.parse(responseBody) : {};
-    
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: TotpGenerateResponse = responseBody
+      ? JSON.parse(responseBody)
+      : {};
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<TotpGenerateResponse>;
-
   };
 
-    const  getJWKs = async (
+  const getJWKs = async (
     options?: RequestInit,
   ): Promise<FetchResponse<JWKSet>> => {
     const url = baseURL + `/.well-known/jwks.json`;
@@ -1730,20 +1720,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: JWKSet = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<JWKSet>;
-
   };
 
-    const  createPAT = async (
+  const createPAT = async (
     body: CreatePATRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<CreatePATResponse>> => {
@@ -1763,20 +1753,22 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: CreatePATResponse = responseBody ? JSON.parse(responseBody) : {};
-    
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: CreatePATResponse = responseBody
+      ? JSON.parse(responseBody)
+      : {};
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<CreatePATResponse>;
-
   };
 
-    const  signInAnonymous = async (
+  const signInAnonymous = async (
     body?: SignInAnonymousRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
@@ -1796,20 +1788,22 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: SessionPayload = responseBody ? JSON.parse(responseBody) : {};
-    
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<SessionPayload>;
-
   };
 
-    const  signInOTPEmail = async (
+  const signInOTPEmail = async (
     body: SignInOTPEmailRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -1829,20 +1823,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-
   };
 
-    const  verifySignInOTPEmail = async (
+  const verifySignInOTPEmail = async (
     body: SignInOTPEmailVerifyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SignInOTPEmailVerifyResponse>> => {
@@ -1862,20 +1856,22 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: SignInOTPEmailVerifyResponse = responseBody ? JSON.parse(responseBody) : {};
-    
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SignInOTPEmailVerifyResponse = responseBody
+      ? JSON.parse(responseBody)
+      : {};
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<SignInOTPEmailVerifyResponse>;
-
   };
 
-    const  signInPAT = async (
+  const signInPAT = async (
     body: SignInPATRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
@@ -1895,20 +1891,22 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: SessionPayload = responseBody ? JSON.parse(responseBody) : {};
-    
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<SessionPayload>;
-
   };
 
-    const  signInIdToken = async (
+  const signInIdToken = async (
     body: SignInIdTokenRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
@@ -1928,20 +1926,22 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
-    const payload: SessionPayload = responseBody ? JSON.parse(responseBody) : {};
-    
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<SessionPayload>;
-
   };
 
-    const  linkIdToken = async (
+  const linkIdToken = async (
     body: LinkIdTokenRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -1961,20 +1961,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-
   };
 
-    const  deanonymizeUser = async (
+  const deanonymizeUser = async (
     body: UserDeanonymizeRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -1994,20 +1994,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-
   };
 
-    const  changeUserEmail = async (
+  const changeUserEmail = async (
     body: UserEmailChangeRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -2027,20 +2027,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-
   };
 
-    const  sendVerificationEmail = async (
+  const sendVerificationEmail = async (
     body: UserEmailSendVerificationEmailRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -2060,20 +2060,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-
   };
 
-    const  changeUserPassword = async (
+  const changeUserPassword = async (
     body: UserPasswordRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -2093,20 +2093,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-
   };
 
-    const  sendPasswordResetEmail = async (
+  const sendPasswordResetEmail = async (
     body: UserPasswordResetRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -2126,22 +2126,20 @@ export const createAPIClient = (
       const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
       throw new FetchError(payload, res.status, res.headers);
     }
-    
-    const responseBody = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
     const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-    
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-
   };
 
-    const  verifyTicketURL = (
-    params?: VerifyTicketParams,
-  ): string => {
+  const verifyTicketURL = (params?: VerifyTicketParams): string => {
     const normalizedParams = new URLSearchParams();
 
     Object.entries(params || {}).forEach(([key, value]) => {
@@ -2162,7 +2160,7 @@ export const createAPIClient = (
     return url;
   };
 
-    const  signInProviderURL = (
+  const signInProviderURL = (
     provider: SignInProvider,
     params?: SignInProviderParams,
   ): string => {
@@ -2186,35 +2184,34 @@ export const createAPIClient = (
     return url;
   };
 
-
   return {
     baseURL,
     pushChainFunction,
-      healthCheckHead,
-      healthCheckGet,
-      getVersion,
-      refreshToken,
-      signOut,
-      signInEmailPassword,
-      signInVerifyMfaTotp,
-      signInPasswordlessEmail,
-      signUpEmailPassword,
-      changeUserMfaVerify,
-      changeUserMfa,
-      getJWKs,
-      createPAT,
-      signInAnonymous,
-      signInOTPEmail,
-      verifySignInOTPEmail,
-      signInPAT,
-      signInIdToken,
-      linkIdToken,
-      deanonymizeUser,
-      changeUserEmail,
-      sendVerificationEmail,
-      changeUserPassword,
-      sendPasswordResetEmail,
-      verifyTicketURL,
-      signInProviderURL,
+    healthCheckHead,
+    healthCheckGet,
+    getVersion,
+    refreshToken,
+    signOut,
+    signInEmailPassword,
+    signInVerifyMfaTotp,
+    signInPasswordlessEmail,
+    signUpEmailPassword,
+    changeUserMfaVerify,
+    changeUserMfa,
+    getJWKs,
+    createPAT,
+    signInAnonymous,
+    signInOTPEmail,
+    verifySignInOTPEmail,
+    signInPAT,
+    signInIdToken,
+    linkIdToken,
+    deanonymizeUser,
+    changeUserEmail,
+    sendVerificationEmail,
+    changeUserPassword,
+    sendPasswordResetEmail,
+    verifyTicketURL,
+    signInProviderURL,
   };
 };

@@ -66,6 +66,7 @@ deleteFile(id: string, options?: RequestInit): Promise<FetchResponse<void>>;
 
 Summary: Delete file
 Permanently delete a file from storage. This removes both the file content and its associated metadata.
+
 This method may return different T based on the response code:
 
 - 204: void
@@ -93,6 +94,7 @@ getFile(
 
 Summary: Download file
 Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
+
 This method may return different T based on the response code:
 
 - 200: void
@@ -123,6 +125,7 @@ getFileMetadataHeaders(
 
 Summary: Check file information
 Retrieve file metadata headers without downloading the file content. Supports conditional requests and provides caching information.
+
 This method may return different T based on the response code:
 
 - 200: void
@@ -150,6 +153,7 @@ getVersion(options?: RequestInit): Promise<FetchResponse<VersionInformation>>;
 
 Summary: Get service version information
 Retrieves build and version information about the storage service. Useful for monitoring and debugging.
+
 This method may return different T based on the response code:
 
 - 200: VersionInformation
@@ -223,6 +227,7 @@ uploadFiles(body: UploadFilesBody, options?: RequestInit): Promise<FetchResponse
 
 Summary: Upload files
 Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
+
 This method may return different T based on the response code:
 
 - 201: UploadFilesResponse201
@@ -269,7 +274,7 @@ Error details.
 message: string;
 ```
 
-(string) - Human-readable error message.
+(`string`) - Human-readable error message.
 
 - Example - `"File not found"`
 
@@ -653,7 +658,7 @@ Example - `"user-uploads"`
 file[]: Blob[];
 ```
 
-(Blob[]) - Array of files to upload.
+(`Blob[]`) - Array of files to upload.
 
 ##### metadata\[\]?
 

@@ -7,7 +7,7 @@ import type { ChainFunction, FetchResponse } from "../fetch";
 
 /**
  * Contains version information about the storage service.
- @property buildVersion? (string) - The version number of the storage service build.
+ @property buildVersion? (`string`) - The version number of the storage service build.
     *    Example - `"1.2.3"`*/
 export interface VersionInformation {
   /**
@@ -19,13 +19,13 @@ export interface VersionInformation {
 
 /**
  * Basic information about a file in storage.
- @property id? (string) - Unique identifier for the file.
+ @property id? (`string`) - Unique identifier for the file.
     *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
- @property name? (string) - Name of the file including extension.
+ @property name? (`string`) - Name of the file including extension.
     *    Example - `"profile-picture.jpg"`
- @property bucketId? (string) - ID of the bucket containing the file.
+ @property bucketId? (`string`) - ID of the bucket containing the file.
     *    Example - `"users-bucket"`
- @property isUploaded? (boolean) - Whether the file has been successfully uploaded.
+ @property isUploaded? (`boolean`) - Whether the file has been successfully uploaded.
     *    Example - `true`*/
 export interface FileSummary {
   /**
@@ -52,29 +52,29 @@ export interface FileSummary {
 
 /**
  * Comprehensive metadata information about a file in storage.
- @property id? (string) - Unique identifier for the file.
+ @property id? (`string`) - Unique identifier for the file.
     *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
- @property name? (string) - Name of the file including extension.
+ @property name? (`string`) - Name of the file including extension.
     *    Example - `"profile-picture.jpg"`
- @property size? (number) - Size of the file in bytes.
+ @property size? (`number`) - Size of the file in bytes.
     *    Example - `245678`
- @property bucketId? (string) - ID of the bucket containing the file.
+ @property bucketId? (`string`) - ID of the bucket containing the file.
     *    Example - `"users-bucket"`
- @property etag? (string) - Entity tag for cache validation.
+ @property etag? (`string`) - Entity tag for cache validation.
     *    Example - `"\"a1b2c3d4e5f6\""`
- @property createdAt? (string) - Timestamp when the file was created.
+ @property createdAt? (`string`) - Timestamp when the file was created.
     *    Example - `"2023-01-15T12:34:56Z"`
     *    Format - date-time
- @property updatedAt? (string) - Timestamp when the file was last updated.
+ @property updatedAt? (`string`) - Timestamp when the file was last updated.
     *    Example - `"2023-01-16T09:45:32Z"`
     *    Format - date-time
- @property isUploaded? (boolean) - Whether the file has been successfully uploaded.
+ @property isUploaded? (`boolean`) - Whether the file has been successfully uploaded.
     *    Example - `true`
- @property mimeType? (string) - MIME type of the file.
+ @property mimeType? (`string`) - MIME type of the file.
     *    Example - `"image/jpeg"`
- @property uploadedByUserId? (string) - ID of the user who uploaded the file.
+ @property uploadedByUserId? (`string`) - ID of the user who uploaded the file.
     *    Example - `"abc123def456"`
- @property metadata? (Record<string, unknown>) - Custom metadata associated with the file.
+ @property metadata? (`Record<string, unknown>`) - Custom metadata associated with the file.
     *    Example - `{"alt":"Profile picture","category":"avatar"}`*/
 export interface FileMetadata {
   /**
@@ -138,11 +138,11 @@ export interface FileMetadata {
 
 /**
  * Metadata provided when uploading a new file.
- @property id? (string) - Optional custom ID for the file. If not provided, a UUID will be generated.
+ @property id? (`string`) - Optional custom ID for the file. If not provided, a UUID will be generated.
     *    Example - `"custom-id-123"`
- @property name? (string) - Name to assign to the file. If not provided, the original filename will be used.
+ @property name? (`string`) - Name to assign to the file. If not provided, the original filename will be used.
     *    Example - `"custom-filename.png"`
- @property metadata? (Record<string, unknown>) - Custom metadata to associate with the file.
+ @property metadata? (`Record<string, unknown>`) - Custom metadata to associate with the file.
     *    Example - `{"alt":"Custom image","category":"document"}`*/
 export interface UploadFileMetadata {
   /**
@@ -164,9 +164,9 @@ export interface UploadFileMetadata {
 
 /**
  * Metadata that can be updated for an existing file.
- @property name? (string) - New name to assign to the file.
+ @property name? (`string`) - New name to assign to the file.
     *    Example - `"renamed-file.jpg"`
- @property metadata? (Record<string, unknown>) - Updated custom metadata to associate with the file.
+ @property metadata? (`Record<string, unknown>`) - Updated custom metadata to associate with the file.
     *    Example - `{"alt":"Updated image description","category":"profile"}`*/
 export interface UpdateFileMetadata {
   /**
@@ -183,9 +183,9 @@ export interface UpdateFileMetadata {
 
 /**
  * Contains a presigned URL for direct file operations.
- @property url? (string) - The presigned URL for file operations.
+ @property url? (`string`) - The presigned URL for file operations.
     *    Example - `"https://storage.example.com/files/abc123?signature=xyz"`
- @property expiration? (number) - The time in seconds until the URL expires.
+ @property expiration? (`number`) - The time in seconds until the URL expires.
     *    Example - `3600`*/
 export interface PresignedURLResponse {
   /**
@@ -202,7 +202,7 @@ export interface PresignedURLResponse {
 
 /**
  * Error details.
- @property message (string) - Human-readable error message.
+ @property message (`string`) - Human-readable error message.
     *    Example - `"File not found"`*/
 export interface ErrorResponseError {
   /**
@@ -214,7 +214,7 @@ export interface ErrorResponseError {
 
 /**
  * Error information returned by the API.
- @property error? (ErrorResponseError) - Error details.*/
+ @property error? (`ErrorResponseError`) - Error details.*/
 export interface ErrorResponse {
   /**
    * Error details.
@@ -224,10 +224,10 @@ export interface ErrorResponse {
 
 /**
  * 
- @property bucket-id? (string) - Target bucket identifier where files will be stored.
+ @property bucket-id? (`string`) - Target bucket identifier where files will be stored.
     *    Example - `"user-uploads"`
- @property metadata[]? (UploadFileMetadata[]) - Optional custom metadata for each uploaded file. Must match the order of the file[] array.
- @property file[] (Blob[]) - Array of files to upload.*/
+ @property metadata[]? (`UploadFileMetadata[]`) - Optional custom metadata for each uploaded file. Must match the order of the file[] array.
+ @property file[] (`Blob[]`) - Array of files to upload.*/
 export interface UploadFilesBody {
   /**
    * Target bucket identifier where files will be stored.
@@ -246,7 +246,7 @@ export interface UploadFilesBody {
 
 /**
  * 
- @property processedFiles? (FileMetadata[]) - List of successfully processed files with their metadata.*/
+ @property processedFiles? (`FileMetadata[]`) - List of successfully processed files with their metadata.*/
 export interface UploadFilesResponse201 {
   /**
    * List of successfully processed files with their metadata.
@@ -266,8 +266,8 @@ export type GetF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
 
 /**
  * 
- @property metadata? (UpdateFileMetadata) - Metadata that can be updated for an existing file.
- @property file? (Blob) - New file content to replace the existing file
+ @property metadata? (`UpdateFileMetadata`) - Metadata that can be updated for an existing file.
+ @property file? (`Blob`) - New file content to replace the existing file
     *    Format - binary*/
 export interface ReplaceFileBody {
   /**
@@ -366,6 +366,7 @@ export interface Client {
   /**
      Summary: Get service version information
      Retrieves build and version information about the storage service. Useful for monitoring and debugging.
+
      This method may return different T based on the response code:
      - 200: VersionInformation
      */
@@ -374,6 +375,7 @@ export interface Client {
   /**
      Summary: Upload files
      Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
+
      This method may return different T based on the response code:
      - 201: UploadFilesResponse201
      - 400: ErrorResponse
@@ -386,6 +388,7 @@ export interface Client {
   /**
      Summary: Check file information
      Retrieve file metadata headers without downloading the file content. Supports conditional requests and provides caching information.
+
      This method may return different T based on the response code:
      - 200: void
      - 304: void
@@ -401,6 +404,7 @@ export interface Client {
   /**
      Summary: Download file
      Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
+
      This method may return different T based on the response code:
      - 200: void
      - 304: void
@@ -422,6 +426,7 @@ export interface Client {
 
 Each step is atomic, but if a step fails, previous steps will not be automatically rolled back.
 
+
      This method may return different T based on the response code:
      - 200: FileMetadata
      - 400: ErrorResponse
@@ -435,6 +440,7 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
   /**
      Summary: Delete file
      Permanently delete a file from storage. This removes both the file content and its associated metadata.
+
      This method may return different T based on the response code:
      - 204: void
      - 400: ErrorResponse

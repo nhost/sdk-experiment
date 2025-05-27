@@ -706,7 +706,7 @@ expiresAt: string;
 optional metadata: Record<string, unknown>;
 ```
 
-- Example - `{"name":"my-pat","used-by":"my-app-cli"}`
+Example - `{"name":"my-pat","used-by":"my-app-cli"}`
 
 ---
 
@@ -932,8 +932,8 @@ ticket: string;
 optional redirectTo: string;
 ```
 
-- Example - `"https://my-app.com/catch-redirection"`
-- Format - uri
+Example - `"https://my-app.com/catch-redirection"`
+Format - uri
 
 ---
 
@@ -1041,7 +1041,7 @@ User authentication session containing tokens and user information
 optional displayName: string;
 ```
 
-- Example - `"John Smith"`
+Example - `"John Smith"`
 
 ##### locale?
 
@@ -1050,10 +1050,9 @@ optional locale: string;
 ```
 
 A two-characters locale
-
-- Example - `"en"`
-- MinLength - 2
-- MaxLength - 2
+Example - `"en"`
+MinLength - 2
+MaxLength - 2
 
 ##### metadata?
 
@@ -1061,7 +1060,7 @@ A two-characters locale
 optional metadata: Record<string, unknown>;
 ```
 
-- Example - `{"firstName":"John","lastName":"Smith"}`
+Example - `{"firstName":"John","lastName":"Smith"}`
 
 ---
 
@@ -1357,9 +1356,8 @@ optional email: string;
 ```
 
 A valid email
-
-- Example - `"john.smith@nhost.io"`
-- Format - email
+Example - `"john.smith@nhost.io"`
+Format - email
 
 ---
 
@@ -1382,9 +1380,8 @@ optional email: string;
 ```
 
 A valid email. Deprecated, no longer used
-
-- Example - `"john.smith@nhost.io"`
-- Format - email
+Example - `"john.smith@nhost.io"`
+Format - email
 
 ---
 
@@ -1457,7 +1454,7 @@ password: string;
 optional allowedRoles: string[];
 ```
 
-- Example - `["me","user"]`
+Example - `["me","user"]`
 
 ##### defaultRole?
 
@@ -1465,7 +1462,7 @@ optional allowedRoles: string[];
 optional defaultRole: string;
 ```
 
-- Example - `"user"`
+Example - `"user"`
 
 ##### displayName?
 
@@ -1473,9 +1470,9 @@ optional defaultRole: string;
 optional displayName: string;
 ```
 
-- Example - `"John Smith"`
-- Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-- MaxLength - 32
+Example - `"John Smith"`
+Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
+MaxLength - 32
 
 ##### locale?
 
@@ -1484,10 +1481,9 @@ optional locale: string;
 ```
 
 A two-characters locale
-
-- Example - `"en"`
-- MinLength - 2
-- MaxLength - 2
+Example - `"en"`
+MinLength - 2
+MaxLength - 2
 
 ##### metadata?
 
@@ -1495,7 +1491,7 @@ A two-characters locale
 optional metadata: Record<string, unknown>;
 ```
 
-- Example - `{"firstName":"John","lastName":"Smith"}`
+Example - `{"firstName":"John","lastName":"Smith"}`
 
 ##### redirectTo?
 
@@ -1503,8 +1499,8 @@ optional metadata: Record<string, unknown>;
 optional redirectTo: string;
 ```
 
-- Example - `"https://my-app.com/catch-redirection"`
-- Format - uri
+Example - `"https://my-app.com/catch-redirection"`
+Format - uri
 
 ---
 
@@ -1613,9 +1609,8 @@ optional email: string;
 ```
 
 User's email address
-
-- Example - `"john.smith@nhost.io"`
-- Format - email
+Example - `"john.smith@nhost.io"`
+Format - email
 
 ##### emailVerified
 
@@ -1677,8 +1672,7 @@ optional phoneNumber: string;
 ```
 
 User's phone number
-
-- Example - `"+12025550123"`
+Example - `"+12025550123"`
 
 ##### phoneNumberVerified
 
@@ -1738,10 +1732,9 @@ optional password: string;
 ```
 
 A password of minimum 3 characters
-
-- Example - `"Str0ngPassw#ord-94|%"`
-- MinLength - 3
-- MaxLength - 50
+Example - `"Str0ngPassw#ord-94|%"`
+MinLength - 3
+MaxLength - 50
 
 ##### signInMethod
 
@@ -1812,8 +1805,7 @@ optional activeMfaType: UserMfaRequestActiveMfaType;
 ```
 
 Type of MFA to activate. Use empty string to disable MFA.
-
-- Example - `"totp"`
+Example - `"totp"`
 
 ##### code
 
@@ -1850,8 +1842,7 @@ optional ticket: string;
 ```
 
 Ticket to reset the password, required if the user is not authenticated
-
-- Pattern - ^passwordReset\:.\*$
+Pattern - ^passwordReset\:.\*$
 
 ---
 
