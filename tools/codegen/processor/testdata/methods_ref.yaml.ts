@@ -7,7 +7,7 @@ import type { ChainFunction, FetchResponse } from "../fetch";
 
 /**
  * Contains version information about the storage service.
- @property buildVersion? (string) - The version number of the storage service build.
+ @property buildVersion? (`string`) - The version number of the storage service build.
     *    Example - `"1.2.3"`*/
 export interface VersionInformation {
   /**
@@ -20,13 +20,13 @@ export interface VersionInformation {
 
 /**
  * Basic information about a file in storage.
- @property id? (string) - Unique identifier for the file.
+ @property id? (`string`) - Unique identifier for the file.
     *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
- @property name? (string) - Name of the file including extension.
+ @property name? (`string`) - Name of the file including extension.
     *    Example - `"profile-picture.jpg"`
- @property bucketId? (string) - ID of the bucket containing the file.
+ @property bucketId? (`string`) - ID of the bucket containing the file.
     *    Example - `"users-bucket"`
- @property isUploaded? (boolean) - Whether the file has been successfully uploaded.
+ @property isUploaded? (`boolean`) - Whether the file has been successfully uploaded.
     *    Example - `true`*/
 export interface FileSummary {
   /**
@@ -54,29 +54,29 @@ export interface FileSummary {
 
 /**
  * Comprehensive metadata information about a file in storage.
- @property id? (string) - Unique identifier for the file.
+ @property id? (`string`) - Unique identifier for the file.
     *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
- @property name? (string) - Name of the file including extension.
+ @property name? (`string`) - Name of the file including extension.
     *    Example - `"profile-picture.jpg"`
- @property size? (number) - Size of the file in bytes.
+ @property size? (`number`) - Size of the file in bytes.
     *    Example - `245678`
- @property bucketId? (string) - ID of the bucket containing the file.
+ @property bucketId? (`string`) - ID of the bucket containing the file.
     *    Example - `"users-bucket"`
- @property etag? (string) - Entity tag for cache validation.
+ @property etag? (`string`) - Entity tag for cache validation.
     *    Example - `"\"a1b2c3d4e5f6\""`
- @property createdAt? (string) - Timestamp when the file was created.
+ @property createdAt? (`string`) - Timestamp when the file was created.
     *    Example - `"2023-01-15T12:34:56Z"`
     *    Format - date-time
- @property updatedAt? (string) - Timestamp when the file was last updated.
+ @property updatedAt? (`string`) - Timestamp when the file was last updated.
     *    Example - `"2023-01-16T09:45:32Z"`
     *    Format - date-time
- @property isUploaded? (boolean) - Whether the file has been successfully uploaded.
+ @property isUploaded? (`boolean`) - Whether the file has been successfully uploaded.
     *    Example - `true`
- @property mimeType? (string) - MIME type of the file.
+ @property mimeType? (`string`) - MIME type of the file.
     *    Example - `"image/jpeg"`
- @property uploadedByUserId? (string) - ID of the user who uploaded the file.
+ @property uploadedByUserId? (`string`) - ID of the user who uploaded the file.
     *    Example - `"abc123def456"`
- @property metadata? (Record<string, unknown>) - Custom metadata associated with the file.
+ @property metadata? (`Record<string, unknown>`) - Custom metadata associated with the file.
     *    Example - `{"alt":"Profile picture","category":"avatar"}`*/
 export interface FileMetadata {
   /**
@@ -141,11 +141,11 @@ export interface FileMetadata {
 
 /**
  * Metadata provided when uploading a new file.
- @property id? (string) - Optional custom ID for the file. If not provided, a UUID will be generated.
+ @property id? (`string`) - Optional custom ID for the file. If not provided, a UUID will be generated.
     *    Example - `"custom-id-123"`
- @property name? (string) - Name to assign to the file. If not provided, the original filename will be used.
+ @property name? (`string`) - Name to assign to the file. If not provided, the original filename will be used.
     *    Example - `"custom-filename.png"`
- @property metadata? (Record<string, unknown>) - Custom metadata to associate with the file.
+ @property metadata? (`Record<string, unknown>`) - Custom metadata to associate with the file.
     *    Example - `{"alt":"Custom image","category":"document"}`*/
 export interface UploadFileMetadata {
   /**
@@ -168,9 +168,9 @@ export interface UploadFileMetadata {
 
 /**
  * Metadata that can be updated for an existing file.
- @property name? (string) - New name to assign to the file.
+ @property name? (`string`) - New name to assign to the file.
     *    Example - `"renamed-file.jpg"`
- @property metadata? (Record<string, unknown>) - Updated custom metadata to associate with the file.
+ @property metadata? (`Record<string, unknown>`) - Updated custom metadata to associate with the file.
     *    Example - `{"alt":"Updated image description","category":"profile"}`*/
 export interface UpdateFileMetadata {
   /**
@@ -188,7 +188,7 @@ export interface UpdateFileMetadata {
 
 /**
  * Error details.
- @property message (string) - Human-readable error message.
+ @property message (`string`) - Human-readable error message.
     *    Example - `"File not found"`*/
 export interface ErrorResponseError {
   /**
@@ -201,7 +201,7 @@ export interface ErrorResponseError {
 
 /**
  * Error information returned by the API.
- @property error? (ErrorResponseError) - Error details.*/
+ @property error? (`ErrorResponseError`) - Error details.*/
 export interface ErrorResponse {
   /**
    * Error details.
@@ -212,7 +212,7 @@ export interface ErrorResponse {
 
 /**
  * Request to refresh an access token
- @property refreshToken (string) - Refresh token used to generate a new access token
+ @property refreshToken (`string`) - Refresh token used to generate a new access token
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b*/
 export interface RefreshTokenRequest {
@@ -227,18 +227,18 @@ export interface RefreshTokenRequest {
 
 /**
  * User authentication session containing tokens and user information
- @property accessToken (string) - JWT token for authenticating API requests
+ @property accessToken (`string`) - JWT token for authenticating API requests
     *    Example - `"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
- @property accessTokenExpiresIn (number) - Expiration time of the access token in seconds
+ @property accessTokenExpiresIn (`number`) - Expiration time of the access token in seconds
     *    Example - `900`
     *    Format - int64
- @property refreshTokenId (string) - Identifier for the refresh token
+ @property refreshTokenId (`string`) - Identifier for the refresh token
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
- @property refreshToken (string) - Token used to refresh the access token
+ @property refreshToken (`string`) - Token used to refresh the access token
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
- @property user? (User) - User profile and account information*/
+ @property user? (`User`) - User profile and account information*/
 export interface Session {
   /**
    * JWT token for authenticating API requests
@@ -272,36 +272,36 @@ export interface Session {
 
 /**
  * User profile and account information
- @property avatarUrl (string) - URL to the user's profile picture
+ @property avatarUrl (`string`) - URL to the user's profile picture
     *    Example - `"https://myapp.com/avatars/user123.jpg"`
- @property createdAt (string) - Timestamp when the user account was created
+ @property createdAt (`string`) - Timestamp when the user account was created
     *    Example - `"2023-01-15T12:34:56Z"`
     *    Format - date-time
- @property defaultRole (string) - Default authorization role for the user
+ @property defaultRole (`string`) - Default authorization role for the user
     *    Example - `"user"`
- @property displayName (string) - User's display name
+ @property displayName (`string`) - User's display name
     *    Example - `"John Smith"`
- @property email? (string) - User's email address
+ @property email? (`string`) - User's email address
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property emailVerified (boolean) - Whether the user's email has been verified
+ @property emailVerified (`boolean`) - Whether the user's email has been verified
     *    Example - `true`
- @property id (string) - Unique identifier for the user
+ @property id (`string`) - Unique identifier for the user
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
- @property isAnonymous (boolean) - Whether this is an anonymous user account
+ @property isAnonymous (`boolean`) - Whether this is an anonymous user account
     *    Example - `false`
- @property locale (string) - User's preferred locale (language code)
+ @property locale (`string`) - User's preferred locale (language code)
     *    Example - `"en"`
     *    MinLength - 2
     *    MaxLength - 2
- @property metadata (Record<string, unknown>) - Custom metadata associated with the user
+ @property metadata (`Record<string, unknown>`) - Custom metadata associated with the user
     *    Example - `{"firstName":"John","lastName":"Smith"}`
- @property phoneNumber? (string) - User's phone number
+ @property phoneNumber? (`string`) - User's phone number
     *    Example - `"+12025550123"`
- @property phoneNumberVerified (boolean) - Whether the user's phone number has been verified
+ @property phoneNumberVerified (`boolean`) - Whether the user's phone number has been verified
     *    Example - `false`
- @property roles (string[]) - List of roles assigned to the user
+ @property roles (`string[]`) - List of roles assigned to the user
     *    Example - `["user","customer"]`*/
 export interface User {
   /**
@@ -457,10 +457,10 @@ export type RedirectToQuery = string;
 
 /**
  * 
- @property bucket-id? (string) - Target bucket identifier where files will be stored.
+ @property bucket-id? (`string`) - Target bucket identifier where files will be stored.
     *    Example - `"user-uploads"`
- @property metadata[]? (FileMetadata[]) - Optional custom metadata for each uploaded file. Must match the order of the file[] array.
- @property file[] (Blob[]) - Array of files to upload.*/
+ @property metadata[]? (`FileMetadata[]`) - Optional custom metadata for each uploaded file. Must match the order of the file[] array.
+ @property file[] (`Blob[]`) - Array of files to upload.*/
 export interface UploadFilesBody {
   /**
    * Target bucket identifier where files will be stored.
@@ -480,7 +480,7 @@ export interface UploadFilesBody {
 
 /**
  * 
- @property processedFiles? (FileMetadata[]) - List of successfully processed files with their metadata.*/
+ @property processedFiles? (`FileMetadata[]`) - List of successfully processed files with their metadata.*/
 export interface UploadFilesResponse201 {
   /**
    * List of successfully processed files with their metadata.
@@ -491,8 +491,8 @@ export interface UploadFilesResponse201 {
 
 /**
  * 
- @property metadata? (UpdateFileMetadata) - Metadata that can be updated for an existing file.
- @property file (Blob) - New file content to replace the existing file
+ @property metadata? (`UpdateFileMetadata`) - Metadata that can be updated for an existing file.
+ @property file (`Blob`) - New file content to replace the existing file
     *    Format - binary*/
 export interface ReplaceFileBody {
   /**

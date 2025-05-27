@@ -47,19 +47,6 @@ components:
             type: string
             description: "Tags associated with the object."
             example: "tag1"
-        parent:
-          description: "Parent object reference."
-          $ref: '#/components/schemas/SimpleObject'
-        children:
-          description: "List of child object references."
-          type: array
-          items:
-            $ref: '#/components/schemas/SimpleObject'
-        relatedObjects:
-          description: "Array of related object references."
-          type: array
-          items:
-            $ref: '#/components/schemas/SimpleObject'
         status:
           type: string
           description: "Status of the object."

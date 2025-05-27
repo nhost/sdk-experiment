@@ -2,6 +2,9 @@
  * This file is auto-generated. Do not edit manually.
  */
 
+import { FetchError, createEnhancedFetch } from "../fetch";
+import type { ChainFunction, FetchResponse } from "../fetch";
+
 /**
  * Enumeration of possible status values.
  */
@@ -28,19 +31,19 @@ export type SimpleObjectStatusMixed = 0 | "One" | true;
 
 /**
  * Nested object containing additional properties.
- * @property (string) nestedId - Unique identifier for the nested object.
-    *    Example - "nested123"
- * @property (string) nestedData - Data associated with the nested object.
-    *    Example - "Nested data"*/
+ @property nestedId (`string`) - Unique identifier for the nested object.
+    *    Example - `"nested123"`
+ @property nestedData? (`string`) - Data associated with the nested object.
+    *    Example - `"Nested data"`*/
 export interface SimpleObjectNested {
   /**
    * Unique identifier for the nested object.
-    *    Example - "nested123"
+    *    Example - `"nested123"`
    */
   nestedId: string,
   /**
    * Data associated with the nested object.
-    *    Example - "Nested data"
+    *    Example - `"Nested data"`
    */
   nestedData?: string,
 };
@@ -48,56 +51,53 @@ export interface SimpleObjectNested {
 
 /**
  * This is a simple object schema.
- * @property (string) id - Unique identifier for the object.
-    *    Example - "abc123"
- * @property (boolean) active - Indicates if the object is active.
-    *    Example - true
- * @property (number) age - Age of the object in years.
-    *    Example - 5
- * @property (string) createdAt - Timestamp when the file was created.
-    *    Example - "2023-01-15T12:34:56Z"
+ @property id (`string`) - Unique identifier for the object.
+    *    Example - `"abc123"`
+ @property active (`boolean`) - Indicates if the object is active.
+    *    Example - `true`
+ @property age (`number`) - Age of the object in years.
+    *    Example - `5`
+ @property createdAt (`string`) - Timestamp when the file was created.
+    *    Example - `"2023-01-15T12:34:56Z"`
     *    Format - date-time
- * @property (Record<string, unknown>) metadata - Custom metadata associated with the file.
-    *    Example - {"alt":"Profile picture","category":"avatar"}
- * @property (Blob) data - Base64 encoded data of the file.
+ @property metadata (`Record<string, unknown>`) - Custom metadata associated with the file.
+    *    Example - `{"alt":"Profile picture","category":"avatar"}`
+ @property data (`Blob`) - Base64 encoded data of the file.
     *    Format - binary
- * @property (string[]) tags - List of tags associated with the object.
- * @property (SimpleObject) parent - This is a simple object schema.
- * @property (SimpleObject[]) children - List of child object references.
- * @property (SimpleObject[]) relatedObjects - Array of related object references.
- * @property (SimpleObjectStatus) status - Status of the object.
-    *    Example - "active"
- * @property (SimpleObjectStatusCode) statusCode - Status code of the object.
-    *    Example - 0
- * @property (SimpleObjectStatusMixed) statusMixed - Some people just want to see the world burn.
-    *    Example - 0
- * @property (StatusEnum) statusRef - Enumeration of possible status values.
- * @property (SimpleObjectNested) nested - Nested object containing additional properties.*/
+ @property tags? (`string[]`) - List of tags associated with the object.
+ @property status? (`SimpleObjectStatus`) - Status of the object.
+    *    Example - `"active"`
+ @property statusCode? (`SimpleObjectStatusCode`) - Status code of the object.
+    *    Example - `0`
+ @property statusMixed? (`SimpleObjectStatusMixed`) - Some people just want to see the world burn.
+    *    Example - `0`
+ @property statusRef? (`StatusEnum`) - Enumeration of possible status values.
+ @property nested? (`SimpleObjectNested`) - Nested object containing additional properties.*/
 export interface SimpleObject {
   /**
    * Unique identifier for the object.
-    *    Example - "abc123"
+    *    Example - `"abc123"`
    */
   id: string,
   /**
    * Indicates if the object is active.
-    *    Example - true
+    *    Example - `true`
    */
   active: boolean,
   /**
    * Age of the object in years.
-    *    Example - 5
+    *    Example - `5`
    */
   age: number,
   /**
    * Timestamp when the file was created.
-    *    Example - "2023-01-15T12:34:56Z"
+    *    Example - `"2023-01-15T12:34:56Z"`
     *    Format - date-time
    */
   createdAt: string,
   /**
    * Custom metadata associated with the file.
-    *    Example - {"alt":"Profile picture","category":"avatar"}
+    *    Example - `{"alt":"Profile picture","category":"avatar"}`
    */
   metadata: Record<string, unknown>,
   /**
@@ -110,30 +110,18 @@ export interface SimpleObject {
    */
   tags?: string[],
   /**
-   * This is a simple object schema.
-   */
-  parent?: SimpleObject,
-  /**
-   * List of child object references.
-   */
-  children?: SimpleObject[],
-  /**
-   * Array of related object references.
-   */
-  relatedObjects?: SimpleObject[],
-  /**
    * Status of the object.
-    *    Example - "active"
+    *    Example - `"active"`
    */
   status?: SimpleObjectStatus,
   /**
    * Status code of the object.
-    *    Example - 0
+    *    Example - `0`
    */
   statusCode?: SimpleObjectStatusCode,
   /**
    * Some people just want to see the world burn.
-    *    Example - 0
+    *    Example - `0`
    */
   statusMixed?: SimpleObjectStatusMixed,
   /**
