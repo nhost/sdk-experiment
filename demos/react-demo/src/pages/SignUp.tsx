@@ -150,10 +150,10 @@ export default function SignUp(): JSX.Element {
             </div>
           }
           webauthnTabContent={
-            <WebAuthnForm 
+            <WebAuthnForm
               email={email}
               setEmail={setEmail}
-              displayName={displayName} 
+              displayName={displayName}
               setDisplayName={setDisplayName}
             />
           }

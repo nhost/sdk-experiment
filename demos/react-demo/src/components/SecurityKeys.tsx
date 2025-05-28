@@ -167,13 +167,10 @@ export default function SecurityKeys() {
       }
 
       // Step 2: Browser prompts user to interact with security key
-      const publicKeyCredentialCreationOptions =
-        initResponse.body as PublicKeyCredentialCreationOptions;
-
       try {
         // Prepare credential options using utility function
         const credentialOptions = prepareRegistrationOptions(
-          publicKeyCredentialCreationOptions,
+          initResponse.body,
         );
 
         if (!credentialOptions.challenge) {

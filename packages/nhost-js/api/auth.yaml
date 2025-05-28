@@ -1664,6 +1664,7 @@ components:
         name: protocol
         path: github.com/go-webauthn/webauthn/protocol
       x-go-type: protocol.PublicKeyCredentialCreationOptions
+      x-ts-type: PublicKeyCredentialCreationOptions
 
     SignInWebauthnVerifyRequest:
       type: object
@@ -1711,6 +1712,7 @@ components:
         name: protocol
         path: github.com/go-webauthn/webauthn/protocol
       x-go-type: protocol.PublicKeyCredentialCreationOptions
+      x-ts-type: PublicKeyCredentialCreationOptions
 
     VerifyAddSecurityKeyRequest:
       type: object

@@ -13,9 +13,9 @@ export default function TabForm({
   socialTabContent,
   webauthnTabContent,
 }: TabFormProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<"password" | "magic" | "social" | "webauthn">(
-    "password",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "password" | "magic" | "social" | "webauthn"
+  >("password");
 
   return (
     <div>

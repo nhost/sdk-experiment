@@ -1415,12 +1415,12 @@ export interface Client {
      Initiate a WebAuthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
 
      This method may return different T based on the response code:
-     - 200: Record<string, unknown>
+     - 200: PublicKeyCredentialCreationOptions
      */
   signUpWebAuthn(
     body: SignUpWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<Record<string, unknown>>>;
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 
   /**
      Summary: Verify WebAuthn sign-up
@@ -1439,11 +1439,11 @@ export interface Client {
      
 
      This method may return different T based on the response code:
-     - 200: Record<string, unknown>
+     - 200: PublicKeyCredentialCreationOptions
      */
   addSecurityKey(
     options?: RequestInit,
-  ): Promise<FetchResponse<Record<string, unknown>>>;
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 
   /**
      Summary: Verify adding of a new webauthn security key
@@ -2380,7 +2380,7 @@ export const createAPIClient = (
   const signUpWebAuthn = async (
     body: SignUpWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<Record<string, unknown>>> => {
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>> => {
     const url = baseURL + `/signup/webauthn`;
     const res = await fetch(url, {
       ...options,
@@ -2401,7 +2401,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: Record<string, unknown> = responseBody
+    const payload: PublicKeyCredentialCreationOptions = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -2409,7 +2409,7 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<Record<string, unknown>>;
+    } as FetchResponse<PublicKeyCredentialCreationOptions>;
   };
 
   const verifySignUpWebAuthn = async (
@@ -2449,7 +2449,7 @@ export const createAPIClient = (
 
   const addSecurityKey = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<Record<string, unknown>>> => {
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>> => {
     const url = baseURL + `/user/webauthn/add`;
     const res = await fetch(url, {
       ...options,
@@ -2468,7 +2468,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: Record<string, unknown> = responseBody
+    const payload: PublicKeyCredentialCreationOptions = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -2476,7 +2476,7 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<Record<string, unknown>>;
+    } as FetchResponse<PublicKeyCredentialCreationOptions>;
   };
 
   const verifyAddSecurityKey = async (

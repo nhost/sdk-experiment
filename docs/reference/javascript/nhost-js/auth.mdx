@@ -66,14 +66,14 @@ baseURL: string;
 ##### addSecurityKey()
 
 ```ts
-addSecurityKey(options?: RequestInit): Promise<FetchResponse<Record<string, unknown>>>;
+addSecurityKey(options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 ```
 
 Summary: Initialize adding of a new webauthn security key
 
 This method may return different T based on the response code:
 
-- 200: Record<string, unknown>
+- 200: PublicKeyCredentialCreationOptions
 
 ###### Parameters
 
@@ -83,7 +83,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`Record`&lt;`string`, `unknown`&gt;&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialCreationOptions`&gt;&gt;
 
 ##### changeUserEmail()
 
@@ -689,7 +689,7 @@ This method may return different T based on the response code:
 ##### signUpWebAuthn()
 
 ```ts
-signUpWebAuthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<Record<string, unknown>>>;
+signUpWebAuthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 ```
 
 Summary: Sign up with WebAuthn
@@ -697,7 +697,7 @@ Initiate a WebAuthn sign-up process by sending a challenge to the user's device.
 
 This method may return different T based on the response code:
 
-- 200: Record<string, unknown>
+- 200: PublicKeyCredentialCreationOptions
 
 ###### Parameters
 
@@ -708,7 +708,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`Record`&lt;`string`, `unknown`&gt;&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialCreationOptions`&gt;&gt;
 
 ##### verifyAddSecurityKey()
 
