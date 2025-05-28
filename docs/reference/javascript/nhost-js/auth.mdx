@@ -591,6 +591,54 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
+##### signInWebAuthn()
+
+```ts
+signInWebAuthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<Record<string, unknown>>>;
+```
+
+Summary: Sign in with WebAuthn
+Initiate a WebAuthn sign-in process by sending a challenge to the user's device. The user must have previously registered a WebAuthn credential.
+
+This method may return different T based on the response code:
+
+- 200: Record<string, unknown>
+
+###### Parameters
+
+| Parameter  | Type                                              |
+| ---------- | ------------------------------------------------- |
+| `body?`    | [`SignInWebauthnRequest`](#signinwebauthnrequest) |
+| `options?` | `RequestInit`                                     |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`Record`&lt;`string`, `unknown`&gt;&gt;&gt;
+
+##### signInWebAuthnVerify()
+
+```ts
+signInWebAuthnVerify(body: SignInWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+```
+
+Summary: Verify WebAuthn sign-in
+Complete the WebAuthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
+
+This method may return different T based on the response code:
+
+- 200: SessionPayload
+
+###### Parameters
+
+| Parameter  | Type                                                          |
+| ---------- | ------------------------------------------------------------- |
+| `body`     | [`SignInWebauthnVerifyRequest`](#signinwebauthnverifyrequest) |
+| `options?` | `RequestInit`                                                 |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
 ##### signOut()
 
 ```ts
@@ -635,6 +683,54 @@ This method may return different T based on the response code:
 | ---------- | ----------------------------------------------------------- |
 | `body`     | [`SignUpEmailPasswordRequest`](#signupemailpasswordrequest) |
 | `options?` | `RequestInit`                                               |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
+##### signUpWebAuthn()
+
+```ts
+signUpWebAuthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<Record<string, unknown>>>;
+```
+
+Summary: Sign up with WebAuthn
+Initiate a WebAuthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
+
+This method may return different T based on the response code:
+
+- 200: Record<string, unknown>
+
+###### Parameters
+
+| Parameter  | Type                                              |
+| ---------- | ------------------------------------------------- |
+| `body`     | [`SignUpWebauthnRequest`](#signupwebauthnrequest) |
+| `options?` | `RequestInit`                                     |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`Record`&lt;`string`, `unknown`&gt;&gt;&gt;
+
+##### signUpWebAuthnVerify()
+
+```ts
+signUpWebAuthnVerify(body: SignUpWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+```
+
+Summary: Verify WebAuthn sign-up
+Complete the WebAuthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
+
+This method may return different T based on the response code:
+
+- 200: SessionPayload
+
+###### Parameters
+
+| Parameter  | Type                                                          |
+| ---------- | ------------------------------------------------------------- |
+| `body`     | [`SignUpWebauthnVerifyRequest`](#signupwebauthnverifyrequest) |
+| `options?` | `RequestInit`                                                 |
 
 ###### Returns
 
@@ -1524,6 +1620,86 @@ email: string;
 ```ts
 optional options: SignUpOptions;
 ```
+
+---
+
+### SignUpWebauthnVerifyRequest
+
+#### Properties
+
+##### credential
+
+```ts
+credential: Record<string, unknown>;
+```
+
+(`Record<string, unknown>`) -
+
+##### options?
+
+```ts
+optional options: SignUpWebauthnVerifyRequestOptions;
+```
+
+---
+
+### SignUpWebauthnVerifyRequestOptions
+
+#### Properties
+
+##### allowedRoles?
+
+```ts
+optional allowedRoles: string[];
+```
+
+Example - `["me","user"]`
+
+##### defaultRole?
+
+```ts
+optional defaultRole: string;
+```
+
+Example - `"user"`
+
+##### displayName?
+
+```ts
+optional displayName: string;
+```
+
+Example - `"John Smith"`
+Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
+MaxLength - 32
+
+##### locale?
+
+```ts
+optional locale: string;
+```
+
+A two-characters locale
+Example - `"en"`
+MinLength - 2
+MaxLength - 2
+
+##### metadata?
+
+```ts
+optional metadata: Record<string, unknown>;
+```
+
+Example - `{"firstName":"John","lastName":"Smith"}`
+
+##### redirectTo?
+
+```ts
+optional redirectTo: string;
+```
+
+Example - `"https://my-app.com/catch-redirection"`
+Format - uri
 
 ---
 

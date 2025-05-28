@@ -797,29 +797,70 @@ export interface SignInWebauthnVerifyRequest {
 
 /**
  * 
- @property nickname? (`string`) - */
-export interface SignUpWebauthnVerifyRequestOptionsAllOf1 {
+ @property allowedRoles? (`string[]`) - 
+    *    Example - `["me","user"]`
+ @property defaultRole? (`string`) - 
+    *    Example - `"user"`
+ @property displayName? (`string`) - 
+    *    Example - `"John Smith"`
+    *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
+    *    MaxLength - 32
+ @property locale? (`string`) - A two-characters locale
+    *    Example - `"en"`
+    *    MinLength - 2
+    *    MaxLength - 2
+ @property metadata? (`Record<string, unknown>`) - 
+    *    Example - `{"firstName":"John","lastName":"Smith"}`
+ @property redirectTo? (`string`) - 
+    *    Example - `"https://my-app.com/catch-redirection"`
+    *    Format - uri*/
+export interface SignUpWebauthnVerifyRequestOptions {
   /**
    *
+   *    Example - `["me","user"]`
    */
-  nickname?: string;
+  allowedRoles?: string[];
+  /**
+   *
+   *    Example - `"user"`
+   */
+  defaultRole?: string;
+  /**
+   *
+   *    Example - `"John Smith"`
+   *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
+   *    MaxLength - 32
+   */
+  displayName?: string;
+  /**
+   * A two-characters locale
+   *    Example - `"en"`
+   *    MinLength - 2
+   *    MaxLength - 2
+   */
+  locale?: string;
+  /**
+   *
+   *    Example - `{"firstName":"John","lastName":"Smith"}`
+   */
+  metadata?: Record<string, unknown>;
+  /**
+   *
+   *    Example - `"https://my-app.com/catch-redirection"`
+   *    Format - uri
+   */
+  redirectTo?: string;
 }
 
 /**
- *
- */
-export type SignUpWebauthnVerifyRequestOptions = SignUpOptions &
-  SignUpWebauthnVerifyRequestOptionsAllOf1;
-
-/**
  * 
- @property credential? (`Record<string, unknown>`) - 
+ @property credential (`Record<string, unknown>`) - 
  @property options? (`SignUpWebauthnVerifyRequestOptions`) - */
 export interface SignUpWebauthnVerifyRequest {
   /**
    *
    */
-  credential?: Record<string, unknown>;
+  credential: Record<string, unknown>;
   /**
    *
    */
@@ -1373,7 +1414,7 @@ export interface Client {
      - 200: Record<string, unknown>
      */
   signInWebAuthn(
-    body: SignInWebauthnRequest,
+    body?: SignInWebauthnRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<Record<string, unknown>>>;
 
@@ -2264,7 +2305,7 @@ export const createAPIClient = (
   };
 
   const signInWebAuthn = async (
-    body: SignInWebauthnRequest,
+    body?: SignInWebauthnRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<Record<string, unknown>>> => {
     const url = baseURL + `/signin/webauthn`;

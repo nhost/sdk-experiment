@@ -135,23 +135,6 @@ export interface SimpleObject {
 };
 
 
-/**
- * 
- @property nickname? (`string`) - Nickname of the object.*/
-export interface SimpleObjectExtendedAllOf1 {
-  /**
-   * Nickname of the object.
-   */
-  nickname?: string,
-};
-
-
-/**
- * Extended version of the simple object schema with additional properties.
- */
-export type SimpleObjectExtended = SimpleObject & SimpleObjectExtendedAllOf1 & Record<string, unknown>;
-
-
 
 export interface Client {
   baseURL: string;

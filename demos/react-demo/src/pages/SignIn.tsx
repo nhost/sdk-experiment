@@ -2,6 +2,7 @@ import { useState, useEffect, type JSX } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import TabForm from "../components/TabForm";
 import MagicLinkForm from "../components/MagicLinkForm";
+import WebAuthnSignInForm from "../components/WebAuthnSignInForm";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
@@ -153,6 +154,12 @@ export default function SignIn(): JSX.Element {
                   Continue with GitHub
                 </button>
               </div>
+            }
+            webauthnTabContent={
+              <WebAuthnSignInForm 
+                email={email}
+                setEmail={setEmail}
+              />
             }
           />
         )}

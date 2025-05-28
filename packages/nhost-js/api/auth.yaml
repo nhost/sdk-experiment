@@ -885,7 +885,7 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/SignInWebauthnRequest"
-        required: true
+        required: false
       responses:
         "200":
           content:
@@ -1535,7 +1535,7 @@ components:
     SignUpOptions:
       type: object
       additionalProperties: false
-      properties:
+      properties: &signUpOptionsProperties
         allowedRoles:
           example:
             - me
@@ -1645,13 +1645,13 @@ components:
         options:
           type: object
           additionalProperties: false
-          allOf:
-            - $ref: "#/components/schemas/SignUpOptions"
-            - type: object
-              additionalProperties: false
-              properties:
-                nickname:
-                  type: string
+          properties:
+            <<: *signUpOptionsProperties
+            nickname:
+              description: Nickname for the security key
+              type: string
+      required:
+        - credential
 
     SignInIdTokenRequest:
       type: object

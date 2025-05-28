@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/fs"
 	"slices"
-	"strconv"
 
 	"github.com/nhost/sdk-experiment/tools/codegen/format"
 	"github.com/pb33f/libopenapi/datamodel/high/base"
@@ -19,7 +18,6 @@ const (
 	KindIdentifierEnum   KindIdentifier = "enum"
 	KindIdentifierMap    KindIdentifier = "map"
 	KindIdentifierAlias  KindIdentifier = "alias"
-	KindIdentifierAllOf  KindIdentifier = "allOf"
 )
 
 type Plugin interface { //nolint:interfacebloat
@@ -186,33 +184,6 @@ func (t *TypeMap) Schema() *base.SchemaProxy {
 	return t.schema
 }
 
-type TypeAllOf struct {
-	name   string
-	schema *base.SchemaProxy
-	Types  []Type
-	p      Plugin
-}
-
-func (t *TypeAllOf) Name() string {
-	return t.p.TypeObjectName(t.name)
-}
-
-func (t *TypeAllOf) Kind() KindIdentifier {
-	return KindIdentifierAllOf
-}
-
-func (t *TypeAllOf) Schema() *base.SchemaProxy {
-	return t.schema
-}
-
-func (t *TypeAllOf) TypeNames() []string {
-	names := make([]string, len(t.Types))
-	for i, typ := range t.Types {
-		names[i] = typ.Name()
-	}
-	return names
-}
-
 func getTypeObject( //nolint:ireturn
 	schema *base.SchemaProxy, derivedName string, p Plugin,
 ) (Type, []Type, error) {
@@ -220,37 +191,7 @@ func getTypeObject( //nolint:ireturn
 		derivedName = format.GetNameFromComponentRef(schema.GetReference())
 	}
 
-	switch {
-	case len(schema.Schema().AllOf) > 0:
-		types := make([]Type, len(schema.Schema().AllOf))
-		var tt []Type
-		for i, s := range schema.Schema().AllOf {
-			name := derivedName + "AllOf" + strconv.Itoa(i)
-			t, tt2, err := GetType(s, name, p, true)
-			if err != nil {
-				return nil, nil, fmt.Errorf("failed to get type for allOf schema %s: %w", name, err)
-			}
-			types[i] = t
-			tt = append(tt, tt2...)
-		}
-
-		if schema.Schema().AdditionalProperties != nil && schema.Schema().AdditionalProperties.B {
-			types = append(types, &TypeMap{
-				schema: schema,
-				p:      p,
-			})
-		}
-
-		t := &TypeAllOf{
-			name:   derivedName,
-			schema: schema,
-			Types:  types,
-			p:      p,
-		}
-
-		return t, append(tt, t), nil
-
-	case schema.Schema().Properties == nil:
+	if schema.Schema().Properties == nil {
 		if schema.Schema().AdditionalProperties.B {
 			return &TypeMap{
 				schema: schema,
