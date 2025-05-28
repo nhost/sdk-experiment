@@ -35,7 +35,6 @@ export default function SignUp(): JSX.Element {
         password,
         options: {
           displayName,
-          redirectTo: window.location.origin + "/verify",
         },
       });
 
@@ -156,7 +155,6 @@ export default function SignUp(): JSX.Element {
               setEmail={setEmail}
               displayName={displayName} 
               setDisplayName={setDisplayName}
-              redirectTo={window.location.origin + "/verify"}
             />
           }
         />

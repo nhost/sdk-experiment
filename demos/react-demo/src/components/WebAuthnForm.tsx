@@ -1,4 +1,4 @@
-import { useState, type JSX, useEffect } from "react";
+import { useState, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
