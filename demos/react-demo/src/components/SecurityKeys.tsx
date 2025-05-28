@@ -32,15 +32,16 @@ function base64URLToArrayBuffer(base64URL: string): ArrayBuffer {
 // Helper function to convert ArrayBuffer to base64URL
 function arrayBufferToBase64URL(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
-  let binary = '';
+  let binary = "";
   for (let i = 0; i < bytes.byteLength; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
   // Convert binary to base64 and then to base64URL
-  return window.btoa(binary)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=/g, '');
+  return window
+    .btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=/g, "");
 }
 
 interface SecurityKey {
@@ -130,18 +131,20 @@ export default function SecurityKeys() {
         },
       });
 
-      if (response.error) {
-        throw new Error(response.error.message);
+      if (response.body?.errors) {
+        throw new Error(response.body.errors[0]?.message || "Unknown error");
       }
 
       // Remove the key from the local state
       setSecurityKeys(securityKeys.filter((key) => key.id !== keyId));
-      setSuccess("Security key deleted successfully!");
+      setSuccess(
+        "Security key deleted successfully! Remember to also remove it from your authenticator app, password manager, or device credential manager to avoid future authentication issues.",
+      );
 
-      // Hide success message after 3 seconds
+      // Hide success message after 5 seconds (increased to give users time to read the reminder)
       setTimeout(() => {
         setSuccess(null);
-      }, 3000);
+      }, 5000);
     } catch (err) {
       const error = err as Error;
       setErrorMessage(`Failed to delete security key: ${error.message}`);
@@ -191,7 +194,7 @@ export default function SecurityKeys() {
 
     try {
       console.log("Starting security key registration");
-      
+
       // Step 1: Initialize WebAuthn security key registration
       const initResponse = await nhost.auth.addSecurityKey();
 
@@ -203,18 +206,26 @@ export default function SecurityKeys() {
         throw new Error(errorMessage);
       }
 
-      console.log("Received security key initialization response:", initResponse);
+      console.log(
+        "Received security key initialization response:",
+        initResponse,
+      );
 
       // Step 2: Browser prompts user to interact with security key
       const publicKeyCredentialCreationOptions =
         initResponse.body as PublicKeyCredentialCreationOptions;
 
       try {
-        console.log("Raw WebAuthn options:", publicKeyCredentialCreationOptions);
-        
+        console.log(
+          "Raw WebAuthn options:",
+          publicKeyCredentialCreationOptions,
+        );
+
         // Create a copy to modify
-        const credentialOptions = structuredClone(publicKeyCredentialCreationOptions);
-        
+        const credentialOptions = structuredClone(
+          publicKeyCredentialCreationOptions,
+        );
+
         // Convert challenge from base64URL to ArrayBuffer
         if (credentialOptions && credentialOptions.challenge) {
           const challenge = credentialOptions.challenge;
@@ -223,7 +234,10 @@ export default function SecurityKeys() {
             credentialOptions.challenge = base64URLToArrayBuffer(challenge);
           }
         } else {
-          console.error("Challenge is missing from the response", credentialOptions);
+          console.error(
+            "Challenge is missing from the response",
+            credentialOptions,
+          );
           throw new Error("Invalid challenge data received from server");
         }
 
@@ -239,7 +253,7 @@ export default function SecurityKeys() {
         // Convert excludeCredentials ids from base64URL if present
         if (credentialOptions.excludeCredentials) {
           console.log("Converting exclude credentials from base64URL");
-          credentialOptions.excludeCredentials = 
+          credentialOptions.excludeCredentials =
             credentialOptions.excludeCredentials.map((credential: any) => {
               if (credential.id && typeof credential.id === "string") {
                 return {
@@ -260,7 +274,7 @@ export default function SecurityKeys() {
           challenge: "ArrayBuffer (redacted for logging)",
           pubKeyCredParams: credentialOptions.pubKeyCredParams,
         });
-        
+
         // Create new credential
         const credential = (await navigator.credentials.create({
           publicKey: credentialOptions,
@@ -279,10 +293,12 @@ export default function SecurityKeys() {
           rawId: arrayBufferToBase64URL(credential.rawId),
           response: {
             clientDataJSON: arrayBufferToBase64URL(
-              (credential.response as AuthenticatorAttestationResponse).clientDataJSON
+              (credential.response as AuthenticatorAttestationResponse)
+                .clientDataJSON,
             ),
             attestationObject: arrayBufferToBase64URL(
-              (credential.response as AuthenticatorAttestationResponse).attestationObject
+              (credential.response as AuthenticatorAttestationResponse)
+                .attestationObject,
             ),
           },
         };
@@ -315,22 +331,24 @@ export default function SecurityKeys() {
         fetchSecurityKeys();
       } catch (err) {
         console.error("WebAuthn credential creation error:", err);
-        
+
         // Provide more specific error messages based on the error
         let errorMessage = "Failed to register security key";
-        
+
         if (err instanceof Error) {
           if (err.name === "NotAllowedError") {
-            errorMessage = "You cancelled the registration or the operation timed out";
+            errorMessage =
+              "You cancelled the registration or the operation timed out";
           } else if (err.name === "NotSupportedError") {
-            errorMessage = "Your device doesn't support this type of security key";
+            errorMessage =
+              "Your device doesn't support this type of security key";
           } else if (err.name === "SecurityError") {
             errorMessage = "The operation was blocked for security reasons";
           } else if (err.message) {
             errorMessage = err.message;
           }
         }
-        
+
         throw new Error(errorMessage);
       }
     } catch (err) {
@@ -367,8 +385,9 @@ export default function SecurityKeys() {
             (Chrome, Firefox, Safari, Edge) that supports WebAuthn.
           </p>
           <p className="mt-2 text-sm">
-            Note: Even if your browser supports WebAuthn, you may need a compatible authenticator
-            like a fingerprint reader, facial recognition, or a security key (e.g., YubiKey).
+            Note: Even if your browser supports WebAuthn, you may need a
+            compatible authenticator like a fingerprint reader, facial
+            recognition, or a security key (e.g., YubiKey).
           </p>
         </div>
       )}
@@ -380,9 +399,10 @@ export default function SecurityKeys() {
             browser to register it.
           </p>
           <p className="text-sm text-gray-400 mt-2">
-            Note: You'll need a security key (like YubiKey) or a device with biometric 
-            authentication (like Touch ID, Face ID, or Windows Hello).
-            If registration fails, make sure your device has the required capabilities.
+            Note: You'll need a security key (like YubiKey) or a device with
+            biometric authentication (like Touch ID, Face ID, or Windows Hello).
+            If registration fails, make sure your device has the required
+            capabilities.
           </p>
           <p className="text-sm text-gray-400">
             This works the same way as when you registered during sign up.
@@ -464,13 +484,6 @@ export default function SecurityKeys() {
             <p>No security keys registered.</p>
           ) : (
             <div className="space-y-4">
-              <div className="flex items-center">
-                <span className="mr-3">Status:</span>
-                <span className="font-semibold text-green-500">
-                  {securityKeys.length} key{securityKeys.length !== 1 && "s"}{" "}
-                  registered
-                </span>
-              </div>
               <ul className="space-y-3">
                 {securityKeys.map((key) => (
                   <li
@@ -489,7 +502,7 @@ export default function SecurityKeys() {
                       onClick={() => deleteSecurityKey(key.id)}
                       disabled={isDeleting && deletingKeyId === key.id}
                       className="action-icon action-icon-delete"
-                      title="Delete security key"
+                      title="Delete security key from your account"
                     >
                       {isDeleting && deletingKeyId === key.id ? (
                         <svg
