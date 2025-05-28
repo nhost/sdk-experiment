@@ -4,16 +4,9 @@ import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 
-// Email is maintained for backward compatibility but no longer required for WebAuthn sign in
-interface WebAuthnSignInFormProps {
-  email?: string;
-  setEmail?: (email: string) => void;
-}
+interface WebAuthnSignInFormProps {}
 
-export default function WebAuthnSignInForm({
-  email = "",
-  setEmail = () => {},
-}: WebAuthnSignInFormProps): JSX.Element {
+export default function WebAuthnSignInForm({}: WebAuthnSignInFormProps): JSX.Element {
   const { nhost } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -25,7 +18,7 @@ export default function WebAuthnSignInForm({
     setError(null);
 
     try {
-      // Step 1: Request a challenge from the server without email for credential discovery
+      // Request a challenge from the server for credential discovery
       // The server will return a challenge that allows any registered credentials
       const response = await nhost.auth.signInWebAuthn();
 

@@ -797,65 +797,9 @@ export interface SignInWebauthnVerifyRequest {
 
 /**
  * 
- @property allowedRoles? (`string[]`) - 
-    *    Example - `["me","user"]`
- @property defaultRole? (`string`) - 
-    *    Example - `"user"`
- @property displayName? (`string`) - 
-    *    Example - `"John Smith"`
-    *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-    *    MaxLength - 32
- @property locale? (`string`) - A two-characters locale
-    *    Example - `"en"`
-    *    MinLength - 2
-    *    MaxLength - 2
- @property metadata? (`Record<string, unknown>`) - 
-    *    Example - `{"firstName":"John","lastName":"Smith"}`
- @property redirectTo? (`string`) - 
-    *    Example - `"https://my-app.com/catch-redirection"`
-    *    Format - uri*/
-export interface SignUpWebauthnVerifyRequestOptions {
-  /**
-   *
-   *    Example - `["me","user"]`
-   */
-  allowedRoles?: string[];
-  /**
-   *
-   *    Example - `"user"`
-   */
-  defaultRole?: string;
-  /**
-   *
-   *    Example - `"John Smith"`
-   *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-   *    MaxLength - 32
-   */
-  displayName?: string;
-  /**
-   * A two-characters locale
-   *    Example - `"en"`
-   *    MinLength - 2
-   *    MaxLength - 2
-   */
-  locale?: string;
-  /**
-   *
-   *    Example - `{"firstName":"John","lastName":"Smith"}`
-   */
-  metadata?: Record<string, unknown>;
-  /**
-   *
-   *    Example - `"https://my-app.com/catch-redirection"`
-   *    Format - uri
-   */
-  redirectTo?: string;
-}
-
-/**
- * 
  @property credential (`Record<string, unknown>`) - 
- @property options? (`SignUpWebauthnVerifyRequestOptions`) - */
+ @property options? (`SignUpOptions`) - 
+ @property nickname? (`string`) - Nickname for the security key*/
 export interface SignUpWebauthnVerifyRequest {
   /**
    *
@@ -864,7 +808,43 @@ export interface SignUpWebauthnVerifyRequest {
   /**
    *
    */
-  options?: SignUpWebauthnVerifyRequestOptions;
+  options?: SignUpOptions;
+  /**
+   * Nickname for the security key
+   */
+  nickname?: string;
+}
+
+/**
+ * 
+ @property credential (`Record<string, unknown>`) - The credential created during registration
+ @property nickname? (`string`) - Optional nickname for the security key*/
+export interface VerifyAddSecurityKeyRequest {
+  /**
+   * The credential created during registration
+   */
+  credential: Record<string, unknown>;
+  /**
+   * Optional nickname for the security key
+   */
+  nickname?: string;
+}
+
+/**
+ * 
+ @property id (`string`) - The ID of the newly added security key
+    *    Example - `"123e4567-e89b-12d3-a456-426614174000"`
+ @property nickname? (`string`) - The nickname of the security key if provided*/
+export interface VerifyAddSecurityKeyResponse {
+  /**
+   * The ID of the newly added security key
+   *    Example - `"123e4567-e89b-12d3-a456-426614174000"`
+   */
+  id: string;
+  /**
+   * The nickname of the security key if provided
+   */
+  nickname?: string;
 }
 
 /**
@@ -1425,7 +1405,7 @@ export interface Client {
      This method may return different T based on the response code:
      - 200: SessionPayload
      */
-  signInWebAuthnVerify(
+  verifySignInWebAuthn(
     body: SignInWebauthnVerifyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
@@ -1449,10 +1429,33 @@ export interface Client {
      This method may return different T based on the response code:
      - 200: SessionPayload
      */
-  signUpWebAuthnVerify(
+  verifySignUpWebAuthn(
     body: SignUpWebauthnVerifyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
+
+  /**
+     Summary: Initialize adding of a new webauthn security key
+     
+
+     This method may return different T based on the response code:
+     - 200: Record<string, unknown>
+     */
+  addSecurityKey(
+    options?: RequestInit,
+  ): Promise<FetchResponse<Record<string, unknown>>>;
+
+  /**
+     Summary: Verify adding of a new webauthn security key
+     
+
+     This method may return different T based on the response code:
+     - 200: VerifyAddSecurityKeyResponse
+     */
+  verifyAddSecurityKey(
+    body: VerifyAddSecurityKeyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<VerifyAddSecurityKeyResponse>>;
 }
 
 export const createAPIClient = (
@@ -2339,7 +2342,7 @@ export const createAPIClient = (
     } as FetchResponse<Record<string, unknown>>;
   };
 
-  const signInWebAuthnVerify = async (
+  const verifySignInWebAuthn = async (
     body: SignInWebauthnVerifyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
@@ -2409,7 +2412,7 @@ export const createAPIClient = (
     } as FetchResponse<Record<string, unknown>>;
   };
 
-  const signUpWebAuthnVerify = async (
+  const verifySignUpWebAuthn = async (
     body: SignUpWebauthnVerifyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
@@ -2444,6 +2447,73 @@ export const createAPIClient = (
     } as FetchResponse<SessionPayload>;
   };
 
+  const addSecurityKey = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<Record<string, unknown>>> => {
+    const url = baseURL + `/user/webauthn/add`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: Record<string, unknown> = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<Record<string, unknown>>;
+  };
+
+  const verifyAddSecurityKey = async (
+    body: VerifyAddSecurityKeyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<VerifyAddSecurityKeyResponse>> => {
+    const url = baseURL + `/user/webauthn/verify`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: VerifyAddSecurityKeyResponse = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<VerifyAddSecurityKeyResponse>;
+  };
+
   return {
     baseURL,
     pushChainFunction,
@@ -2474,8 +2544,10 @@ export const createAPIClient = (
     verifyTicketURL,
     signInProviderURL,
     signInWebAuthn,
-    signInWebAuthnVerify,
+    verifySignInWebAuthn,
     signUpWebAuthn,
-    signUpWebAuthnVerify,
+    verifySignUpWebAuthn,
+    addSecurityKey,
+    verifyAddSecurityKey,
   };
 };

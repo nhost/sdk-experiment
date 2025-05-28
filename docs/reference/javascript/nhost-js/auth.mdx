@@ -63,6 +63,28 @@ baseURL: string;
 
 #### Methods
 
+##### addSecurityKey()
+
+```ts
+addSecurityKey(options?: RequestInit): Promise<FetchResponse<Record<string, unknown>>>;
+```
+
+Summary: Initialize adding of a new webauthn security key
+
+This method may return different T based on the response code:
+
+- 200: Record<string, unknown>
+
+###### Parameters
+
+| Parameter  | Type          |
+| ---------- | ------------- |
+| `options?` | `RequestInit` |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`Record`&lt;`string`, `unknown`&gt;&gt;&gt;
+
 ##### changeUserEmail()
 
 ```ts
@@ -615,30 +637,6 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`Record`&lt;`string`, `unknown`&gt;&gt;&gt;
 
-##### signInWebAuthnVerify()
-
-```ts
-signInWebAuthnVerify(body: SignInWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
-```
-
-Summary: Verify WebAuthn sign-in
-Complete the WebAuthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
-
-This method may return different T based on the response code:
-
-- 200: SessionPayload
-
-###### Parameters
-
-| Parameter  | Type                                                          |
-| ---------- | ------------------------------------------------------------- |
-| `body`     | [`SignInWebauthnVerifyRequest`](#signinwebauthnverifyrequest) |
-| `options?` | `RequestInit`                                                 |
-
-###### Returns
-
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
-
 ##### signOut()
 
 ```ts
@@ -712,29 +710,28 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`Record`&lt;`string`, `unknown`&gt;&gt;&gt;
 
-##### signUpWebAuthnVerify()
+##### verifyAddSecurityKey()
 
 ```ts
-signUpWebAuthnVerify(body: SignUpWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+verifyAddSecurityKey(body: VerifyAddSecurityKeyRequest, options?: RequestInit): Promise<FetchResponse<VerifyAddSecurityKeyResponse>>;
 ```
 
-Summary: Verify WebAuthn sign-up
-Complete the WebAuthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
+Summary: Verify adding of a new webauthn security key
 
 This method may return different T based on the response code:
 
-- 200: SessionPayload
+- 200: VerifyAddSecurityKeyResponse
 
 ###### Parameters
 
 | Parameter  | Type                                                          |
 | ---------- | ------------------------------------------------------------- |
-| `body`     | [`SignUpWebauthnVerifyRequest`](#signupwebauthnverifyrequest) |
+| `body`     | [`VerifyAddSecurityKeyRequest`](#verifyaddsecuritykeyrequest) |
 | `options?` | `RequestInit`                                                 |
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`VerifyAddSecurityKeyResponse`](#verifyaddsecuritykeyresponse)&gt;&gt;
 
 ##### verifySignInOTPEmail()
 
@@ -758,6 +755,54 @@ This method may return different T based on the response code:
 ###### Returns
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInOTPEmailVerifyResponse`](#signinotpemailverifyresponse)&gt;&gt;
+
+##### verifySignInWebAuthn()
+
+```ts
+verifySignInWebAuthn(body: SignInWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+```
+
+Summary: Verify WebAuthn sign-in
+Complete the WebAuthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
+
+This method may return different T based on the response code:
+
+- 200: SessionPayload
+
+###### Parameters
+
+| Parameter  | Type                                                          |
+| ---------- | ------------------------------------------------------------- |
+| `body`     | [`SignInWebauthnVerifyRequest`](#signinwebauthnverifyrequest) |
+| `options?` | `RequestInit`                                                 |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
+##### verifySignUpWebAuthn()
+
+```ts
+verifySignUpWebAuthn(body: SignUpWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+```
+
+Summary: Verify WebAuthn sign-up
+Complete the WebAuthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
+
+This method may return different T based on the response code:
+
+- 200: SessionPayload
+
+###### Parameters
+
+| Parameter  | Type                                                          |
+| ---------- | ------------------------------------------------------------- |
+| `body`     | [`SignUpWebauthnVerifyRequest`](#signupwebauthnverifyrequest) |
+| `options?` | `RequestInit`                                                 |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### verifyTicketURL()
 
@@ -1635,71 +1680,19 @@ credential: Record<string, unknown>;
 
 (`Record<string, unknown>`) -
 
+##### nickname?
+
+```ts
+optional nickname: string;
+```
+
+Nickname for the security key
+
 ##### options?
 
 ```ts
-optional options: SignUpWebauthnVerifyRequestOptions;
+optional options: SignUpOptions;
 ```
-
----
-
-### SignUpWebauthnVerifyRequestOptions
-
-#### Properties
-
-##### allowedRoles?
-
-```ts
-optional allowedRoles: string[];
-```
-
-Example - `["me","user"]`
-
-##### defaultRole?
-
-```ts
-optional defaultRole: string;
-```
-
-Example - `"user"`
-
-##### displayName?
-
-```ts
-optional displayName: string;
-```
-
-Example - `"John Smith"`
-Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-MaxLength - 32
-
-##### locale?
-
-```ts
-optional locale: string;
-```
-
-A two-characters locale
-Example - `"en"`
-MinLength - 2
-MaxLength - 2
-
-##### metadata?
-
-```ts
-optional metadata: Record<string, unknown>;
-```
-
-Example - `{"firstName":"John","lastName":"Smith"}`
-
-##### redirectTo?
-
-```ts
-optional redirectTo: string;
-```
-
-Example - `"https://my-app.com/catch-redirection"`
-Format - uri
 
 ---
 
@@ -2042,6 +2035,52 @@ email: string;
 ```ts
 optional options: OptionsRedirectTo;
 ```
+
+---
+
+### VerifyAddSecurityKeyRequest
+
+#### Properties
+
+##### credential
+
+```ts
+credential: Record<string, unknown>;
+```
+
+(`Record<string, unknown>`) - The credential created during registration
+
+##### nickname?
+
+```ts
+optional nickname: string;
+```
+
+Optional nickname for the security key
+
+---
+
+### VerifyAddSecurityKeyResponse
+
+#### Properties
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - The ID of the newly added security key
+
+- Example - `"123e4567-e89b-12d3-a456-426614174000"`
+
+##### nickname?
+
+```ts
+optional nickname: string;
+```
+
+The nickname of the security key if provided
 
 ---
 

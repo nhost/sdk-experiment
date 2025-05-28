@@ -905,7 +905,7 @@ paths:
       description: >-
         Complete the WebAuthn sign-in process by verifying the response from the user's device.
         Returns a session if validation is successful.
-      operationId: signInWebAuthnVerify
+      operationId: verifySignInWebAuthn
       requestBody:
         content:
           application/json:
@@ -958,7 +958,7 @@ paths:
       description: >-
         Complete the WebAuthn sign-up process by verifying the response from the user's device.
         Returns a session if validation is successful.
-      operationId: signUpWebAuthnVerify
+      operationId: verifySignUpWebAuthn
       requestBody:
         content:
           application/json:
@@ -978,6 +978,60 @@ paths:
         - signup
         - webauthn
         - verify
+
+  /user/webauthn/add:
+    post:
+      summary: Initialize adding of a new webauthn security key
+      operationId: addSecurityKey
+      tags:
+        - user-management
+        - webauthn
+      security:
+        - BearerAuthElevated: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddSecurityKeyResponse"
+          description: >-
+            Challenge created for registering a new security key
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: An error occurred while processing the request
+
+  /user/webauthn/verify:
+    post:
+      summary: Verify adding of a new webauthn security key
+      operationId: verifyAddSecurityKey
+      tags:
+        - user-management
+        - webauthn
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyAddSecurityKeyRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyAddSecurityKeyResponse"
+          description: >-
+            Security key successfully added
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: An error occurred while processing the request
 
 components:
   securitySchemes:
@@ -1643,15 +1697,52 @@ components:
             path: github.com/go-webauthn/webauthn/protocol
           x-go-type: protocol.CredentialCreationResponse
         options:
-          type: object
-          additionalProperties: false
-          properties:
-            <<: *signUpOptionsProperties
-            nickname:
-              description: Nickname for the security key
-              type: string
+          $ref: "#/components/schemas/SignUpOptions"
+        nickname:
+          description: Nickname for the security key
+          type: string
       required:
         - credential
+
+    AddSecurityKeyResponse:
+      type: object
+      additionalProperties: true
+      x-go-type-import:
+        name: protocol
+        path: github.com/go-webauthn/webauthn/protocol
+      x-go-type: protocol.PublicKeyCredentialCreationOptions
+
+    VerifyAddSecurityKeyRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        credential:
+          type: object
+          additionalProperties: true
+          x-go-type-import:
+            name: protocol
+            path: github.com/go-webauthn/webauthn/protocol
+          x-go-type: protocol.CredentialCreationResponse
+          description: The credential created during registration
+        nickname:
+          type: string
+          description: Optional nickname for the security key
+      required:
+        - credential
+
+    VerifyAddSecurityKeyResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: The ID of the newly added security key
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        nickname:
+          type: string
+          description: The nickname of the security key if provided
+      required:
+        - id
 
     SignInIdTokenRequest:
       type: object
