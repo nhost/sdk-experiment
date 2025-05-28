@@ -155,12 +155,7 @@ export default function SignIn(): JSX.Element {
                 </button>
               </div>
             }
-            webauthnTabContent={
-              <WebAuthnSignInForm 
-                email={email}
-                setEmail={setEmail}
-              />
-            }
+            webauthnTabContent={<WebAuthnSignInForm />}
           />
         )}
       </div>

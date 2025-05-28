@@ -2,47 +2,11 @@ import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
 import type { ErrorResponse } from "@nhost/nhost-js/auth";
-
-// Check if WebAuthn is supported by the browser
-const isWebAuthnSupported = () => {
-  return (
-    typeof window !== "undefined" &&
-    window.PublicKeyCredential !== undefined &&
-    typeof navigator.credentials !== "undefined"
-  );
-};
-
-// Helper function to convert base64URL to ArrayBuffer
-function base64URLToArrayBuffer(base64URL: string): ArrayBuffer {
-  const base64 = base64URL.replace(/-/g, "+").replace(/_/g, "/");
-  const padLength = (4 - (base64.length % 4)) % 4;
-  const paddedBase64 = base64 + "=".repeat(padLength);
-
-  // Convert base64 to binary string
-  const binaryString = window.atob(paddedBase64);
-
-  // Convert binary string to ArrayBuffer
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
-
-// Helper function to convert ArrayBuffer to base64URL
-function arrayBufferToBase64URL(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer);
-  let binary = "";
-  for (let i = 0; i < bytes.byteLength; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  // Convert binary to base64 and then to base64URL
-  return window
-    .btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=/g, "");
-}
+import {
+  isWebAuthnSupported,
+  prepareRegistrationOptions,
+  formatRegistrationCredentialForVerification,
+} from "../lib/webauthn";
 
 interface SecurityKey {
   id: string;
@@ -102,7 +66,6 @@ export default function SecurityKeys() {
     } catch (err) {
       const error = err as FetchError<ErrorResponse>;
       setErrorMessage(`Failed to load security keys: ${error.message}`);
-      console.error(`Failed to query security keys:`, error);
     } finally {
       setIsLoading(false);
     }
@@ -148,7 +111,6 @@ export default function SecurityKeys() {
     } catch (err) {
       const error = err as Error;
       setErrorMessage(`Failed to delete security key: ${error.message}`);
-      console.error("Failed to delete security key:", err);
     } finally {
       setIsDeleting(false);
       setDeletingKeyId(null);
@@ -193,8 +155,6 @@ export default function SecurityKeys() {
     setSuccess(null);
 
     try {
-      console.log("Starting security key registration");
-
       // Step 1: Initialize WebAuthn security key registration
       const initResponse = await nhost.auth.addSecurityKey();
 
@@ -206,107 +166,31 @@ export default function SecurityKeys() {
         throw new Error(errorMessage);
       }
 
-      console.log(
-        "Received security key initialization response:",
-        initResponse,
-      );
-
       // Step 2: Browser prompts user to interact with security key
       const publicKeyCredentialCreationOptions =
         initResponse.body as PublicKeyCredentialCreationOptions;
 
       try {
-        console.log(
-          "Raw WebAuthn options:",
+        // Prepare credential options using utility function
+        const credentialOptions = prepareRegistrationOptions(
           publicKeyCredentialCreationOptions,
         );
 
-        // Create a copy to modify
-        const credentialOptions = structuredClone(
-          publicKeyCredentialCreationOptions,
-        );
-
-        // Convert challenge from base64URL to ArrayBuffer
-        if (credentialOptions && credentialOptions.challenge) {
-          const challenge = credentialOptions.challenge;
-          if (typeof challenge === "string") {
-            console.log("Converting challenge from base64URL:", challenge);
-            credentialOptions.challenge = base64URLToArrayBuffer(challenge);
-          }
-        } else {
-          console.error(
-            "Challenge is missing from the response",
-            credentialOptions,
-          );
+        if (!credentialOptions.challenge) {
           throw new Error("Invalid challenge data received from server");
         }
-
-        // Convert user.id from base64URL to ArrayBuffer
-        if (credentialOptions.user?.id) {
-          const userId = credentialOptions.user.id;
-          if (typeof userId === "string") {
-            console.log("Converting user ID from base64URL:", userId);
-            credentialOptions.user.id = base64URLToArrayBuffer(userId);
-          }
-        }
-
-        // Convert excludeCredentials ids from base64URL if present
-        if (credentialOptions.excludeCredentials) {
-          console.log("Converting exclude credentials from base64URL");
-          credentialOptions.excludeCredentials =
-            credentialOptions.excludeCredentials.map((credential: any) => {
-              if (credential.id && typeof credential.id === "string") {
-                return {
-                  ...credential,
-                  id: base64URLToArrayBuffer(credential.id),
-                };
-              }
-              return credential;
-            });
-        }
-
-        console.log("Calling navigator.credentials.create with options:", {
-          rp: credentialOptions.rp,
-          user: {
-            ...credentialOptions.user,
-            id: "ArrayBuffer (redacted for logging)",
-          },
-          challenge: "ArrayBuffer (redacted for logging)",
-          pubKeyCredParams: credentialOptions.pubKeyCredParams,
-        });
-
         // Create new credential
         const credential = (await navigator.credentials.create({
           publicKey: credentialOptions,
         })) as PublicKeyCredential;
 
-        console.log("Created credential:", credential.id);
-
         if (!credential) {
           throw new Error("Security key registration was cancelled or failed");
         }
 
-        // Prepare credential for verification
-        const credentialForVerification = {
-          id: credential.id,
-          type: credential.type,
-          rawId: arrayBufferToBase64URL(credential.rawId),
-          response: {
-            clientDataJSON: arrayBufferToBase64URL(
-              (credential.response as AuthenticatorAttestationResponse)
-                .clientDataJSON,
-            ),
-            attestationObject: arrayBufferToBase64URL(
-              (credential.response as AuthenticatorAttestationResponse)
-                .attestationObject,
-            ),
-          },
-        };
-
-        console.log("Credential formatted for verification:", {
-          id: credential.id,
-          type: credential.type,
-        });
+        // Prepare credential for verification using utility function
+        const credentialForVerification =
+          formatRegistrationCredentialForVerification(credential);
 
         // Step 4: Verify the security key with the server
         const verifyResponse = await nhost.auth.verifyAddSecurityKey({
@@ -330,8 +214,6 @@ export default function SecurityKeys() {
         // Refresh the security keys list
         fetchSecurityKeys();
       } catch (err) {
-        console.error("WebAuthn credential creation error:", err);
-
         // Provide more specific error messages based on the error
         let errorMessage = "Failed to register security key";
 
@@ -354,7 +236,6 @@ export default function SecurityKeys() {
     } catch (err) {
       const error = err as Error;
       setErrorMessage(`Failed to register security key: ${error.message}`);
-      console.error("Security key registration error:", err);
     } finally {
       setIsRegistering(false);
     }
