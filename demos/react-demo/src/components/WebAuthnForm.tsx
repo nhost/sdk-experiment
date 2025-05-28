@@ -150,13 +150,13 @@ export default function WebAuthnForm({
           };
 
           // Step 2: Send the credential to the server for verification
-          const verifyResponse = await nhost.auth.signUpWebAuthnVerify({
+          const verifyResponse = await nhost.auth.verifySignUpWebAuthn({
             credential: credentialForVerify,
             options: {
-              nickname:
-                keyNickname || `Security Key for ${displayName || email}`,
               displayName: displayName || undefined,
             },
+            nickname:
+              keyNickname || `Security Key for ${displayName || email}`,
           });
 
           if (verifyResponse.body && verifyResponse.body.session) {

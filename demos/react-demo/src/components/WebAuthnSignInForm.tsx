@@ -26,14 +26,14 @@ export default function WebAuthnSignInForm({}: WebAuthnSignInFormProps): JSX.Ele
       if (response.body && window.PublicKeyCredential) {
         // WebAuthn is supported
         const publicKey = response.body;
-        
+
         // Create a copy to modify
         const publicKeyCredentialRequestOptions = structuredClone(publicKey);
-        
+
         console.log("Received WebAuthn signin options:", publicKeyCredentialRequestOptions);
-        
+
         // Convert ArrayBuffer fields from base64 to the right format
-        if (publicKeyCredentialRequestOptions && 
+        if (publicKeyCredentialRequestOptions &&
             publicKeyCredentialRequestOptions.challenge) {
           const challenge = publicKeyCredentialRequestOptions.challenge;
           if (typeof challenge === "string") {
@@ -46,7 +46,7 @@ export default function WebAuthnSignInForm({}: WebAuthnSignInFormProps): JSX.Ele
 
         // Convert allowCredentials ids from base64 if present
         if (publicKeyCredentialRequestOptions.allowCredentials) {
-          publicKeyCredentialRequestOptions.allowCredentials = 
+          publicKeyCredentialRequestOptions.allowCredentials =
             publicKeyCredentialRequestOptions.allowCredentials.map((credential: any) => {
               if (credential.id && typeof credential.id === "string") {
                 return {
@@ -57,7 +57,7 @@ export default function WebAuthnSignInForm({}: WebAuthnSignInFormProps): JSX.Ele
               return credential;
             });
         }
-        
+
         try {
           // Get credential
           const credential = await navigator.credentials.get({
@@ -79,14 +79,14 @@ export default function WebAuthnSignInForm({}: WebAuthnSignInFormProps): JSX.Ele
               signature: arrayBufferToBase64URL(
                 (credential.response as AuthenticatorAssertionResponse).signature
               ),
-              userHandle: (credential.response as AuthenticatorAssertionResponse).userHandle ? 
-                arrayBufferToBase64URL((credential.response as AuthenticatorAssertionResponse).userHandle as ArrayBuffer) : 
+              userHandle: (credential.response as AuthenticatorAssertionResponse).userHandle ?
+                arrayBufferToBase64URL((credential.response as AuthenticatorAssertionResponse).userHandle as ArrayBuffer) :
                 null,
             },
           };
 
           // Step 2: Send the credential to the server for verification
-          const verifyResponse = await nhost.auth.signInWebAuthnVerify({
+          const verifyResponse = await nhost.auth.verifySignInWebAuthn({
             credential: credentialForVerify,
           });
 
@@ -120,10 +120,10 @@ export default function WebAuthnSignInForm({}: WebAuthnSignInFormProps): JSX.Ele
     const base64 = base64URL.replace(/-/g, '+').replace(/_/g, '/');
     const padLength = (4 - (base64.length % 4)) % 4;
     const paddedBase64 = base64 + '='.repeat(padLength);
-    
+
     // Convert base64 to binary string
     const binaryString = window.atob(paddedBase64);
-    
+
     // Convert binary string to ArrayBuffer
     const bytes = new Uint8Array(binaryString.length);
     for (let i = 0; i < binaryString.length; i++) {
@@ -157,7 +157,7 @@ export default function WebAuthnSignInForm({}: WebAuthnSignInFormProps): JSX.Ele
       >
         {isLoading ? "Authenticating..." : "Sign In with Security Key"}
       </button>
-      
+
       <div className="text-xs mt-2 text-gray-400">
         <p>You'll be prompted to use your device's security key (like TouchID, FaceID, Windows Hello, or a USB security key)</p>
         <p>Your browser will show available security keys that you've previously registered.</p>
