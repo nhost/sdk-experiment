@@ -3,11 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
-import {
-  isWebAuthnSupported,
-  preparePublicKeyCredentialCreationOptions,
-  formatAuthenticationCredentialForVerification,
-} from "../lib/webauthn";
+import { isWebAuthnSupported } from "../lib/webauthn";
 
 export default function WebAuthnSignInForm(): JSX.Element {
   const { nhost } = useAuth();
@@ -34,18 +30,22 @@ export default function WebAuthnSignInForm(): JSX.Element {
       }
 
       try {
-        // Get credential
-        const credential = (await navigator.credentials.get({
-          publicKey: preparePublicKeyCredentialCreationOptions(response.body),
-        })) as PublicKeyCredential;
+        // Get credential from the browser using the challenge
+        const credential = await navigator.credentials.get({
+          publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(
+            response.body,
+          ),
+        });
 
-        // Prepare credential for verification
-        const credentialForVerify =
-          formatAuthenticationCredentialForVerification(credential);
+        if (!credential) {
+          setError("No credential was selected.");
+          setIsLoading(false);
+          return;
+        }
 
         // Step 2: Send the credential to the server for verification
         const verifyResponse = await nhost.auth.verifySignInWebAuthn({
-          credential: credentialForVerify,
+          credential,
         });
 
         if (verifyResponse.body && verifyResponse.body.session) {

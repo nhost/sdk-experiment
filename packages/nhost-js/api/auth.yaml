@@ -1656,7 +1656,7 @@ components:
         name: protocol
         path: github.com/go-webauthn/webauthn/protocol
       x-go-type: protocol.PublicKeyCredentialRequestOptions
-      x-ts-type: PublicKeyCredentialCreationOptions
+      x-ts-type: PublicKeyCredentialRequestOptionsJSON
 
     SignUpWebauthnResponse:
       type: object
@@ -1665,7 +1665,7 @@ components:
         name: protocol
         path: github.com/go-webauthn/webauthn/protocol
       x-go-type: protocol.PublicKeyCredentialCreationOptions
-      x-ts-type: PublicKeyCredentialCreationOptions
+      x-ts-type: PublicKeyCredentialCreationOptionsJSON
 
     SignInWebauthnVerifyRequest:
       type: object
@@ -1684,6 +1684,7 @@ components:
             name: protocol
             path: github.com/go-webauthn/webauthn/protocol
           x-go-type: protocol.CredentialAssertionResponse
+          x-ts-type: Credential
       required:
         - credential
 
@@ -1698,6 +1699,7 @@ components:
             name: protocol
             path: github.com/go-webauthn/webauthn/protocol
           x-go-type: protocol.CredentialCreationResponse
+          x-ts-type: Credential
         options:
           $ref: "#/components/schemas/SignUpOptions"
         nickname:
@@ -1713,7 +1715,7 @@ components:
         name: protocol
         path: github.com/go-webauthn/webauthn/protocol
       x-go-type: protocol.PublicKeyCredentialCreationOptions
-      x-ts-type: PublicKeyCredentialCreationOptions
+      x-ts-type: PublicKeyCredentialCreationOptionsJSON
 
     VerifyAddSecurityKeyRequest:
       type: object
@@ -1726,6 +1728,7 @@ components:
             name: protocol
             path: github.com/go-webauthn/webauthn/protocol
           x-go-type: protocol.CredentialCreationResponse
+          x-ts-type: Credential
           description: The credential created during registration
         nickname:
           type: string

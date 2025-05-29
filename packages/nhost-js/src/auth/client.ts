@@ -781,7 +781,7 @@ export interface SignUpWebauthnRequest {
  @property email? (`string`) - A valid email. Deprecated, no longer used
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property credential (`Record<string, unknown>`) - */
+ @property credential (`Credential`) - */
 export interface SignInWebauthnVerifyRequest {
   /**
    * A valid email. Deprecated, no longer used
@@ -792,19 +792,19 @@ export interface SignInWebauthnVerifyRequest {
   /**
    *
    */
-  credential: Record<string, unknown>;
+  credential: Credential;
 }
 
 /**
  * 
- @property credential (`Record<string, unknown>`) - 
+ @property credential (`Credential`) - 
  @property options? (`SignUpOptions`) - 
  @property nickname? (`string`) - Nickname for the security key*/
 export interface SignUpWebauthnVerifyRequest {
   /**
    *
    */
-  credential: Record<string, unknown>;
+  credential: Credential;
   /**
    *
    */
@@ -817,13 +817,13 @@ export interface SignUpWebauthnVerifyRequest {
 
 /**
  * 
- @property credential (`Record<string, unknown>`) - The credential created during registration
+ @property credential (`Credential`) - The credential created during registration
  @property nickname? (`string`) - Optional nickname for the security key*/
 export interface VerifyAddSecurityKeyRequest {
   /**
    * The credential created during registration
    */
-  credential: Record<string, unknown>;
+  credential: Credential;
   /**
    * Optional nickname for the security key
    */
@@ -1391,12 +1391,12 @@ export interface Client {
      Initiate a WebAuthn sign-in process by sending a challenge to the user's device. The user must have previously registered a WebAuthn credential.
 
      This method may return different T based on the response code:
-     - 200: PublicKeyCredentialCreationOptions
+     - 200: PublicKeyCredentialRequestOptionsJSON
      */
   signInWebAuthn(
     body?: SignInWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
+  ): Promise<FetchResponse<PublicKeyCredentialRequestOptionsJSON>>;
 
   /**
      Summary: Verify WebAuthn sign-in
@@ -1415,12 +1415,12 @@ export interface Client {
      Initiate a WebAuthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
 
      This method may return different T based on the response code:
-     - 200: PublicKeyCredentialCreationOptions
+     - 200: PublicKeyCredentialCreationOptionsJSON
      */
   signUpWebAuthn(
     body: SignUpWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>>;
 
   /**
      Summary: Verify WebAuthn sign-up
@@ -1439,11 +1439,11 @@ export interface Client {
      
 
      This method may return different T based on the response code:
-     - 200: PublicKeyCredentialCreationOptions
+     - 200: PublicKeyCredentialCreationOptionsJSON
      */
   addSecurityKey(
     options?: RequestInit,
-  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>>;
 
   /**
      Summary: Verify adding of a new webauthn security key
@@ -2310,7 +2310,7 @@ export const createAPIClient = (
   const signInWebAuthn = async (
     body?: SignInWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>> => {
+  ): Promise<FetchResponse<PublicKeyCredentialRequestOptionsJSON>> => {
     const url = baseURL + `/signin/webauthn`;
     const res = await fetch(url, {
       ...options,
@@ -2331,7 +2331,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: PublicKeyCredentialCreationOptions = responseBody
+    const payload: PublicKeyCredentialRequestOptionsJSON = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -2339,7 +2339,7 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<PublicKeyCredentialCreationOptions>;
+    } as FetchResponse<PublicKeyCredentialRequestOptionsJSON>;
   };
 
   const verifySignInWebAuthn = async (
@@ -2380,7 +2380,7 @@ export const createAPIClient = (
   const signUpWebAuthn = async (
     body: SignUpWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>> => {
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>> => {
     const url = baseURL + `/signup/webauthn`;
     const res = await fetch(url, {
       ...options,
@@ -2401,7 +2401,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: PublicKeyCredentialCreationOptions = responseBody
+    const payload: PublicKeyCredentialCreationOptionsJSON = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -2409,7 +2409,7 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<PublicKeyCredentialCreationOptions>;
+    } as FetchResponse<PublicKeyCredentialCreationOptionsJSON>;
   };
 
   const verifySignUpWebAuthn = async (
@@ -2449,7 +2449,7 @@ export const createAPIClient = (
 
   const addSecurityKey = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>> => {
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>> => {
     const url = baseURL + `/user/webauthn/add`;
     const res = await fetch(url, {
       ...options,
@@ -2468,7 +2468,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: PublicKeyCredentialCreationOptions = responseBody
+    const payload: PublicKeyCredentialCreationOptionsJSON = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -2476,7 +2476,7 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<PublicKeyCredentialCreationOptions>;
+    } as FetchResponse<PublicKeyCredentialCreationOptionsJSON>;
   };
 
   const verifyAddSecurityKey = async (

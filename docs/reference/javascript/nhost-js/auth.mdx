@@ -66,14 +66,14 @@ baseURL: string;
 ##### addSecurityKey()
 
 ```ts
-addSecurityKey(options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
+addSecurityKey(options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>>;
 ```
 
 Summary: Initialize adding of a new webauthn security key
 
 This method may return different T based on the response code:
 
-- 200: PublicKeyCredentialCreationOptions
+- 200: PublicKeyCredentialCreationOptionsJSON
 
 ###### Parameters
 
@@ -83,7 +83,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialCreationOptions`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialCreationOptionsJSON`&gt;&gt;
 
 ##### changeUserEmail()
 
@@ -616,7 +616,7 @@ This method may return different T based on the response code:
 ##### signInWebAuthn()
 
 ```ts
-signInWebAuthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
+signInWebAuthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialRequestOptionsJSON>>;
 ```
 
 Summary: Sign in with WebAuthn
@@ -624,7 +624,7 @@ Initiate a WebAuthn sign-in process by sending a challenge to the user's device.
 
 This method may return different T based on the response code:
 
-- 200: PublicKeyCredentialCreationOptions
+- 200: PublicKeyCredentialRequestOptionsJSON
 
 ###### Parameters
 
@@ -635,7 +635,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialCreationOptions`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialRequestOptionsJSON`&gt;&gt;
 
 ##### signOut()
 
@@ -689,7 +689,7 @@ This method may return different T based on the response code:
 ##### signUpWebAuthn()
 
 ```ts
-signUpWebAuthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
+signUpWebAuthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>>;
 ```
 
 Summary: Sign up with WebAuthn
@@ -697,7 +697,7 @@ Initiate a WebAuthn sign-up process by sending a challenge to the user's device.
 
 This method may return different T based on the response code:
 
-- 200: PublicKeyCredentialCreationOptions
+- 200: PublicKeyCredentialCreationOptionsJSON
 
 ###### Parameters
 
@@ -708,7 +708,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialCreationOptions`&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialCreationOptionsJSON`&gt;&gt;
 
 ##### verifyAddSecurityKey()
 
@@ -1509,10 +1509,10 @@ Format - email
 ##### credential
 
 ```ts
-credential: Record<string, unknown>;
+credential: Credential;
 ```
 
-(`Record<string, unknown>`) -
+(`Credential`) -
 
 ##### email?
 
@@ -1675,10 +1675,10 @@ optional options: SignUpOptions;
 ##### credential
 
 ```ts
-credential: Record<string, unknown>;
+credential: Credential;
 ```
 
-(`Record<string, unknown>`) -
+(`Credential`) -
 
 ##### nickname?
 
@@ -2045,10 +2045,10 @@ optional options: OptionsRedirectTo;
 ##### credential
 
 ```ts
-credential: Record<string, unknown>;
+credential: Credential;
 ```
 
-(`Record<string, unknown>`) - The credential created during registration
+(`Credential`) - The credential created during registration
 
 ##### nickname?
 

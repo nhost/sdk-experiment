@@ -2,11 +2,7 @@ import { useState, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
-import {
-  isWebAuthnSupported,
-  preparePublicKeyCredentialCreationOptions,
-  formatRegistrationCredentialForVerification,
-} from "../lib/webauthn";
+import { isWebAuthnSupported } from "../lib/webauthn";
 
 interface WebAuthnFormProps {
   email: string;
@@ -28,7 +24,7 @@ export default function WebAuthnForm({
   const [error, setError] = useState<string | null>(null);
   const [keyNickname, setKeyNickname] = useState<string>("");
   const [challengeData, setChallengeData] =
-    useState<PublicKeyCredentialCreationOptions | null>(null);
+    useState<PublicKeyCredentialCreationOptionsJSON | null>(null);
 
   const startWebAuthnRegistration = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -61,28 +57,23 @@ export default function WebAuthnForm({
       // Store the challenge data
       setChallengeData(response.body);
 
-      // Prepare credential options
-      const credentialOptions = preparePublicKeyCredentialCreationOptions(
-        response.body,
-      );
-
-      if (!credentialOptions.challenge) {
-        throw new Error("Invalid challenge data received from server");
-      }
-
       try {
-        // Create new credential
-        const credential = (await navigator.credentials.create({
-          publicKey: credentialOptions,
-        })) as PublicKeyCredential;
+        // Get credential from the browser using the challenge
+        const credential = await navigator.credentials.create({
+          publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
+            response.body,
+          ),
+        });
 
-        // Prepare credential for verification
-        const credentialForVerify =
-          formatRegistrationCredentialForVerification(credential);
+        if (!credential) {
+          setError("No credential was created.");
+          setIsLoading(false);
+          return;
+        }
 
         // Step 2: Send the credential to the server for verification
         const verifyResponse = await nhost.auth.verifySignUpWebAuthn({
-          credential: credentialForVerify,
+          credential,
           options: {
             displayName: displayName || undefined,
           },

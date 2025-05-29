@@ -2,11 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
 import type { ErrorResponse } from "@nhost/nhost-js/auth";
-import {
-  isWebAuthnSupported,
-  preparePublicKeyCredentialCreationOptions,
-  formatRegistrationCredentialForVerification,
-} from "../lib/webauthn";
+import { isWebAuthnSupported } from "../lib/webauthn";
 
 interface SecurityKey {
   id: string;
@@ -158,24 +154,20 @@ export default function SecurityKeys() {
       // Step 1: Initialize WebAuthn security key registration
       const initResponse = await nhost.auth.addSecurityKey();
 
-      // Step 2: Browser prompts user to interact with security key
-      // Prepare credential options using utility function
-      const credentialOptions = preparePublicKeyCredentialCreationOptions(
-        initResponse.body,
-      );
+      const credential = await navigator.credentials.create({
+        publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
+          initResponse.body,
+        ),
+      });
 
-      // Create new credential
-      const credential = (await navigator.credentials.create({
-        publicKey: credentialOptions,
-      })) as PublicKeyCredential;
-
-      // Prepare credential for verification using utility function
-      const credentialForVerification =
-        formatRegistrationCredentialForVerification(credential);
+      if (!credential) {
+        setErrorMessage("No credential was selected. Please try again.");
+        return;
+      }
 
       // Step 4: Verify the security key with the server
       await nhost.auth.verifyAddSecurityKey({
-        credential: credentialForVerification,
+        credential,
         nickname: keyName.trim(),
       });
 
