@@ -2,8 +2,24 @@ import { useState, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
-import { isWebAuthnSupported } from "../lib/webauthn";
+import { isWebAuthnSupported } from "../lib/utils";
 
+/**
+ * WebAuthn Registration (Sign Up) Flow
+ *
+ * This component handles new user registration using WebAuthn/FIDO2 standards.
+ * Instead of creating a password, users register using biometrics or security keys,
+ * providing a more secure and phishing-resistant authentication method.
+ */
+
+/**
+ * Props for the WebAuthn signup form
+ * @param email - User's email address
+ * @param setEmail - Function to update email state
+ * @param displayName - User's display name
+ * @param setDisplayName - Function to update display name state
+ * @param redirectTo - Optional URL to redirect after successful registration
+ */
 interface WebAuthnFormProps {
   email: string;
   setEmail: (email: string) => void;
@@ -26,6 +42,16 @@ export default function WebAuthnForm({
   const [challengeData, setChallengeData] =
     useState<PublicKeyCredentialCreationOptionsJSON | null>(null);
 
+  /**
+   * Handles the WebAuthn registration flow (sign up with security key/biometrics)
+   *
+   * The WebAuthn registration flow consists of:
+   * 1. Server generates a challenge and user verification requirements
+   * 2. Browser activates the authenticator and creates new credential key pair
+   * 3. The private key remains securely on the user's device
+   * 4. The public key and attestation are sent to the server for verification
+   * 5. Server stores the public key for future authentication attempts
+   */
   const startWebAuthnRegistration = async (
     e: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
@@ -33,12 +59,14 @@ export default function WebAuthnForm({
     setIsLoading(true);
     setError(null);
 
+    // Validate required fields
     if (!email) {
       setError("Email is required");
       setIsLoading(false);
       return;
     }
 
+    // Check browser compatibility before proceeding
     if (!isWebAuthnSupported()) {
       setError("WebAuthn is not supported by your browser.");
       setIsLoading(false);
@@ -46,7 +74,13 @@ export default function WebAuthnForm({
     }
 
     try {
-      // Step 1: Request a challenge from the server
+      // Step 1: Request a registration challenge from the server
+      // The server generates a random challenge and credential creation options
+      // including information like:
+      // - relying party (website) details
+      // - user account information
+      // - challenge to prevent replay attacks
+      // - supported algorithms
       const response = await nhost.auth.signUpWebAuthn({
         email,
         options: {
@@ -54,11 +88,15 @@ export default function WebAuthnForm({
         },
       });
 
-      // Store the challenge data
+      // Store the challenge data for UI feedback
       setChallengeData(response.body);
 
       try {
-        // Get credential from the browser using the challenge
+        // Step 2: Browser prompts user to create a new credential
+        // This activates the authenticator (fingerprint scanner, security key, etc.)
+        // and creates a new public/private key pair
+        // - The private key is stored securely on the device
+        // - The public key will be sent to the server
         const credential = await navigator.credentials.create({
           publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
             response.body,
@@ -71,7 +109,9 @@ export default function WebAuthnForm({
           return;
         }
 
-        // Step 2: Send the credential to the server for verification
+        // Step 3: Send the credential attestation to the server for verification
+        // The server verifies the attestation signature and certificate chain,
+        // then stores the public key for future authentication attempts
         const verifyResponse = await nhost.auth.verifySignUpWebAuthn({
           credential,
           options: {
@@ -80,8 +120,14 @@ export default function WebAuthnForm({
           nickname: keyNickname || `Security Key for ${displayName || email}`,
         });
 
+        // Step 4: Handle registration success
         if (verifyResponse.body && verifyResponse.body.session) {
           // Success! User is now registered and authenticated
+          // At this point:
+          // - The user account has been created in the system
+          // - The public key is stored in the database
+          // - The private key remains securely on the user's device
+          // - A session has been established
           window.location.href =
             redirectTo || window.location.origin + "/profile";
         }
@@ -97,8 +143,6 @@ export default function WebAuthnForm({
       setIsLoading(false);
     }
   };
-
-  // Helper functions moved to utils/webauthn.ts
 
   return (
     <form onSubmit={startWebAuthnRegistration} className="space-y-5">
@@ -155,6 +199,10 @@ export default function WebAuthnForm({
         <p>
           You&apos;ll be prompted to use your device&apos;s security key (like
           TouchID, FaceID, Windows Hello, or a USB security key)
+        </p>
+        <p className="mt-1">
+          When prompted, please complete the biometric verification or insert
+          and activate your security key to create your account.
         </p>
       </div>
     </form>

@@ -3,14 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
-import { isWebAuthnSupported } from "../lib/webauthn";
+import { isWebAuthnSupported } from "../lib/utils";
 
+/**
+ * WebAuthnSignInForm provides a passwordless authentication flow using WebAuthn (FIDO2) protocol.
+ * This enables users to authenticate using biometrics, hardware security keys, or platform authenticators
+ * instead of traditional passwords.
+ */
 export default function WebAuthnSignInForm(): JSX.Element {
   const { nhost } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Handles the WebAuthn authentication flow:
+   * 1. Request a challenge from the server
+   * 2. Have the browser/authenticator sign the challenge with the private key
+   * 3. Verify the signature on the server and establish a session
+   */
   const startWebAuthnSignIn = async (
     e: React.FormEvent<HTMLFormElement>,
   ): Promise<void> => {
@@ -19,18 +30,23 @@ export default function WebAuthnSignInForm(): JSX.Element {
     setError(null);
 
     try {
-      // Request a challenge from the server for credential discovery
-      // The server will return a challenge that allows any registered credentials
-      const response = await nhost.auth.signInWebAuthn();
-
+      // First check if WebAuthn is supported by this browser
       if (!isWebAuthnSupported()) {
         setError("WebAuthn is not supported by your browser.");
         setIsLoading(false);
         return;
       }
 
+      // Step 1: Request a challenge from the server for credential discovery
+      // The server creates a random challenge and sends allowed credential information
+      // This prevents replay attacks by ensuring each authentication attempt is unique
+      const response = await nhost.auth.signInWebAuthn();
+
       try {
-        // Get credential from the browser using the challenge
+        // Step 2: Browser prompts user for their security key or biometric verification
+        // The navigator.credentials.get() API activates the authenticator (fingerprint reader,
+        // security key, etc.) and asks the user to verify their identity
+        // The authenticator then signs the challenge with the private key
         const credential = await navigator.credentials.get({
           publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(
             response.body,
@@ -43,12 +59,16 @@ export default function WebAuthnSignInForm(): JSX.Element {
           return;
         }
 
-        // Step 2: Send the credential to the server for verification
+        // Step 3: Send the signed challenge to the server for verification
+        // The server validates the signature using the stored public key
+        // If valid, the server creates an authenticated session
         const verifyResponse = await nhost.auth.verifySignInWebAuthn({
           credential,
         });
 
+        // Step 4: Handle authentication result
         if (verifyResponse.body && verifyResponse.body.session) {
+          // Authentication successful, redirect to profile page
           navigate("/profile");
         } else {
           setError("Authentication failed");
@@ -65,8 +85,6 @@ export default function WebAuthnSignInForm(): JSX.Element {
       setIsLoading(false);
     }
   };
-
-  // Helper functions moved to utils/webauthn.ts
 
   return (
     <form onSubmit={startWebAuthnSignIn} className="space-y-5">

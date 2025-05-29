@@ -2,14 +2,23 @@ import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
 import type { ErrorResponse } from "@nhost/nhost-js/auth";
-import { isWebAuthnSupported } from "../lib/webauthn";
+import { isWebAuthnSupported } from "../lib/utils";
 
+/**
+ * Represents a WebAuthn security key stored for a user
+ * - id: Database ID for the key
+ * - credentialId: WebAuthn credential identifier 
+ * - nickname: User-provided friendly name for the key
+ */
 interface SecurityKey {
   id: string;
   credentialId: string;
   nickname: string | null;
 }
 
+/**
+ * GraphQL response format for security keys query
+ */
 interface SecurityKeysResponse {
   data?: {
     user?: {
@@ -31,6 +40,11 @@ export default function SecurityKeys() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [isWebAuthnAvailable, setIsWebAuthnAvailable] = useState<boolean>(true);
 
+  /**
+   * Fetches all registered WebAuthn security keys for the current user
+   * These are the public keys stored on the server that correspond to
+   * private keys stored securely on the user's devices/authenticators
+   */
   const fetchSecurityKeys = useCallback(async (): Promise<void> => {
     if (!user?.id) return;
 
@@ -38,6 +52,7 @@ export default function SecurityKeys() {
     setErrorMessage(null);
 
     try {
+      // Query the database for all security keys registered to this user
       const response: FetchResponse<SecurityKeysResponse> =
         await nhost.graphql.post({
           query: `
@@ -76,7 +91,9 @@ export default function SecurityKeys() {
     setErrorMessage(null);
 
     try {
-      // Delete the security key using GraphQL mutation
+      // Send request to server to delete the security key
+      // This removes the stored public key from the server database
+      // so it can no longer be used for authentication
       const response = await nhost.graphql.post({
         query: `
           mutation DeleteSecurityKey($keyId: uuid!) {
@@ -94,7 +111,7 @@ export default function SecurityKeys() {
         throw new Error(response.body.errors[0]?.message || "Unknown error");
       }
 
-      // Remove the key from the local state
+      // Update the UI by removing the key from local state
       setSecurityKeys(securityKeys.filter((key) => key.id !== keyId));
       setSuccess(
         "Security key deleted successfully! Remember to also remove it from your authenticator app, password manager, or device credential manager to avoid future authentication issues.",
@@ -114,9 +131,11 @@ export default function SecurityKeys() {
   };
 
   useEffect(() => {
-    // Check WebAuthn browser support
+    // Check if the current browser supports WebAuthn
+    // This tests for the presence of the WebAuthn API (PublicKeyCredential and credentials)
     setIsWebAuthnAvailable(isWebAuthnSupported());
 
+    // Load the user's security keys when authenticated
     if (isAuthenticated && user?.id) {
       fetchSecurityKeys();
     }
@@ -134,6 +153,7 @@ export default function SecurityKeys() {
   const registerNewSecurityKey = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Check if browser supports WebAuthn
     if (!isWebAuthnAvailable) {
       setErrorMessage(
         "WebAuthn is not supported by your browser. Please use a modern browser that supports WebAuthn.",
@@ -141,6 +161,7 @@ export default function SecurityKeys() {
       return;
     }
 
+    // Validate key name exists
     if (!keyName.trim()) {
       setErrorMessage("Please provide a name for your security key");
       return;
@@ -151,9 +172,14 @@ export default function SecurityKeys() {
     setSuccess(null);
 
     try {
-      // Step 1: Initialize WebAuthn security key registration
+      // Step 1: Request challenge from server
+      // The server generates a random challenge to ensure the registration
+      // is happening in real-time and creates a new credential ID
       const initResponse = await nhost.auth.addSecurityKey();
 
+      // Step 2: Browser prompts user for security key or biometric verification
+      // The browser creates a new credential pair (public/private) and stores
+      // the private key securely on the device
       const credential = await navigator.credentials.create({
         publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
           initResponse.body,
@@ -165,13 +191,15 @@ export default function SecurityKeys() {
         return;
       }
 
-      // Step 4: Verify the security key with the server
+      // Step 3: Send credential public key back to server for verification
+      // The server verifies the attestation and stores the public key
+      // associated with the user's account for future authentication
       await nhost.auth.verifyAddSecurityKey({
         credential,
         nickname: keyName.trim(),
       });
 
-      // Registration successful
+      // Step 4: Registration successful - update UI
       setSuccess("Security key registered successfully!");
       setKeyName("");
       setShowAddForm(false);
