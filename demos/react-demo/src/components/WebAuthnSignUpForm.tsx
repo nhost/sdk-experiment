@@ -4,7 +4,7 @@ import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import {
   isWebAuthnSupported,
-  prepareRegistrationOptions,
+  preparePublicKeyCredentialCreationOptions,
   formatRegistrationCredentialForVerification,
 } from "../lib/webauthn";
 
@@ -27,7 +27,8 @@ export default function WebAuthnForm({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [keyNickname, setKeyNickname] = useState<string>("");
-  const [challengeData, setChallengeData] = useState<any | null>(null);
+  const [challengeData, setChallengeData] =
+    useState<PublicKeyCredentialCreationOptions | null>(null);
 
   const startWebAuthnRegistration = async (
     e: React.FormEvent<HTMLFormElement>,
@@ -61,7 +62,9 @@ export default function WebAuthnForm({
       setChallengeData(response.body);
 
       // Prepare credential options
-      const credentialOptions = prepareRegistrationOptions(response.body);
+      const credentialOptions = preparePublicKeyCredentialCreationOptions(
+        response.body,
+      );
 
       if (!credentialOptions.challenge) {
         throw new Error("Invalid challenge data received from server");
@@ -159,8 +162,8 @@ export default function WebAuthnForm({
 
       <div className="text-xs mt-2 text-gray-400">
         <p>
-          You'll be prompted to use your device's security key (like TouchID,
-          FaceID, Windows Hello, or a USB security key)
+          You&apos;ll be prompted to use your device&apos;s security key (like
+          TouchID, FaceID, Windows Hello, or a USB security key)
         </p>
       </div>
     </form>

@@ -616,7 +616,7 @@ This method may return different T based on the response code:
 ##### signInWebAuthn()
 
 ```ts
-signInWebAuthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<Record<string, unknown>>>;
+signInWebAuthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 ```
 
 Summary: Sign in with WebAuthn
@@ -624,7 +624,7 @@ Initiate a WebAuthn sign-in process by sending a challenge to the user's device.
 
 This method may return different T based on the response code:
 
-- 200: Record<string, unknown>
+- 200: PublicKeyCredentialCreationOptions
 
 ###### Parameters
 
@@ -635,7 +635,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`Record`&lt;`string`, `unknown`&gt;&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialCreationOptions`&gt;&gt;
 
 ##### signOut()
 

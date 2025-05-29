@@ -1391,12 +1391,12 @@ export interface Client {
      Initiate a WebAuthn sign-in process by sending a challenge to the user's device. The user must have previously registered a WebAuthn credential.
 
      This method may return different T based on the response code:
-     - 200: Record<string, unknown>
+     - 200: PublicKeyCredentialCreationOptions
      */
   signInWebAuthn(
     body?: SignInWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<Record<string, unknown>>>;
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 
   /**
      Summary: Verify WebAuthn sign-in
@@ -2310,7 +2310,7 @@ export const createAPIClient = (
   const signInWebAuthn = async (
     body?: SignInWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<Record<string, unknown>>> => {
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>> => {
     const url = baseURL + `/signin/webauthn`;
     const res = await fetch(url, {
       ...options,
@@ -2331,7 +2331,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: Record<string, unknown> = responseBody
+    const payload: PublicKeyCredentialCreationOptions = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -2339,7 +2339,7 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<Record<string, unknown>>;
+    } as FetchResponse<PublicKeyCredentialCreationOptions>;
   };
 
   const verifySignInWebAuthn = async (

@@ -52,84 +52,44 @@ export function arrayBufferToBase64URL(buffer: ArrayBuffer): string {
 /**
  * Prepares WebAuthn credential creation options by converting Base64URL strings to ArrayBuffers
  */
-export function prepareRegistrationOptions(
-  publicKeyOptions: any,
+export function preparePublicKeyCredentialCreationOptions(
+  publicKeyOptions: PublicKeyCredentialCreationOptions,
 ): PublicKeyCredentialCreationOptions {
-  const credentialOptions = publicKeyOptions.publicKey
-    ? structuredClone(publicKeyOptions.publicKey)
-    : structuredClone(publicKeyOptions);
-
   // Convert challenge from base64 to ArrayBuffer
   if (
-    credentialOptions.challenge &&
-    typeof credentialOptions.challenge === "string"
+    publicKeyOptions.challenge &&
+    typeof publicKeyOptions.challenge === "string"
   ) {
-    credentialOptions.challenge = base64URLToArrayBuffer(
-      credentialOptions.challenge,
+    publicKeyOptions.challenge = base64URLToArrayBuffer(
+      publicKeyOptions.challenge,
     );
   }
 
   // Convert user.id from base64 if necessary
   if (
-    credentialOptions.user?.id &&
-    typeof credentialOptions.user.id === "string"
+    publicKeyOptions.user?.id &&
+    typeof publicKeyOptions.user.id === "string"
   ) {
-    credentialOptions.user.id = base64URLToArrayBuffer(
-      credentialOptions.user.id,
-    );
+    publicKeyOptions.user.id = base64URLToArrayBuffer(publicKeyOptions.user.id);
   }
 
   // Convert excludeCredentials ids from base64 if present
-  if (credentialOptions.excludeCredentials) {
-    credentialOptions.excludeCredentials =
-      credentialOptions.excludeCredentials.map((credential: any) => {
-        if (credential.id && typeof credential.id === "string") {
-          return {
-            ...credential,
-            id: base64URLToArrayBuffer(credential.id),
-          };
-        }
-        return credential;
-      });
+  if (publicKeyOptions.excludeCredentials) {
+    publicKeyOptions.excludeCredentials =
+      publicKeyOptions.excludeCredentials.map(
+        (credential: PublicKeyCredentialDescriptor) => {
+          if (credential.id && typeof credential.id === "string") {
+            return {
+              ...credential,
+              id: base64URLToArrayBuffer(credential.id),
+            };
+          }
+          return credential;
+        },
+      );
   }
 
-  return credentialOptions;
-}
-
-/**
- * Prepares WebAuthn credential request options by converting Base64URL strings to ArrayBuffers
- */
-export function prepareAuthenticationOptions(
-  publicKeyOptions: any,
-): PublicKeyCredentialRequestOptions {
-  const credentialOptions = structuredClone(publicKeyOptions);
-
-  // Convert challenge from base64 to ArrayBuffer
-  if (
-    credentialOptions.challenge &&
-    typeof credentialOptions.challenge === "string"
-  ) {
-    credentialOptions.challenge = base64URLToArrayBuffer(
-      credentialOptions.challenge,
-    );
-  }
-
-  // Convert allowCredentials ids from base64 if present
-  if (credentialOptions.allowCredentials) {
-    credentialOptions.allowCredentials = credentialOptions.allowCredentials.map(
-      (credential: any) => {
-        if (credential.id && typeof credential.id === "string") {
-          return {
-            ...credential,
-            id: base64URLToArrayBuffer(credential.id),
-          };
-        }
-        return credential;
-      },
-    );
-  }
-
-  return credentialOptions;
+  return publicKeyOptions;
 }
 
 /**
@@ -137,7 +97,7 @@ export function prepareAuthenticationOptions(
  */
 export function formatRegistrationCredentialForVerification(
   credential: PublicKeyCredential,
-): any {
+) {
   return {
     id: credential.id,
     type: credential.type,
@@ -160,7 +120,7 @@ export function formatRegistrationCredentialForVerification(
  */
 export function formatAuthenticationCredentialForVerification(
   credential: PublicKeyCredential,
-): any {
+) {
   return {
     id: credential.id,
     type: credential.type,

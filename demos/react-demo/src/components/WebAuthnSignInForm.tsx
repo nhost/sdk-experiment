@@ -5,13 +5,11 @@ import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import {
   isWebAuthnSupported,
-  prepareAuthenticationOptions,
+  preparePublicKeyCredentialCreationOptions,
   formatAuthenticationCredentialForVerification,
 } from "../lib/webauthn";
 
-interface WebAuthnSignInFormProps {}
-
-export default function WebAuthnSignInForm({}: WebAuthnSignInFormProps): JSX.Element {
+export default function WebAuthnSignInForm(): JSX.Element {
   const { nhost } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -35,19 +33,10 @@ export default function WebAuthnSignInForm({}: WebAuthnSignInFormProps): JSX.Ele
         return;
       }
 
-      // Prepare authentication options
-      const publicKeyCredentialRequestOptions = prepareAuthenticationOptions(
-        response.body,
-      );
-
-      if (!publicKeyCredentialRequestOptions.challenge) {
-        throw new Error("Invalid challenge data received from server");
-      }
-
       try {
         // Get credential
         const credential = (await navigator.credentials.get({
-          publicKey: publicKeyCredentialRequestOptions,
+          publicKey: preparePublicKeyCredentialCreationOptions(response.body),
         })) as PublicKeyCredential;
 
         // Prepare credential for verification
@@ -93,12 +82,12 @@ export default function WebAuthnSignInForm({}: WebAuthnSignInFormProps): JSX.Ele
 
       <div className="text-xs mt-2 text-gray-400">
         <p>
-          You'll be prompted to use your device's security key (like TouchID,
-          FaceID, Windows Hello, or a USB security key)
+          You&apos;ll be prompted to use your device&apos;s security key (like
+          TouchID, FaceID, Windows Hello, or a USB security key)
         </p>
         <p>
-          Your browser will show available security keys that you've previously
-          registered.
+          Your browser will show available security keys that you&apos;ve
+          previously registered.
         </p>
       </div>
     </form>

@@ -4,7 +4,7 @@ import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
 import type { ErrorResponse } from "@nhost/nhost-js/auth";
 import {
   isWebAuthnSupported,
-  prepareRegistrationOptions,
+  preparePublicKeyCredentialCreationOptions,
   formatRegistrationCredentialForVerification,
 } from "../lib/webauthn";
 
@@ -69,7 +69,7 @@ export default function SecurityKeys() {
     } finally {
       setIsLoading(false);
     }
-  }, [user, isAuthenticated, nhost.graphql]);
+  }, [user, nhost.graphql]);
 
   const deleteSecurityKey = async (keyId: string): Promise<void> => {
     if (isDeleting) return;
@@ -160,7 +160,9 @@ export default function SecurityKeys() {
 
       // Step 2: Browser prompts user to interact with security key
       // Prepare credential options using utility function
-      const credentialOptions = prepareRegistrationOptions(initResponse.body);
+      const credentialOptions = preparePublicKeyCredentialCreationOptions(
+        initResponse.body,
+      );
 
       // Create new credential
       const credential = (await navigator.credentials.create({
@@ -213,8 +215,8 @@ export default function SecurityKeys() {
         <div className="alert alert-error mb-4">
           <p>
             <strong>WebAuthn not supported!</strong> Your browser or device
-            doesn't support WebAuthn authentication. Please use a modern browser
-            (Chrome, Firefox, Safari, Edge) that supports WebAuthn.
+            doesn&apos;t support WebAuthn authentication. Please use a modern
+            browser (Chrome, Firefox, Safari, Edge) that supports WebAuthn.
           </p>
           <p className="mt-2 text-sm">
             Note: Even if your browser supports WebAuthn, you may need a
@@ -231,10 +233,10 @@ export default function SecurityKeys() {
             browser to register it.
           </p>
           <p className="text-sm text-gray-400 mt-2">
-            Note: You'll need a security key (like YubiKey) or a device with
-            biometric authentication (like Touch ID, Face ID, or Windows Hello).
-            If registration fails, make sure your device has the required
-            capabilities.
+            Note: You&apos;ll need a security key (like YubiKey) or a device
+            with biometric authentication (like Touch ID, Face ID, or Windows
+            Hello). If registration fails, make sure your device has the
+            required capabilities.
           </p>
           <p className="text-sm text-gray-400">
             This works the same way as when you registered during sign up.
