@@ -48,8 +48,6 @@ export const generateServiceUrl = (
     return customUrl;
   } else if (subdomain && region) {
     return `https://${subdomain}.${serviceType}.${region}.nhost.run/v1`;
-  } else if (subdomain) {
-    return `https://${subdomain}.${serviceType}.nhost.run/v1`;
   } else {
     return `https://local.${serviceType}.local.nhost.run/v1`;
   }

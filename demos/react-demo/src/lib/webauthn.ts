@@ -39,7 +39,7 @@ export function arrayBufferToBase64URL(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
   let binary = "";
   for (let i = 0; i < bytes.byteLength; i++) {
-    binary += String.fromCharCode(bytes[i]);
+    binary += String.fromCharCode(bytes[i] as number);
   }
   // Convert binary to base64 and then to base64URL
   return window

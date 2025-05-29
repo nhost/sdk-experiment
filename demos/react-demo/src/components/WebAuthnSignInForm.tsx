@@ -29,46 +29,45 @@ export default function WebAuthnSignInForm({}: WebAuthnSignInFormProps): JSX.Ele
       // The server will return a challenge that allows any registered credentials
       const response = await nhost.auth.signInWebAuthn();
 
-      // Start the WebAuthn authentication process
-      if (response.body && isWebAuthnSupported()) {
-        // WebAuthn is supported
-
-        // Prepare authentication options
-        const publicKeyCredentialRequestOptions = prepareAuthenticationOptions(
-          response.body,
-        );
-
-        if (!publicKeyCredentialRequestOptions.challenge) {
-          throw new Error("Invalid challenge data received from server");
-        }
-
-        try {
-          // Get credential
-          const credential = (await navigator.credentials.get({
-            publicKey: publicKeyCredentialRequestOptions,
-          })) as PublicKeyCredential;
-
-          // Prepare credential for verification
-          const credentialForVerify =
-            formatAuthenticationCredentialForVerification(credential);
-
-          // Step 2: Send the credential to the server for verification
-          const verifyResponse = await nhost.auth.verifySignInWebAuthn({
-            credential: credentialForVerify,
-          });
-
-          if (verifyResponse.body && verifyResponse.body.session) {
-            navigate("/profile");
-          } else {
-            setError("Authentication failed");
-          }
-        } catch (credError) {
-          setError(
-            `WebAuthn authentication failed: ${(credError as Error).message || "Unknown error"}`,
-          );
-        }
-      } else {
+      if (!isWebAuthnSupported()) {
         setError("WebAuthn is not supported by your browser.");
+        setIsLoading(false);
+        return;
+      }
+
+      // Prepare authentication options
+      const publicKeyCredentialRequestOptions = prepareAuthenticationOptions(
+        response.body,
+      );
+
+      if (!publicKeyCredentialRequestOptions.challenge) {
+        throw new Error("Invalid challenge data received from server");
+      }
+
+      try {
+        // Get credential
+        const credential = (await navigator.credentials.get({
+          publicKey: publicKeyCredentialRequestOptions,
+        })) as PublicKeyCredential;
+
+        // Prepare credential for verification
+        const credentialForVerify =
+          formatAuthenticationCredentialForVerification(credential);
+
+        // Step 2: Send the credential to the server for verification
+        const verifyResponse = await nhost.auth.verifySignInWebAuthn({
+          credential: credentialForVerify,
+        });
+
+        if (verifyResponse.body && verifyResponse.body.session) {
+          navigate("/profile");
+        } else {
+          setError("Authentication failed");
+        }
+      } catch (credError) {
+        setError(
+          `WebAuthn authentication failed: ${(credError as Error).message || "Unknown error"}`,
+        );
       }
     } catch (err) {
       const error = err as FetchError<ErrorResponse>;

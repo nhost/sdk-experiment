@@ -2,7 +2,7 @@ import { useState, type JSX } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import TabForm from "../components/TabForm";
 import MagicLinkForm from "../components/MagicLinkForm";
-import WebAuthnForm from "../components/WebAuthnForm";
+import WebAuthnForm from "../components/WebAuthnSignUpForm";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";

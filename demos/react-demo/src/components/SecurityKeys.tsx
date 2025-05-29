@@ -158,78 +158,32 @@ export default function SecurityKeys() {
       // Step 1: Initialize WebAuthn security key registration
       const initResponse = await nhost.auth.addSecurityKey();
 
-      if (!initResponse.body || initResponse.status >= 400) {
-        const errorMessage =
-          initResponse.body && (initResponse.body as any).message
-            ? (initResponse.body as any).message
-            : "Failed to initialize security key registration";
-        throw new Error(errorMessage);
-      }
-
       // Step 2: Browser prompts user to interact with security key
-      try {
-        // Prepare credential options using utility function
-        const credentialOptions = prepareRegistrationOptions(
-          initResponse.body,
-        );
+      // Prepare credential options using utility function
+      const credentialOptions = prepareRegistrationOptions(initResponse.body);
 
-        if (!credentialOptions.challenge) {
-          throw new Error("Invalid challenge data received from server");
-        }
-        // Create new credential
-        const credential = (await navigator.credentials.create({
-          publicKey: credentialOptions,
-        })) as PublicKeyCredential;
+      // Create new credential
+      const credential = (await navigator.credentials.create({
+        publicKey: credentialOptions,
+      })) as PublicKeyCredential;
 
-        if (!credential) {
-          throw new Error("Security key registration was cancelled or failed");
-        }
+      // Prepare credential for verification using utility function
+      const credentialForVerification =
+        formatRegistrationCredentialForVerification(credential);
 
-        // Prepare credential for verification using utility function
-        const credentialForVerification =
-          formatRegistrationCredentialForVerification(credential);
+      // Step 4: Verify the security key with the server
+      await nhost.auth.verifyAddSecurityKey({
+        credential: credentialForVerification,
+        nickname: keyName.trim(),
+      });
 
-        // Step 4: Verify the security key with the server
-        const verifyResponse = await nhost.auth.verifyAddSecurityKey({
-          credential: credentialForVerification,
-          nickname: keyName.trim(),
-        });
+      // Registration successful
+      setSuccess("Security key registered successfully!");
+      setKeyName("");
+      setShowAddForm(false);
 
-        if (!verifyResponse.body || verifyResponse.status >= 400) {
-          const errorMessage =
-            verifyResponse.body && (verifyResponse.body as any).message
-              ? (verifyResponse.body as any).message
-              : "Failed to verify security key";
-          throw new Error(errorMessage);
-        }
-
-        // Registration successful
-        setSuccess("Security key registered successfully!");
-        setKeyName("");
-        setShowAddForm(false);
-
-        // Refresh the security keys list
-        fetchSecurityKeys();
-      } catch (err) {
-        // Provide more specific error messages based on the error
-        let errorMessage = "Failed to register security key";
-
-        if (err instanceof Error) {
-          if (err.name === "NotAllowedError") {
-            errorMessage =
-              "You cancelled the registration or the operation timed out";
-          } else if (err.name === "NotSupportedError") {
-            errorMessage =
-              "Your device doesn't support this type of security key";
-          } else if (err.name === "SecurityError") {
-            errorMessage = "The operation was blocked for security reasons";
-          } else if (err.message) {
-            errorMessage = err.message;
-          }
-        }
-
-        throw new Error(errorMessage);
-      }
+      // Refresh the security keys list
+      fetchSecurityKeys();
     } catch (err) {
       const error = err as Error;
       setErrorMessage(`Failed to register security key: ${error.message}`);

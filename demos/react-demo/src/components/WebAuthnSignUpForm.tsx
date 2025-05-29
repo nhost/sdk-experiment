@@ -42,6 +42,12 @@ export default function WebAuthnForm({
       return;
     }
 
+    if (!isWebAuthnSupported()) {
+      setError("WebAuthn is not supported by your browser.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       // Step 1: Request a challenge from the server
       const response = await nhost.auth.signUpWebAuthn({
@@ -54,48 +60,41 @@ export default function WebAuthnForm({
       // Store the challenge data
       setChallengeData(response.body);
 
-      // Start the WebAuthn registration process
-      if (response.body && isWebAuthnSupported()) {
-        // WebAuthn is supported
+      // Prepare credential options
+      const credentialOptions = prepareRegistrationOptions(response.body);
 
-        // Prepare credential options
-        const credentialOptions = prepareRegistrationOptions(response.body);
+      if (!credentialOptions.challenge) {
+        throw new Error("Invalid challenge data received from server");
+      }
 
-        if (!credentialOptions.challenge) {
-          throw new Error("Invalid challenge data received from server");
+      try {
+        // Create new credential
+        const credential = (await navigator.credentials.create({
+          publicKey: credentialOptions,
+        })) as PublicKeyCredential;
+
+        // Prepare credential for verification
+        const credentialForVerify =
+          formatRegistrationCredentialForVerification(credential);
+
+        // Step 2: Send the credential to the server for verification
+        const verifyResponse = await nhost.auth.verifySignUpWebAuthn({
+          credential: credentialForVerify,
+          options: {
+            displayName: displayName || undefined,
+          },
+          nickname: keyNickname || `Security Key for ${displayName || email}`,
+        });
+
+        if (verifyResponse.body && verifyResponse.body.session) {
+          // Success! User is now registered and authenticated
+          window.location.href =
+            redirectTo || window.location.origin + "/profile";
         }
-
-        try {
-          // Create new credential
-          const credential = (await navigator.credentials.create({
-            publicKey: credentialOptions,
-          })) as PublicKeyCredential;
-
-          // Prepare credential for verification
-          const credentialForVerify =
-            formatRegistrationCredentialForVerification(credential);
-
-          // Step 2: Send the credential to the server for verification
-          const verifyResponse = await nhost.auth.verifySignUpWebAuthn({
-            credential: credentialForVerify,
-            options: {
-              displayName: displayName || undefined,
-            },
-            nickname: keyNickname || `Security Key for ${displayName || email}`,
-          });
-
-          if (verifyResponse.body && verifyResponse.body.session) {
-            // Success! User is now registered and authenticated
-            window.location.href =
-              redirectTo || window.location.origin + "/profile";
-          }
-        } catch (credError) {
-          setError(
-            `WebAuthn registration failed: ${(credError as Error).message || "Unknown error"}`,
-          );
-        }
-      } else {
-        setError("WebAuthn is not supported by your browser.");
+      } catch (credError) {
+        setError(
+          `WebAuthn registration failed: ${(credError as Error).message || "Unknown error"}`,
+        );
       }
     } catch (err) {
       const error = err as FetchError<ErrorResponse>;
