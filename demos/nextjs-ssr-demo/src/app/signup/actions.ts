@@ -135,19 +135,16 @@ export async function signUpWebAuthn({
 /**
  * Verifies WebAuthn registration response
  */
-export async function verifySignUpWebAuthn({
-  credential,
-  nickname,
-}: {
-  credential: Credential;
-  nickname: string;
-}) {
+export async function verifySignUpWebAuthn(
+  credential: PublicKeyCredentialJSON,
+  nickname: string,
+) {
   try {
     // Get the server Nhost client
     const nhost = await createNhostClient();
 
     const response = await nhost.auth.verifySignUpWebAuthn({
-      credential,
+      credential: credential as Credential,
       nickname,
     });
 

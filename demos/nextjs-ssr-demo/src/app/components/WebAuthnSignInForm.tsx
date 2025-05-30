@@ -70,7 +70,9 @@ export default function WebAuthnSignInForm({
 
         // Step 3: Send the signed challenge to the server for verification
         // Use PublicKeyCredential's built-in serialization method
-        const verifyResult = await verifySignInWebAuthn(credential);
+        const verifyResult = await verifySignInWebAuthn(
+          (credential as PublicKeyCredential).toJSON(),
+        );
 
         if (verifyResult.error) {
           setError(verifyResult.error);

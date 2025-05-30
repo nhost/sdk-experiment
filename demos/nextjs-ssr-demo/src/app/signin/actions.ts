@@ -174,7 +174,7 @@ export async function signInWebAuthn() {
     const nhost = await createNhostClient();
 
     // Request authentication options from server
-    const response = await nhost.auth.signInWebAuthn();
+    const response = await nhost.auth.signInWebAuthn({});
 
     // Return the challenge data for the client
     return {
@@ -192,13 +192,17 @@ export async function signInWebAuthn() {
  * Verifies WebAuthn authentication response
  * This is called after the user has completed the WebAuthn authentication
  */
-export async function verifySignInWebAuthn(credential: Credential) {
+export async function verifySignInWebAuthn(
+  credential: PublicKeyCredentialJSON,
+) {
   try {
     // Get the server Nhost client
     const nhost = await createNhostClient();
 
+    console.log("Verifying WebAuthn credential:", credential);
+
     const response = await nhost.auth.verifySignInWebAuthn({
-      credential,
+      credential: credential as Credential,
     });
 
     // If we have a session, verification was successful

@@ -89,10 +89,11 @@ export default function WebAuthnSignUpForm({
         }
 
         // Step 3: Send the credential attestation to the server for verification
-        const verifyResult = await verifySignUpWebAuthn({
-          credential,
-          nickname: keyNickname || `Security Key for ${displayName || email}`,
-        });
+        // Use PublicKeyCredential's built-in serialization method
+        const verifyResult = await verifySignUpWebAuthn(
+          (credential as PublicKeyCredential).toJSON(),
+          keyNickname || `Security Key for ${displayName || email}`,
+        );
 
         if (verifyResult.error) {
           setError(verifyResult.error);
