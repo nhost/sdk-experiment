@@ -1,6 +1,5 @@
 import { useState, useEffect, type JSX } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import TabForm from "../components/TabForm";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
@@ -65,8 +64,13 @@ export default function SignIn(): JSX.Element {
 
       <div className="glass-card w-full p-8 mb-6">
         <h2 className="text-2xl mb-6">Sign In</h2>
-        <TabForm
-          passwordTabContent={
+        <div>
+          <div className="tabs-container">
+            <button className="tab-button tab-active">
+              Email + Password
+            </button>
+          </div>
+          <div className="tab-content">
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label htmlFor="email">Email</label>
@@ -100,9 +104,8 @@ export default function SignIn(): JSX.Element {
                 {isLoading ? "Signing In..." : "Sign In"}
               </button>
             </form>
-          }
-        />
-        )
+          </div>
+        </div>
       </div>
 
       <div className="mt-4">

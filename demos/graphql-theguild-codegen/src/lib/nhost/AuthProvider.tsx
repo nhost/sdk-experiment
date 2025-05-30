@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  // Create the nhost client with EventEmitterStorage
+  // Create the nhost client
   const nhost = useMemo(
     () =>
       createClient({
