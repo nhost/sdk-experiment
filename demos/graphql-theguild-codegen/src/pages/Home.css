@@ -55,8 +55,14 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .turtle-header {
@@ -204,7 +210,7 @@
     flex-wrap: nowrap;
     overflow-x: auto;
   }
-  
+
   .turtle-tab {
     flex: 0 0 auto;
   }

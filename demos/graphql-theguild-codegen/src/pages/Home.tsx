@@ -72,16 +72,18 @@ export default function Home(): JSX.Element {
     });
   };
 
-  if (loading) return (
-    <div className="loading-container">
-      <p>Loading ninja turtles...</p>
-    </div>
-  );
-  if (error) return (
-    <div className="alert alert-error">
-      Error loading ninja turtles: {error.message}
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="loading-container">
+        <p>Loading ninja turtles...</p>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="alert alert-error">
+        Error loading ninja turtles: {error.message}
+      </div>
+    );
 
   // Access the data using the correct field name from the GraphQL response
   const ninjaTurtles: NinjaTurtle[] = data?.ninjaTurtles || [];
@@ -105,7 +107,9 @@ export default function Home(): JSX.Element {
 
   return (
     <div className="ninja-turtles-container">
-      <h1 className="ninja-turtles-title text-3xl font-bold mb-6">Teenage Mutant Ninja Turtles</h1>
+      <h1 className="ninja-turtles-title text-3xl font-bold mb-6">
+        Teenage Mutant Ninja Turtles
+      </h1>
 
       {/* Tabs navigation */}
       <div className="turtle-tabs">
@@ -126,7 +130,9 @@ export default function Home(): JSX.Element {
         .map((turtle) => (
           <div key={turtle.id} className="turtle-card glass-card p-6">
             <div className="turtle-header">
-              <h2 className="turtle-name text-2xl font-semibold">{turtle.name}</h2>
+              <h2 className="turtle-name text-2xl font-semibold">
+                {turtle.name}
+              </h2>
             </div>
 
             <p className="turtle-description">{turtle.description}</p>
@@ -145,7 +151,9 @@ export default function Home(): JSX.Element {
                   <p className="comment-text">{comment.comment}</p>
                   <div className="comment-meta">
                     <div className="comment-avatar">
-                      {(comment.user?.displayName || comment.user?.email || "?").charAt(0).toUpperCase()}
+                      {(comment.user?.displayName || comment.user?.email || "?")
+                        .charAt(0)
+                        .toUpperCase()}
                     </div>
                     <p>
                       {comment.user?.displayName ||
@@ -189,7 +197,15 @@ export default function Home(): JSX.Element {
                   onClick={() => setActiveCommentId(turtle.id)}
                   className="add-comment-button"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <line x1="12" y1="5" x2="12" y2="19"></line>
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                   </svg>

@@ -7,7 +7,11 @@ import { useApolloClient } from "./lib/graphql/apolloClient";
 import { AuthProvider, useAuth } from "./lib/nhost/AuthProvider";
 
 // Wrapper component that provides Apollo client using the Nhost client from AuthProvider
-const ApolloProviderWithAuth = ({ children }: { children: React.ReactNode }) => {
+const ApolloProviderWithAuth = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const apolloClient = useApolloClient();
   return <ApolloProvider client={apolloClient}>{children}</ApolloProvider>;
 };
