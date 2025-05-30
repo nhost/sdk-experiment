@@ -22,7 +22,7 @@ export default function SignIn(): JSX.Element {
   // Use useEffect for navigation after authentication is confirmed
   useEffect(() => {
     if (isAuthenticated && !isVerifying) {
-      navigate("/profile");
+      navigate("/home");
     }
   }, [isAuthenticated, isVerifying, navigate]);
 
@@ -46,7 +46,7 @@ export default function SignIn(): JSX.Element {
 
       // If we have a session, sign in was successful
       if (response.body?.session) {
-        navigate("/profile");
+        navigate("/home");
       } else {
         setError("Failed to sign in");
       }
@@ -66,9 +66,7 @@ export default function SignIn(): JSX.Element {
         <h2 className="text-2xl mb-6">Sign In</h2>
         <div>
           <div className="tabs-container">
-            <button className="tab-button tab-active">
-              Email + Password
-            </button>
+            <button className="tab-button tab-active">Email + Password</button>
           </div>
           <div className="tab-content">
             <form onSubmit={handleSubmit} className="space-y-5">

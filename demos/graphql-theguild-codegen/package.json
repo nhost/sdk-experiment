@@ -15,7 +15,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@apollo/client": "^3.13.8",
     "@nhost/nhost-js": "workspace:*",
+    "graphql": "^16.11.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.0"

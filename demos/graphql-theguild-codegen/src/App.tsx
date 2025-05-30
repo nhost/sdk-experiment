@@ -7,7 +7,6 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
-import { AuthProvider } from "./lib/nhost/AuthProvider";
 import Navigation from "./components/Navigation";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
@@ -39,10 +38,10 @@ const RootLayout = (): JSX.Element => {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<RootLayout />}>
-      <Route index element={<Home />} />
       <Route path="signin" element={<SignIn />} />
       <Route path="signup" element={<SignUp />} />
       <Route element={<ProtectedRoute />}>
+        <Route path="home" element={<Home />} />
         <Route path="profile" element={<Profile />} />
       </Route>
       <Route path="*" element={<Navigate to="/" />} />
@@ -51,11 +50,7 @@ const router = createBrowserRouter(
 );
 
 const App = (): JSX.Element => {
-  return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
-  );
+  return <RouterProvider router={router} />;
 };
 
 export default App;

@@ -1,6 +1,34 @@
 table:
   name: ninja_turtles
   schema: public
+configuration:
+  column_config:
+    created_at:
+      custom_name: createdAt
+    id:
+      custom_name: id
+    name:
+      custom_name: name
+    updated_at:
+      custom_name: updatedAt
+  custom_column_names:
+    created_at: createdAt
+    id: id
+    name: name
+    updated_at: updatedAt
+  custom_name: ninjaTurtles
+  custom_root_fields:
+    delete: deleteNinjaTurtles
+    delete_by_pk: deleteNinjaTurtle
+    insert: insertNinjaTurtles
+    insert_one: insertNinjaTurtle
+    select: ninjaTurtles
+    select_aggregate: ninjaTurtlesAggregate
+    select_by_pk: ninjaTurtle
+    select_stream: ninjaTurtlesStream
+    update: updateNinjaTurtles
+    update_by_pk: updateNinjaTurtle
+    update_many: updateNinjaTurtlesMany
 array_relationships:
   - name: comments
     using:
@@ -13,9 +41,10 @@ select_permissions:
   - role: user
     permission:
       columns:
-        - name
         - created_at
-        - updated_at
+        - description
         - id
+        - name
+        - updated_at
       filter: {}
     comment: ""

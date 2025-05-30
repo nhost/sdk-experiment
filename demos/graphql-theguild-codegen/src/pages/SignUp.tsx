@@ -16,7 +16,7 @@ export default function SignUp(): JSX.Element {
 
   // If already authenticated, redirect to profile
   if (isAuthenticated) {
-    return <Navigate to="/profile" />;
+    return <Navigate to="/home" />;
   }
 
   const handleSubmit = async (
@@ -37,7 +37,7 @@ export default function SignUp(): JSX.Element {
 
       if (response.body) {
         // Successfully signed up and automatically signed in
-        navigate("/profile");
+        navigate("/home");
       } else {
         // Verification email sent
         navigate("/verify");
@@ -59,9 +59,7 @@ export default function SignUp(): JSX.Element {
 
         <div>
           <div className="tabs-container">
-            <button className="tab-button tab-active">
-              Email + Password
-            </button>
+            <button className="tab-button tab-active">Email + Password</button>
           </div>
           <div className="tab-content">
             <form onSubmit={handleSubmit} className="space-y-5">

@@ -19,6 +19,9 @@ export default function Navigation(): JSX.Element {
           <div className="navbar-links">
             {isAuthenticated ? (
               <>
+                <Link to="/home" className={`nav-link ${isActive("/home")}`}>
+                  Home
+                </Link>
                 <Link
                   to="/profile"
                   className={`nav-link ${isActive("/profile")}`}
