@@ -28,7 +28,7 @@ interface WebAuthnFormProps {
   redirectTo?: string;
 }
 
-export default function WebAuthnForm({
+export default function WebAuthnSignUpForm({
   email,
   setEmail,
   displayName,

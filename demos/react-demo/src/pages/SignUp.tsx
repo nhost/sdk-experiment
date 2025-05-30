@@ -2,7 +2,7 @@ import { useState, type JSX } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import TabForm from "../components/TabForm";
 import MagicLinkForm from "../components/MagicLinkForm";
-import WebAuthnForm from "../components/WebAuthnSignUpForm";
+import WebAuthnSignUpForm from "../components/WebAuthnSignUpForm";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
@@ -150,7 +150,7 @@ export default function SignUp(): JSX.Element {
             </div>
           }
           webauthnTabContent={
-            <WebAuthnForm
+            <WebAuthnSignUpForm
               email={email}
               setEmail={setEmail}
               displayName={displayName}
