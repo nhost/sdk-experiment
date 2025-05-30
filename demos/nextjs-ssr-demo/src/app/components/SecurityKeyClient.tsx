@@ -1,14 +1,12 @@
-import { useEffect, useState, useCallback } from "react";
-import { useAuth } from "../lib/nhost/AuthProvider";
-import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
-import type { ErrorResponse } from "@nhost/nhost-js/auth";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { createNhostClient } from "../lib/nhost/client";
 import { isWebAuthnSupported } from "../lib/utils";
 
 /**
  * Represents a WebAuthn security key stored for a user
- * - id: Database ID for the key
- * - credentialId: WebAuthn credential identifier
- * - nickname: User-provided friendly name for the key
  */
 interface SecurityKey {
   id: string;
@@ -16,73 +14,34 @@ interface SecurityKey {
   nickname: string | null;
 }
 
-/**
- * GraphQL response format for security keys query
- */
-interface SecurityKeysResponse {
-  data?: {
-    user?: {
-      securityKeys: SecurityKey[];
-    };
-  };
+interface SecurityKeyClientProps {
+  initialSecurityKeys: SecurityKey[];
+  serverError: string | null;
 }
 
-export default function SecurityKeys() {
-  const { nhost, user, isAuthenticated } = useAuth();
-  const [securityKeys, setSecurityKeys] = useState<SecurityKey[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+export default function SecurityKeyClient({
+  initialSecurityKeys,
+  serverError,
+}: SecurityKeyClientProps) {
+  const router = useRouter();
+  const nhost = createNhostClient();
+  const [securityKeys, setSecurityKeys] =
+    useState<SecurityKey[]>(initialSecurityKeys);
   const [isRegistering, setIsRegistering] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deletingKeyId, setDeletingKeyId] = useState<string | null>(null);
   const [keyName, setKeyName] = useState("");
   const [success, setSuccess] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(serverError);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [isWebAuthnAvailable, setIsWebAuthnAvailable] = useState<boolean>(true);
+  const [isWebAuthnAvailable, setIsWebAuthnAvailable] = useState(false);
 
-  /**
-   * Fetches all registered WebAuthn security keys for the current user
-   * These are the public keys stored on the server that correspond to
-   * private keys stored securely on the user's devices/authenticators
-   */
-  const fetchSecurityKeys = useCallback(async (): Promise<void> => {
-    if (!user?.id) return;
+  // Check WebAuthn support after component mounts to prevent hydration mismatch
+  useEffect(() => {
+    setIsWebAuthnAvailable(isWebAuthnSupported());
+  }, []);
 
-    setIsLoading(true);
-    setErrorMessage(null);
-
-    try {
-      // Query the database for all security keys registered to this user
-      const response: FetchResponse<SecurityKeysResponse> =
-        await nhost.graphql.post({
-          query: `
-          query GetUserSecurityKeys($userId: uuid!) {
-            user(id: $userId) {
-              securityKeys {
-                id
-                credentialId
-                nickname
-              }
-            }
-          }
-        `,
-          variables: {
-            userId: user.id,
-          },
-        });
-
-      const userData = response.body?.data;
-      const keys = userData?.user?.securityKeys || [];
-      setSecurityKeys(keys);
-    } catch (err) {
-      const error = err as FetchError<ErrorResponse>;
-      setErrorMessage(`Failed to load security keys: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user, nhost.graphql]);
-
-  const deleteSecurityKey = async (keyId: string): Promise<void> => {
+  const deleteSecurityKey = async (keyId: string) => {
     if (isDeleting) return;
 
     setIsDeleting(true);
@@ -92,9 +51,7 @@ export default function SecurityKeys() {
 
     try {
       // Send request to server to delete the security key
-      // This removes the stored public key from the server database
-      // so it can no longer be used for authentication
-      const response = await nhost.graphql.post({
+      await nhost.graphql.post({
         query: `
           mutation DeleteSecurityKey($keyId: uuid!) {
             deleteAuthUserSecurityKey(id: $keyId) {
@@ -107,17 +64,16 @@ export default function SecurityKeys() {
         },
       });
 
-      if (response.body?.errors) {
-        throw new Error(response.body.errors[0]?.message || "Unknown error");
-      }
-
       // Update the UI by removing the key from local state
       setSecurityKeys(securityKeys.filter((key) => key.id !== keyId));
       setSuccess(
         "Security key deleted successfully! Remember to also remove it from your authenticator app, password manager, or device credential manager to avoid future authentication issues.",
       );
 
-      // Hide success message after 5 seconds (increased to give users time to read the reminder)
+      // Refresh the page to get updated data from server
+      router.refresh();
+
+      // Hide success message after 5 seconds
       setTimeout(() => {
         setSuccess(null);
       }, 5000);
@@ -129,26 +85,6 @@ export default function SecurityKeys() {
       setDeletingKeyId(null);
     }
   };
-
-  useEffect(() => {
-    // Check if the current browser supports WebAuthn
-    // This tests for the presence of the WebAuthn API (PublicKeyCredential and credentials)
-    setIsWebAuthnAvailable(isWebAuthnSupported());
-
-    // Load the user's security keys when authenticated
-    if (isAuthenticated && user?.id) {
-      fetchSecurityKeys();
-    }
-  }, [user, isAuthenticated, fetchSecurityKeys]);
-
-  if (isLoading) {
-    return (
-      <div className="glass-card p-8 mb-6">
-        <h3 className="text-xl mb-4">Security Keys</h3>
-        <p>Loading security keys...</p>
-      </div>
-    );
-  }
 
   const registerNewSecurityKey = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -173,13 +109,10 @@ export default function SecurityKeys() {
 
     try {
       // Step 1: Request challenge from server
-      // The server generates a random challenge to ensure the registration
-      // is happening in real-time and creates a new credential ID
+      // userId is implicitly used by the nhost client for authentication
       const initResponse = await nhost.auth.addSecurityKey();
 
       // Step 2: Browser prompts user for security key or biometric verification
-      // The browser creates a new credential pair (public/private) and stores
-      // the private key securely on the device
       const credential = await navigator.credentials.create({
         publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
           initResponse.body,
@@ -192,8 +125,7 @@ export default function SecurityKeys() {
       }
 
       // Step 3: Send credential public key back to server for verification
-      // The server verifies the attestation and stores the public key
-      // associated with the user's account for future authentication
+      // userId is implicitly used by the nhost client for this operation
       await nhost.auth.verifyAddSecurityKey({
         credential,
         nickname: keyName.trim(),
@@ -204,8 +136,8 @@ export default function SecurityKeys() {
       setKeyName("");
       setShowAddForm(false);
 
-      // Refresh the security keys list
-      fetchSecurityKeys();
+      // Refresh the page to get updated data from server
+      router.refresh();
     } catch (err) {
       const error = err as Error;
       setErrorMessage(`Failed to register security key: ${error.message}`);
@@ -221,6 +153,13 @@ export default function SecurityKeys() {
     setKeyName("");
   };
 
+  // Use client-side only rendering for browser-specific components
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <div className="glass-card p-8 mb-6">
       <h3 className="text-xl mb-4">Security Keys</h3>
@@ -231,7 +170,7 @@ export default function SecurityKeys() {
 
       {success && <div className="alert alert-success mb-4">{success}</div>}
 
-      {!isWebAuthnAvailable && (
+      {isMounted && !isWebAuthnAvailable && (
         <div className="alert alert-error mb-4">
           <p>
             <strong>WebAuthn not supported!</strong> Your browser or device
@@ -257,9 +196,6 @@ export default function SecurityKeys() {
             with biometric authentication (like Touch ID, Face ID, or Windows
             Hello). If registration fails, make sure your device has the
             required capabilities.
-          </p>
-          <p className="text-sm text-gray-400">
-            This works the same way as when you registered during sign up.
           </p>
 
           <form onSubmit={registerNewSecurityKey} className="space-y-4">
@@ -396,7 +332,9 @@ export default function SecurityKeys() {
             disabled={!isWebAuthnAvailable}
             className="btn btn-primary"
           >
-            Register New Security Key
+            {!isMounted || isWebAuthnAvailable
+              ? "Register New Security Key"
+              : "WebAuthn Not Available"}
           </button>
         </div>
       )}

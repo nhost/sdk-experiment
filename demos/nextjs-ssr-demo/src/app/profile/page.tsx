@@ -1,6 +1,7 @@
 import { createNhostClient } from "../lib/nhost/server";
 import MFASettings from "./mfa-settings";
 import ChangePassword from "./change-password";
+import SecurityKeys from "./security-keys";
 
 interface GetUserMfaStatusResponse {
   user: {
@@ -107,6 +108,9 @@ export default async function Profile() {
 
       {/* MFA Settings Component */}
       <MFASettings initialMfaEnabled={isMfaEnabled} />
+
+      {/* Security Keys Component */}
+      <SecurityKeys />
 
       {/* Change Password Component */}
       <ChangePassword />

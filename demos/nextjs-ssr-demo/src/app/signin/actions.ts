@@ -163,3 +163,59 @@ export async function getProviderSignInUrl(provider: "github") {
     };
   }
 }
+
+/**
+ * Initiates WebAuthn sign in process
+ * Server side function that gets authentication options from Nhost
+ */
+export async function signInWebAuthn() {
+  try {
+    // Get the server Nhost client
+    const nhost = await createNhostClient();
+
+    // Request authentication options from server
+    const response = await nhost.auth.signInWebAuthn();
+
+    // Return the challenge data for the client
+    return {
+      publicKeyCredentialRequestOptions: response.body,
+    };
+  } catch (err) {
+    const error = err as FetchError<ErrorResponse>;
+    return {
+      error: `Failed to initiate WebAuthn sign in: ${error.message}`,
+    };
+  }
+}
+
+/**
+ * Verifies WebAuthn authentication response
+ * This is called after the user has completed the WebAuthn authentication
+ */
+export async function verifySignInWebAuthn(credential: Credential) {
+  try {
+    // Get the server Nhost client
+    const nhost = await createNhostClient();
+
+    const response = await nhost.auth.verifySignInWebAuthn({
+      credential,
+    });
+
+    // If we have a session, verification was successful
+    if (response.body?.session) {
+      // Revalidate all paths to ensure server components re-render
+      revalidatePath("/");
+
+      // Return redirect to profile page
+      return { redirect: "/profile" };
+    }
+
+    // If we got here, something went wrong
+    return { error: "Failed to verify WebAuthn authentication" };
+  } catch (err) {
+    const error = err as FetchError<ErrorResponse>;
+    return {
+      error: `Failed to verify WebAuthn authentication: ${error.message}`,
+    };
+  }
+}

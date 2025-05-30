@@ -14,6 +14,9 @@ export function createNhostClient() {
   return createClient({
     region: process.env["NHOST_REGION"] || "local",
     subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
-    storage: new CookieStorage(), // use CookieStorage for client components
+    storage: new CookieStorage({
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    }),
   });
 }

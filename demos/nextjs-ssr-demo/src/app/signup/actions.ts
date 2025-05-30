@@ -92,3 +92,80 @@ export async function sendMagicLink(formData: FormData) {
     };
   }
 }
+
+/**
+ * Initiates WebAuthn registration process (sign up)
+ */
+export async function signUpWebAuthn({
+  email,
+  displayName,
+}: {
+  email: string;
+  displayName?: string;
+}) {
+  // Validate inputs
+  if (!email) {
+    return { error: "Email is required" };
+  }
+
+  try {
+    // Get the server Nhost client
+    const nhost = await createNhostClient();
+
+    // Request registration options from server
+    const response = await nhost.auth.signUpWebAuthn({
+      email,
+      options: {
+        displayName,
+      },
+    });
+
+    // Return the challenge data for the client
+    return {
+      publicKeyCredentialCreationOptions: response.body,
+    };
+  } catch (err) {
+    const error = err as FetchError<ErrorResponse>;
+    return {
+      error: `Failed to initiate WebAuthn sign up: ${error.message}`,
+    };
+  }
+}
+
+/**
+ * Verifies WebAuthn registration response
+ */
+export async function verifySignUpWebAuthn({
+  credential,
+  nickname,
+}: {
+  credential: Credential;
+  nickname: string;
+}) {
+  try {
+    // Get the server Nhost client
+    const nhost = await createNhostClient();
+
+    const response = await nhost.auth.verifySignUpWebAuthn({
+      credential,
+      nickname,
+    });
+
+    // If we have a session, verification was successful
+    if (response.body?.session) {
+      // Revalidate all paths to ensure server components re-render
+      revalidatePath("/");
+
+      // Return redirect to profile page
+      return { redirect: "/profile" };
+    }
+
+    // If we got here, something went wrong
+    return { error: "Failed to verify WebAuthn registration" };
+  } catch (err) {
+    const error = err as FetchError<ErrorResponse>;
+    return {
+      error: `Failed to verify WebAuthn registration: ${error.message}`,
+    };
+  }
+}
