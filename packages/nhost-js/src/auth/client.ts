@@ -781,7 +781,7 @@ export interface SignUpWebauthnRequest {
  @property email? (`string`) - A valid email. Deprecated, no longer used
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property credential (`Record<string, unknown>`) - */
+ @property credential (`Credential`) - */
 export interface SignInWebauthnVerifyRequest {
   /**
    * A valid email. Deprecated, no longer used
@@ -792,7 +792,59 @@ export interface SignInWebauthnVerifyRequest {
   /**
    *
    */
-  credential: Record<string, unknown>;
+  credential: Credential;
+}
+
+/**
+ * 
+ @property credential (`Credential`) - 
+ @property options? (`SignUpOptions`) - 
+ @property nickname? (`string`) - Nickname for the security key*/
+export interface SignUpWebauthnVerifyRequest {
+  /**
+   *
+   */
+  credential: Credential;
+  /**
+   *
+   */
+  options?: SignUpOptions;
+  /**
+   * Nickname for the security key
+   */
+  nickname?: string;
+}
+
+/**
+ * 
+ @property credential (`Credential`) - The credential created during registration
+ @property nickname? (`string`) - Optional nickname for the security key*/
+export interface VerifyAddSecurityKeyRequest {
+  /**
+   * The credential created during registration
+   */
+  credential: Credential;
+  /**
+   * Optional nickname for the security key
+   */
+  nickname?: string;
+}
+
+/**
+ * 
+ @property id (`string`) - The ID of the newly added security key
+    *    Example - `"123e4567-e89b-12d3-a456-426614174000"`
+ @property nickname? (`string`) - The nickname of the security key if provided*/
+export interface VerifyAddSecurityKeyResponse {
+  /**
+   * The ID of the newly added security key
+   *    Example - `"123e4567-e89b-12d3-a456-426614174000"`
+   */
+  id: string;
+  /**
+   * The nickname of the security key if provided
+   */
+  nickname?: string;
 }
 
 /**
@@ -1333,6 +1385,77 @@ export interface Client {
     params?: SignInProviderParams,
     options?: RequestInit,
   ): string;
+
+  /**
+     Summary: Sign in with WebAuthn
+     Initiate a WebAuthn sign-in process by sending a challenge to the user's device. The user must have previously registered a WebAuthn credential.
+
+     This method may return different T based on the response code:
+     - 200: PublicKeyCredentialRequestOptionsJSON
+     */
+  signInWebAuthn(
+    body?: SignInWebauthnRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<PublicKeyCredentialRequestOptionsJSON>>;
+
+  /**
+     Summary: Verify WebAuthn sign-in
+     Complete the WebAuthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
+
+     This method may return different T based on the response code:
+     - 200: SessionPayload
+     */
+  verifySignInWebAuthn(
+    body: SignInWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>>;
+
+  /**
+     Summary: Sign up with WebAuthn
+     Initiate a WebAuthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
+
+     This method may return different T based on the response code:
+     - 200: PublicKeyCredentialCreationOptionsJSON
+     */
+  signUpWebAuthn(
+    body: SignUpWebauthnRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>>;
+
+  /**
+     Summary: Verify WebAuthn sign-up
+     Complete the WebAuthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
+
+     This method may return different T based on the response code:
+     - 200: SessionPayload
+     */
+  verifySignUpWebAuthn(
+    body: SignUpWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>>;
+
+  /**
+     Summary: Initialize adding of a new webauthn security key
+     
+
+     This method may return different T based on the response code:
+     - 200: PublicKeyCredentialCreationOptionsJSON
+     */
+  addSecurityKey(
+    options?: RequestInit,
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>>;
+
+  /**
+     Summary: Verify adding of a new webauthn security key
+     
+
+     This method may return different T based on the response code:
+     - 200: VerifyAddSecurityKeyResponse
+     */
+  verifyAddSecurityKey(
+    body: VerifyAddSecurityKeyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<VerifyAddSecurityKeyResponse>>;
 }
 
 export const createAPIClient = (
@@ -2184,6 +2307,213 @@ export const createAPIClient = (
     return url;
   };
 
+  const signInWebAuthn = async (
+    body?: SignInWebauthnRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<PublicKeyCredentialRequestOptionsJSON>> => {
+    const url = baseURL + `/signin/webauthn`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: PublicKeyCredentialRequestOptionsJSON = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<PublicKeyCredentialRequestOptionsJSON>;
+  };
+
+  const verifySignInWebAuthn = async (
+    body: SignInWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const url = baseURL + `/signin/webauthn/verify`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+  };
+
+  const signUpWebAuthn = async (
+    body: SignUpWebauthnRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>> => {
+    const url = baseURL + `/signup/webauthn`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: PublicKeyCredentialCreationOptionsJSON = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<PublicKeyCredentialCreationOptionsJSON>;
+  };
+
+  const verifySignUpWebAuthn = async (
+    body: SignUpWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const url = baseURL + `/signup/webauthn/verify`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+  };
+
+  const addSecurityKey = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>> => {
+    const url = baseURL + `/user/webauthn/add`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: PublicKeyCredentialCreationOptionsJSON = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<PublicKeyCredentialCreationOptionsJSON>;
+  };
+
+  const verifyAddSecurityKey = async (
+    body: VerifyAddSecurityKeyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<VerifyAddSecurityKeyResponse>> => {
+    const url = baseURL + `/user/webauthn/verify`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: VerifyAddSecurityKeyResponse = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<VerifyAddSecurityKeyResponse>;
+  };
+
   return {
     baseURL,
     pushChainFunction,
@@ -2213,5 +2543,11 @@ export const createAPIClient = (
     sendPasswordResetEmail,
     verifyTicketURL,
     signInProviderURL,
+    signInWebAuthn,
+    verifySignInWebAuthn,
+    signUpWebAuthn,
+    verifySignUpWebAuthn,
+    addSecurityKey,
+    verifyAddSecurityKey,
   };
 };

@@ -31,7 +31,7 @@ httpPoolSize = 100
 version = 20
 
 [auth]
-version = '0.38.0'
+version = '0.38.1-beta2'
 
 [auth.elevatedPrivileges]
 mode = 'disabled'
@@ -138,7 +138,12 @@ enabled = false
 enabled = false
 
 [auth.method.webauthn]
-enabled = false
+enabled = true
+
+[auth.method.webauthn.relyingParty]
+id = 'localhost'
+name = 'nhost-sdk-experiment'
+origins = ['http://localhost:3000', 'http://localhost:5173']
 
 [auth.method.webauthn.attestation]
 timeout = 60000

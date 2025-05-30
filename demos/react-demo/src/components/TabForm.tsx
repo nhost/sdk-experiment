@@ -4,16 +4,18 @@ interface TabFormProps {
   passwordTabContent: ReactNode;
   magicTabContent: ReactNode;
   socialTabContent?: ReactNode;
+  webauthnTabContent?: ReactNode;
 }
 
 export default function TabForm({
   passwordTabContent,
   magicTabContent,
   socialTabContent,
+  webauthnTabContent,
 }: TabFormProps): JSX.Element {
-  const [activeTab, setActiveTab] = useState<"password" | "magic" | "social">(
-    "password",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "password" | "magic" | "social" | "webauthn"
+  >("password");
 
   return (
     <div>
@@ -38,6 +40,14 @@ export default function TabForm({
             Social
           </button>
         )}
+        {webauthnTabContent && (
+          <button
+            className={`tab-button ${activeTab === "webauthn" ? "tab-active" : ""}`}
+            onClick={() => setActiveTab("webauthn")}
+          >
+            Security Key
+          </button>
+        )}
       </div>
 
       <div className="tab-content">
@@ -45,7 +55,9 @@ export default function TabForm({
           ? passwordTabContent
           : activeTab === "magic"
             ? magicTabContent
-            : socialTabContent}
+            : activeTab === "social"
+              ? socialTabContent
+              : webauthnTabContent}
       </div>
     </div>
   );

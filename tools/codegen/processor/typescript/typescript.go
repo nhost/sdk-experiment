@@ -10,6 +10,8 @@ import (
 	"github.com/nhost/sdk-experiment/tools/codegen/processor"
 )
 
+const extCustomType = "x-ts-type"
+
 //go:embed templates/*.tmpl
 var templatesFS embed.FS
 
@@ -73,7 +75,10 @@ func (t *Typescript) TypeEnumValues(values []any) []string {
 	return enumValues
 }
 
-func (t *Typescript) TypeMapName(_ *processor.TypeMap) string {
+func (t *Typescript) TypeMapName(schema *processor.TypeMap) string {
+	if v, ok := schema.Schema().Schema().Extensions.Get(extCustomType); ok {
+		return v.Value
+	}
 	return "Record<string, unknown>"
 }
 

@@ -96,4 +96,3 @@ components:
         - metadata
         - data
       additionalProperties: false
-

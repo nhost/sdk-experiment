@@ -63,6 +63,28 @@ baseURL: string;
 
 #### Methods
 
+##### addSecurityKey()
+
+```ts
+addSecurityKey(options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>>;
+```
+
+Summary: Initialize adding of a new webauthn security key
+
+This method may return different T based on the response code:
+
+- 200: PublicKeyCredentialCreationOptionsJSON
+
+###### Parameters
+
+| Parameter  | Type          |
+| ---------- | ------------- |
+| `options?` | `RequestInit` |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialCreationOptionsJSON`&gt;&gt;
+
 ##### changeUserEmail()
 
 ```ts
@@ -591,6 +613,30 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
+##### signInWebAuthn()
+
+```ts
+signInWebAuthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialRequestOptionsJSON>>;
+```
+
+Summary: Sign in with WebAuthn
+Initiate a WebAuthn sign-in process by sending a challenge to the user's device. The user must have previously registered a WebAuthn credential.
+
+This method may return different T based on the response code:
+
+- 200: PublicKeyCredentialRequestOptionsJSON
+
+###### Parameters
+
+| Parameter  | Type                                              |
+| ---------- | ------------------------------------------------- |
+| `body?`    | [`SignInWebauthnRequest`](#signinwebauthnrequest) |
+| `options?` | `RequestInit`                                     |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialRequestOptionsJSON`&gt;&gt;
+
 ##### signOut()
 
 ```ts
@@ -640,6 +686,53 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
+##### signUpWebAuthn()
+
+```ts
+signUpWebAuthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptionsJSON>>;
+```
+
+Summary: Sign up with WebAuthn
+Initiate a WebAuthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
+
+This method may return different T based on the response code:
+
+- 200: PublicKeyCredentialCreationOptionsJSON
+
+###### Parameters
+
+| Parameter  | Type                                              |
+| ---------- | ------------------------------------------------- |
+| `body`     | [`SignUpWebauthnRequest`](#signupwebauthnrequest) |
+| `options?` | `RequestInit`                                     |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`PublicKeyCredentialCreationOptionsJSON`&gt;&gt;
+
+##### verifyAddSecurityKey()
+
+```ts
+verifyAddSecurityKey(body: VerifyAddSecurityKeyRequest, options?: RequestInit): Promise<FetchResponse<VerifyAddSecurityKeyResponse>>;
+```
+
+Summary: Verify adding of a new webauthn security key
+
+This method may return different T based on the response code:
+
+- 200: VerifyAddSecurityKeyResponse
+
+###### Parameters
+
+| Parameter  | Type                                                          |
+| ---------- | ------------------------------------------------------------- |
+| `body`     | [`VerifyAddSecurityKeyRequest`](#verifyaddsecuritykeyrequest) |
+| `options?` | `RequestInit`                                                 |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`VerifyAddSecurityKeyResponse`](#verifyaddsecuritykeyresponse)&gt;&gt;
+
 ##### verifySignInOTPEmail()
 
 ```ts
@@ -662,6 +755,54 @@ This method may return different T based on the response code:
 ###### Returns
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInOTPEmailVerifyResponse`](#signinotpemailverifyresponse)&gt;&gt;
+
+##### verifySignInWebAuthn()
+
+```ts
+verifySignInWebAuthn(body: SignInWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+```
+
+Summary: Verify WebAuthn sign-in
+Complete the WebAuthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
+
+This method may return different T based on the response code:
+
+- 200: SessionPayload
+
+###### Parameters
+
+| Parameter  | Type                                                          |
+| ---------- | ------------------------------------------------------------- |
+| `body`     | [`SignInWebauthnVerifyRequest`](#signinwebauthnverifyrequest) |
+| `options?` | `RequestInit`                                                 |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
+##### verifySignUpWebAuthn()
+
+```ts
+verifySignUpWebAuthn(body: SignUpWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+```
+
+Summary: Verify WebAuthn sign-up
+Complete the WebAuthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
+
+This method may return different T based on the response code:
+
+- 200: SessionPayload
+
+###### Parameters
+
+| Parameter  | Type                                                          |
+| ---------- | ------------------------------------------------------------- |
+| `body`     | [`SignUpWebauthnVerifyRequest`](#signupwebauthnverifyrequest) |
+| `options?` | `RequestInit`                                                 |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
 ##### verifyTicketURL()
 
@@ -1368,10 +1509,10 @@ Format - email
 ##### credential
 
 ```ts
-credential: Record<string, unknown>;
+credential: Credential;
 ```
 
-(`Record<string, unknown>`) -
+(`Credential`) -
 
 ##### email?
 
@@ -1518,6 +1659,34 @@ email: string;
 
 - Example - `"john.smith@nhost.io"`
 - Format - email
+
+##### options?
+
+```ts
+optional options: SignUpOptions;
+```
+
+---
+
+### SignUpWebauthnVerifyRequest
+
+#### Properties
+
+##### credential
+
+```ts
+credential: Credential;
+```
+
+(`Credential`) -
+
+##### nickname?
+
+```ts
+optional nickname: string;
+```
+
+Nickname for the security key
 
 ##### options?
 
@@ -1866,6 +2035,52 @@ email: string;
 ```ts
 optional options: OptionsRedirectTo;
 ```
+
+---
+
+### VerifyAddSecurityKeyRequest
+
+#### Properties
+
+##### credential
+
+```ts
+credential: Credential;
+```
+
+(`Credential`) - The credential created during registration
+
+##### nickname?
+
+```ts
+optional nickname: string;
+```
+
+Optional nickname for the security key
+
+---
+
+### VerifyAddSecurityKeyResponse
+
+#### Properties
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - The ID of the newly added security key
+
+- Example - `"123e4567-e89b-12d3-a456-426614174000"`
+
+##### nickname?
+
+```ts
+optional nickname: string;
+```
+
+The nickname of the security key if provided
 
 ---
 

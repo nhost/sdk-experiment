@@ -3,6 +3,7 @@ import type { JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import MFASettings from "../components/MFASettings";
 import ChangePassword from "../components/ChangePassword";
+import SecurityKeys from "../components/SecurityKeys";
 import type { ErrorResponse } from "@nhost/nhost-js/auth";
 import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
 
@@ -118,6 +119,8 @@ export default function Profile(): JSX.Element {
         key={`mfa-settings-${isMfaEnabled}`}
         initialMfaEnabled={isMfaEnabled}
       />
+
+      <SecurityKeys />
 
       <ChangePassword />
     </div>

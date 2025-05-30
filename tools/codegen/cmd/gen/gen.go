@@ -81,8 +81,8 @@ func action(_ context.Context, c *cli.Command) error {
 	f, err := os.OpenFile(
 		c.String(flagOutputFile),
 		os.O_CREATE|os.O_WRONLY|os.O_TRUNC,
-		0o644,
-	) //nolint:mnd
+		0o644, //nolint:mnd
+	)
 	if err != nil {
 		return cli.Exit(fmt.Sprintf("failed to open output file: %v", err), 1)
 	}

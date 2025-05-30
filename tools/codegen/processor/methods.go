@@ -220,6 +220,10 @@ func GetMethod(
 	operation *v3.Operation,
 	p Plugin,
 ) (*Method, []Type, error) {
+	if operation.OperationId == "" {
+		return nil, nil,
+			fmt.Errorf("%w: operation %s %s has no operationId", ErrRequiredOptionMissing, method, path)
+	}
 	params, types, err := getMethodParameters(method, operation, p)
 	if err != nil {
 		return nil, nil, fmt.Errorf(

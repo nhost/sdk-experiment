@@ -3,6 +3,7 @@ import TabForm from "../components/TabForm";
 import SignUpForm from "./SignUpForm";
 import MagicLinkForm from "../components/MagicLinkForm";
 import SocialSignIn from "../components/SocialSignIn";
+import WebAuthnSignUpForm from "../components/WebAuthnSignUpForm";
 import { sendMagicLink } from "./actions";
 
 export default async function SignUp({
@@ -48,6 +49,9 @@ export default async function SignUp({
                 <p className="mb-6">Sign up using your Social account</p>
                 <SocialSignIn provider="github" />
               </div>
+            }
+            webauthnTabContent={
+              <WebAuthnSignUpForm buttonLabel="Sign up with Security Key" />
             }
           />
         )}
