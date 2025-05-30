@@ -74,6 +74,11 @@ export interface Client {
     request: GraphQLRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<T>>>;
+
+  /**
+   * URL for the GraphQL endpoint.
+   */
+  url?: string;
 }
 
 /**
@@ -83,12 +88,12 @@ export interface Client {
  * a GraphQL API, with support for middleware functions to handle authentication,
  * error handling, and other cross-cutting concerns.
  *
- * @param baseURL - Base URL for the GraphQL endpoint
+ * @param url - Base URL for the GraphQL endpoint
  * @param chainFunctions - Array of middleware functions for the fetch chain
  * @returns GraphQL client with query and mutation methods
  */
 export const createAPIClient = (
-  baseURL: string,
+  url: string,
   chainFunctions: ChainFunction[] = [],
 ): Client => {
   const enhancedFetch = createEnhancedFetch(chainFunctions);
@@ -98,7 +103,7 @@ export const createAPIClient = (
     request: GraphQLRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<T>>> => {
-    const response = await enhancedFetch(`${baseURL}`, {
+    const response = await enhancedFetch(`${url}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -134,5 +139,6 @@ export const createAPIClient = (
 
   return {
     post,
+    url,
   } as Client;
 };

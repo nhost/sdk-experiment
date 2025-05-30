@@ -61,6 +61,16 @@ try {
 
 GraphQL client interface providing methods for executing queries and mutations
 
+#### Properties
+
+##### url?
+
+```ts
+optional url: string;
+```
+
+URL for the GraphQL endpoint.
+
 #### Methods
 
 ##### post()
@@ -220,10 +230,7 @@ Key-value pairs of variable names and their values.
 ### createAPIClient()
 
 ```ts
-function createAPIClient(
-  baseURL: string,
-  chainFunctions: ChainFunction[],
-): Client;
+function createAPIClient(url: string, chainFunctions: ChainFunction[]): Client;
 ```
 
 Creates a GraphQL API client for interacting with a GraphQL endpoint.
@@ -236,7 +243,7 @@ error handling, and other cross-cutting concerns.
 
 | Parameter        | Type                                         | Default value | Description                                       |
 | ---------------- | -------------------------------------------- | ------------- | ------------------------------------------------- |
-| `baseURL`        | `string`                                     | `undefined`   | Base URL for the GraphQL endpoint                 |
+| `url`            | `string`                                     | `undefined`   | Base URL for the GraphQL endpoint                 |
 | `chainFunctions` | [`ChainFunction`](fetch#chainfunction)[] | `[]`          | Array of middleware functions for the fetch chain |
 
 #### Returns

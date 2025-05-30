@@ -9,17 +9,16 @@ import { useAuth } from "../nhost/AuthProvider";
 import { useMemo } from "react";
 import type { NhostClient } from "@nhost/nhost-js";
 
-// HTTP connection to the API
-const httpLink = createHttpLink({
-  uri: `https://local.graphql.local.nhost.run/v1`,
-});
-
 // Create a function that creates an Apollo client using the provided Nhost client
-export const createApolloClient = (nhostClient: NhostClient) => {
+export const createApolloClient = (nhost: NhostClient) => {
+  // HTTP connection to the API
+  const httpLink = createHttpLink({
+    uri: nhost.graphql.url,
+  });
   // Auth link to append headers
   const authLink = setContext(async (_, { headers }) => {
     // Get the authentication token from nhost
-    const resp = await nhostClient.refreshSession(60);
+    const resp = await nhost.refreshSession(60);
     const token = resp ? resp.accessToken : null;
 
     // Return the headers to the context so httpLink can read them

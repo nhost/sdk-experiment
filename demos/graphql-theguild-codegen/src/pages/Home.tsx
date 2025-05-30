@@ -12,7 +12,7 @@ import "./Home.css";
 type Comment = {
   id: string;
   comment: string;
-  created_at: string;
+  createdAt: string;
   user?: {
     id: string;
     displayName?: string;
@@ -24,8 +24,8 @@ type NinjaTurtle = {
   id: string;
   name: string;
   description: string;
-  created_at: string;
-  updated_at: string;
+  createdAt: string;
+  updatedAt: string;
   comments: Comment[];
 };
 
@@ -43,7 +43,7 @@ export default function Home(): JSX.Element {
       </div>
     );
   }
-  
+
   // If not authenticated, redirect to signin page
   if (!isAuthenticated) {
     return <Navigate to="/signin" />;
@@ -52,9 +52,6 @@ export default function Home(): JSX.Element {
   const { loading, error, data, refetch } = useQuery(
     GET_NINJA_TURTLES_WITH_COMMENTS,
   );
-
-  // Debug: Log the raw data from GraphQL response
-  console.log("GraphQL response data:", data);
 
   const [addComment] = useMutation(ADD_COMMENT, {
     onCompleted: () => {
@@ -69,7 +66,7 @@ export default function Home(): JSX.Element {
 
     addComment({
       variables: {
-        ninja_turtle_id: turtleId,
+        ninjaTurtleId: turtleId,
         comment: commentText,
       },
     });
@@ -85,13 +82,20 @@ export default function Home(): JSX.Element {
       Error loading ninja turtles: {error.message}
     </div>
   );
-  
+
   // Access the data using the correct field name from the GraphQL response
   const ninjaTurtles: NinjaTurtle[] = data?.ninjaTurtles || [];
-  
+  if (!ninjaTurtles || ninjaTurtles.length === 0) {
+    return (
+      <div className="no-turtles-container">
+        <p>No ninja turtles found. Please add some!</p>
+      </div>
+    );
+  }
+
   // Set the active tab to the first turtle if there's no active tab and there are turtles
-  if (activeTabId === null && ninjaTurtles.length > 0) {
-    setActiveTabId(ninjaTurtles[0].id);
+  if (activeTabId === null) {
+    setActiveTabId(ninjaTurtles[0] ? ninjaTurtles[0].id : null);
   }
 
   const formatDate = (dateString: string) => {
@@ -128,7 +132,7 @@ export default function Home(): JSX.Element {
             <p className="turtle-description">{turtle.description}</p>
 
             <div className="turtle-date">
-              Added on {formatDate(turtle.createdAt || turtle.created_at)}
+              Added on {formatDate(turtle.createdAt || turtle.createdAt)}
             </div>
 
             <div className="comments-section">
@@ -147,7 +151,7 @@ export default function Home(): JSX.Element {
                       {comment.user?.displayName ||
                         comment.user?.email ||
                         "Anonymous"}{" "}
-                      - {formatDate(comment.createdAt || comment.created_at)}
+                      - {formatDate(comment.createdAt || comment.createdAt)}
                     </p>
                   </div>
                 </div>
