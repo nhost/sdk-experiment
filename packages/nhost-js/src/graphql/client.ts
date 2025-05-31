@@ -78,7 +78,7 @@ export interface Client {
   /**
    * URL for the GraphQL endpoint.
    */
-  url?: string;
+  url: string;
 }
 
 /**
