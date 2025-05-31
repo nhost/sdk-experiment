@@ -1,17 +1,23 @@
-# React Apollo with Nhost SDK
+# React Query with Nhost SDK
 
-This guide demonstrates how to integrate GraphQL queries and mutations with React using Apollo Client and the Nhost SDK.
+This guide demonstrates how to integrate GraphQL queries and mutations with React using TanStack Query (React Query) and the Nhost SDK.
 
 ## Setup
 
 ### 1. Install Dependencies
 
 ```bash
-npm install @apollo/client @nhost/nhost-js graphql
+npm install @tanstack/react-query @nhost/nhost-js graphql
 # or
-yarn add @apollo/client @nhost/nhost-js graphql
+yarn add @tanstack/react-query @nhost/nhost-js graphql
 # or
-pnpm add @apollo/client @nhost/nhost-js graphql
+pnpm add @tanstack/react-query @nhost/nhost-js graphql
+```
+
+For development, add React Query DevTools:
+
+```bash
+npm install -D @tanstack/react-query-devtools
 ```
 
 ### 2. Generate Types with GraphQL CodeGen
@@ -19,7 +25,7 @@ pnpm add @apollo/client @nhost/nhost-js graphql
 Install GraphQL CodeGen:
 
 ```bash
-npm install -D @graphql-codegen/cli @graphql-codegen/typescript @graphql-codegen/typescript-operations @graphql-codegen/typescript-react-apollo
+npm install -D @graphql-codegen/cli @graphql-codegen/typescript @graphql-codegen/typescript-operations @graphql-codegen/schema-ast
 ```
 
 Set up `codegen.ts`:
@@ -37,16 +43,12 @@ const config: CodegenConfig = {
       },
     },
   ],
-  documents: ["src/**/*.ts"],
+  documents: ["src/**/*.ts", "src/**/*.tsx"],
   ignoreNoDocuments: true,
   generates: {
     "./src/lib/graphql/__generated__/graphql.ts": {
       documents: ["src/lib/graphql/**/*.graphql"],
-      plugins: [
-        "typescript",
-        "typescript-operations",
-        "typescript-react-apollo",
-      ],
+      plugins: ["typescript", "typescript-operations"],
       config: {
         scalars: {
           UUID: "string",
@@ -65,6 +67,52 @@ const config: CodegenConfig = {
         includeDirectives: true,
       },
     },
+  },
+};
+
+export default config;
+```
+
+#### Secure Schema Introspection Options
+
+For production environments, it's recommended to use more secure approaches for schema introspection:
+
+##### Option 1: Pre-generated schema file
+
+```typescript
+import type { CodegenConfig } from "@graphql-codegen/cli";
+
+const config: CodegenConfig = {
+  schema: "./schema.graphql", // Use a downloaded schema file
+  documents: ["src/**/*.ts", "src/**/*.tsx"],
+  ignoreNoDocuments: true,
+  generates: {
+    // ... same as above
+  },
+};
+
+export default config;
+```
+
+##### Option 2: Environment variables for secrets
+
+```typescript
+import type { CodegenConfig } from "@graphql-codegen/cli";
+
+const config: CodegenConfig = {
+  schema: [
+    {
+      [process.env.GRAPHQL_ENDPOINT || "https://your-project-subdomain.region.nhost.run/v1"]: {
+        headers: {
+          "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET || "", 
+        },
+      },
+    },
+  ],
+  documents: ["src/**/*.ts", "src/**/*.tsx"],
+  ignoreNoDocuments: true,
+  generates: {
+    // ... same as above
   },
 };
 
@@ -155,92 +203,119 @@ export const useAuth = (): AuthContextType => {
 };
 ```
 
-### 2. Create Apollo Client Integration
+### 2. Create Query Provider
 
-Configure Apollo Client with the Nhost authentication:
+Set up React Query with the Nhost client:
 
 ```typescript
-// src/lib/graphql/apolloClient.ts
-import {
-  ApolloClient,
-  InMemoryCache,
-  createHttpLink,
-  ApolloLink,
-} from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
-import { useAuth } from "../nhost/AuthProvider";
-import { useMemo } from "react";
-import type { NhostClient } from "@nhost/nhost-js";
+// src/lib/graphql/QueryProvider.tsx
+import { type ReactNode } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { QueryClient } from "@tanstack/react-query";
 
-export const createApolloClient = (nhost: NhostClient) => {
-  const httpLink = createHttpLink({
-    uri: nhost.graphql.url,
-  });
-  
-  const authLink = setContext(async (_, prevContext) => {
-    const resp = await nhost.refreshSession(60);
-    const token = resp ? resp.accessToken : null;
+interface QueryProviderProps {
+  children: ReactNode;
+}
 
-    return {
-      headers: {
-        ...(prevContext["headers"] as Record<string, string>),
-        Authorization: token ? `Bearer ${token}` : "",
-      },
-    };
-  });
-
-  const link = ApolloLink.from([authLink, httpLink]);
-
-  return new ApolloClient({
-    link,
-    cache: new InMemoryCache(),
+// Create a query client instance
+const createQueryClient = () => {
+  return new QueryClient({
     defaultOptions: {
-      watchQuery: {
-        fetchPolicy: "cache-and-network",
+      queries: {
+        staleTime: 10 * 1000, // 10 seconds
+        refetchOnWindowFocus: true,
+        retry: 1,
       },
     },
   });
 };
 
-export const useApolloClient = () => {
+export function QueryProvider({ children }: QueryProviderProps) {
+  // Create the query client
+  const queryClient = createQueryClient();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  );
+}
+```
+
+### 3. Create Authenticated Fetcher Hook
+
+Create a utility to make authenticated GraphQL requests with the Nhost client:
+
+```typescript
+// src/lib/graphql/queryHooks.ts
+import { useCallback } from "react";
+import { useAuth } from "../nhost/AuthProvider";
+
+// This wrapper returns a fetcher function that uses the authenticated nhost client
+export const useAuthenticatedFetcher = <TData, TVariables>(
+  document: string | { query: string; variables?: TVariables },
+) => {
   const { nhost } = useAuth();
-  return useMemo(() => createApolloClient(nhost), [nhost]);
+
+  return useCallback(
+    async (variables?: TVariables): Promise<TData> => {
+      // Handle both string format or document object format
+      const query = typeof document === "string" ? document : document.query;
+      const documentVariables =
+        typeof document === "object" ? document.variables : undefined;
+      const mergedVariables = variables || documentVariables;
+
+      const resp = await nhost.graphql.post<TData>({
+        query,
+        variables: mergedVariables as Record<string, unknown>,
+      });
+
+      if (!resp.body.data) {
+        throw new Error(
+          `Response does not contain data: ${JSON.stringify(resp.body)}`,
+        );
+      }
+
+      return resp.body.data;
+    },
+    [nhost],
+  );
 };
 ```
 
-### 3. Set Up Apollo Provider
+### 4. Set Up Your App Providers
 
-Wrap your application with the Apollo Provider:
+Wrap your application with the Auth and Query providers:
 
-```typescript
-// src/main.tsx or src/App.tsx
+```tsx
+// src/main.tsx
 import React from "react";
-import ReactDOM from "react-dom/client";
-import { ApolloProvider } from "@apollo/client";
+import { createRoot } from "react-dom/client";
+import "./index.css";
 import App from "./App";
 import { AuthProvider } from "./lib/nhost/AuthProvider";
-import { useApolloClient } from "./lib/graphql/apolloClient";
+import { QueryProvider } from "./lib/graphql/QueryProvider";
 
-const AppWithProviders = () => {
-  const apolloClient = useApolloClient();
-  
-  return (
-    <ApolloProvider client={apolloClient}>
-      <App />
-    </ApolloProvider>
-  );
-};
-
-ReactDOM.createRoot(document.getElementById("root")!).render(
+// Root component that sets up providers
+const Root = () => (
   <React.StrictMode>
     <AuthProvider>
-      <AppWithProviders />
+      <QueryProvider>
+        <App />
+      </QueryProvider>
     </AuthProvider>
   </React.StrictMode>
 );
+
+const rootElement = document.getElementById("root");
+if (!rootElement) throw new Error("Root element not found");
+
+createRoot(rootElement).render(<Root />);
 ```
 
-### 4. Define GraphQL Operations
+### 5. Define GraphQL Operations
 
 Create a GraphQL file with your queries and mutations:
 
@@ -266,13 +341,15 @@ query GetNinjaTurtlesWithComments {
 }
 
 mutation AddComment($ninjaTurtleId: uuid!, $comment: String!) {
-  insert_comments_one(object: {ninjaTurtleId: $ninjaTurtleId, comment: $comment}) {
+  insert_comments_one(
+    object: { ninjaTurtleId: $ninjaTurtleId, comment: $comment }
+  ) {
     id
   }
 }
 ```
 
-### 5. Generate TypeScript Types
+### 6. Generate TypeScript Types
 
 Run the code generator:
 
@@ -280,34 +357,122 @@ Run the code generator:
 npx graphql-codegen
 ```
 
-### 6. Use in Components
+You can also add a script to your package.json:
 
-Use the generated hooks in your components:
+```json
+{
+  "scripts": {
+    "codegen": "graphql-codegen --config codegen.ts"
+  }
+}
+```
+
+Then run:
+
+```bash
+npm run codegen
+# or
+yarn codegen
+# or
+pnpm codegen
+```
+
+### 7. Create Custom Query Hooks
+
+After generating types, extend the generated types to create React Query hooks:
+
+```typescript
+// Add to src/lib/graphql/__generated__/graphql.ts
+
+import {
+  useQuery,
+  useMutation,
+  type UseQueryOptions,
+  type UseMutationOptions,
+} from "@tanstack/react-query";
+import { useAuthenticatedFetcher } from "../queryHooks";
+
+// Example query hook
+export const useGetNinjaTurtlesWithCommentsQuery = (
+  options?: Omit<
+    UseQueryOptions<GetNinjaTurtlesWithCommentsQuery>,
+    "queryKey" | "queryFn"
+  >
+) => {
+  const fetcher = useAuthenticatedFetcher<
+    GetNinjaTurtlesWithCommentsQuery,
+    GetNinjaTurtlesWithCommentsQueryVariables
+  >(GetNinjaTurtlesWithCommentsDocument);
+
+  return useQuery<GetNinjaTurtlesWithCommentsQuery>({
+    queryKey: ["GetNinjaTurtlesWithComments"],
+    queryFn: () => fetcher(),
+    ...options,
+  });
+};
+
+// Example mutation hook
+export const useAddCommentMutation = (
+  options?: Omit<
+    UseMutationOptions<
+      AddCommentMutation,
+      Error,
+      AddCommentMutationVariables
+    >,
+    "mutationFn"
+  >
+) => {
+  const fetcher = useAuthenticatedFetcher<
+    AddCommentMutation,
+    AddCommentMutationVariables
+  >(AddCommentDocument);
+
+  return useMutation<AddCommentMutation, Error, AddCommentMutationVariables>({
+    mutationFn: (variables) => fetcher(variables),
+    ...options,
+  });
+};
+```
+
+### 8. Use in Components
+
+Use the generated React Query hooks in your components:
 
 ```tsx
 // src/pages/Home.tsx
-import { useState } from "react";
+import { type JSX } from "react";
 import {
   useGetNinjaTurtlesWithCommentsQuery,
   useAddCommentMutation,
 } from "../lib/graphql/__generated__/graphql";
+import { useState } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
+import { Navigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
-export default function Home() {
+export default function Home(): JSX.Element {
   const { isAuthenticated, isLoading } = useAuth();
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
+  
+  const queryClient = useQueryClient();
 
   // Query for data
-  const { loading, error, data, refetch } = 
-    useGetNinjaTurtlesWithCommentsQuery();
+  const {
+    data,
+    isLoading: loading,
+    error,
+  } = useGetNinjaTurtlesWithCommentsQuery();
 
   // Mutation hook
-  const [addComment] = useAddCommentMutation({
-    onCompleted: () => {
+  const { mutate: addComment } = useAddCommentMutation({
+    onSuccess: () => {
       setCommentText("");
       setActiveCommentId(null);
-      refetch();
+      // Invalidate and refetch the ninja turtles query to get updated data
+      queryClient.invalidateQueries({
+        queryKey: ["GetNinjaTurtlesWithComments"],
+      });
     },
   });
 
@@ -316,46 +481,48 @@ export default function Home() {
   }
 
   if (!isAuthenticated) {
-    return <div>Please sign in</div>;
+    return <Navigate to="/signin" />;
   }
 
   const handleAddComment = (turtleId: string) => {
     if (!commentText.trim()) return;
 
     addComment({
-      variables: {
-        ninjaTurtleId: turtleId,
-        comment: commentText,
-      },
+      ninjaTurtleId: turtleId,
+      comment: commentText,
     });
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Loading ninja turtles...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
+  // Access the data
   const ninjaTurtles = data?.ninjaTurtles || [];
-  
+
   return (
     <div>
       <h1>Ninja Turtles</h1>
-      {ninjaTurtles.map(turtle => (
+      {ninjaTurtles.map((turtle) => (
         <div key={turtle.id}>
           <h2>{turtle.name}</h2>
           <p>{turtle.description}</p>
-          
+
           {/* Comments section */}
           <div>
             <h3>Comments ({turtle.comments.length})</h3>
-            
-            {turtle.comments.map(comment => (
+
+            {turtle.comments.map((comment) => (
               <div key={comment.id}>
                 <p>{comment.comment}</p>
                 <small>
-                  By {comment.user?.displayName || comment.user?.email || "Anonymous"}
+                  By{" "}
+                  {comment.user?.displayName ||
+                    comment.user?.email ||
+                    "Anonymous"}
                 </small>
               </div>
             ))}
-            
+
             {activeCommentId === turtle.id ? (
               <div>
                 <textarea
@@ -419,10 +586,114 @@ await nhost.auth.signOut();
 
 1. **Authentication Flow**: Use the `isAuthenticated` and `isLoading` states from the `useAuth` hook to control access to protected content.
 
-2. **Refresh Tokens**: The Apollo Client setup automatically refreshes tokens before making requests.
+2. **React Query Features**:
+   - Use `invalidateQueries` to refresh data after mutations
+   - Leverage `useQueryClient` to interact with the query cache
+   - Take advantage of stale-time and caching for optimization
 
 3. **Error Handling**: Always handle loading and error states in your components.
 
-4. **Optimistic Updates**: For better UX, use optimistic updates in mutations.
+4. **Optimistic Updates**: For better UX, use optimistic updates with React Query:
 
-5. **Secure Routes**: Create protected route components that redirect unauthenticated users.
+```tsx
+const queryClient = useQueryClient();
+
+const { mutate } = useAddCommentMutation({
+  // Optimistic update
+  onMutate: async (newComment) => {
+    // Cancel outgoing refetches
+    await queryClient.cancelQueries({ queryKey: ['GetNinjaTurtlesWithComments'] });
+    
+    // Snapshot the previous value
+    const previousData = queryClient.getQueryData(['GetNinjaTurtlesWithComments']);
+    
+    // Optimistically update the cache
+    queryClient.setQueryData(['GetNinjaTurtlesWithComments'], (old: any) => {
+      // Add new comment to the cache
+      return {
+        ...old,
+        // Update data structure according to your schema
+      };
+    });
+    
+    // Return snapshot to use in case of rollback
+    return { previousData };
+  },
+  onError: (err, newComment, context) => {
+    // Rollback on error
+    if (context?.previousData) {
+      queryClient.setQueryData(
+        ['GetNinjaTurtlesWithComments'], 
+        context.previousData
+      );
+    }
+  },
+  onSettled: () => {
+    // Always refetch after error or success
+    queryClient.invalidateQueries({ queryKey: ['GetNinjaTurtlesWithComments'] });
+  },
+});
+```
+
+5. **Secure Routes**: Create protected route components that redirect unauthenticated users:
+
+```typescript
+// src/components/ProtectedRoute.tsx
+import { Navigate, Outlet } from "react-router-dom";
+import { useAuth } from "../lib/nhost/AuthProvider";
+
+interface ProtectedRouteProps {
+  redirectTo?: string;
+}
+
+export default function ProtectedRoute({
+  redirectTo = "/signin",
+}: ProtectedRouteProps) {
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to={redirectTo} />;
+  }
+
+  return <Outlet />;
+}
+```
+
+Usage in your router setup:
+
+```tsx
+// In your router configuration
+<Routes>
+  <Route path="/" element={<Layout />}>
+    <Route index element={<Home />} />
+    <Route path="public" element={<PublicPage />} />
+    
+    {/* Protected routes */}
+    <Route element={<ProtectedRoute />}>
+      <Route path="profile" element={<Profile />} />
+      <Route path="dashboard" element={<Dashboard />} />
+    </Route>
+  </Route>
+</Routes>
+```
+
+6. **DevTools**: Use React Query DevTools during development to debug queries and inspect cache. The DevTools panel provides insights into:
+   - All active queries in your application
+   - Query states (loading, error, success)
+   - Query data and timestamps
+   - Query refetch capabilities
+   - Cache inspection and manipulation
+
+7. **Performance Optimization**: Fine-tune React Query settings for optimal performance:
+   - Adjust `staleTime` based on how frequently your data changes
+   - Use `keepPreviousData` for pagination to prevent UI flashing
+   - Implement `prefetchQuery` for data you anticipate needing soon
+   - Set appropriate `cacheTime` to control how long unused data stays in memory

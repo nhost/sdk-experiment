@@ -16,16 +16,21 @@ export default function Home(): JSX.Element {
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
-  
-  const { data, isLoading: loading, error, refetch } =
-    useGetNinjaTurtlesWithCommentsQuery();
+
+  const {
+    data,
+    isLoading: loading,
+    error,
+  } = useGetNinjaTurtlesWithCommentsQuery();
 
   const { mutate: addComment } = useAddCommentMutation({
     onSuccess: () => {
       setCommentText("");
       setActiveCommentId(null);
       // Invalidate and refetch the ninja turtles query to get updated data
-      queryClient.invalidateQueries({ queryKey: ['GetNinjaTurtlesWithComments'] });
+      queryClient.invalidateQueries({
+        queryKey: ["GetNinjaTurtlesWithComments"],
+      });
     },
   });
 
@@ -61,7 +66,7 @@ export default function Home(): JSX.Element {
   if (error)
     return (
       <div className="alert alert-error">
-        Error loading ninja turtles: {error.message}
+        Error loading ninja turtles: {(error as Error).message}
       </div>
     );
 
