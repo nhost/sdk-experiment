@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import { ApolloProvider } from "@apollo/client";
 import { useApolloClient } from "./lib/graphql/apolloClient";
-import { AuthProvider, useAuth } from "./lib/nhost/AuthProvider";
+import { AuthProvider } from "./lib/nhost/AuthProvider";
 
 // Wrapper component that provides Apollo client using the Nhost client from AuthProvider
 const ApolloProviderWithAuth = ({

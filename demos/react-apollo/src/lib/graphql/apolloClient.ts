@@ -16,7 +16,7 @@ export const createApolloClient = (nhost: NhostClient) => {
     uri: nhost.graphql.url,
   });
   // Auth link to append headers
-  const authLink = setContext(async (_, { headers }) => {
+  const authLink = setContext(async (_, prevContext) => {
     // Get the authentication token from nhost
     const resp = await nhost.refreshSession(60);
     const token = resp ? resp.accessToken : null;
@@ -24,7 +24,7 @@ export const createApolloClient = (nhost: NhostClient) => {
     // Return the headers to the context so httpLink can read them
     return {
       headers: {
-        ...headers,
+        ...(prevContext["headers"] as Record<string, string>),
         Authorization: token ? `Bearer ${token}` : "",
       },
     };

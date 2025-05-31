@@ -19,6 +19,8 @@ export default tseslint.config(
       "coverage",
       "vite.config.ts",
       "eslint.config.mjs",
+      "codegen.ts",
+      "src/lib/graphql/__generated__/**",
     ],
   },
   {

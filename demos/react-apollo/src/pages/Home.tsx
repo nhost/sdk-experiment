@@ -1,39 +1,29 @@
 import { type JSX } from "react";
-import { useQuery, useMutation } from "@apollo/client";
 import {
-  GET_NINJA_TURTLES_WITH_COMMENTS,
-  ADD_COMMENT,
-} from "../lib/graphql/operations";
+  useGetNinjaTurtlesWithCommentsQuery,
+  useAddCommentMutation,
+} from "../lib/graphql/__generated__/graphql";
 import { useState } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { Navigate } from "react-router-dom";
 import "./Home.css";
-
-type Comment = {
-  id: string;
-  comment: string;
-  createdAt: string;
-  user?: {
-    id: string;
-    displayName?: string;
-    email?: string;
-  };
-};
-
-type NinjaTurtle = {
-  id: string;
-  name: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string;
-  comments: Comment[];
-};
 
 export default function Home(): JSX.Element {
   const { isAuthenticated, isLoading } = useAuth();
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
+
+  const { loading, error, data, refetch } =
+    useGetNinjaTurtlesWithCommentsQuery();
+
+  const [addComment] = useAddCommentMutation({
+    onCompleted: () => {
+      setCommentText("");
+      setActiveCommentId(null);
+      refetch();
+    },
+  });
 
   // If authentication is still loading, show a loading state
   if (isLoading) {
@@ -48,18 +38,6 @@ export default function Home(): JSX.Element {
   if (!isAuthenticated) {
     return <Navigate to="/signin" />;
   }
-
-  const { loading, error, data, refetch } = useQuery(
-    GET_NINJA_TURTLES_WITH_COMMENTS,
-  );
-
-  const [addComment] = useMutation(ADD_COMMENT, {
-    onCompleted: () => {
-      setCommentText("");
-      setActiveCommentId(null);
-      refetch();
-    },
-  });
 
   const handleAddComment = (turtleId: string) => {
     if (!commentText.trim()) return;
@@ -86,7 +64,7 @@ export default function Home(): JSX.Element {
     );
 
   // Access the data using the correct field name from the GraphQL response
-  const ninjaTurtles: NinjaTurtle[] = data?.ninjaTurtles || [];
+  const ninjaTurtles = data?.ninjaTurtles || [];
   if (!ninjaTurtles || ninjaTurtles.length === 0) {
     return (
       <div className="no-turtles-container">
