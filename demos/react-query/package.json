@@ -16,7 +16,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@apollo/client": "^3.13.8",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@nhost/nhost-js": "workspace:*",
     "@tanstack/react-query": "^5.79.0",
