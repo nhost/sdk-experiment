@@ -5,12 +5,11 @@ import {
 } from "../lib/graphql/__generated__/graphql";
 import { useState } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { Navigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import "./Home.css";
 
 export default function Home(): JSX.Element {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isLoading } = useAuth();
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
@@ -41,11 +40,6 @@ export default function Home(): JSX.Element {
         <p>Loading...</p>
       </div>
     );
-  }
-
-  // If not authenticated, redirect to signin page
-  if (!isAuthenticated) {
-    return <Navigate to="/signin" />;
   }
 
   const handleAddComment = (turtleId: string) => {

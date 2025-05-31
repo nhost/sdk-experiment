@@ -30,9 +30,9 @@ import type { CodegenConfig } from "@graphql-codegen/cli";
 const config: CodegenConfig = {
   schema: [
     {
-      "https://your-project-subdomain.region.nhost.run/v1": {
+      "https://local.graphql.local.nhost.run/v1": {
         headers: {
-          "x-hasura-admin-secret": "your-admin-secret", // Development only
+          "x-hasura-admin-secret": "nhost-admin-secret",
         },
       },
     },
@@ -176,7 +176,7 @@ export const createApolloClient = (nhost: NhostClient) => {
   const httpLink = createHttpLink({
     uri: nhost.graphql.url,
   });
-  
+
   const authLink = setContext(async (_, prevContext) => {
     const resp = await nhost.refreshSession(60);
     const token = resp ? resp.accessToken : null;
@@ -223,7 +223,7 @@ import { useApolloClient } from "./lib/graphql/apolloClient";
 
 const AppWithProviders = () => {
   const apolloClient = useApolloClient();
-  
+
   return (
     <ApolloProvider client={apolloClient}>
       <App />
@@ -299,7 +299,7 @@ export default function Home() {
   const [commentText, setCommentText] = useState("");
 
   // Query for data
-  const { loading, error, data, refetch } = 
+  const { loading, error, data, refetch } =
     useGetNinjaTurtlesWithCommentsQuery();
 
   // Mutation hook
@@ -334,7 +334,7 @@ export default function Home() {
   if (error) return <div>Error: {error.message}</div>;
 
   const ninjaTurtles = data?.ninjaTurtles || [];
-  
+
   return (
     <div>
       <h1>Ninja Turtles</h1>
@@ -342,11 +342,11 @@ export default function Home() {
         <div key={turtle.id}>
           <h2>{turtle.name}</h2>
           <p>{turtle.description}</p>
-          
+
           {/* Comments section */}
           <div>
             <h3>Comments ({turtle.comments.length})</h3>
-            
+
             {turtle.comments.map(comment => (
               <div key={comment.id}>
                 <p>{comment.comment}</p>
@@ -355,7 +355,7 @@ export default function Home() {
                 </small>
               </div>
             ))}
-            
+
             {activeCommentId === turtle.id ? (
               <div>
                 <textarea
@@ -384,45 +384,3 @@ export default function Home() {
   );
 }
 ```
-
-## Environment Variables
-
-Create a `.env` file with:
-
-```
-VITE_NHOST_REGION=your-region
-VITE_NHOST_SUBDOMAIN=your-subdomain
-```
-
-## Authentication Operations
-
-Handle sign-in/sign-up with Nhost:
-
-```tsx
-// Sign in
-await nhost.auth.signIn({
-  email: "user@example.com",
-  password: "password123",
-});
-
-// Sign up
-await nhost.auth.signUp({
-  email: "newuser@example.com",
-  password: "password123",
-});
-
-// Sign out
-await nhost.auth.signOut();
-```
-
-## Best Practices
-
-1. **Authentication Flow**: Use the `isAuthenticated` and `isLoading` states from the `useAuth` hook to control access to protected content.
-
-2. **Refresh Tokens**: The Apollo Client setup automatically refreshes tokens before making requests.
-
-3. **Error Handling**: Always handle loading and error states in your components.
-
-4. **Optimistic Updates**: For better UX, use optimistic updates in mutations.
-
-5. **Secure Routes**: Create protected route components that redirect unauthenticated users.

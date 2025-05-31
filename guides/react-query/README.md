@@ -36,19 +36,23 @@ import type { CodegenConfig } from "@graphql-codegen/cli";
 const config: CodegenConfig = {
   schema: [
     {
-      "https://your-project-subdomain.region.nhost.run/v1": {
+      "https://local.graphql.local.nhost.run/v1": {
         headers: {
-          "x-hasura-admin-secret": "your-admin-secret", // Development only
+          "x-hasura-admin-secret": "nhost-admin-secret",
         },
       },
     },
   ],
-  documents: ["src/**/*.ts", "src/**/*.tsx"],
+  documents: ["src/**/*.ts"],
   ignoreNoDocuments: true,
   generates: {
     "./src/lib/graphql/__generated__/graphql.ts": {
       documents: ["src/lib/graphql/**/*.graphql"],
-      plugins: ["typescript", "typescript-operations"],
+      plugins: [
+        "typescript",
+        "typescript-operations",
+        "typescript-react-query",
+      ],
       config: {
         scalars: {
           UUID: "string",
@@ -59,6 +63,14 @@ const config: CodegenConfig = {
           bytea: "Buffer",
           citext: "string",
         },
+        exposeQueryKeys: true,
+        exposeFetcher: true,
+        fetcher: {
+          func: "../queryHooks#useAuthenticatedFetcher",
+          isReactHook: true,
+        },
+        useTypeImports: true,
+        reactQueryVersion: 5,
       },
     },
     "./schema.graphql": {
@@ -67,52 +79,6 @@ const config: CodegenConfig = {
         includeDirectives: true,
       },
     },
-  },
-};
-
-export default config;
-```
-
-#### Secure Schema Introspection Options
-
-For production environments, it's recommended to use more secure approaches for schema introspection:
-
-##### Option 1: Pre-generated schema file
-
-```typescript
-import type { CodegenConfig } from "@graphql-codegen/cli";
-
-const config: CodegenConfig = {
-  schema: "./schema.graphql", // Use a downloaded schema file
-  documents: ["src/**/*.ts", "src/**/*.tsx"],
-  ignoreNoDocuments: true,
-  generates: {
-    // ... same as above
-  },
-};
-
-export default config;
-```
-
-##### Option 2: Environment variables for secrets
-
-```typescript
-import type { CodegenConfig } from "@graphql-codegen/cli";
-
-const config: CodegenConfig = {
-  schema: [
-    {
-      [process.env.GRAPHQL_ENDPOINT || "https://your-project-subdomain.region.nhost.run/v1"]: {
-        headers: {
-          "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET || "", 
-        },
-      },
-    },
-  ],
-  documents: ["src/**/*.ts", "src/**/*.tsx"],
-  ignoreNoDocuments: true,
-  generates: {
-    // ... same as above
   },
 };
 
@@ -218,9 +184,9 @@ interface QueryProviderProps {
   children: ReactNode;
 }
 
-// Create a query client instance
-const createQueryClient = () => {
-  return new QueryClient({
+export function QueryProvider({ children }: QueryProviderProps) {
+  // Create the query client
+  const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 10 * 1000, // 10 seconds
@@ -229,11 +195,6 @@ const createQueryClient = () => {
       },
     },
   });
-};
-
-export function QueryProvider({ children }: QueryProviderProps) {
-  // Create the query client
-  const queryClient = createQueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -377,66 +338,9 @@ yarn codegen
 pnpm codegen
 ```
 
-### 7. Create Custom Query Hooks
+### 7. Use in Components
 
-After generating types, extend the generated types to create React Query hooks:
-
-```typescript
-// Add to src/lib/graphql/__generated__/graphql.ts
-
-import {
-  useQuery,
-  useMutation,
-  type UseQueryOptions,
-  type UseMutationOptions,
-} from "@tanstack/react-query";
-import { useAuthenticatedFetcher } from "../queryHooks";
-
-// Example query hook
-export const useGetNinjaTurtlesWithCommentsQuery = (
-  options?: Omit<
-    UseQueryOptions<GetNinjaTurtlesWithCommentsQuery>,
-    "queryKey" | "queryFn"
-  >
-) => {
-  const fetcher = useAuthenticatedFetcher<
-    GetNinjaTurtlesWithCommentsQuery,
-    GetNinjaTurtlesWithCommentsQueryVariables
-  >(GetNinjaTurtlesWithCommentsDocument);
-
-  return useQuery<GetNinjaTurtlesWithCommentsQuery>({
-    queryKey: ["GetNinjaTurtlesWithComments"],
-    queryFn: () => fetcher(),
-    ...options,
-  });
-};
-
-// Example mutation hook
-export const useAddCommentMutation = (
-  options?: Omit<
-    UseMutationOptions<
-      AddCommentMutation,
-      Error,
-      AddCommentMutationVariables
-    >,
-    "mutationFn"
-  >
-) => {
-  const fetcher = useAuthenticatedFetcher<
-    AddCommentMutation,
-    AddCommentMutationVariables
-  >(AddCommentDocument);
-
-  return useMutation<AddCommentMutation, Error, AddCommentMutationVariables>({
-    mutationFn: (variables) => fetcher(variables),
-    ...options,
-  });
-};
-```
-
-### 8. Use in Components
-
-Use the generated React Query hooks in your components:
+Finally, you can use the generated React Query hooks in your components:
 
 ```tsx
 // src/pages/Home.tsx
@@ -451,10 +355,10 @@ import { Navigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function Home(): JSX.Element {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isLoading } = useAuth();
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
-  
+
   const queryClient = useQueryClient();
 
   // Query for data
@@ -478,10 +382,6 @@ export default function Home(): JSX.Element {
 
   if (isLoading) {
     return <div>Loading...</div>;
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/signin" />;
   }
 
   const handleAddComment = (turtleId: string) => {
@@ -551,149 +451,3 @@ export default function Home(): JSX.Element {
   );
 }
 ```
-
-## Environment Variables
-
-Create a `.env` file with:
-
-```
-VITE_NHOST_REGION=your-region
-VITE_NHOST_SUBDOMAIN=your-subdomain
-```
-
-## Authentication Operations
-
-Handle sign-in/sign-up with Nhost:
-
-```tsx
-// Sign in
-await nhost.auth.signIn({
-  email: "user@example.com",
-  password: "password123",
-});
-
-// Sign up
-await nhost.auth.signUp({
-  email: "newuser@example.com",
-  password: "password123",
-});
-
-// Sign out
-await nhost.auth.signOut();
-```
-
-## Best Practices
-
-1. **Authentication Flow**: Use the `isAuthenticated` and `isLoading` states from the `useAuth` hook to control access to protected content.
-
-2. **React Query Features**:
-   - Use `invalidateQueries` to refresh data after mutations
-   - Leverage `useQueryClient` to interact with the query cache
-   - Take advantage of stale-time and caching for optimization
-
-3. **Error Handling**: Always handle loading and error states in your components.
-
-4. **Optimistic Updates**: For better UX, use optimistic updates with React Query:
-
-```tsx
-const queryClient = useQueryClient();
-
-const { mutate } = useAddCommentMutation({
-  // Optimistic update
-  onMutate: async (newComment) => {
-    // Cancel outgoing refetches
-    await queryClient.cancelQueries({ queryKey: ['GetNinjaTurtlesWithComments'] });
-    
-    // Snapshot the previous value
-    const previousData = queryClient.getQueryData(['GetNinjaTurtlesWithComments']);
-    
-    // Optimistically update the cache
-    queryClient.setQueryData(['GetNinjaTurtlesWithComments'], (old: any) => {
-      // Add new comment to the cache
-      return {
-        ...old,
-        // Update data structure according to your schema
-      };
-    });
-    
-    // Return snapshot to use in case of rollback
-    return { previousData };
-  },
-  onError: (err, newComment, context) => {
-    // Rollback on error
-    if (context?.previousData) {
-      queryClient.setQueryData(
-        ['GetNinjaTurtlesWithComments'], 
-        context.previousData
-      );
-    }
-  },
-  onSettled: () => {
-    // Always refetch after error or success
-    queryClient.invalidateQueries({ queryKey: ['GetNinjaTurtlesWithComments'] });
-  },
-});
-```
-
-5. **Secure Routes**: Create protected route components that redirect unauthenticated users:
-
-```typescript
-// src/components/ProtectedRoute.tsx
-import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../lib/nhost/AuthProvider";
-
-interface ProtectedRouteProps {
-  redirectTo?: string;
-}
-
-export default function ProtectedRoute({
-  redirectTo = "/signin",
-}: ProtectedRouteProps) {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="loading-container">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to={redirectTo} />;
-  }
-
-  return <Outlet />;
-}
-```
-
-Usage in your router setup:
-
-```tsx
-// In your router configuration
-<Routes>
-  <Route path="/" element={<Layout />}>
-    <Route index element={<Home />} />
-    <Route path="public" element={<PublicPage />} />
-    
-    {/* Protected routes */}
-    <Route element={<ProtectedRoute />}>
-      <Route path="profile" element={<Profile />} />
-      <Route path="dashboard" element={<Dashboard />} />
-    </Route>
-  </Route>
-</Routes>
-```
-
-6. **DevTools**: Use React Query DevTools during development to debug queries and inspect cache. The DevTools panel provides insights into:
-   - All active queries in your application
-   - Query states (loading, error, success)
-   - Query data and timestamps
-   - Query refetch capabilities
-   - Cache inspection and manipulation
-
-7. **Performance Optimization**: Fine-tune React Query settings for optimal performance:
-   - Adjust `staleTime` based on how frequently your data changes
-   - Use `keepPreviousData` for pagination to prevent UI flashing
-   - Implement `prefetchQuery` for data you anticipate needing soon
-   - Set appropriate `cacheTime` to control how long unused data stays in memory

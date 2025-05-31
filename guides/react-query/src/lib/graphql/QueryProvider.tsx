@@ -7,9 +7,9 @@ interface QueryProviderProps {
   children: ReactNode;
 }
 
-// Create a query client instance
-const createQueryClient = () => {
-  return new QueryClient({
+export function QueryProvider({ children }: QueryProviderProps) {
+  // Create the query client
+  const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
         staleTime: 10 * 1000, // 10 seconds
@@ -18,11 +18,6 @@ const createQueryClient = () => {
       },
     },
   });
-};
-
-export function QueryProvider({ children }: QueryProviderProps) {
-  // Create the query client
-  const queryClient = createQueryClient();
 
   return (
     <QueryClientProvider client={queryClient}>
