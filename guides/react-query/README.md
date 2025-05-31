@@ -451,3 +451,43 @@ export default function Home(): JSX.Element {
   );
 }
 ```
+
+## Appendix: Known GraphQL CodeGen Issues
+
+When using GraphQL Code Generator with both `useTypeImports: true` and a custom fetcher that's a React hook, there's a known bug ([issue #824](https://github.com/dotansimha/graphql-code-generator-community/issues/824)) that causes incorrect import statements in the generated code.
+
+The problem occurs because when `useTypeImports` is enabled, the generator incorrectly adds the `type` keyword to the import statement for your custom fetcher function:
+
+```ts
+import type { useAuthenticatedFetcher } from "../queryHooks";
+```
+
+Since `useAuthenticatedFetcher` is a React hook that needs to be executed at runtime (not just used as a type), this causes TypeScript errors because the function can't be called when imported as a type.
+
+To fix this issue, you need to modify the generated file to remove the `type` keyword from the import statement. This can be done with a post-processing wrapper script (`codegen-wrapper.sh`):
+
+```bash
+#!/bin/bash
+# due to bug https://github.com/dotansimha/graphql-code-generator-community/issues/824
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+echo "Running GraphQL code generator..."
+# Run the original codegen command
+pnpm graphql-codegen --config codegen.ts
+
+# Path to the generated file
+GENERATED_FILE="src/lib/graphql/__generated__/graphql.ts"
+
+echo "Fixing import in $GENERATED_FILE..."
+if [ -f "$GENERATED_FILE" ]; then
+  sed -i -e 's/import type { useAuthenticatedFetcher }/import { useAuthenticatedFetcher }/g' "$GENERATED_FILE"
+  echo "Successfully removed \"type\" from useAuthenticatedFetcher import."
+else
+  echo "Error: Generated file not found at $GENERATED_FILE"
+  exit 1
+fi
+
+echo "All tasks completed successfully."
+```
