@@ -1,0 +1,35 @@
+{
+  "name": "react-demo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "pnpm build:codegen && tsc && vite build",
+    "build:codegen": "pnpm graphql-codegen --config codegen.ts",
+    "test": "pnpm test:audit && pnpm test:typecheck && pnpm test:lint && pnpm test:format && echo \"No tests specified\" && exit 0",
+    "test:typecheck": "tsc --noEmit",
+    "test:lint": "eslint .",
+    "test:format": "prettier --check .",
+    "test:audit": "pnpm audit",
+    "format": "prettier --write .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.13.8",
+    "@graphql-typed-document-node/core": "^3.2.0",
+    "@nhost/nhost-js": "workspace:*",
+    "graphql": "^16.11.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.6",
+    "@graphql-codegen/schema-ast": "^4.1.0",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.3",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1"
+  }
+}

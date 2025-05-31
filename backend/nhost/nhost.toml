@@ -31,7 +31,7 @@ httpPoolSize = 100
 version = 20
 
 [auth]
-version = '0.38.1-beta2'
+version = '0.38.1'
 
 [auth.elevatedPrivileges]
 mode = 'disabled'
@@ -177,7 +177,7 @@ limit = 1000
 interval = '1m'
 
 [postgres]
-version = '14.15-20250311-1'
+version = '17.4-20250530-1'
 
 [postgres.resources]
 [postgres.resources.storage]
@@ -186,7 +186,7 @@ capacity = 1
 [provider]
 
 [storage]
-version = '0.7.1'
+version = '0.7.2'
 
 [observability]
 [observability.grafana]
