@@ -16,6 +16,11 @@ endif
 VERSION=$(shell echo $(VER) | sed -e 's/\//_/g')
 
 
+.PHONY: dev-env-up
+dev-env-up:
+	echo "Nothing to do"
+
+
 .PHONY: check-dry-run
 check-dry-run:  ## Returns the derivation of the check
 	@nix build \
