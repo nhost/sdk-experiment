@@ -29,6 +29,7 @@
             "go.sum"
             (inDirectory "vendor")
             isDirectory
+            (inDirectory "processor/testdata")
             (nix-filter.lib.matchExt "go")
             (nix-filter.lib.matchExt "tmpl")
           ];
