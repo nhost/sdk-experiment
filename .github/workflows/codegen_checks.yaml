@@ -46,7 +46,7 @@ jobs:
     needs:
       - check-permissions
     with:
-      NAME: hasura-storage
+      NAME: codegen
       VERSION: 0.0.0-dev # hardcoded to avoid rebuilding
       GIT_REF: ${{ github.event.pull_request.head.sha }}
       PROJECT_PATH: tools/codegen
