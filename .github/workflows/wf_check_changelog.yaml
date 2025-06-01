@@ -1,0 +1,42 @@
+---
+on:
+  workflow_call:
+    inputs:
+      PROJECT_PATH:
+        type: string
+        required: true
+        description: "Path to the project directory where CHANGELOG.md is located"
+
+jobs:
+  check-changelog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: "Check out repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: "Check CHANGELOG.md and verify PR title"
+        run: |
+          # Fetch the default branch
+          git fetch origin ${{ github.base_ref || 'main' }}
+          
+          # Check if CHANGELOG.md exists
+          if [ ! -f "${{ inputs.PROJECT_PATH }}/CHANGELOG.md" ]; then
+            echo "::error::CHANGELOG.md does not exist in ${{ inputs.PROJECT_PATH }}"
+            exit 1
+          fi
+          
+          # Get the diff for CHANGELOG.md
+          git diff origin/${{ github.base_ref || 'main' }} -- ${{ inputs.PROJECT_PATH }}/CHANGELOG.md > changelog_diff.txt
+          
+          # Check if PR title appears in the diff
+          if grep -q "${{ github.event.pull_request.title }}" changelog_diff.txt; then
+            echo "PR title found in CHANGELOG.md diff"
+          else
+            echo "::error::PR title '${{ github.event.pull_request.title }}' not found in CHANGELOG.md diff"
+            exit 1
+          fi

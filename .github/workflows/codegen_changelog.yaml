@@ -1,0 +1,16 @@
+---
+name: "check changelog"
+on:
+  pull_request:
+    paths:
+      - "tools/codegen/**"
+      - ".github/workflows/codegen_changelog.yaml"
+      - ".github/workflows/wf_check_changelog.yaml"
+
+jobs:
+  check-changelog:
+    uses: ./.github/workflows/wf_check_changelog.yaml
+    needs:
+      - check-permissions
+    with:
+      PROJECT_PATH: tools/codegen
