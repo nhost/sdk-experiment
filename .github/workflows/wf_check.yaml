@@ -73,6 +73,10 @@ jobs:
 
         echo BUILD_NEEDED=$BUILD_NEEDED >> $GITHUB_OUTPUT
 
+    - name: "Build artifact"
+      run: |
+        make build
+
     - name: "Start containters for integration tests"
       run: |
         nix develop .\#${{ inputs.NAME }} -c make dev-env-up

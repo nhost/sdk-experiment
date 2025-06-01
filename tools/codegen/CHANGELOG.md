@@ -1,3 +1,1 @@
-# 0.0.0-dev
-
-- chore: enable ci
+- 20250601 chore: enable ci
