@@ -35,8 +35,8 @@ jobs:
 
           # Check if PR title appears in the diff
           if grep -q "${{ github.event.pull_request.title }}" changelog_diff.txt; then
-            echo "PR title found in CHANGELOG.md diff"
+            echo "PR title found in ${{ inputs.PROJECT_PATH}}/CHANGELOG.md diff"
           else
-            echo "::error::PR title '${{ github.event.pull_request.title }}' not found in CHANGELOG.md diff"
+            echo "::error::PR title '${{ github.event.pull_request.title }}' not found in ${{ inputs.PROJECT_PATH }}/CHANGELOG.md diff"
             exit 1
           fi
