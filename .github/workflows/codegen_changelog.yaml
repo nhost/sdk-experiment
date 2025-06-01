@@ -13,7 +13,5 @@ on:
 jobs:
   check-changelog:
     uses: ./.github/workflows/wf_check_changelog.yaml
-    needs:
-      - check-permissions
     with:
       PROJECT_PATH: tools/codegen
