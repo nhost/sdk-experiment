@@ -34,6 +34,8 @@ jobs:
     with:
       NAME: codegen
       GIT_REF: ${{ github.event.pull_request.head.sha }}
+      PROJECT_PATH: tools/codegen
+
     secrets:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_PRODUCTION_CORE_ACCOUNT_ID }}
       NIX_CACHE_PUB_KEY: ${{ secrets.NIX_CACHE_PUB_KEY }}
@@ -47,6 +49,7 @@ jobs:
       NAME: hasura-storage
       VERSION: 0.0.0-dev # hardcoded to avoid rebuilding
       GIT_REF: ${{ github.event.pull_request.head.sha }}
+      PROJECT_PATH: tools/codegen
     secrets:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_PRODUCTION_CORE_ACCOUNT_ID }}
       NIX_CACHE_PUB_KEY: ${{ secrets.NIX_CACHE_PUB_KEY }}

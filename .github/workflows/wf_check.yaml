@@ -10,8 +10,7 @@ on:
         required: false
       PROJECT_PATH:
         type: string
-        default: "."
-        required: false
+        required: true
     secrets:
       AWS_ACCOUNT_ID:
         required: true
@@ -39,7 +38,6 @@ jobs:
       with:
         fetch-depth: 0
         ref: ${{ inputs.GIT_REF }}
-        actions: read
 
     - name: Configure aws
       uses: aws-actions/configure-aws-credentials@v4
