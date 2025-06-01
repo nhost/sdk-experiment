@@ -23,16 +23,16 @@ jobs:
         run: |
           # Fetch the default branch
           git fetch origin ${{ github.base_ref || 'main' }}
-          
+
           # Check if CHANGELOG.md exists
           if [ ! -f "${{ inputs.PROJECT_PATH }}/CHANGELOG.md" ]; then
             echo "::error::CHANGELOG.md does not exist in ${{ inputs.PROJECT_PATH }}"
             exit 1
           fi
-          
+
           # Get the diff for CHANGELOG.md
           git diff origin/${{ github.base_ref || 'main' }} -- ${{ inputs.PROJECT_PATH }}/CHANGELOG.md > changelog_diff.txt
-          
+
           # Check if PR title appears in the diff
           if grep -q "${{ github.event.pull_request.title }}" changelog_diff.txt; then
             echo "PR title found in CHANGELOG.md diff"

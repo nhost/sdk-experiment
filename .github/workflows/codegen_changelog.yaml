@@ -6,6 +6,9 @@ on:
       - "tools/codegen/**"
       - ".github/workflows/codegen_changelog.yaml"
       - ".github/workflows/wf_check_changelog.yaml"
+      - 'flake.nix'
+      - 'flake.lock'
+      - 'nix/**'
 
 jobs:
   check-changelog:
