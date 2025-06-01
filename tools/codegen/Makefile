@@ -12,7 +12,16 @@ else
   OS?=linux
 endif
 
-VER=$(shell echo $(VERSION) | sed -e 's/\//_/g')
+
+VERSION=$(shell echo $(VER) | sed -e 's/\//_/g')
+
+
+.PHONY: check-dry-run
+check-dry-run:  ## Returns the derivation of the check
+	@nix build \
+		--dry-run \
+		--json \
+		--print-build-logs | jq -r '.[].outputs.out'
 
 
 .PHONY: check
@@ -28,5 +37,5 @@ build:  ## Build application and places the binary under ./result/bin
 
 .PHONY: get-version
 get-version:  ## Return version
-	@sed -i '/^\s*version = "0\.0\.0-dev";/s//version = "${VERSION}";/' flake.nix
+	@sed -i '/^\s*version = "0\.0\.0-dev";/s//        version = "${VERSION}";/' flake.nix
 	@echo $(VERSION)

@@ -70,7 +70,6 @@ jobs:
         echo "VERSION=$(make get-version VER=${{ inputs.VERSION }})" >> $GITHUB_OUTPUT
         ARCH=$([ "${{ runner.arch }}" == "X64" ] && echo "x86_64" || echo "aarch64")
         echo "ARCH=${ARCH}" >> $GITHUB_OUTPUT
-        echo "VERSION=${{ steps.vars.outputs.VERSION }}" >> $GITHUB_OUTPUT
 
     - name: "Build artifact"
       run: |
