@@ -24,8 +24,11 @@
           ];
         };
 
-        checkDeps = [
+        checkDeps = with pkgs; [
           self.packages.${system}.codegen
+          nhost-cli
+          nodejs
+          pnpm
         ];
 
         buildInputs = [
@@ -49,10 +52,7 @@
 
         devShells = flake-utils.lib.flattenTree {
           default = nixops-lib.go.devShell {
-            buildInputs = with pkgs; [
-              nhost-cli
-              nodejs
-              pnpm
+            buildInputs = [
             ] ++ checkDeps ++ buildInputs ++ nativeBuildInputs;
           };
 

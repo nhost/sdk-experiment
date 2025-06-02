@@ -39,7 +39,7 @@ jobs:
     with:
       NAME: nhost-js
       GIT_REF: ${{ github.event.pull_request.head.sha }}
-      PROJECT_PATH: packages/nhost-js
+      PROJECT_PATH: .
 
     secrets:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_PRODUCTION_CORE_ACCOUNT_ID }}

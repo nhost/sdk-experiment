@@ -6,7 +6,7 @@ let
   submodule = "tools/${name}";
 
   src = nix-filter.lib.filter {
-    root = ./.;
+    root = ../..;
     include = with nix-filter.lib;[
       ".golangci.yaml"
       "go.mod"
