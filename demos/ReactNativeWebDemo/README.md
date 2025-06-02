@@ -20,14 +20,16 @@ This is a React Native demo showcasing the Nhost SDK with authentication feature
 2. Configure Nhost
 
    Update `app.json` with your Nhost configuration:
+
    ```json
    "extra": {
      "NHOST_REGION": "your-region",
      "NHOST_SUBDOMAIN": "your-subdomain"
    }
    ```
-   
+
    For local development, keep the defaults:
+
    ```json
    "extra": {
      "NHOST_REGION": "local",
@@ -69,10 +71,12 @@ app/
 ## Key Implementations
 
 1. **Authentication Context**
+
    - Uses `@nhost/nhost-js` to manage auth state
    - Provides user session information throughout the app
 
 2. **Protected Routes**
+
    - `ProtectedScreen` component restricts access to authenticated users
    - Redirects to login when not authenticated
 
@@ -85,6 +89,7 @@ app/
 If you have the Nhost CLI installed and want to run against a local backend:
 
 1. Start your Nhost local backend:
+
    ```bash
    nhost dev
    ```

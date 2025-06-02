@@ -1,70 +1,10 @@
 import { Stack } from "expo-router";
 import { AuthProvider } from "./lib/nhost/AuthProvider";
 import { Text, View } from "react-native";
-import * as Linking from 'expo-linking';
-import { useEffect } from "react";
-import { router } from "expo-router";
-
-// Configure linking - detects exp:// links automatically for Expo Go
-const linking = {
-  prefixes: [
-    // For standalone app
-    Linking.createURL('/'),
-    // For Expo Go
-    'exp://',
-    'exp://localhost:19000',
-    'exp://192.168.1.103:19000'
-  ],
-  config: {
-    screens: {
-      verify: 'verify',
-      signin: 'signin',
-      signup: 'signup',
-      profile: 'profile',
-      index: '',
-    },
-  },
-};
-
-// Handle deep links that Expo Router might not catch
-function HandleDeepLinks() {
-  useEffect(() => {
-    // Listen for incoming links while the app is open
-    const subscription = Linking.addEventListener('url', ({ url }) => {
-      console.log('Deep link received:', url);
-      
-      // Parse the URL to extract path and params
-      try {
-        const parsedUrl = new URL(url);
-        const path = parsedUrl.pathname.split('/').pop() || '';
-        
-        // If this is a verification link with a refresh token
-        if (path === 'verify' && parsedUrl.searchParams.has('refreshToken')) {
-          const refreshToken = parsedUrl.searchParams.get('refreshToken');
-          router.navigate({
-            pathname: '/verify',
-            params: { refreshToken }
-          });
-        }
-      } catch (e) {
-        console.error('Failed to parse deep link URL:', e);
-      }
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
-
-  return null;
-}
 
 export default function RootLayout() {
   return (
     <AuthProvider>
-      {/* Custom handler for deep links */}
-      <HandleDeepLinks />
-      
       <Stack
         screenOptions={{
           headerStyle: {

@@ -14,12 +14,13 @@ The app is configured to connect to a Nhost backend. You can modify the connecti
 
 ```json
 "extra": {
-  "NHOST_REGION": "your-region", 
+  "NHOST_REGION": "your-region",
   "NHOST_SUBDOMAIN": "your-subdomain"
 }
 ```
 
 For local development with Nhost CLI, keep the defaults:
+
 ```json
 "extra": {
   "NHOST_REGION": "local",
@@ -30,11 +31,13 @@ For local development with Nhost CLI, keep the defaults:
 ## Running the App
 
 1. First install all dependencies:
+
    ```bash
    npm install
    ```
 
 2. Start the app:
+
    ```bash
    npx expo start
    ```
@@ -50,6 +53,7 @@ For local development with Nhost CLI, keep the defaults:
 If you encounter any errors:
 
 1. Make sure you've installed AsyncStorage:
+
    ```bash
    npm install @react-native-async-storage/async-storage
    ```
@@ -57,18 +61,20 @@ If you encounter any errors:
 2. Check that your Nhost backend is running and accessible
 
 3. Clear the React Native cache:
+
    ```bash
    npx expo start --clear
    ```
 
 4. If you have issues with the Nhost client, try modifying `app/lib/nhost/AuthProvider.tsx` to use memory storage instead of AsyncStorage by setting:
    ```javascript
-   clientStorageType: "memory"
+   clientStorageType: "memory";
    ```
 
 ## Features
 
 This demo showcases:
+
 - Email/password authentication
 - User registration
 - Protected routes

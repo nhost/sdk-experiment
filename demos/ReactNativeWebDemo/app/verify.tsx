@@ -11,12 +11,12 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useAuth } from "./lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
 
 export default function Verify() {
   const params = useLocalSearchParams<{ refreshToken: string }>();
   const [status, setStatus] = useState<"verifying" | "success" | "error">(
-    "verifying"
+    "verifying",
   );
   const [error, setError] = useState<string>("");
   const [urlParams, setUrlParams] = useState<Record<string, string>>({});
@@ -28,26 +28,26 @@ export default function Verify() {
   useEffect(() => {
     async function getInitialUrl() {
       const url = await Linking.getInitialURL();
-      console.log('Initial URL:', url);
+      console.log("Initial URL:", url);
       setInitialUrl(url);
     }
-    
+
     getInitialUrl();
   }, []);
-  
+
   useEffect(() => {
     // First check URL params provided by expo-router
     let refreshToken = params.refreshToken;
-    
+
     // If no refresh token in params, try to extract it from the initial URL
     // This handles cases where expo-router params might not work properly in Expo Go
     if (!refreshToken && initialUrl) {
       try {
         const url = new URL(initialUrl);
-        refreshToken = url.searchParams.get('refreshToken');
-        console.log('Extracted refresh token from initial URL:', refreshToken);
+        refreshToken = url.searchParams.get("refreshToken") || "";
+        console.log("Extracted refresh token from initial URL:", refreshToken);
       } catch (e) {
-        console.log('Error parsing initial URL:', e);
+        console.log("Error parsing initial URL:", e);
       }
     }
 
@@ -60,7 +60,7 @@ export default function Verify() {
         }
       });
       if (initialUrl) {
-        allParams['initialUrl'] = initialUrl;
+        allParams["initialUrl"] = initialUrl;
       }
       setUrlParams(allParams);
 
@@ -120,7 +120,7 @@ export default function Verify() {
     return () => {
       isMounted = false;
     };
-  }, [params, nhost.auth]);
+  }, [params, nhost.auth, initialUrl]);
 
   // If already authenticated and not handling verification, redirect to profile
   useEffect(() => {
@@ -150,11 +150,9 @@ export default function Verify() {
 
           {status === "success" && (
             <View>
-              <Text style={styles.successText}>
-                ✓ Successfully verified!
-              </Text>
+              <Text style={styles.successText}>✓ Successfully verified!</Text>
               <Text style={styles.statusText}>
-                You'll be redirected to your profile page shortly...
+                You&apos;ll be redirected to your profile page shortly...
               </Text>
             </View>
           )}
@@ -163,8 +161,8 @@ export default function Verify() {
             <View>
               <Text style={styles.errorText}>Verification failed</Text>
               <Text style={styles.statusText}>{error}</Text>
-          
-              {Platform.OS !== 'web' && (
+
+              {Platform.OS !== "web" && (
                 <View style={styles.debugInfo}>
                   <Text style={styles.debugTitle}>Testing in Expo Go?</Text>
                   <Text style={styles.debugText}>
@@ -173,17 +171,19 @@ export default function Verify() {
                 </View>
               )}
 
-                  {Object.keys(urlParams).length > 0 && (
-                    <View style={styles.paramsContainer}>
-                      <Text style={styles.paramsTitle}>URL Parameters:</Text>
-                      {Object.entries(urlParams).map(([key, value]) => (
-                        <View key={key} style={styles.paramRow}>
-                          <Text style={styles.paramKey}>{key}:</Text>
-                          <Text style={styles.paramValue}>{value?.toString() || 'undefined'}</Text>
-                        </View>
-                      ))}
+              {Object.keys(urlParams).length > 0 && (
+                <View style={styles.paramsContainer}>
+                  <Text style={styles.paramsTitle}>URL Parameters:</Text>
+                  {Object.entries(urlParams).map(([key, value]) => (
+                    <View key={key} style={styles.paramRow}>
+                      <Text style={styles.paramKey}>{key}:</Text>
+                      <Text style={styles.paramValue}>
+                        {value?.toString() || "undefined"}
+                      </Text>
                     </View>
-                  )}
+                  ))}
+                </View>
+              )}
 
               <TouchableOpacity
                 onPress={() => router.replace("/signin")}
@@ -201,20 +201,20 @@ export default function Verify() {
 
 const styles = StyleSheet.create({
   debugInfo: {
-    backgroundColor: '#fff8dc',
+    backgroundColor: "#fff8dc",
     padding: 10,
     borderRadius: 5,
     marginVertical: 10,
     borderWidth: 1,
-    borderColor: '#ffd700',
+    borderColor: "#ffd700",
   },
   debugTitle: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 5,
-    color: '#b8860b',
+    color: "#b8860b",
   },
   debugText: {
-    color: '#5a4a00',
+    color: "#5a4a00",
     fontSize: 14,
   },
   container: {

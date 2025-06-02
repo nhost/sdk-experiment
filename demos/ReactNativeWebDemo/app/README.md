@@ -11,6 +11,7 @@ npm install @react-native-async-storage/async-storage
 ## About this Demo
 
 This demo showcases the Nhost SDK integration with a React Native Expo application. It demonstrates authentication flow including:
+
 - Sign up with email/password
 - Sign in with email/password
 - Protected profile screen
@@ -21,7 +22,7 @@ This demo showcases the Nhost SDK integration with a React Native Expo applicati
 The app uses Expo Router for navigation with the following structure:
 
 - `app/_layout.tsx`: Main entry point with the AuthProvider
-- `app/index.tsx`: Home screen 
+- `app/index.tsx`: Home screen
 - `app/signin.tsx`: Sign in screen
 - `app/signup.tsx`: Sign up screen
 - `app/profile.tsx`: Protected profile screen
@@ -42,11 +43,13 @@ The app is configured to connect to a local Nhost backend by default. You can ch
 ## Running the App
 
 1. Install dependencies:
+
    ```bash
    npm install
    ```
 
 2. Start the app:
+
    ```bash
    npx expo start
    ```

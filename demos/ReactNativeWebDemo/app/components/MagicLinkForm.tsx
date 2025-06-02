@@ -10,7 +10,7 @@ import {
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
 
 interface MagicLinkFormProps {
   buttonLabel?: string;
@@ -32,10 +32,10 @@ export default function MagicLinkForm({
     try {
       // For Expo Go, we need to create the correct URL format
       // This will work both in Expo Go and standalone app
-      const redirectUrl = Linking.createURL('verify');
-      
-      console.log('Magic link redirect URL:', redirectUrl);
-      
+      const redirectUrl = Linking.createURL("verify");
+
+      console.log("Magic link redirect URL:", redirectUrl);
+
       await nhost.auth.signInPasswordlessEmail({
         email,
         options: {
@@ -47,7 +47,7 @@ export default function MagicLinkForm({
     } catch (err) {
       const error = err as FetchError<ErrorResponse>;
       setError(
-        `An error occurred while sending the magic link: ${error.message}`
+        `An error occurred while sending the magic link: ${error.message}`,
       );
     } finally {
       setIsLoading(false);
@@ -57,9 +57,11 @@ export default function MagicLinkForm({
   if (success) {
     return (
       <View style={styles.container}>
-        <Text style={styles.successText}>Magic link sent! Check your email to sign in.</Text>
-        <TouchableOpacity 
-          style={styles.secondaryButton} 
+        <Text style={styles.successText}>
+          Magic link sent! Check your email to sign in.
+        </Text>
+        <TouchableOpacity
+          style={styles.secondaryButton}
           onPress={() => setSuccess(false)}
         >
           <Text style={styles.secondaryButtonText}>Try again</Text>
