@@ -73,14 +73,14 @@ jobs:
 
         echo BUILD_NEEDED=$BUILD_NEEDED >> $GITHUB_OUTPUT
 
-    - name: "Build artifact"
-      run: |
-        nix develop .\#${{ inputs.NAME }} -c make build
-
     - name: "Start containters for integration tests"
       run: |
         nix develop .\#${{ inputs.NAME }} -c make dev-env-up
       if: ${{ steps.verify-build.outputs.BUILD_NEEDED == 'yes' }}
+
+    - name: "Build artifact"
+      run: |
+        nix develop .\#${{ inputs.NAME }} -c make build
 
     - name: "Run checks"
       run: make check
