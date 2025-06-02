@@ -1,5 +1,9 @@
 # @nhost/docs
 
+## main
+
+- 20250601 chore (ci): enabled #26
+
 ## 2.31.0
 
 ### Minor Changes

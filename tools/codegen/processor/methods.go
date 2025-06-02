@@ -222,7 +222,12 @@ func GetMethod(
 ) (*Method, []Type, error) {
 	if operation.OperationId == "" {
 		return nil, nil,
-			fmt.Errorf("%w: operation %s %s has no operationId", ErrRequiredOptionMissing, method, path)
+			fmt.Errorf(
+				"%w: operation %s %s has no operationId",
+				ErrRequiredOptionMissing,
+				method,
+				path,
+			)
 	}
 	params, types, err := getMethodParameters(method, operation, p)
 	if err != nil {
