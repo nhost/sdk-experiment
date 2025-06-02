@@ -16,6 +16,7 @@ on:
       - "packages/nhost-js/**"
       - "demos/**"
       - "guides/**"
+      - "docs/**"
   push:
     branches:
       - main

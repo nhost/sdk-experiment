@@ -1,0 +1,16 @@
+---
+name: "check changelog"
+on:
+  pull_request:
+    paths:
+      - 'flake.nix'
+      - 'flake.lock'
+      - 'nix/**'
+      - 'build/**'
+      - 'docs/**'
+
+jobs:
+  check-changelog:
+    uses: ./.github/workflows/wf_check_changelog.yaml
+    with:
+      PROJECT_PATH: docs

@@ -6,11 +6,10 @@
     "dev": "mintlify dev",
     "start": "mintlify dev",
     "build": "echo \"No build required for docs\" && exit 0",
-    "test": "echo \"No tests specified\" && exit 0",
-    "lint": "pnpm audit && echo \"No lint specified\" && exit 0",
+    "test": "echo \"No test required for docs\" && exit 0",
+    "lint": "echo \"No lint specified\" && exit 0",
     "lint:fix": "echo \"No lint:fix specified\" && exit 0",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "echo \"No format specified\" && exit 0",
     "typecheck": "echo \"No typecheck required for docs\" && exit 0"
   },
   "devDependencies": {

@@ -7,10 +7,10 @@
   "license": "ISC",
   "packageManager": "pnpm@10.9.0",
   "scripts": {
-    "build": "pnpm --recursive --filter \"./packages/**\" --filter \"./demos/**\" run build",
-    "test": "pnpm --recursive --filter \"./packages/**\" --filter \"./demos/**\" run test",
+    "build": "pnpm --recursive run build",
+    "test": "pnpm --recursive run test",
     "test:audit": "pnpm audit",
-    "format": "pnpm --recursive --filter \"./packages/**\" --filter \"./demos/**\" run format"
+    "format": "pnpm --recursive run format"
   },
   "devDependencies": {
     "@eslint/js": "9.26.0",
