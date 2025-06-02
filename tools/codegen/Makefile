@@ -12,18 +12,22 @@ check-dry-run:  ## Returns the derivation of the check
 	@nix build \
 		--dry-run \
 		--json \
-		--print-build-logs | jq -r '.[].outputs.out'
+		--print-build-logs \
+		.\#checks.$(ARCH)-$(OS).$(NAME) | jq -r '.[].outputs.out'
 
 
 .PHONY: check
 check:  ## Run nix flake check
-	nix flake check --print-build-logs
+	nix build \
+		--print-build-logs \
+		.\#checks.$(ARCH)-$(OS).$(NAME)
 
 
 .PHONY: build
 build:  ## Build application and places the binary under ./result/bin
 	nix build \
-		--print-build-logs
+		--print-build-logs \
+		.\#packages.$(ARCH)-$(OS).$(NAME)
 
 
 .PHONY: get-version

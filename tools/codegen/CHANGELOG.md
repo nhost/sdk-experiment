@@ -1,1 +1,1 @@
-- 20250601 chore: enable ci
+- 20250601 chore (ci): enabled #26

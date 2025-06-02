@@ -6,10 +6,16 @@ on:
     paths:
       - '.github/workflows/wf_check.yaml'
       - '.github/workflows/nhost-js_checks.yaml'
-      - "packages/nhost-js/**"
       - 'flake.nix'
       - 'flake.lock'
       - 'nix/**'
+      - 'build/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - "packages/nhost-js/**"
+      - "demos/**"
+      - "guides/**"
   push:
     branches:
       - main

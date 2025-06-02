@@ -3,6 +3,7 @@ let
   name = "codegen";
   description = "Codegen";
   version = "0.0.0-dev";
+  submodule = "tools/${name}";
 
   src = nix-filter.lib.filter {
     root = ./.;
@@ -12,13 +13,18 @@ let
       "go.sum"
       (inDirectory "vendor")
       isDirectory
-      (inDirectory "processor/testdata")
-      (nix-filter.lib.matchExt "go")
-      (nix-filter.lib.matchExt "tmpl")
+      (and
+        (inDirectory submodule)
+        (matchExt "go")
+      )
+      (and
+        (inDirectory submodule)
+        (matchExt "tmpl")
+      )
+      (inDirectory "${submodule}/processor/testdata")
     ];
   };
 
-  submodule = ".";
   tags = [ ];
   ldflags = [
     "-X main.Version=${version}"

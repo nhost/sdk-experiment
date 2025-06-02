@@ -3,12 +3,11 @@ name: "check changelog"
 on:
   pull_request:
     paths:
-      - "tools/codegen/**"
-      - ".github/workflows/codegen_changelog.yaml"
-      - ".github/workflows/wf_check_changelog.yaml"
       - 'flake.nix'
       - 'flake.lock'
       - 'nix/**'
+      - 'build/**'
+      - "tools/codegen/**"
 
 jobs:
   check-changelog:

@@ -4,13 +4,14 @@ NAME=$(notdir $(PROJ))
 
 
 ifeq ($(shell uname -m),x86_64)
-  HOST_ARCH?=x86_64
-  ARCH?=amd64
+  ARCH?=x86_64
 else ifeq ($(shell uname -m),arm64)
-  HOST_ARCH?=aarch64
-  ARCH?=arm64
+  ARCH?=aarch64
+else ifeq ($(shell uname -m),aarch64)
+   ARCH?=aarch64
+else
+   ARCH?=FIXME-$(shell uname -m)
 endif
-
 
 ifeq ($(shell uname -o),Darwin)
   OS?=darwin

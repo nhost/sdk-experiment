@@ -3,12 +3,11 @@ name: "check changelog"
 on:
   pull_request:
     paths:
-      - ".github/workflows/nhost-js_changelog.yaml"
-      - ".github/workflows/wf_check_changelog.yaml"
-      - "packages/nhost-js/**"
       - 'flake.nix'
       - 'flake.lock'
       - 'nix/**'
+      - 'build/**'
+      - 'packages/nhost-js/**'
 
 jobs:
   check-changelog:
