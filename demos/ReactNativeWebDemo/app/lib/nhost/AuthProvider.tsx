@@ -36,9 +36,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const nhost = useMemo(
     () =>
       createClient({
-        region: Constants.expoConfig?.extra?.NHOST_REGION || "192-168-1-103",
         subdomain:
           Constants.expoConfig?.extra?.NHOST_SUBDOMAIN || "192-168-1-103",
+        region: Constants.expoConfig?.extra?.NHOST_REGION || "local",
         storage: new MemoryStorage(),
       }),
     [],

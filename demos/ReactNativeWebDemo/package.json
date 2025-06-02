@@ -11,6 +11,7 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@expo/metro-runtime": "~5.0.4",
     "@expo/vector-icons": "^14.1.0",
     "@nhost/nhost-js": "workspace:*",
     "@react-navigation/bottom-tabs": "^7.3.10",
@@ -42,9 +43,9 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
-    "typescript": "~5.8.3",
     "eslint": "^9.25.0",
-    "eslint-config-expo": "~9.2.0"
+    "eslint-config-expo": "~9.2.0",
+    "typescript": "~5.8.3"
   },
   "private": true
 }
