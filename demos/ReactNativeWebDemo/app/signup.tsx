@@ -10,19 +10,24 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { router, Link } from "expo-router";
+import { router, Link, useLocalSearchParams } from "expo-router";
 import { useAuth } from "./lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
+import MagicLinkForm from "./components/MagicLinkForm";
 
 export default function SignUp() {
   const { nhost, isAuthenticated } = useAuth();
+  const params = useLocalSearchParams();
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [displayName, setDisplayName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"password" | "magic">("password");
+  
+  const magicLinkSent = params.magic === "success";
 
   // If already authenticated, redirect to profile
   useEffect(() => {
@@ -73,60 +78,117 @@ export default function SignUp() {
         <View style={styles.card}>
           <Text style={styles.cardTitle}>Sign Up</Text>
 
-          <View style={styles.form}>
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Display Name</Text>
-              <TextInput
-                style={styles.input}
-                value={displayName}
-                onChangeText={setDisplayName}
-                placeholder="Enter your name"
-                autoCapitalize="words"
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Email</Text>
-              <TextInput
-                style={styles.input}
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Enter your email"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                autoComplete="email"
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Password</Text>
-              <TextInput
-                style={styles.input}
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Enter your password"
-                secureTextEntry
-                autoCapitalize="none"
-              />
-              <Text style={styles.helperText}>
-                Password must be at least 8 characters long
+          {magicLinkSent ? (
+            <View style={styles.messageContainer}>
+              <Text style={styles.successText}>
+                Magic link sent! Check your email to sign in.
               </Text>
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={() => router.setParams({ magic: "" })}
+              >
+                <Text style={styles.secondaryButtonText}>Back to sign up</Text>
+              </TouchableOpacity>
             </View>
+          ) : (
+            <>
+              <View style={styles.tabContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.tabButton,
+                    activeTab === "password" && styles.activeTab,
+                  ]}
+                  onPress={() => setActiveTab("password")}
+                >
+                  <Text
+                    style={[
+                      styles.tabText,
+                      activeTab === "password" && styles.activeTabText,
+                    ]}
+                  >
+                    Password
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.tabButton,
+                    activeTab === "magic" && styles.activeTab,
+                  ]}
+                  onPress={() => setActiveTab("magic")}
+                >
+                  <Text
+                    style={[
+                      styles.tabText,
+                      activeTab === "magic" && styles.activeTabText,
+                    ]}
+                  >
+                    Magic Link
+                  </Text>
+                </TouchableOpacity>
+              </View>
 
-            {error && <Text style={styles.errorText}>{error}</Text>}
+              <View style={styles.form}>
+                {activeTab === "password" ? (
+                  <>
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Display Name</Text>
+                      <TextInput
+                        style={styles.input}
+                        value={displayName}
+                        onChangeText={setDisplayName}
+                        placeholder="Enter your name"
+                        autoCapitalize="words"
+                      />
+                    </View>
 
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleSubmit}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Text style={styles.buttonText}>Sign Up</Text>
-              )}
-            </TouchableOpacity>
-          </View>
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Email</Text>
+                      <TextInput
+                        style={styles.input}
+                        value={email}
+                        onChangeText={setEmail}
+                        placeholder="Enter your email"
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoComplete="email"
+                      />
+                    </View>
+
+                    <View style={styles.inputGroup}>
+                      <Text style={styles.label}>Password</Text>
+                      <TextInput
+                        style={styles.input}
+                        value={password}
+                        onChangeText={setPassword}
+                        placeholder="Enter your password"
+                        secureTextEntry
+                        autoCapitalize="none"
+                      />
+                      <Text style={styles.helperText}>
+                        Password must be at least 8 characters long
+                      </Text>
+                    </View>
+
+                    {error && <Text style={styles.errorText}>{error}</Text>}
+
+                    <TouchableOpacity
+                      style={styles.button}
+                      onPress={handleSubmit}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                      ) : (
+                        <Text style={styles.buttonText}>Sign Up</Text>
+                      )}
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <MagicLinkForm buttonLabel="Sign Up with Magic Link" />
+                )}
+              </View>
+            </>
+          )}
         </View>
 
         <View style={styles.footer}>
@@ -181,6 +243,29 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "center",
   },
+  tabContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e2e8f0",
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 10,
+    alignItems: "center",
+  },
+  tabText: {
+    fontSize: 16,
+    color: "#718096",
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: "#6366f1",
+  },
+  activeTabText: {
+    color: "#6366f1",
+    fontWeight: "600",
+  },
   form: {
     width: "100%",
   },
@@ -210,6 +295,16 @@ const styles = StyleSheet.create({
     color: "#e53e3e",
     marginBottom: 10,
   },
+  successText: {
+    color: "#38a169",
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 15,
+  },
+  messageContainer: {
+    alignItems: "center",
+    paddingVertical: 10,
+  },
   button: {
     backgroundColor: "#6366f1",
     paddingVertical: 12,
@@ -219,6 +314,19 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  secondaryButton: {
+    backgroundColor: "#e2e8f0",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  secondaryButtonText: {
+    color: "#4a5568",
     fontSize: 16,
     fontWeight: "600",
   },
