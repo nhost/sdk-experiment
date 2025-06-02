@@ -29,14 +29,21 @@ jobs:
             echo "::error::CHANGELOG.md does not exist in ${{ inputs.PROJECT_PATH }}"
             exit 1
           fi
+          
+          # Validate PR title format
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          if ! echo "$PR_TITLE" | grep -Eq "^(feat|fix|chore) \([a-zA-Z0-9_-]+\): .+$"; then
+            echo "::error::PR title '$PR_TITLE' does not follow the required format: 'feat|fix|chore (affected-service): this is the title'"
+            exit 1
+          fi
 
           # Get the diff for CHANGELOG.md
           git diff origin/${{ github.base_ref || 'main' }} -- ${{ inputs.PROJECT_PATH }}/CHANGELOG.md > changelog_diff.txt
 
           # Check if PR title appears in the diff
-          if grep -q "${{ github.event.pull_request.title }}" changelog_diff.txt; then
+          if grep -q "$PR_TITLE" changelog_diff.txt; then
             echo "PR title found in ${{ inputs.PROJECT_PATH}}/CHANGELOG.md diff"
           else
-            echo "::error::PR title '${{ github.event.pull_request.title }}' not found in ${{ inputs.PROJECT_PATH }}/CHANGELOG.md diff"
+            echo "::error::PR title '$PR_TITLE' not found in ${{ inputs.PROJECT_PATH }}/CHANGELOG.md diff"
             exit 1
           fi

@@ -4,10 +4,9 @@
     nixpkgs.follows = "nixops/nixpkgs";
     flake-utils.follows = "nixops/flake-utils";
     nix-filter.follows = "nixops/nix-filter";
-    codegen.url = "path:./tools/codegen";
   };
 
-  outputs = { self, nixops, nixpkgs, flake-utils, nix-filter, codegen }:
+  outputs = { self, nixops, nixpkgs, flake-utils, nix-filter }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [
@@ -25,20 +24,27 @@
           ];
         };
 
-        checkDeps = with pkgs; [
+        checkDeps = [
+          self.packages.${system}.codegen
         ];
 
-        buildInputs = with pkgs; [
+        buildInputs = [
         ];
 
-        nativeBuildInputs = with pkgs; [
+        nativeBuildInputs = [
         ];
 
         nixops-lib = nixops.lib { inherit pkgs; };
+
+        codegenf = import ./tools/codegen/project.nix {
+          inherit self pkgs nix-filter nixops-lib;
+        };
       in
       {
-        checks = flake-utils.lib.flattenTree rec {
+        checks = flake-utils.lib.flattenTree {
           nixpkgs-fmt = nixops-lib.nix.check { src = nix-src; };
+
+          codegen = codegenf.check;
         };
 
         devShells = flake-utils.lib.flattenTree {
@@ -47,9 +53,14 @@
               nhost-cli
               nodejs
               pnpm
-              codegen.packages.${system}.default
             ] ++ checkDeps ++ buildInputs ++ nativeBuildInputs;
           };
+
+          codegen = codegenf.devShell;
+        };
+
+        packages = flake-utils.lib.flattenTree {
+          codegen = codegenf.package;
         };
       }
     );

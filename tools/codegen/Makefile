@@ -1,23 +1,9 @@
-ifeq ($(shell uname -m),x86_64)
-  HOST_ARCH?=x86_64
-  ARCH?=amd64
-else ifeq ($(shell uname -m),arm64)
-  HOST_ARCH?=aarch64
-  ARCH?=arm64
-endif
-
-ifeq ($(shell uname -o),Darwin)
-  OS?=darwin
-else
-  OS?=linux
-endif
-
-
-VERSION=$(shell echo $(VER) | sed -e 's/\//_/g')
+ROOT_DIR?=$(abspath ../../)
+include $(ROOT_DIR)/build/makefiles/general.makefile
 
 
 .PHONY: dev-env-up
-dev-env-up:
+dev-env-up:  ## Start the development environment
 	echo "Nothing to do"
 
 

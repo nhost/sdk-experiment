@@ -5,8 +5,8 @@ on:
   pull_request:
     paths:
       - '.github/workflows/wf_check.yaml'
-      - '.github/workflows/codegen_checks.yaml'
-      - 'tools/codegen/**'
+      - '.github/workflows/nhost-js_checks.yaml'
+      - "packages/nhost-js/**"
       - 'flake.nix'
       - 'flake.lock'
       - 'nix/**'
@@ -31,9 +31,9 @@ jobs:
     needs:
       - check-permissions
     with:
-      NAME: codegen
+      NAME: nhost-js
       GIT_REF: ${{ github.event.pull_request.head.sha }}
-      PROJECT_PATH: tools/codegen
+      PROJECT_PATH: packages/nhost-js
 
     secrets:
       AWS_ACCOUNT_ID: ${{ secrets.AWS_PRODUCTION_CORE_ACCOUNT_ID }}
