@@ -5,4 +5,5 @@ check:  ## Run tests with pnpm
 
 .PHONY: build
 build:  ## Build project with pnpm
+	pnpm install
 	pnpm build
