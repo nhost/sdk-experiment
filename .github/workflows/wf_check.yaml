@@ -75,7 +75,7 @@ jobs:
 
     - name: "Build artifact"
       run: |
-        make build
+        nix develop .\#${{ inputs.NAME }} -c make build
 
     - name: "Start containters for integration tests"
       run: |

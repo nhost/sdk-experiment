@@ -50,8 +50,10 @@
           codegen = codegenf.check;
         };
 
-        devShells = flake-utils.lib.flattenTree {
-          default = nixops-lib.go.devShell {
+        devShells = flake-utils.lib.flattenTree rec {
+          default = nhost-js;
+
+          nhost-js = pkgs.mkShell {
             buildInputs = [
             ] ++ checkDeps ++ buildInputs ++ nativeBuildInputs;
           };
