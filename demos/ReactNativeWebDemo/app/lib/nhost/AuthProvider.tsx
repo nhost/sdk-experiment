@@ -38,8 +38,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     () =>
       createClient({
         subdomain:
-          Constants.expoConfig?.extra?.NHOST_SUBDOMAIN || "192-168-1-103",
-        region: Constants.expoConfig?.extra?.NHOST_REGION || "local",
+          Constants.expoConfig?.extra?.['NHOST_SUBDOMAIN'] || "192-168-1-103",
+        region: Constants.expoConfig?.extra?.['NHOST_REGION'] || "local",
         storage: new NhostAsyncStorage(),
       }),
     [],

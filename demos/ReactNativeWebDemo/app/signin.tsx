@@ -25,7 +25,7 @@ export default function SignIn() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"password" | "magic">("password");
 
-  const magicLinkSent = params.magic === "success";
+  const magicLinkSent = params['magic'] === "success";
 
   // If already authenticated, redirect to profile
   React.useEffect(() => {

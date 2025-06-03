@@ -21,7 +21,7 @@ import { type ErrorResponse } from "@nhost/nhost-js/auth";
 export default function MFAVerification() {
   const { nhost } = useAuth();
   const params = useLocalSearchParams();
-  const ticket = params.ticket as string;
+  const ticket = params['ticket'] as string;
 
   const [verificationCode, setVerificationCode] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
