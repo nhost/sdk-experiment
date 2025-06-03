@@ -14,6 +14,7 @@ import { useAuth } from "./lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import MagicLinkForm from "./components/MagicLinkForm";
+import SocialLoginForm from "./components/SocialLoginForm";
 
 export default function SignUp() {
   const { nhost, isAuthenticated } = useAuth();
@@ -24,7 +25,7 @@ export default function SignUp() {
   const [displayName, setDisplayName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"password" | "magic">("password");
+  const [activeTab, setActiveTab] = useState<"password" | "magic" | "social">("password");
 
   const magicLinkSent = params['magic'] === "success";
 
@@ -62,6 +63,8 @@ export default function SignUp() {
       setIsLoading(false);
     }
   };
+
+  // Social login is now handled by the SocialLoginForm component
 
   return (
     <KeyboardAvoidingView
@@ -124,6 +127,22 @@ export default function SignUp() {
                     Magic Link
                   </Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.tabButton,
+                    activeTab === "social" && styles.activeTab,
+                  ]}
+                  onPress={() => setActiveTab("social")}
+                >
+                  <Text
+                    style={[
+                      styles.tabText,
+                      activeTab === "social" && styles.activeTabText,
+                    ]}
+                  >
+                    Social
+                  </Text>
+                </TouchableOpacity>
               </View>
 
               <View style={styles.form}>
@@ -182,8 +201,10 @@ export default function SignUp() {
                       )}
                     </TouchableOpacity>
                   </>
-                ) : (
+                ) : activeTab === "magic" ? (
                   <MagicLinkForm buttonLabel="Sign Up with Magic Link" />
+                ) : (
+                  <SocialLoginForm action="Sign Up" isLoading={isLoading} />
                 )}
               </View>
             </>
@@ -341,4 +362,5 @@ const styles = StyleSheet.create({
     color: "#6366f1",
     fontWeight: "bold",
   },
+
 });

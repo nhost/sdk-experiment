@@ -14,6 +14,7 @@ import { useAuth } from "./lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import MagicLinkForm from "./components/MagicLinkForm";
+import SocialLoginForm from "./components/SocialLoginForm";
 
 export default function SignIn() {
   const { nhost, isAuthenticated } = useAuth();
@@ -22,9 +23,11 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"password" | "magic">("password");
+  const [activeTab, setActiveTab] = useState<"password" | "magic" | "social">(
+    "password",
+  );
 
-  const magicLinkSent = params['magic'] === "success";
+  const magicLinkSent = params["magic"] === "success";
 
   // If already authenticated, redirect to profile
   React.useEffect(() => {
@@ -64,11 +67,10 @@ export default function SignIn() {
     }
   };
 
+
+
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      style={styles.container}
-    >
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
@@ -125,6 +127,22 @@ export default function SignIn() {
                     Magic Link
                   </Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.tabButton,
+                    activeTab === "social" && styles.activeTab,
+                  ]}
+                  onPress={() => setActiveTab("social")}
+                >
+                  <Text
+                    style={[
+                      styles.tabText,
+                      activeTab === "social" && styles.activeTabText,
+                    ]}
+                  >
+                    Social
+                  </Text>
+                </TouchableOpacity>
               </View>
 
               <View style={styles.form}>
@@ -169,8 +187,10 @@ export default function SignIn() {
                       )}
                     </TouchableOpacity>
                   </>
-                ) : (
+                ) : activeTab === "magic" ? (
                   <MagicLinkForm buttonLabel="Sign In with Magic Link" />
+                ) : (
+                  <SocialLoginForm action="Sign In" isLoading={isLoading} />
                 )}
               </View>
             </>
@@ -323,4 +343,5 @@ const styles = StyleSheet.create({
     color: "#6366f1",
     fontWeight: "bold",
   },
+
 });
