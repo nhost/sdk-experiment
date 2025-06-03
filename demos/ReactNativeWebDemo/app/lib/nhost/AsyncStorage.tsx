@@ -1,22 +1,29 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { type SessionStorageBackend, DEFAULT_SESSION_KEY } from '@nhost/nhost-js/session';
-import { type Session } from '@nhost/nhost-js/auth';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+/**
+ * Empty component to satisfy the Router's need for a default export.
+ * The actual functionality is provided through the NhostAsyncStorage class.
+ */
+import { type Session } from "@nhost/nhost-js/auth";
+import {
+  type SessionStorageBackend,
+  DEFAULT_SESSION_KEY,
+} from "@nhost/nhost-js/session";
 
 /**
  * Custom storage implementation for React Native using AsyncStorage
  * to persist the Nhost session on the device.
- * 
+ *
  * This implementation synchronously works with the SessionStorageBackend interface
  * while ensuring reliable persistence with AsyncStorage for Expo Go.
  */
 export class NhostAsyncStorage implements SessionStorageBackend {
   private key: string;
   private cache: Session | null = null;
-  private isInitialized: boolean = false;
 
   constructor(key: string = DEFAULT_SESSION_KEY) {
     this.key = key;
-    
+
     // Immediately try to load from AsyncStorage
     this.loadFromAsyncStorage();
   }
@@ -28,24 +35,21 @@ export class NhostAsyncStorage implements SessionStorageBackend {
     // Try to get cached data from AsyncStorage immediately
     try {
       AsyncStorage.getItem(this.key)
-        .then(value => {
+        .then((value) => {
           if (value) {
             try {
               this.cache = JSON.parse(value) as Session;
             } catch (error) {
-              console.warn('Error parsing session from AsyncStorage:', error);
+              console.warn("Error parsing session from AsyncStorage:", error);
               this.cache = null;
             }
           }
-          this.isInitialized = true;
         })
-        .catch(error => {
-          console.warn('Error loading from AsyncStorage:', error);
-          this.isInitialized = true;
+        .catch((error) => {
+          console.warn("Error loading from AsyncStorage:", error);
         });
     } catch (error) {
-      console.warn('AsyncStorage access error:', error);
-      this.isInitialized = true;
+      console.warn("AsyncStorage access error:", error);
     }
   }
 
@@ -63,13 +67,13 @@ export class NhostAsyncStorage implements SessionStorageBackend {
   set(value: Session): void {
     // Update cache immediately
     this.cache = value;
-    
+
     // Persist to AsyncStorage with better error handling
     (async () => {
       try {
         await AsyncStorage.setItem(this.key, JSON.stringify(value));
       } catch (error) {
-        console.warn('Error saving session to AsyncStorage:', error);
+        console.warn("Error saving session to AsyncStorage:", error);
       }
     })();
   }
@@ -81,14 +85,22 @@ export class NhostAsyncStorage implements SessionStorageBackend {
   remove(): void {
     // Clear cache immediately
     this.cache = null;
-    
+
     // Remove from AsyncStorage with better error handling
     (async () => {
       try {
         await AsyncStorage.removeItem(this.key);
       } catch (error) {
-        console.warn('Error removing session from AsyncStorage:', error);
+        console.warn("Error removing session from AsyncStorage:", error);
       }
     })();
   }
+}
+
+/**
+ * Empty component to satisfy the Router's need for a default export.
+ * The actual functionality is provided through the NhostAsyncStorage class above.
+ */
+export default function AsyncStorageComponent() {
+  return null;
 }

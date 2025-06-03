@@ -48,26 +48,26 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     // Initialize authentication state
     setIsLoading(true);
-    
+
     // Allow enough time for AsyncStorage to be read and session to be restored
     const initializeSession = async () => {
       try {
         // Let's wait a bit to ensure AsyncStorage has been read
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
         // Now try to get the current session
         const currentSession = nhost.getUserSession();
-        
+
         setUser(currentSession?.user || null);
         setSession(currentSession);
         setIsAuthenticated(!!currentSession);
       } catch (error) {
-        console.warn('Error initializing session:', error);
+        console.warn("Error initializing session:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    
+
     initializeSession();
 
     // Listen for session changes

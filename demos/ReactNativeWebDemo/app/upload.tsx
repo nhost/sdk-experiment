@@ -8,7 +8,6 @@ import {
   Alert,
   ActivityIndicator,
   Platform,
-  ScrollView,
 } from "react-native";
 import { Stack } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
@@ -17,7 +16,7 @@ import * as Sharing from "expo-sharing";
 import * as WebBrowser from "expo-web-browser";
 import { useAuth } from "./lib/nhost/AuthProvider";
 import { formatFileSize } from "./lib/utils";
-import { ProtectedScreen } from "./components/ProtectedScreen";
+import ProtectedScreen from "./components/ProtectedScreen";
 import type { FileMetadata, ErrorResponse } from "@nhost/nhost-js/storage";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 
@@ -30,10 +29,17 @@ interface GraphqlGetFilesResponse {
   files: FileMetadata[];
 }
 
+// Declare global window for web compatibility
+declare global {
+  interface Window {
+    open(url?: string, target?: string, features?: string): Window | null;
+  }
+}
+
 export default function Upload() {
   const { nhost } = useAuth();
   const [selectedFile, setSelectedFile] =
-    useState<DocumentPicker.DocumentResult | null>(null);
+    useState<DocumentPicker.DocumentPickerResult | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
   const [uploadResult, setUploadResult] = useState<FileMetadata | null>(null);
   const [isFetching, setIsFetching] = useState<boolean>(true);
@@ -89,7 +95,7 @@ export default function Upload() {
         copyToCacheDirectory: true,
       });
 
-      if (result.canceled === false) {
+      if (!result.canceled) {
         setSelectedFile(result);
         setError(null);
         setUploadResult(null);
@@ -111,11 +117,15 @@ export default function Upload() {
 
     try {
       // For React Native, we need to read the file first
-      const fileToUpload = selectedFile.assets[0];
+      const fileToUpload = selectedFile.assets?.[0];
+      if (!fileToUpload) {
+        throw new Error("No file selected");
+      }
+
       const fileUri = fileToUpload.uri;
 
       // Read file as base64 if needed
-      let fileData;
+      let fileData: any;
 
       if (Platform.OS === "web") {
         // Web handling is different
@@ -176,7 +186,7 @@ export default function Upload() {
   const handleViewFile = async (
     fileId: string,
     fileName: string,
-    mimeType: string,
+    _mimeType: string,
   ) => {
     setViewingFile(fileId);
 
@@ -184,14 +194,18 @@ export default function Upload() {
       // Fetch the file with authentication using the SDK
       const response = await nhost.storage.getFile(fileId);
 
-      // Different handling based on platform
+      // Handle file viewing based on platform
       if (Platform.OS === "web") {
-        // Create a URL for the blob
+        // For web, create blob URL and open in new tab
         const url = URL.createObjectURL(response.body);
-        WebBrowser.openBrowserAsync(url);
+        await WebBrowser.openBrowserAsync(url);
       } else {
-        // On native platforms, we need to save the file temporarily and then open it
-        const fileUri = FileSystem.documentDirectory + fileName;
+        // For native platforms, save temporarily and share
+        const documentDir = FileSystem.documentDirectory;
+        if (!documentDir) {
+          throw new Error("Document directory not available");
+        }
+        const fileUri = documentDir + fileName;
 
         // Convert blob to base64 and write to file
         const reader = new FileReader();
@@ -199,12 +213,16 @@ export default function Upload() {
           const base64data = reader.result as string;
           const base64Content = base64data.split(",")[1];
 
+          if (!base64Content) {
+            throw new Error("Failed to extract base64 content");
+          }
+
           try {
             await FileSystem.writeAsStringAsync(fileUri, base64Content, {
               encoding: FileSystem.EncodingType.Base64,
             });
 
-            // Check if sharing is available
+            // Share the file using the native share sheet
             const isAvailable = await Sharing.isAvailableAsync();
             if (isAvailable) {
               await Sharing.shareAsync(fileUri);
@@ -218,6 +236,11 @@ export default function Upload() {
             console.error("Error saving or sharing file:", error);
             Alert.alert("Error", "Failed to open file");
           }
+        };
+
+        reader.onerror = () => {
+          console.error("Error reading file blob");
+          Alert.alert("Error", "Failed to read file");
         };
 
         reader.readAsDataURL(response.body);
@@ -293,7 +316,7 @@ export default function Upload() {
   return (
     <ProtectedScreen>
       <Stack.Screen options={{ title: "File Upload" }} />
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         {/* Upload Form */}
         <View style={styles.card}>
           <Text style={styles.title}>Upload a File</Text>
@@ -303,12 +326,14 @@ export default function Upload() {
               <Text style={styles.uploadIconText}>⬆️</Text>
             </View>
             <Text style={styles.uploadText}>Tap to select a file</Text>
-            {selectedFile && selectedFile.canceled === false && (
-              <Text style={styles.fileName}>
-                {selectedFile.assets[0].name}(
-                {formatFileSize(selectedFile.assets[0].size || 0)})
-              </Text>
-            )}
+            {selectedFile &&
+              !selectedFile.canceled &&
+              selectedFile.assets?.[0] && (
+                <Text style={styles.fileName}>
+                  {selectedFile.assets[0].name}(
+                  {formatFileSize(selectedFile.assets[0].size || 0)})
+                </Text>
+              )}
           </TouchableOpacity>
 
           {error && (
@@ -420,7 +445,7 @@ export default function Upload() {
             />
           )}
         </View>
-      </ScrollView>
+      </View>
     </ProtectedScreen>
   );
 }

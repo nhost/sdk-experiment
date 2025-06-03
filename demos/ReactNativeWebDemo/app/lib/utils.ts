@@ -15,3 +15,11 @@ export function formatFileSize(bytes: number, decimals = 2): string {
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
+
+/**
+ * Default export to satisfy the Router's requirements
+ * This utilities file primarily exports helper functions
+ */
+export default {
+  formatFileSize
+};
