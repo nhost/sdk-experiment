@@ -31,7 +31,7 @@ export default function Verify() {
       setInitialUrl(url);
     }
 
-    getInitialUrl();
+    void getInitialUrl();
   }, []);
 
   useEffect(() => {
@@ -113,7 +113,7 @@ export default function Verify() {
       }
     }
 
-    processToken();
+    void processToken();
 
     // Cleanup function
     return () => {

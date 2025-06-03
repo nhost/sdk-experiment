@@ -60,7 +60,7 @@ export default function Profile() {
     };
 
     if (isAuthenticated && user?.id) {
-      fetchMfaStatus();
+      void fetchMfaStatus();
     }
   }, [user, isAuthenticated, nhost.graphql]);
 

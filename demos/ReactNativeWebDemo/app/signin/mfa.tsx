@@ -109,7 +109,7 @@ export default function MFAVerification() {
                   onSubmitEditing={() => {
                     Keyboard.dismiss();
                     if (verificationCode.length === 6 && !isLoading) {
-                      handleSubmit();
+                      void handleSubmit();
                     }
                   }}
                 />

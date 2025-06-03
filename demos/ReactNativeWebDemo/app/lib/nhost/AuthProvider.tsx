@@ -34,13 +34,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Create the nhost client with persistent storage
   const nhost = useMemo(
-    () =>
-      createClient({
-        subdomain:
-          Constants.expoConfig?.extra?.['NHOST_SUBDOMAIN'] || "192-168-1-103",
-        region: Constants.expoConfig?.extra?.['NHOST_REGION'] || "local",
+    () => {
+      // Get configuration values with type assertion
+      const subdomain = Constants.expoConfig?.extra?.['NHOST_SUBDOMAIN'] as string || "192-168-1-103";
+      const region = Constants.expoConfig?.extra?.['NHOST_REGION'] as string || "local";
+      
+      return createClient({
+        subdomain,
+        region,
         storage: new NhostAsyncStorage(),
-      }),
+      });
+    },
     [],
   );
 
