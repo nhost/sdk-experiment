@@ -69,7 +69,7 @@ export class NhostAsyncStorage implements SessionStorageBackend {
     this.cache = value;
 
     // Persist to AsyncStorage with better error handling
-    (async () => {
+    void (async () => {
       try {
         await AsyncStorage.setItem(this.key, JSON.stringify(value));
       } catch (error) {
@@ -87,7 +87,7 @@ export class NhostAsyncStorage implements SessionStorageBackend {
     this.cache = null;
 
     // Remove from AsyncStorage with better error handling
-    (async () => {
+    void (async () => {
       try {
         await AsyncStorage.removeItem(this.key);
       } catch (error) {

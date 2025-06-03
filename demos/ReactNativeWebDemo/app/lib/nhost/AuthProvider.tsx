@@ -10,7 +10,6 @@ import { createClient, type NhostClient } from "@nhost/nhost-js";
 import { type Session } from "@nhost/nhost-js/auth";
 import Constants from "expo-constants";
 import { NhostAsyncStorage } from "./AsyncStorage";
-import { SessionPersistenceManager } from "./SessionPersistence";
 
 interface AuthContextType {
   user: Session["user"] | null;
@@ -68,7 +67,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     };
 
-    initializeSession();
+    void initializeSession();
 
     // Listen for session changes
     const unsubscribe = nhost.sessionStorage.onChange((currentSession) => {
@@ -94,7 +93,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     <AuthContext.Provider value={value}>
-      <SessionPersistenceManager nhost={nhost} />
       {children}
     </AuthContext.Provider>
   );
