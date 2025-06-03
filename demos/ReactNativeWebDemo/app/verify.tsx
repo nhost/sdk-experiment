@@ -5,7 +5,6 @@ import {
   View,
   TouchableOpacity,
   ActivityIndicator,
-  Platform,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useAuth } from "./lib/nhost/AuthProvider";
@@ -162,14 +161,12 @@ export default function Verify() {
               <Text style={styles.errorText}>Verification failed</Text>
               <Text style={styles.statusText}>{error}</Text>
 
-              {Platform.OS !== "web" && (
-                <View style={styles.debugInfo}>
-                  <Text style={styles.debugTitle}>Testing in Expo Go?</Text>
-                  <Text style={styles.debugText}>
-                    Make sure your magic link uses the proper Expo Go format.
-                  </Text>
-                </View>
-              )}
+              <View style={styles.debugInfo}>
+                <Text style={styles.debugTitle}>Testing in Expo Go?</Text>
+                <Text style={styles.debugText}>
+                  Make sure your magic link uses the proper Expo Go format.
+                </Text>
+              </View>
 
               {Object.keys(urlParams).length > 0 && (
                 <View style={styles.paramsContainer}>

@@ -12,7 +12,6 @@ import {
   Modal,
   Dimensions,
   KeyboardAvoidingView,
-  Platform,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
@@ -177,7 +176,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
 
       {isSettingUpMfa ? (
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior="padding"
           style={{ flex: 1 }}
         >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -282,7 +281,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
         </KeyboardAvoidingView>
       ) : isDisablingMfa ? (
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          behavior="padding"
           style={{ flex: 1 }}
         >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

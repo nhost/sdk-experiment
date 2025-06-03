@@ -15,11 +15,11 @@
     "build": "pnpm expo export -p ios -p android",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web",
+
     "lint": "expo lint"
   },
   "dependencies": {
-    "@expo/metro-runtime": "~5.0.4",
+
     "@expo/vector-icons": "^14.1.0",
     "@nhost/nhost-js": "workspace:*",
     "@react-native-async-storage/async-storage": "^2.1.2",
@@ -44,13 +44,12 @@
     "expo-system-ui": "~5.0.7",
     "expo-web-browser": "~14.1.6",
     "react": "19.0.0",
-    "react-dom": "19.0.0",
+
     "react-native": "0.79.2",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "^4.11.1",
-    "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5"
   },
   "devDependencies": {

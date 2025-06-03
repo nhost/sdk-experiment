@@ -13,12 +13,26 @@ import { Stack } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
-import * as WebBrowser from "expo-web-browser";
 import { useAuth } from "./lib/nhost/AuthProvider";
 import { formatFileSize } from "./lib/utils";
 import ProtectedScreen from "./components/ProtectedScreen";
 import type { FileMetadata, ErrorResponse } from "@nhost/nhost-js/storage";
 import { type FetchError } from "@nhost/nhost-js/fetch";
+
+// Helper function to convert a Blob to base64
+const blobToBase64 = (blob: Blob): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64data = reader.result as string;
+      // Remove the data URL prefix (e.g., "data:application/octet-stream;base64,")
+      const base64Content = base64data.split(",")[1] || "";
+      resolve(base64Content);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
 
 interface DeleteStatus {
   message: string;
@@ -186,7 +200,7 @@ export default function Upload() {
   const handleViewFile = async (
     fileId: string,
     fileName: string,
-    _mimeType: string,
+    mimeType: string,
   ) => {
     setViewingFile(fileId);
 
@@ -194,56 +208,41 @@ export default function Upload() {
       // Fetch the file with authentication using the SDK
       const response = await nhost.storage.getFile(fileId);
 
-      // Handle file viewing based on platform
-      if (Platform.OS === "web") {
-        // For web, create blob URL and open in new tab
-        const url = URL.createObjectURL(response.body);
-        await WebBrowser.openBrowserAsync(url);
+      if (!response.body) {
+        throw new Error("Failed to retrieve file contents");
+      }
+
+      // For iOS/Android, we need to save the file to the device first
+      // Create a unique temp file path with a timestamp to prevent collisions
+      const fileExtension = fileName.includes(".") ? "" : ".file";
+      const tempFileName = fileName.includes(".")
+        ? fileName
+        : `${fileName}${fileExtension}`;
+      const tempFilePath = `${FileSystem.cacheDirectory}${Date.now()}_${tempFileName}`;
+
+      // Get the blob from the response
+      const blob = response.body;
+
+      // Convert blob to base64
+      const base64Data = await blobToBase64(blob);
+
+      // Write the file to the filesystem
+      await FileSystem.writeAsStringAsync(tempFilePath, base64Data, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // Check if sharing is available (iOS & Android)
+      const isSharingAvailable = await Sharing.isAvailableAsync();
+
+      if (isSharingAvailable) {
+        // Open the file with the default app
+        await Sharing.shareAsync(tempFilePath, {
+          mimeType: mimeType || "application/octet-stream",
+          dialogTitle: `View ${fileName}`,
+          UTI: mimeType, // for iOS
+        });
       } else {
-        // For native platforms, save temporarily and share
-        const documentDir = FileSystem.documentDirectory;
-        if (!documentDir) {
-          throw new Error("Document directory not available");
-        }
-        const fileUri = documentDir + fileName;
-
-        // Convert blob to base64 and write to file
-        const reader = new FileReader();
-        reader.onload = async () => {
-          const base64data = reader.result as string;
-          const base64Content = base64data.split(",")[1];
-
-          if (!base64Content) {
-            throw new Error("Failed to extract base64 content");
-          }
-
-          try {
-            await FileSystem.writeAsStringAsync(fileUri, base64Content, {
-              encoding: FileSystem.EncodingType.Base64,
-            });
-
-            // Share the file using the native share sheet
-            const isAvailable = await Sharing.isAvailableAsync();
-            if (isAvailable) {
-              await Sharing.shareAsync(fileUri);
-            } else {
-              Alert.alert(
-                "Sharing not available",
-                "Sharing is not available on this device",
-              );
-            }
-          } catch (error) {
-            console.error("Error saving or sharing file:", error);
-            Alert.alert("Error", "Failed to open file");
-          }
-        };
-
-        reader.onerror = () => {
-          console.error("Error reading file blob");
-          Alert.alert("Error", "Failed to read file");
-        };
-
-        reader.readAsDataURL(response.body);
+        throw new Error("Sharing is not available on this device");
       }
     } catch (err) {
       const error = err as FetchError<ErrorResponse>;

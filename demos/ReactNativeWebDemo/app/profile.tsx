@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  Platform,
 } from "react-native";
 import { router } from "expo-router";
 import { useAuth } from "./lib/nhost/AuthProvider";
@@ -233,7 +232,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#666",
     marginBottom: 10,
-    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
+    fontFamily: "monospace",
   },
   actionButton: {
     backgroundColor: "#6366f1",
