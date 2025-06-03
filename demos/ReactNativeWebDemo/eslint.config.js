@@ -1,6 +1,5 @@
 // https://docs.expo.dev/guides/using-eslint/
 import { defineConfig } from "eslint/config";
-import expoConfig from "eslint-config-expo/flat";
 import tseslint from "typescript-eslint";
 import eslint from "@eslint/js";
 import globals from "globals";
@@ -8,11 +7,15 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import reactPlugin from "eslint-plugin-react";
 
-export default tseslint.config(
+export default defineConfig([
+    // Base configs
     eslint.configs.recommended,
-    tseslint.configs.recommendedTypeChecked,
-    tseslint.configs.stylistic,
-    expoConfig,
+
+    // TypeScript configs (properly structured for ESLint 9)
+    ...tseslint.configs.recommendedTypeChecked,
+    ...tseslint.configs.stylistic,
+
+    // Project ignores
     {
         ignores: [
             "dist/*",
@@ -25,6 +28,8 @@ export default tseslint.config(
             "package.json",
         ],
     },
+
+    // TypeScript project config
     {
         languageOptions: {
             parserOptions: {
@@ -33,6 +38,8 @@ export default tseslint.config(
             },
         },
     },
+
+    // React-specific configuration
     {
         files: ["**/*.{tsx,jsx}"],
         languageOptions: {
@@ -46,6 +53,7 @@ export default tseslint.config(
                 ecmaFeatures: { jsx: true },
             },
         },
+        // Only define React-related plugins here to avoid conflicts
         plugins: {
             react: reactPlugin,
             "react-hooks": reactHooks,
@@ -75,4 +83,4 @@ export default tseslint.config(
             ],
         },
     },
-);
+]);
