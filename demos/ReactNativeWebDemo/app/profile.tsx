@@ -33,7 +33,7 @@ export default function Profile() {
 
       try {
         // Correctly structure GraphQL query with parameters
-        const response: FetchResponse<MfaStatusResponse> = 
+        const response: FetchResponse<MfaStatusResponse> =
           await nhost.graphql.post({
             query: `
               query GetUserMfaStatus($userId: uuid!) {
@@ -149,11 +149,14 @@ export default function Profile() {
           </View>
         </View>
 
-        <MFASettings key={`mfa-settings-${isMfaEnabled}`} initialMfaEnabled={isMfaEnabled} />
+        <MFASettings
+          key={`mfa-settings-${isMfaEnabled}`}
+          initialMfaEnabled={isMfaEnabled}
+        />
 
-        <TouchableOpacity 
-          style={styles.actionButton} 
-          onPress={() => router.push('/upload')}
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => router.push("/upload")}
         >
           <Text style={styles.actionButtonText}>File Upload</Text>
         </TouchableOpacity>

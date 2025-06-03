@@ -15,6 +15,7 @@ import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import MagicLinkForm from "./components/MagicLinkForm";
 import SocialLoginForm from "./components/SocialLoginForm";
+import NativeLoginForm from "./components/NativeLoginForm";
 
 export default function SignIn() {
   const { nhost, isAuthenticated } = useAuth();
@@ -22,10 +23,11 @@ export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [appleAuthInProgress, setAppleAuthInProgress] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"password" | "magic" | "social">(
-    "password",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "password" | "magic" | "social" | "native"
+  >("password");
 
   const magicLinkSent = params["magic"] === "success";
 
@@ -66,8 +68,6 @@ export default function SignIn() {
       setIsLoading(false);
     }
   };
-
-
 
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
@@ -143,6 +143,22 @@ export default function SignIn() {
                     Social
                   </Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.tabButton,
+                    activeTab === "native" && styles.activeTab,
+                  ]}
+                  onPress={() => setActiveTab("native")}
+                >
+                  <Text
+                    style={[
+                      styles.tabText,
+                      activeTab === "native" && styles.activeTabText,
+                    ]}
+                  >
+                    Native
+                  </Text>
+                </TouchableOpacity>
               </View>
 
               <View style={styles.form}>
@@ -189,8 +205,14 @@ export default function SignIn() {
                   </>
                 ) : activeTab === "magic" ? (
                   <MagicLinkForm buttonLabel="Sign In with Magic Link" />
-                ) : (
+                ) : activeTab === "social" ? (
                   <SocialLoginForm action="Sign In" isLoading={isLoading} />
+                ) : (
+                  <NativeLoginForm
+                    action="Sign In"
+                    isLoading={isLoading || appleAuthInProgress}
+                    setAppleAuthInProgress={setAppleAuthInProgress}
+                  />
                 )}
               </View>
             </>
@@ -343,5 +365,4 @@ const styles = StyleSheet.create({
     color: "#6366f1",
     fontWeight: "bold",
   },
-
 });

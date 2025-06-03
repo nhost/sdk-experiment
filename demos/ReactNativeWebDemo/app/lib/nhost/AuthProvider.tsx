@@ -33,20 +33,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   // Create the nhost client with persistent storage
-  const nhost = useMemo(
-    () => {
-      // Get configuration values with type assertion
-      const subdomain = Constants.expoConfig?.extra?.['NHOST_SUBDOMAIN'] as string || "192-168-1-103";
-      const region = Constants.expoConfig?.extra?.['NHOST_REGION'] as string || "local";
-      
-      return createClient({
-        subdomain,
-        region,
-        storage: new NhostAsyncStorage(),
-      });
-    },
-    [],
-  );
+  const nhost = useMemo(() => {
+    // Get configuration values with type assertion
+    const subdomain =
+      (Constants.expoConfig?.extra?.["NHOST_SUBDOMAIN"] as string) ||
+      "192-168-1-103";
+    const region =
+      (Constants.expoConfig?.extra?.["NHOST_REGION"] as string) || "local";
+
+    return createClient({
+      subdomain,
+      region,
+      storage: new NhostAsyncStorage(),
+    });
+  }, []);
 
   useEffect(() => {
     // Initialize authentication state
@@ -95,11 +95,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     nhost,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 // Custom hook to use the auth context

@@ -1,5 +1,11 @@
-import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
 import { useAuth } from "../lib/nhost/AuthProvider";
@@ -11,9 +17,10 @@ interface SocialLoginFormProps {
 
 export default function SocialLoginForm({
   action,
-  isLoading = false,
+  isLoading: initialLoading = false,
 }: SocialLoginFormProps) {
   const { nhost } = useAuth();
+  const [isLoading] = useState(initialLoading);
 
   const handleSocialLogin = (provider: "github") => {
     // Use the same redirect URL approach as the magic link
@@ -33,16 +40,20 @@ export default function SocialLoginForm({
   return (
     <View style={styles.socialContainer}>
       <Text style={styles.socialText}>{action} using your Social account</Text>
-      <TouchableOpacity
-        style={styles.socialButton}
-        onPress={() => handleSocialLogin("github")}
-        disabled={isLoading}
-      >
-        <View style={styles.buttonContent}>
-          <Ionicons name="logo-github" size={22} style={styles.githubIcon} />
-          <Text style={styles.socialButtonText}>Continue with GitHub</Text>
-        </View>
-      </TouchableOpacity>
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#6366f1" />
+      ) : (
+        <TouchableOpacity
+          style={styles.socialButton}
+          onPress={() => handleSocialLogin("github")}
+          disabled={isLoading}
+        >
+          <View style={styles.buttonContent}>
+            <Ionicons name="logo-github" size={22} style={styles.githubIcon} />
+            <Text style={styles.socialButtonText}>Continue with GitHub</Text>
+          </View>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

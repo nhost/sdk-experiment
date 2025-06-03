@@ -15,6 +15,7 @@ import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import MagicLinkForm from "./components/MagicLinkForm";
 import SocialLoginForm from "./components/SocialLoginForm";
+import NativeLoginForm from "./components/NativeLoginForm";
 
 export default function SignUp() {
   const { nhost, isAuthenticated } = useAuth();
@@ -24,10 +25,13 @@ export default function SignUp() {
   const [password, setPassword] = useState<string>("");
   const [displayName, setDisplayName] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [appleAuthInProgress, setAppleAuthInProgress] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"password" | "magic" | "social">("password");
+  const [activeTab, setActiveTab] = useState<
+    "password" | "magic" | "social" | "native"
+  >("password");
 
-  const magicLinkSent = params['magic'] === "success";
+  const magicLinkSent = params["magic"] === "success";
 
   // If already authenticated, redirect to profile
   useEffect(() => {
@@ -67,10 +71,7 @@ export default function SignUp() {
   // Social login is now handled by the SocialLoginForm component
 
   return (
-    <KeyboardAvoidingView
-      behavior="padding"
-      style={styles.container}
-    >
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
@@ -143,6 +144,22 @@ export default function SignUp() {
                     Social
                   </Text>
                 </TouchableOpacity>
+                <TouchableOpacity
+                  style={[
+                    styles.tabButton,
+                    activeTab === "native" && styles.activeTab,
+                  ]}
+                  onPress={() => setActiveTab("native")}
+                >
+                  <Text
+                    style={[
+                      styles.tabText,
+                      activeTab === "native" && styles.activeTabText,
+                    ]}
+                  >
+                    Native
+                  </Text>
+                </TouchableOpacity>
               </View>
 
               <View style={styles.form}>
@@ -203,8 +220,14 @@ export default function SignUp() {
                   </>
                 ) : activeTab === "magic" ? (
                   <MagicLinkForm buttonLabel="Sign Up with Magic Link" />
-                ) : (
+                ) : activeTab === "social" ? (
                   <SocialLoginForm action="Sign Up" isLoading={isLoading} />
+                ) : (
+                  <NativeLoginForm
+                    action="Sign Up"
+                    isLoading={isLoading || appleAuthInProgress}
+                    setAppleAuthInProgress={setAppleAuthInProgress}
+                  />
                 )}
               </View>
             </>
@@ -362,5 +385,4 @@ const styles = StyleSheet.create({
     color: "#6366f1",
     fontWeight: "bold",
   },
-
 });

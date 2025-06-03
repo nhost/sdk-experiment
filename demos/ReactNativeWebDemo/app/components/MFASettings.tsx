@@ -15,7 +15,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import * as Clipboard from 'expo-clipboard';
+import * as Clipboard from "expo-clipboard";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
@@ -175,19 +175,19 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
       )}
 
       {isSettingUpMfa ? (
-        <KeyboardAvoidingView
-          behavior="padding"
-          style={{ flex: 1 }}
-        >
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.contentContainer}>
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={styles.contentContainer}
+            >
               <Text style={styles.instructionText}>
                 Scan this QR code with your authenticator app (e.g., Google
                 Authenticator, Authy):
               </Text>
 
               {qrCodeUrl && (
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.qrCodeContainer}
                   onPress={() => setQrCodeModalVisible(true)}
                 >
@@ -199,7 +199,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
                   <Text style={styles.copyHint}>(Tap to enlarge)</Text>
                 </TouchableOpacity>
               )}
-              
+
               <Modal
                 animationType="slide"
                 transparent={true}
@@ -214,7 +214,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
                       style={styles.largeQrCode}
                       resizeMode="contain"
                     />
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       style={styles.closeButton}
                       onPress={() => setQrCodeModalVisible(false)}
                     >
@@ -227,7 +227,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
               <Text style={styles.instructionText}>
                 Or manually enter this secret key:
               </Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.secretContainer}
                 onPress={async () => {
                   await Clipboard.setStringAsync(totpSecret);
@@ -280,12 +280,12 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
       ) : isDisablingMfa ? (
-        <KeyboardAvoidingView
-          behavior="padding"
-          style={{ flex: 1 }}
-        >
+        <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.contentContainer}>
+            <ScrollView
+              style={{ flex: 1 }}
+              contentContainerStyle={styles.contentContainer}
+            >
               <Text style={styles.instructionText}>
                 To disable Multi-Factor Authentication, please enter the current
                 verification code from your authenticator app.
@@ -309,7 +309,8 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
                   style={[
                     styles.button,
                     styles.primaryButton,
-                    (!disableVerificationCode || isLoading) && styles.disabledButton,
+                    (!disableVerificationCode || isLoading) &&
+                      styles.disabledButton,
                   ]}
                   onPress={handleDisableMfa}
                   disabled={isLoading || !disableVerificationCode}
@@ -461,41 +462,41 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 12,
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
     elevation: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    width: Dimensions.get('window').width * 0.9,
+    width: Dimensions.get("window").width * 0.9,
   },
   largeQrCode: {
-    width: Dimensions.get('window').width * 0.7,
-    height: Dimensions.get('window').width * 0.7,
+    width: Dimensions.get("window").width * 0.7,
+    height: Dimensions.get("window").width * 0.7,
     marginVertical: 20,
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 15,
   },
   closeButton: {
-    backgroundColor: '#6366f1',
+    backgroundColor: "#6366f1",
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 6,
   },
   closeButtonText: {
-    color: 'white',
-    fontWeight: '600',
+    color: "white",
+    fontWeight: "600",
   },
   secretContainer: {
     backgroundColor: "#f3f4f6",
