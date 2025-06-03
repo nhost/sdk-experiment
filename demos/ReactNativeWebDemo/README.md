@@ -5,6 +5,9 @@ This is a React Native demo showcasing the Nhost SDK with authentication feature
 ## Features
 
 - Email/Password Authentication
+- Magic Link Authentication
+- Social Authentication (GitHub)
+- Native Authentication (Apple on iOS)
 - User Registration
 - User Profile Management
 - Protected Routes
@@ -19,7 +22,7 @@ This is a React Native demo showcasing the Nhost SDK with authentication feature
    # AsyncStorage is already included in the dependencies
    ```
 
-2. Configure Nhost
+2. Configure Nhost and OAuth Providers
 
    Update `app.json` with your Nhost configuration:
 
@@ -34,7 +37,7 @@ This is a React Native demo showcasing the Nhost SDK with authentication feature
 
    ```json
    "extra": {
-     "NHOST_REGION": "local",
+     "NHOST_REGION": "192-168-1-103", # Replace with your local IP address
      "NHOST_SUBDOMAIN": "local"
    }
    ```
@@ -64,7 +67,11 @@ app/
 ├── signup.tsx           # Sign up screen
 ├── profile.tsx          # User profile (protected)
 ├── components/
-│   └── ProtectedScreen.tsx  # Auth protection component
+│   ├── ProtectedScreen.tsx  # Auth protection component
+│   ├── MagicLinkForm.tsx    # Magic link authentication
+│   ├── SocialLoginForm.tsx  # GitHub authentication
+│   ├── NativeLoginForm.tsx  # Native authentication container
+│   ├── AppleSignIn.tsx      # Apple Sign-In for iOS
 └── lib/
     └── nhost/
         ├── AuthProvider.tsx # Nhost auth context
@@ -86,8 +93,12 @@ app/
    - `ProtectedScreen` component restricts access to authenticated users
    - Redirects to login when not authenticated
 
-3. **Form Handling**
+3. Authentication Methods
    - Email/password sign-in
+   - Magic links for passwordless authentication
+   - GitHub social authentication
+   - Native authentication:
+     - Apple Sign-In (iOS only)
    - User registration with display name
 
 ## Running with Local Nhost Backend
@@ -115,6 +126,7 @@ If you have the Nhost CLI installed and want to run against a local backend:
 - [React Native Documentation](https://reactnative.dev/docs/getting-started)
 - [AsyncStorage Documentation](https://react-native-async-storage.github.io/async-storage/)
 - [React Native App State](https://reactnative.dev/docs/appstate)
+- [Expo Apple Authentication](https://docs.expo.dev/versions/latest/sdk/apple-authentication/)
 
 ## Session Persistence Details
 

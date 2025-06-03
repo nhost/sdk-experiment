@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  Platform,
+} from "react-native";
 import AppleSignIn from "./AppleSignIn";
 
 interface NativeLoginFormProps {
@@ -20,6 +26,9 @@ export default function NativeLoginForm({
     }
   };
 
+  // Check if we have any native options for this platform
+  const hasAppleOption = Platform.OS === "ios";
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>
@@ -34,9 +43,19 @@ export default function NativeLoginForm({
             isLoading={isLoading}
             setIsLoading={updateLoadingState}
           />
-          <Text style={styles.infoText}>
-            Native sign-in options are available based on your device
-          </Text>
+
+          {!hasAppleOption && (
+            <Text style={styles.noOptionsText}>
+              No native authentication options available for your platform
+            </Text>
+          )}
+
+          {hasAppleOption && (
+            <Text style={styles.infoText}>
+              Native sign-in methods provide a more streamlined authentication
+              experience
+            </Text>
+          )}
         </View>
       )}
     </View>
@@ -64,5 +83,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#718096",
     textAlign: "center",
+  },
+  noOptionsText: {
+    marginTop: 20,
+    fontSize: 14,
+    color: "#a0aec0",
+    textAlign: "center",
+    fontStyle: "italic",
   },
 });
