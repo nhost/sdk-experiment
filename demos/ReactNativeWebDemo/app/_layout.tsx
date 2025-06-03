@@ -18,8 +18,10 @@ export default function RootLayout() {
       >
         <Stack.Screen name="index" options={{ title: "Home" }} />
         <Stack.Screen name="signin" options={{ title: "Sign In" }} />
+        <Stack.Screen name="signin/mfa" options={{ title: "MFA Verification" }} />
         <Stack.Screen name="signup" options={{ title: "Sign Up" }} />
         <Stack.Screen name="profile" options={{ title: "Profile" }} />
+        <Stack.Screen name="upload" options={{ title: "File Upload" }} />
         <Stack.Screen name="verify" options={{ title: "Verify Email" }} />
       </Stack>
     </AuthProvider>

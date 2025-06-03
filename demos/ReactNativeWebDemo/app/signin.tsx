@@ -45,6 +45,12 @@ export default function SignIn() {
         password,
       });
 
+      // Check if MFA is required
+      if (response.body?.mfa) {
+        router.push(`/signin/mfa?ticket=${response.body.mfa.ticket}`);
+        return;
+      }
+
       // If we have a session, sign in was successful
       if (response.body?.session) {
         router.replace("/profile");

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,9 +11,59 @@ import {
 import { router } from "expo-router";
 import { useAuth } from "./lib/nhost/AuthProvider";
 import ProtectedScreen from "./components/ProtectedScreen";
+import MFASettings from "./components/MFASettings";
+import { type FetchError, type FetchResponse } from "@nhost/nhost-js/fetch";
+import { type ErrorResponse } from "@nhost/nhost-js/auth";
+
+interface MfaStatusResponse {
+  data?: {
+    user?: {
+      activeMfaType: string | null;
+    };
+  };
+}
 
 export default function Profile() {
-  const { nhost, user, session } = useAuth();
+  const { nhost, user, session, isAuthenticated } = useAuth();
+  const [isMfaEnabled, setIsMfaEnabled] = useState<boolean>(false);
+
+  // Fetch MFA status when user is authenticated
+  useEffect(() => {
+    const fetchMfaStatus = async () => {
+      if (!user?.id) return;
+
+      try {
+        // Correctly structure GraphQL query with parameters
+        const response: FetchResponse<MfaStatusResponse> = 
+          await nhost.graphql.post({
+            query: `
+              query GetUserMfaStatus($userId: uuid!) {
+                user(id: $userId) {
+                  activeMfaType
+                }
+              }
+            `,
+            variables: {
+              userId: user.id,
+            },
+          });
+
+        const userData = response.body?.data;
+        const activeMfaType = userData?.user?.activeMfaType;
+        const newMfaEnabled = activeMfaType === "totp";
+
+        // Update the state
+        setIsMfaEnabled(newMfaEnabled);
+      } catch (err) {
+        const error = err as FetchError<ErrorResponse>;
+        console.error(`Failed to query MFA status: ${error.message}`);
+      }
+    };
+
+    if (isAuthenticated && user?.id) {
+      fetchMfaStatus();
+    }
+  }, [user, isAuthenticated, nhost.graphql]);
 
   const handleSignOut = async () => {
     try {
@@ -100,6 +150,15 @@ export default function Profile() {
           </View>
         </View>
 
+        <MFASettings key={`mfa-settings-${isMfaEnabled}`} initialMfaEnabled={isMfaEnabled} />
+
+        <TouchableOpacity 
+          style={styles.actionButton} 
+          onPress={() => router.push('/upload')}
+        >
+          <Text style={styles.actionButtonText}>File Upload</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
           <Text style={styles.signOutButtonText}>Sign Out</Text>
         </TouchableOpacity>
@@ -175,6 +234,20 @@ const styles = StyleSheet.create({
     color: "#666",
     marginBottom: 10,
     fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
+  },
+  actionButton: {
+    backgroundColor: "#6366f1",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  actionButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
   signOutButton: {
     backgroundColor: "#e53e3e",

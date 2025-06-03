@@ -1,10 +1,12 @@
 {
-  "extends": "expo/tsconfig.base",
+  "extends": ["expo/tsconfig.base", "../../configs/tsconfig/base.json"],
   "compilerOptions": {
-    "strict": true,
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    /* Override specific settings from base.json as needed for React Native */
+    "lib": ["ESNext"],
+    "jsx": "react-native"
   },
   "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
 }

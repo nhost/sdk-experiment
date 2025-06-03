@@ -24,6 +24,12 @@ export default function Index() {
             >
               <Text style={styles.buttonText}>Go to Profile</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.secondaryButton]}
+              onPress={() => router.push("/upload")}
+            >
+              <Text style={styles.buttonText}>File Upload</Text>
+            </TouchableOpacity>
           </>
         ) : (
           <View style={styles.authButtons}>
@@ -86,6 +92,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 20,
     textAlign: "center",
+  },
+  buttonContainer: {
+    width: "100%",
+    gap: 15,
   },
   authButtons: {
     width: "100%",
