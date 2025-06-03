@@ -8,6 +8,7 @@ This is a React Native demo showcasing the Nhost SDK with authentication feature
 - User Registration
 - User Profile Management
 - Protected Routes
+- Reliable Session Persistence (even with Expo Go)
 
 ## Get started
 
@@ -15,6 +16,7 @@ This is a React Native demo showcasing the Nhost SDK with authentication feature
 
    ```bash
    npm install
+   # AsyncStorage is already included in the dependencies
    ```
 
 2. Configure Nhost
@@ -65,7 +67,9 @@ app/
 │   └── ProtectedScreen.tsx  # Auth protection component
 └── lib/
     └── nhost/
-        └── AuthProvider.tsx # Nhost auth context
+        ├── AuthProvider.tsx # Nhost auth context
+        ├── AsyncStorage.tsx # Custom storage implementation for session persistence with in-memory cache
+        └── SessionPersistence.tsx # Utilities for reliable session persistence with Expo Go
 ```
 
 ## Key Implementations
@@ -74,6 +78,8 @@ app/
 
    - Uses `@nhost/nhost-js` to manage auth state
    - Provides user session information throughout the app
+   - Implements reliable persistent session storage using AsyncStorage with special handling for Expo Go
+   - Handles app state changes to ensure session persistence between app opens/closes
 
 2. **Protected Routes**
 
@@ -107,3 +113,17 @@ If you have the Nhost CLI installed and want to run against a local backend:
 - [Nhost Documentation](https://docs.nhost.io/)
 - [Expo Documentation](https://docs.expo.dev/)
 - [React Native Documentation](https://reactnative.dev/docs/getting-started)
+- [AsyncStorage Documentation](https://react-native-async-storage.github.io/async-storage/)
+- [React Native App State](https://reactnative.dev/docs/appstate)
+
+## Session Persistence Details
+
+This demo implements a robust session persistence strategy that works reliably even with Expo Go:
+
+1. **AsyncStorage Implementation**: Custom storage adapter that works with Nhost's synchronous interface while using AsyncStorage in the background
+
+2. **App State Handling**: Uses AppState to detect when the app goes to background/foreground to ensure sessions are properly persisted
+
+3. **Initialization Timing**: Adds small delay during initialization to ensure AsyncStorage has time to load the session
+
+4. **Error Handling**: Comprehensive error handling to gracefully handle storage failures

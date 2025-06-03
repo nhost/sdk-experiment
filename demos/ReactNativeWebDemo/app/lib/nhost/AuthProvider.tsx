@@ -7,9 +7,10 @@ import {
   type ReactNode,
 } from "react";
 import { createClient, type NhostClient } from "@nhost/nhost-js";
-import { MemoryStorage } from "@nhost/nhost-js/session";
 import { type Session } from "@nhost/nhost-js/auth";
 import Constants from "expo-constants";
+import { NhostAsyncStorage } from "./AsyncStorage";
+import { SessionPersistenceManager } from "./SessionPersistence";
 
 interface AuthContextType {
   user: Session["user"] | null;
@@ -32,14 +33,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-  // Create the nhost client
+  // Create the nhost client with persistent storage
   const nhost = useMemo(
     () =>
       createClient({
         subdomain:
           Constants.expoConfig?.extra?.NHOST_SUBDOMAIN || "192-168-1-103",
         region: Constants.expoConfig?.extra?.NHOST_REGION || "local",
-        storage: new MemoryStorage(),
+        storage: new NhostAsyncStorage(),
       }),
     [],
   );
@@ -47,14 +48,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     // Initialize authentication state
     setIsLoading(true);
+    
+    // Allow enough time for AsyncStorage to be read and session to be restored
+    const initializeSession = async () => {
+      try {
+        // Let's wait a bit to ensure AsyncStorage has been read
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Now try to get the current session
+        const currentSession = nhost.getUserSession();
+        
+        setUser(currentSession?.user || null);
+        setSession(currentSession);
+        setIsAuthenticated(!!currentSession);
+      } catch (error) {
+        console.warn('Error initializing session:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    initializeSession();
 
-    // Set initial values
-    const currentSession = nhost.getUserSession();
-    setUser(currentSession?.user || null);
-    setSession(currentSession);
-    setIsAuthenticated(!!currentSession);
-    setIsLoading(false);
-
+    // Listen for session changes
     const unsubscribe = nhost.sessionStorage.onChange((currentSession) => {
       setUser(currentSession?.user || null);
       setSession(currentSession);
@@ -76,7 +92,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     nhost,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      <SessionPersistenceManager nhost={nhost} />
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 // Custom hook to use the auth context
