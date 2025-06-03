@@ -7,7 +7,6 @@ import {
   FlatList,
   Alert,
   ActivityIndicator,
-  Platform,
 } from "react-native";
 import { Stack } from "expo-router";
 import * as DocumentPicker from "expo-document-picker";
@@ -99,7 +98,7 @@ export default function Upload() {
 
   // Fetch existing files when component mounts
   useEffect(() => {
-    fetchFiles();
+    void fetchFiles();
   }, [fetchFiles]);
 
   const pickDocument = async () => {
@@ -136,34 +135,14 @@ export default function Upload() {
         throw new Error("No file selected");
       }
 
-      const fileUri = fileToUpload.uri;
-
-      // Read file as base64 if needed
-      let fileData: any;
-
-      if (Platform.OS === "web") {
-        // Web handling is different
-        fileData = fileToUpload;
-      } else {
-        // Native platforms
-        const fileInfo = await FileSystem.getInfoAsync(fileUri);
-
-        if (!fileInfo.exists) {
-          throw new Error("File doesn't exist anymore");
-        }
-
-        // Create a File object from the file URI
-        fileData = {
-          uri: fileUri,
-          name: fileToUpload.name,
-          type: fileToUpload.mimeType || "application/octet-stream",
-        };
+      if (!fileToUpload.file) {
+        throw new Error("File not found in selected assets");
       }
 
       // Upload file using Nhost storage
       const response = await nhost.storage.uploadFiles({
         "bucket-id": "default",
-        "file[]": [fileData],
+        "file[]": [fileToUpload.file],
       });
 
       // Get the processed file data
@@ -255,7 +234,7 @@ export default function Upload() {
   };
 
   // Function to handle deleting a file
-  const handleDeleteFile = async (fileId: string) => {
+  const handleDeleteFile = (fileId: string) => {
     if (!fileId || deleting) return;
 
     // Confirm deletion
@@ -267,46 +246,48 @@ export default function Upload() {
       {
         text: "Delete",
         style: "destructive",
-        onPress: async () => {
-          setDeleting(fileId);
-          setError(null);
-          setDeleteStatus(null);
+        onPress: () => {
+          void (async () => {
+            setDeleting(fileId);
+            setError(null);
+            setDeleteStatus(null);
 
-          // Get the file name for the status message
-          const fileToDelete = files.find((file) => file.id === fileId);
-          const fileName = fileToDelete?.name || "File";
+            // Get the file name for the status message
+            const fileToDelete = files.find((file) => file.id === fileId);
+            const fileName = fileToDelete?.name || "File";
 
-          try {
-            // Delete the file using the Nhost storage SDK
-            await nhost.storage.deleteFile(fileId);
+            try {
+              // Delete the file using the Nhost storage SDK
+              await nhost.storage.deleteFile(fileId);
 
-            // Show success message
-            setDeleteStatus({
-              message: `${fileName} deleted successfully`,
-              isError: false,
-            });
+              // Show success message
+              setDeleteStatus({
+                message: `${fileName} deleted successfully`,
+                isError: false,
+              });
 
-            // Update the local files list by removing the deleted file
-            setFiles(files.filter((file) => file.id !== fileId));
+              // Update the local files list by removing the deleted file
+              setFiles(files.filter((file) => file.id !== fileId));
 
-            // Refresh the file list
-            await fetchFiles();
+              // Refresh the file list
+              await fetchFiles();
 
-            // Clear the success message after 3 seconds
-            setTimeout(() => {
-              setDeleteStatus(null);
-            }, 3000);
-          } catch (err) {
-            // Show error message
-            const error = err as FetchError<ErrorResponse>;
-            setDeleteStatus({
-              message: `Failed to delete ${fileName}: ${error.message}`,
-              isError: true,
-            });
-            console.error("Error deleting file:", err);
-          } finally {
-            setDeleting(null);
-          }
+              // Clear the success message after 3 seconds
+              setTimeout(() => {
+                setDeleteStatus(null);
+              }, 3000);
+            } catch (err) {
+              // Show error message
+              const error = err as FetchError<ErrorResponse>;
+              setDeleteStatus({
+                message: `Failed to delete ${fileName}: ${error.message}`,
+                isError: true,
+              });
+              console.error("Error deleting file:", err);
+            } finally {
+              setDeleting(null);
+            }
+          })();
         },
       },
     ]);
