@@ -63,9 +63,9 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
       setQrCodeUrl(response.body.imageUrl);
       setIsSettingUpMfa(true);
     } catch (err) {
-      const error = err as FetchError<ErrorResponse>;
-      setError(`An error occurred while enabling MFA: ${error.message}`);
-      Alert.alert("Error", `Failed to enable MFA: ${error.message}`);
+      const errMessage = err instanceof Error ? err.message : "Unknown error";
+      setError(`An error occurred while enabling MFA: ${errMessage}`);
+      Alert.alert("Error", `Failed to enable MFA: ${errMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -95,9 +95,9 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
       setSuccess("MFA has been successfully enabled.");
       Alert.alert("Success", "MFA has been successfully enabled.");
     } catch (err) {
-      const error = err as FetchError<ErrorResponse>;
-      setError(`An error occurred while verifying the code: ${error.message}`);
-      Alert.alert("Error", `Failed to verify code: ${error.message}`);
+      const errMessage = err instanceof Error ? err.message : "Unknown error";
+      setError(`An error occurred while verifying the code: ${errMessage}`);
+      Alert.alert("Error", `Failed to verify code: ${errMessage}`);
     } finally {
       setIsLoading(false);
     }

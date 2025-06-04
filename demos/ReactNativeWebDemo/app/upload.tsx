@@ -17,21 +17,7 @@ import { formatFileSize } from "./lib/utils";
 import ProtectedScreen from "./components/ProtectedScreen";
 import type { FileMetadata, ErrorResponse } from "@nhost/nhost-js/storage";
 import { type FetchError } from "@nhost/nhost-js/fetch";
-
-// Helper function to convert a Blob to base64
-const blobToBase64 = (blob: Blob): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64data = reader.result as string;
-      // Remove the data URL prefix (e.g., "data:application/octet-stream;base64,")
-      const base64Content = base64data.split(",")[1] || "";
-      resolve(base64Content);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-};
+import { blobToBase64 } from "./lib/utils";
 
 interface DeleteStatus {
   message: string;
@@ -40,13 +26,6 @@ interface DeleteStatus {
 
 interface GraphqlGetFilesResponse {
   files: FileMetadata[];
-}
-
-// Declare global window for web compatibility
-declare global {
-  interface Window {
-    open(url?: string, target?: string, features?: string): Window | null;
-  }
 }
 
 export default function Upload() {
@@ -81,16 +60,11 @@ export default function Upload() {
         }`,
       });
 
-      if (response.body.errors) {
-        throw new Error(
-          response.body.errors[0]?.message || "Failed to fetch files",
-        );
-      }
-
       setFiles(response.body.data?.files || []);
     } catch (err) {
-      console.error("Error fetching files:", err);
-      setError("Failed to load files. Please try refreshing the page.");
+      const errMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
+      setError(`Failed to fetch files: ${errMessage}`);
     } finally {
       setIsFetching(false);
     }

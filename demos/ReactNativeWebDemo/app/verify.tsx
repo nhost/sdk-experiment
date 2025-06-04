@@ -8,9 +8,6 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useAuth } from "./lib/nhost/AuthProvider";
-import { type ErrorResponse } from "@nhost/nhost-js/auth";
-import { type FetchError } from "@nhost/nhost-js/fetch";
-import * as Linking from "expo-linking";
 
 export default function Verify() {
   const params = useLocalSearchParams<{ refreshToken: string }>();
@@ -18,51 +15,13 @@ export default function Verify() {
     "verifying",
   );
   const [error, setError] = useState<string>("");
-  const [urlParams, setUrlParams] = useState<Record<string, string>>({});
-  const [initialUrl, setInitialUrl] = useState<string | null>(null);
 
   const { nhost, isAuthenticated } = useAuth();
 
-  // First, try to get the initial URL that opened the app (for direct deep links)
   useEffect(() => {
-    async function getInitialUrl() {
-      const url = await Linking.getInitialURL();
-      console.log("Initial URL:", url);
-      setInitialUrl(url);
-    }
-
-    void getInitialUrl();
-  }, []);
-
-  useEffect(() => {
-    // First check URL params provided by expo-router
-    let refreshToken = params.refreshToken;
-
-    // If no refresh token in params, try to extract it from the initial URL
-    // This handles cases where expo-router params might not work properly in Expo Go
-    if (!refreshToken && initialUrl) {
-      try {
-        const url = new URL(initialUrl);
-        refreshToken = url.searchParams.get("refreshToken") || "";
-        console.log("Extracted refresh token from initial URL:", refreshToken);
-      } catch (e) {
-        console.log("Error parsing initial URL:", e);
-      }
-    }
+    const refreshToken = params.refreshToken;
 
     if (!refreshToken) {
-      // Collect all URL parameters to display
-      const allParams: Record<string, string> = {};
-      Object.entries(params).forEach(([key, value]) => {
-        if (typeof value === "string") {
-          allParams[key] = value;
-        }
-      });
-      if (initialUrl) {
-        allParams["initialUrl"] = initialUrl;
-      }
-      setUrlParams(allParams);
-
       setStatus("error");
       setError("No refresh token found in the link");
       return;
@@ -86,7 +45,6 @@ export default function Verify() {
               allParams[key] = value;
             }
           });
-          setUrlParams(allParams);
 
           setStatus("error");
           setError("No refresh token found in the link");
@@ -105,11 +63,13 @@ export default function Verify() {
           if (isMounted) router.replace("/profile");
         }, 1500);
       } catch (err) {
-        const error = err as FetchError<ErrorResponse>;
         if (!isMounted) return;
 
+        const errMessage =
+          err instanceof Error ? err.message : "An unexpected error occurred";
+
         setStatus("error");
-        setError(`An error occurred during verification: ${error.message}`);
+        setError(`An error occurred during verification: ${errMessage}`);
       }
     }
 
@@ -119,7 +79,7 @@ export default function Verify() {
     return () => {
       isMounted = false;
     };
-  }, [params, nhost.auth, initialUrl]);
+  }, [params, nhost.auth]);
 
   // If already authenticated and not handling verification, redirect to profile
   useEffect(() => {
@@ -167,20 +127,6 @@ export default function Verify() {
                   Make sure your magic link uses the proper Expo Go format.
                 </Text>
               </View>
-
-              {Object.keys(urlParams).length > 0 && (
-                <View style={styles.paramsContainer}>
-                  <Text style={styles.paramsTitle}>URL Parameters:</Text>
-                  {Object.entries(urlParams).map(([key, value]) => (
-                    <View key={key} style={styles.paramRow}>
-                      <Text style={styles.paramKey}>{key}:</Text>
-                      <Text style={styles.paramValue}>
-                        {value?.toString() || "undefined"}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              )}
 
               <TouchableOpacity
                 onPress={() => router.replace("/signin")}

@@ -34,8 +34,6 @@ export default function MagicLinkForm({
       // This will work both in Expo Go and standalone app
       const redirectUrl = Linking.createURL("verify");
 
-      console.log("Magic link redirect URL:", redirectUrl);
-
       await nhost.auth.signInPasswordlessEmail({
         email,
         options: {

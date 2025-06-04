@@ -26,8 +26,6 @@ export default function SocialLoginForm({
     // Use the same redirect URL approach as the magic link
     const redirectUrl = Linking.createURL("verify");
 
-    console.log(`Social ${action.toLowerCase()} redirect URL:`, redirectUrl);
-
     // Sign in with the specified provider
     const url = nhost.auth.signInProviderURL(provider, {
       redirectTo: redirectUrl,

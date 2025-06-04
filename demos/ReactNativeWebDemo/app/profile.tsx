@@ -11,14 +11,10 @@ import { router } from "expo-router";
 import { useAuth } from "./lib/nhost/AuthProvider";
 import ProtectedScreen from "./components/ProtectedScreen";
 import MFASettings from "./components/MFASettings";
-import { type FetchError, type FetchResponse } from "@nhost/nhost-js/fetch";
-import { type ErrorResponse } from "@nhost/nhost-js/auth";
 
 interface MfaStatusResponse {
-  data?: {
-    user?: {
-      activeMfaType: string | null;
-    };
+  user?: {
+    activeMfaType: string | null;
   };
 }
 
@@ -33,29 +29,28 @@ export default function Profile() {
 
       try {
         // Correctly structure GraphQL query with parameters
-        const response: FetchResponse<MfaStatusResponse> =
-          await nhost.graphql.post({
-            query: `
+        const response = await nhost.graphql.post<MfaStatusResponse>({
+          query: `
               query GetUserMfaStatus($userId: uuid!) {
                 user(id: $userId) {
                   activeMfaType
                 }
               }
             `,
-            variables: {
-              userId: user.id,
-            },
-          });
+          variables: {
+            userId: user.id,
+          },
+        });
 
-        const userData = response.body?.data;
-        const activeMfaType = userData?.user?.activeMfaType;
+        const activeMfaType = response.body?.data?.user?.activeMfaType;
         const newMfaEnabled = activeMfaType === "totp";
 
         // Update the state
         setIsMfaEnabled(newMfaEnabled);
       } catch (err) {
-        const error = err as FetchError<ErrorResponse>;
-        console.error(`Failed to query MFA status: ${error.message}`);
+        const errMessage =
+          err instanceof Error ? err.message : "An unexpected error occurred";
+        console.error(`Failed to query MFA status: ${errMessage}`);
       }
     };
 

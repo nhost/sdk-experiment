@@ -9,7 +9,7 @@ import {
 import { createClient, type NhostClient } from "@nhost/nhost-js";
 import { type Session } from "@nhost/nhost-js/auth";
 import Constants from "expo-constants";
-import { NhostAsyncStorage } from "./AsyncStorage";
+import NhostAsyncStorage from "./AsyncStorage";
 
 interface AuthContextType {
   user: Session["user"] | null;

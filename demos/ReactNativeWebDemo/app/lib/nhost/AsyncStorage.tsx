@@ -1,9 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-/**
- * Empty component to satisfy the Router's need for a default export.
- * The actual functionality is provided through the NhostAsyncStorage class.
- */
 import { type Session } from "@nhost/nhost-js/auth";
 import {
   type SessionStorageBackend,
@@ -17,7 +12,7 @@ import {
  * This implementation synchronously works with the SessionStorageBackend interface
  * while ensuring reliable persistence with AsyncStorage for Expo Go.
  */
-export class NhostAsyncStorage implements SessionStorageBackend {
+export default class NhostAsyncStorage implements SessionStorageBackend {
   private key: string;
   private cache: Session | null = null;
 
@@ -95,12 +90,4 @@ export class NhostAsyncStorage implements SessionStorageBackend {
       }
     })();
   }
-}
-
-/**
- * Empty component to satisfy the Router's need for a default export.
- * The actual functionality is provided through the NhostAsyncStorage class above.
- */
-export default function AsyncStorageComponent() {
-  return null;
 }

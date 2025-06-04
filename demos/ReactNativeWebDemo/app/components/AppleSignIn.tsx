@@ -40,7 +40,7 @@ const AppleSignIn: React.FC<AppleSignInProps> = ({ setIsLoading }) => {
         nonce,
       );
 
-      // Request Apple authentication with our hashed nonce (if using)
+      // Request Apple authentication with our hashed nonce
       const credential = await AppleAuthentication.signInAsync({
         requestedScopes: [
           AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
@@ -52,6 +52,7 @@ const AppleSignIn: React.FC<AppleSignInProps> = ({ setIsLoading }) => {
       if (credential.identityToken) {
         // Use the identity token to sign in with Nhost
         // Pass the original unhashed nonce to the SDK
+        // so the server can verify it
         const response = await nhost.auth.signInIdToken({
           provider: "apple",
           idToken: credential.identityToken,

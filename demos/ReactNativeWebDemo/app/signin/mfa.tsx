@@ -14,8 +14,6 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { type FetchError } from "@nhost/nhost-js/fetch";
-import { type ErrorResponse } from "@nhost/nhost-js/auth";
 
 export default function MFAVerification() {
   const { nhost } = useAuth();
@@ -50,20 +48,14 @@ export default function MFAVerification() {
 
     try {
       // Complete MFA verification
-      const response = await nhost.auth.signInVerifyMfaTotp({
+      await nhost.auth.signInVerifyMfaTotp({
         ticket,
         otp: verificationCode,
       });
-
-      // If we have a session, sign in was successful
-      if (response.body?.session) {
-        router.replace("/profile");
-      } else {
-        setError("Failed to verify code");
-      }
     } catch (err) {
-      const error = err as FetchError<ErrorResponse>;
-      setError(`Verification failed: ${error.message}`);
+      const errMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
+      setError(`Verification failed: ${errMessage}`);
     } finally {
       setIsLoading(false);
     }

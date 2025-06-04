@@ -11,8 +11,6 @@ import {
 } from "react-native";
 import { router, Link, useLocalSearchParams } from "expo-router";
 import { useAuth } from "./lib/nhost/AuthProvider";
-import { type ErrorResponse } from "@nhost/nhost-js/auth";
-import { type FetchError } from "@nhost/nhost-js/fetch";
 import MagicLinkForm from "./components/MagicLinkForm";
 import SocialLoginForm from "./components/SocialLoginForm";
 import NativeLoginForm from "./components/NativeLoginForm";
@@ -57,12 +55,13 @@ export default function SignUp() {
         // Successfully signed up and automatically signed in
         router.replace("/profile");
       } else {
-        // Verification email might be required - show success message
+        // Verification email might be required
         router.replace("/signin");
       }
     } catch (err) {
-      const error = err as FetchError<ErrorResponse>;
-      setError(`An error occurred during sign up: ${error.message}`);
+      const errMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
+      setError(`An error occurred during sign up: ${errMessage}`);
     } finally {
       setIsLoading(false);
     }

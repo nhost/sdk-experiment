@@ -11,8 +11,6 @@ import {
 } from "react-native";
 import { router, Link, useLocalSearchParams } from "expo-router";
 import { useAuth } from "./lib/nhost/AuthProvider";
-import { type ErrorResponse } from "@nhost/nhost-js/auth";
-import { type FetchError } from "@nhost/nhost-js/fetch";
 import MagicLinkForm from "./components/MagicLinkForm";
 import SocialLoginForm from "./components/SocialLoginForm";
 import NativeLoginForm from "./components/NativeLoginForm";
@@ -62,8 +60,9 @@ export default function SignIn() {
         setError("Failed to sign in");
       }
     } catch (err) {
-      const error = err as FetchError<ErrorResponse>;
-      setError(`An error occurred during sign in: ${error.message}`);
+      const errMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
+      setError(`An error occurred during sign in: ${errMessage}`);
     } finally {
       setIsLoading(false);
     }
