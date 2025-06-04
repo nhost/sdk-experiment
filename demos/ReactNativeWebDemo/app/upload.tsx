@@ -135,14 +135,15 @@ export default function Upload() {
         throw new Error("No file selected");
       }
 
-      if (!fileToUpload.file) {
-        throw new Error("File not found in selected assets");
-      }
-
+      const file: unknown = {
+        uri: fileToUpload.uri,
+        name: fileToUpload.name || "file",
+        type: fileToUpload.mimeType || "application/octet-stream",
+      };
       // Upload file using Nhost storage
       const response = await nhost.storage.uploadFiles({
         "bucket-id": "default",
-        "file[]": [fileToUpload.file],
+        "file[]": [file as File],
       });
 
       // Get the processed file data
