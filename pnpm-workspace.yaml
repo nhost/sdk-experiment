@@ -8,5 +8,8 @@ onlyBuiltDependencies:
   - sharp
 
 overrides:
-  rollup@<2.79.2: ">=2.79.2"
-  esbuild@<=0.24.2: ">=0.25.0"
+  rollup@<2.79.2: '>=2.79.2'
+  esbuild@<=0.24.2: '>=0.25.0'
+  tar-fs@>=3.0.0 <3.0.9: '>=3.0.9'
+
+nodeLinker: hoisted
