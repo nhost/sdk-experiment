@@ -20,4 +20,7 @@ else
   exit 1
 fi
 
+# format the generated file
+pnpm prettier --write "$GENERATED_FILE"
+
 echo "All tasks completed successfully."
