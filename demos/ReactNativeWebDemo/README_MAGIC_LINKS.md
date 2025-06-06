@@ -48,7 +48,9 @@ export default function MagicLinkForm() {
       setSuccess(true);
     } catch (err) {
       const error = err as FetchError<ErrorResponse>;
-      setError(`An error occurred while sending the magic link: ${error.message}`);
+      setError(
+        `An error occurred while sending the magic link: ${error.message}`,
+      );
     } finally {
       setIsLoading(false);
     }
@@ -92,11 +94,13 @@ The app supports deep linking through custom URL schemes:
 ### URL Format Differences
 
 #### Standalone App
+
 ```
 reactnativewebdemo://verify?refreshToken=abc123...
 ```
 
 #### Expo Go Development
+
 ```
 exp://192.168.1.103:19000/--/verify?refreshToken=abc123...
 ```
@@ -119,7 +123,9 @@ const redirectUrl = Linking.createURL("verify");
 // app/verify.tsx
 export default function Verify() {
   const params = useLocalSearchParams<{ refreshToken: string }>();
-  const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
+  const [status, setStatus] = useState<"verifying" | "success" | "error">(
+    "verifying",
+  );
   const { nhost, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -205,19 +211,23 @@ if (__DEV__) {
 ### Development with Expo Go
 
 1. **Start Development Server**:
+
    ```bash
    npx expo start
    ```
 
-2. **Note Your Local URL**: 
+2. **Note Your Local URL**:
+
    - Check terminal output for development URL (e.g., `exp://192.168.1.103:19000`)
 
 3. **Send Magic Link**:
+
    - Use Magic Link form in the app
    - Enter your email address
    - Submit the form
 
 4. **Check Email Format**:
+
    - Magic link should use format: `exp://192.168.1.103:19000/--/verify?refreshToken=...`
    - The `--` segment is crucial for Expo Go routing
 
@@ -229,25 +239,27 @@ if (__DEV__) {
 ### Testing Strategies
 
 #### Manual Testing
+
 ```typescript
 // Test different scenarios
 const testScenarios = [
-  'Valid magic link with correct token',
-  'Expired magic link',
-  'Invalid refresh token',
-  'Malformed URL parameters',
-  'Network connectivity issues',
-  'Already authenticated user'
+  "Valid magic link with correct token",
+  "Expired magic link",
+  "Invalid refresh token",
+  "Malformed URL parameters",
+  "Network connectivity issues",
+  "Already authenticated user",
 ];
 ```
 
 #### Automated URL Testing
+
 ```typescript
 // Manually test URL handling
 const testUrls = [
-  'exp://192.168.1.103:19000/--/verify?refreshToken=valid_token',
-  'exp://192.168.1.103:19000/--/verify?refreshToken=invalid_token',
-  'exp://192.168.1.103:19000/--/verify', // Missing token
+  "exp://192.168.1.103:19000/--/verify?refreshToken=valid_token",
+  "exp://192.168.1.103:19000/--/verify?refreshToken=invalid_token",
+  "exp://192.168.1.103:19000/--/verify", // Missing token
 ];
 ```
 
@@ -284,15 +296,15 @@ const processToken = async (token: string) => {
   try {
     // Validate token format before sending to server
     if (!token || token.length < 10) {
-      throw new Error('Invalid token format');
+      throw new Error("Invalid token format");
     }
 
     // Use the token
     await nhost.auth.refreshToken({ refreshToken: token });
   } catch (error) {
     // Log error for debugging but don't expose details to user
-    console.error('Magic link authentication failed:', error);
-    throw new Error('Authentication failed. Please try again.');
+    console.error("Magic link authentication failed:", error);
+    throw new Error("Authentication failed. Please try again.");
   }
 };
 ```
@@ -301,26 +313,29 @@ const processToken = async (token: string) => {
 
 ### Common Issues
 
-| Issue | Symptom | Solution |
-|-------|---------|----------|
-| Link doesn't open app | Clicking link opens browser instead | Check URL scheme configuration and Expo Go installation |
-| "No refresh token" error | Link opens app but shows error | Verify email contains correct URL format with parameters |
-| Network errors during verification | Authentication fails with network error | Check Nhost configuration and internet connectivity |
-| Wrong URL format in email | Link uses incorrect protocol or format | Verify `Linking.createURL()` usage and development server URL |
+| Issue                              | Symptom                                 | Solution                                                      |
+| ---------------------------------- | --------------------------------------- | ------------------------------------------------------------- |
+| Link doesn't open app              | Clicking link opens browser instead     | Check URL scheme configuration and Expo Go installation       |
+| "No refresh token" error           | Link opens app but shows error          | Verify email contains correct URL format with parameters      |
+| Network errors during verification | Authentication fails with network error | Check Nhost configuration and internet connectivity           |
+| Wrong URL format in email          | Link uses incorrect protocol or format  | Verify `Linking.createURL()` usage and development server URL |
 
 ### Debug Steps
 
 1. **Check Console Logs**:
+
    ```typescript
-   console.log('Generated redirect URL:', redirectUrl);
-   console.log('Received URL parameters:', params);
+   console.log("Generated redirect URL:", redirectUrl);
+   console.log("Received URL parameters:", params);
    ```
 
 2. **Verify Email Content**:
+
    - Check that email contains correct URL format
    - Ensure refresh token parameter is present
 
 3. **Test URL Manually**:
+
    - Copy magic link from email
    - Paste into browser or use device's URL handler
 
@@ -334,8 +349,8 @@ const processToken = async (token: string) => {
 // Debug Expo Go URLs
 if (__DEV__) {
   const expoUrl = Linking.createURL("verify");
-  console.log('Expo Go URL format:', expoUrl);
-  
+  console.log("Expo Go URL format:", expoUrl);
+
   // Should output something like:
   // exp://192.168.1.103:19000/--/verify
 }

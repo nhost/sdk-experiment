@@ -18,13 +18,15 @@ This is a comprehensive React Native demo showcasing the Nhost SDK integration w
 ## Quick Start
 
 1. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 2. **Configure Nhost**
-   
+
    Update `app.json` with your Nhost configuration:
+
    ```json
    "extra": {
      "NHOST_SUBDOMAIN": "your-subdomain",
@@ -33,15 +35,18 @@ This is a comprehensive React Native demo showcasing the Nhost SDK integration w
    ```
 
    For local development with Nhost CLI:
+
    ```json
    "extra": {
      "NHOST_SUBDOMAIN": "192-168-1-103",
      "NHOST_REGION": "local"
    }
    ```
-   *(Replace with your actual local IP address using hyphens instead of dots)*
+
+   _(Replace with your actual local IP address using hyphens instead of dots)_
 
 3. **Start the development server**
+
    ```bash
    pnpm start
    ```
@@ -88,18 +93,21 @@ ReactNativeWebDemo/
 ## Architecture Overview
 
 ### Authentication Flow
+
 1. **AuthProvider** wraps the entire app providing global auth state
 2. **ProtectedScreen** component guards routes requiring authentication
 3. **Session persistence** maintains login state across app restarts
 4. **Deep linking** handles magic links and OAuth redirects
 
 ### Key Components
+
 - **AuthProvider**: Central authentication state management
 - **ProtectedScreen**: Higher-order component for route protection
 - **Verification flows**: Unified handling for magic links and OAuth callbacks
 - **Storage adapter**: Custom AsyncStorage implementation for session persistence
 
 ### Supported Authentication Methods
+
 1. **Email/Password**: Traditional username/password with MFA support
 2. **Magic Links**: Passwordless authentication via email verification
 3. **Social OAuth**: GitHub integration with redirect handling
@@ -108,22 +116,26 @@ ReactNativeWebDemo/
 ## Configuration
 
 ### Environment Variables
+
 Set these values in `app.json` under the `extra` section:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
+| Variable          | Description                  | Example       |
+| ----------------- | ---------------------------- | ------------- |
 | `NHOST_SUBDOMAIN` | Your Nhost project subdomain | `"myproject"` |
-| `NHOST_REGION` | Nhost region | `"us-east-1"` |
+| `NHOST_REGION`    | Nhost region                 | `"us-east-1"` |
 
 ### Deep Linking Setup
+
 The app is configured with the scheme `reactnativewebdemo://` for standalone builds and uses Expo's linking system for development.
 
 ## Development
 
 ### Local Nhost Backend
+
 To run against a local Nhost backend:
 
 1. Start Nhost CLI:
+
    ```bash
    nhost dev
    ```
@@ -137,6 +149,7 @@ To run against a local Nhost backend:
    ```
 
 ### Testing Authentication
+
 - Use the sign-in screen's tabbed interface to test different auth methods
 - Magic links work in development through proper deep link configuration
 - Social authentication requires OAuth app setup in your Nhost dashboard
@@ -144,7 +157,7 @@ To run against a local Nhost backend:
 ## Documentation
 
 - [Protected Routes & Email Auth](./README_PROTECTED_ROUTES.md)
-- [Native Authentication](./README_NATIVE_AUTHENTICATION.md) 
+- [Native Authentication](./README_NATIVE_AUTHENTICATION.md)
 - [Magic Links](./README_MAGIC_LINKS.md)
 - [Social Sign-In](./README_SOCIAL_SIGNIN.md)
 

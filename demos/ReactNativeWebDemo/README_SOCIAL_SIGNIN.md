@@ -48,7 +48,7 @@ export default function SocialLoginForm({
       <Text style={styles.socialText}>
         {action} using your Social account
       </Text>
-      
+
       <TouchableOpacity
         style={styles.socialButton}
         onPress={() => handleSocialLogin("github")}
@@ -98,11 +98,13 @@ The app supports deep linking to handle OAuth redirects:
 ### Redirect URL Formats
 
 #### Standalone App
+
 ```
 reactnativewebdemo://verify?refreshToken=abc123...&type=signup
 ```
 
 #### Expo Go Development
+
 ```
 exp://192.168.1.103:19000/--/verify?refreshToken=abc123...&type=signup
 ```
@@ -135,7 +137,7 @@ Create a GitHub OAuth App in your GitHub Developer Settings:
 
 1. **Application Name**: Your app name
 2. **Homepage URL**: Your app's homepage
-3. **Authorization Callback URL**: 
+3. **Authorization Callback URL**:
    - Development: `https://local.auth.nhost.run/v1/auth/providers/github/callback`
    - Production: `https://[subdomain].auth.[region].nhost.run/v1/auth/providers/github/callback`
 
@@ -153,11 +155,13 @@ The app requests these GitHub scopes:
 ```typescript
 // app/verify.tsx - Handles both magic links and social auth
 export default function Verify() {
-  const params = useLocalSearchParams<{ 
+  const params = useLocalSearchParams<{
     refreshToken: string;
     type?: string;
   }>();
-  const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
+  const [status, setStatus] = useState<"verifying" | "success" | "error">(
+    "verifying",
+  );
   const { nhost, isAuthenticated } = useAuth();
 
   useEffect(() => {
@@ -248,9 +252,9 @@ const { user } = useAuth();
 
 if (user?.metadata?.github) {
   const githubData = user.metadata.github;
-  console.log('GitHub username:', githubData.login);
-  console.log('Public repos:', githubData.public_repos);
-  console.log('Followers:', githubData.followers);
+  console.log("GitHub username:", githubData.login);
+  console.log("Public repos:", githubData.public_repos);
+  console.log("Followers:", githubData.followers);
 }
 ```
 
@@ -262,28 +266,28 @@ if (user?.metadata?.github) {
 // Common OAuth error scenarios
 const handleOAuthErrors = (error: any) => {
   switch (error.type) {
-    case 'access_denied':
+    case "access_denied":
       // User denied permission
-      Alert.alert('Access Denied', 'You need to grant permission to continue');
+      Alert.alert("Access Denied", "You need to grant permission to continue");
       break;
-    
-    case 'invalid_request':
+
+    case "invalid_request":
       // Malformed OAuth request
-      Alert.alert('Error', 'Invalid authentication request');
+      Alert.alert("Error", "Invalid authentication request");
       break;
-    
-    case 'server_error':
+
+    case "server_error":
       // GitHub server error
-      Alert.alert('Error', 'GitHub is temporarily unavailable');
+      Alert.alert("Error", "GitHub is temporarily unavailable");
       break;
-    
-    case 'temporarily_unavailable':
+
+    case "temporarily_unavailable":
       // Service temporarily unavailable
-      Alert.alert('Error', 'Authentication service is busy. Please try again.');
+      Alert.alert("Error", "Authentication service is busy. Please try again.");
       break;
-    
+
     default:
-      Alert.alert('Error', 'Authentication failed. Please try again.');
+      Alert.alert("Error", "Authentication failed. Please try again.");
   }
 };
 ```
@@ -296,15 +300,15 @@ const processOAuthCallback = async (refreshToken: string) => {
   try {
     await nhost.auth.refreshToken({ refreshToken });
   } catch (error) {
-    if (error.message.includes('Invalid refresh token')) {
-      throw new Error('Authentication session expired. Please try again.');
+    if (error.message.includes("Invalid refresh token")) {
+      throw new Error("Authentication session expired. Please try again.");
     }
-    
-    if (error.message.includes('Network')) {
-      throw new Error('Network error. Please check your connection.');
+
+    if (error.message.includes("Network")) {
+      throw new Error("Network error. Please check your connection.");
     }
-    
-    throw new Error('Authentication failed. Please try again.');
+
+    throw new Error("Authentication failed. Please try again.");
   }
 };
 ```
@@ -314,11 +318,13 @@ const processOAuthCallback = async (refreshToken: string) => {
 ### Development Testing
 
 1. **Start Development Server**:
+
    ```bash
    npx expo start
    ```
 
 2. **Configure Test Environment**:
+
    - Ensure GitHub OAuth app has correct callback URL
    - Verify Nhost GitHub provider configuration
    - Check network connectivity between device and development server
@@ -335,14 +341,14 @@ const processOAuthCallback = async (refreshToken: string) => {
 ```typescript
 // Test different OAuth scenarios
 const testScenarios = [
-  'First-time GitHub authentication',
-  'Returning GitHub user',
-  'User cancels OAuth flow',
-  'User denies permissions',
-  'GitHub account with 2FA enabled',
-  'Network connection issues during OAuth',
-  'Invalid OAuth configuration',
-  'Expired OAuth session'
+  "First-time GitHub authentication",
+  "Returning GitHub user",
+  "User cancels OAuth flow",
+  "User denies permissions",
+  "GitHub account with 2FA enabled",
+  "Network connection issues during OAuth",
+  "Invalid OAuth configuration",
+  "Expired OAuth session",
 ];
 ```
 
@@ -382,33 +388,36 @@ const testScenarios = [
 
 ### Common Issues
 
-| Issue | Symptom | Solution |
-|-------|---------|----------|
-| OAuth redirect doesn't work | Browser opens but doesn't return to app | Check URL scheme configuration and GitHub OAuth app callback URL |
-| "Invalid client" error | GitHub shows OAuth error page | Verify GitHub OAuth app Client ID in Nhost dashboard |
-| "Redirect URI mismatch" | GitHub rejects OAuth request | Ensure callback URL in GitHub app matches Nhost configuration |
-| App doesn't open after OAuth | Browser stays open after GitHub login | Check deep linking configuration and app installation |
+| Issue                        | Symptom                                 | Solution                                                         |
+| ---------------------------- | --------------------------------------- | ---------------------------------------------------------------- |
+| OAuth redirect doesn't work  | Browser opens but doesn't return to app | Check URL scheme configuration and GitHub OAuth app callback URL |
+| "Invalid client" error       | GitHub shows OAuth error page           | Verify GitHub OAuth app Client ID in Nhost dashboard             |
+| "Redirect URI mismatch"      | GitHub rejects OAuth request            | Ensure callback URL in GitHub app matches Nhost configuration    |
+| App doesn't open after OAuth | Browser stays open after GitHub login   | Check deep linking configuration and app installation            |
 
 ### Debug Steps
 
 1. **Check OAuth URL**:
+
    ```typescript
    const url = nhost.auth.signInProviderURL("github", {
      redirectTo: redirectUrl,
    });
-   console.log('OAuth URL:', url);
+   console.log("OAuth URL:", url);
    ```
 
 2. **Verify Redirect URL**:
+
    ```typescript
    const redirectUrl = Linking.createURL("verify");
-   console.log('Redirect URL:', redirectUrl);
+   console.log("Redirect URL:", redirectUrl);
    ```
 
 3. **Check URL Parameters**:
+
    ```typescript
    // In verify screen
-   console.log('Received parameters:', params);
+   console.log("Received parameters:", params);
    ```
 
 4. **Test Manual URL**:
@@ -418,10 +427,12 @@ const testScenarios = [
 ### GitHub-Specific Debugging
 
 1. **Check GitHub OAuth App Settings**:
+
    - Verify callback URLs are correctly configured
    - Ensure app is not suspended or restricted
 
 2. **Monitor GitHub OAuth Logs**:
+
    - Check GitHub OAuth app's activity logs
    - Look for failed authorization attempts
 
@@ -436,6 +447,7 @@ const testScenarios = [
 For production deployment:
 
 1. **Production Callback URL**:
+
    ```
    https://[subdomain].auth.[region].nhost.run/v1/auth/providers/github/callback
    ```
@@ -491,10 +503,14 @@ const handleSocialLogin = (provider: SocialProvider) => {
 // Provider-specific UI
 const getProviderIcon = (provider: SocialProvider) => {
   switch (provider) {
-    case "github": return "logo-github";
-    case "google": return "logo-google";
-    case "facebook": return "logo-facebook";
-    case "discord": return "logo-discord";
+    case "github":
+      return "logo-github";
+    case "google":
+      return "logo-google";
+    case "facebook":
+      return "logo-facebook";
+    case "discord":
+      return "logo-discord";
   }
 };
 ```

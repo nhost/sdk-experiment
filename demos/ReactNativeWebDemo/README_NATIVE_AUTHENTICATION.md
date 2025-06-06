@@ -215,7 +215,7 @@ While Apple Sign-In typically doesn't require custom deep linking (it's handled 
 ```typescript
 // app/verify.tsx - Used by other auth methods
 useEffect(() => {
-  const subscription = Linking.addEventListener('url', handleDeepLink);
+  const subscription = Linking.addEventListener("url", handleDeepLink);
   return () => subscription?.remove();
 }, []);
 
@@ -233,23 +233,23 @@ const handleAppleSignIn = async () => {
   try {
     // ... authentication logic
   } catch (error: any) {
-    if (error.code === 'ERR_CANCELED') {
+    if (error.code === "ERR_CANCELED") {
       // User canceled authentication
       return;
     }
-    
-    if (error.code === 'ERR_INVALID_RESPONSE') {
-      Alert.alert('Error', 'Invalid response from Apple');
+
+    if (error.code === "ERR_INVALID_RESPONSE") {
+      Alert.alert("Error", "Invalid response from Apple");
       return;
     }
-    
-    if (error.code === 'ERR_NOT_AVAILABLE') {
-      Alert.alert('Error', 'Apple Sign-In not available on this device');
+
+    if (error.code === "ERR_NOT_AVAILABLE") {
+      Alert.alert("Error", "Apple Sign-In not available on this device");
       return;
     }
-    
+
     // Generic error handling
-    Alert.alert('Authentication Error', error.message || 'Unknown error');
+    Alert.alert("Authentication Error", error.message || "Unknown error");
   }
 };
 ```
@@ -265,14 +265,14 @@ const response = await nhost.auth.signInIdToken({
 
 if (response.error) {
   switch (response.error.message) {
-    case 'Invalid identity token':
-      Alert.alert('Error', 'Authentication failed. Please try again.');
+    case "Invalid identity token":
+      Alert.alert("Error", "Authentication failed. Please try again.");
       break;
-    case 'Invalid nonce':
-      Alert.alert('Error', 'Security verification failed');
+    case "Invalid nonce":
+      Alert.alert("Error", "Security verification failed");
       break;
     default:
-      Alert.alert('Error', 'Authentication error occurred');
+      Alert.alert("Error", "Authentication error occurred");
   }
 }
 ```
@@ -301,7 +301,7 @@ const credential = await AppleAuthentication.signInAsync({
 });
 
 // Email might be a private relay address
-console.log('Email:', credential.email); // Could be privaterelay@example.com
+console.log("Email:", credential.email); // Could be privaterelay@example.com
 ```
 
 ## Testing
@@ -317,12 +317,12 @@ console.log('Email:', credential.email); // Could be privaterelay@example.com
 ```typescript
 // Test different authentication states
 const testScenarios = [
-  'First-time sign in with Apple ID',
-  'Returning user authentication',
-  'User cancels authentication',
-  'Network connection issues',
-  'Invalid Apple ID credentials',
-  'Apple ID with 2FA enabled',
+  "First-time sign in with Apple ID",
+  "Returning user authentication",
+  "User cancels authentication",
+  "Network connection issues",
+  "Invalid Apple ID credentials",
+  "Apple ID with 2FA enabled",
 ];
 ```
 
@@ -347,22 +347,22 @@ const testScenarios = [
 
 ### Common Issues
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| "Not Available" Error | iOS version < 13 or not configured | Check device compatibility and configuration |
-| Invalid Identity Token | Incorrect Nhost Apple configuration | Verify Apple provider settings in Nhost dashboard |
-| Nonce Mismatch | Sending hashed nonce to Nhost | Send original unhashed nonce to Nhost |
-| Bundle ID Mismatch | App bundle ID doesn't match Apple config | Ensure bundle IDs match in all configurations |
+| Issue                  | Cause                                    | Solution                                          |
+| ---------------------- | ---------------------------------------- | ------------------------------------------------- |
+| "Not Available" Error  | iOS version < 13 or not configured       | Check device compatibility and configuration      |
+| Invalid Identity Token | Incorrect Nhost Apple configuration      | Verify Apple provider settings in Nhost dashboard |
+| Nonce Mismatch         | Sending hashed nonce to Nhost            | Send original unhashed nonce to Nhost             |
+| Bundle ID Mismatch     | App bundle ID doesn't match Apple config | Ensure bundle IDs match in all configurations     |
 
 ### Debug Tools
 
 ```typescript
 // Enable debug logging
 if (__DEV__) {
-  console.log('Apple Auth Available:', appleAuthAvailable);
-  console.log('Generated Nonce:', nonce);
-  console.log('Hashed Nonce:', hashedNonce);
-  console.log('Identity Token:', credential.identityToken);
+  console.log("Apple Auth Available:", appleAuthAvailable);
+  console.log("Generated Nonce:", nonce);
+  console.log("Hashed Nonce:", hashedNonce);
+  console.log("Identity Token:", credential.identityToken);
 }
 ```
 
