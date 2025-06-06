@@ -266,7 +266,9 @@ query GetNinjaTurtlesWithComments {
 }
 
 mutation AddComment($ninjaTurtleId: uuid!, $comment: String!) {
-  insert_comments_one(object: {ninjaTurtleId: $ninjaTurtleId, comment: $comment}) {
+  insert_comments_one(
+    object: { ninjaTurtleId: $ninjaTurtleId, comment: $comment }
+  ) {
     id
   }
 }
@@ -338,7 +340,7 @@ export default function Home() {
   return (
     <div>
       <h1>Ninja Turtles</h1>
-      {ninjaTurtles.map(turtle => (
+      {ninjaTurtles.map((turtle) => (
         <div key={turtle.id}>
           <h2>{turtle.name}</h2>
           <p>{turtle.description}</p>
@@ -347,11 +349,14 @@ export default function Home() {
           <div>
             <h3>Comments ({turtle.comments.length})</h3>
 
-            {turtle.comments.map(comment => (
+            {turtle.comments.map((comment) => (
               <div key={comment.id}>
                 <p>{comment.comment}</p>
                 <small>
-                  By {comment.user?.displayName || comment.user?.email || "Anonymous"}
+                  By{" "}
+                  {comment.user?.displayName ||
+                    comment.user?.email ||
+                    "Anonymous"}
                 </small>
               </div>
             ))}
