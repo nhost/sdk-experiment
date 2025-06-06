@@ -2,7 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { createNhostClient } from "../lib/nhost/server";
-import type { ErrorResponse } from "@nhost/nhost-js/auth";
+import type {
+  ErrorResponse,
+  AuthenticatorAttestationResponse,
+} from "@nhost/nhost-js/auth";
 import type { FetchError } from "@nhost/nhost-js/fetch";
 
 /**
@@ -136,7 +139,7 @@ export async function signUpWebAuthn({
  * Verifies WebAuthn registration response
  */
 export async function verifySignUpWebAuthn(
-  credential: PublicKeyCredentialJSON,
+  credential: AuthenticatorAttestationResponse,
   nickname: string,
 ) {
   try {
@@ -144,7 +147,7 @@ export async function verifySignUpWebAuthn(
     const nhost = await createNhostClient();
 
     const response = await nhost.auth.verifySignUpWebAuthn({
-      credential: credential as Credential,
+      credential,
       nickname,
     });
 

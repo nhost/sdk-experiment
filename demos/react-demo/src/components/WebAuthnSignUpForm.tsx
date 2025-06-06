@@ -1,6 +1,10 @@
 import { useState, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { type ErrorResponse } from "@nhost/nhost-js/auth";
+import {
+  type ErrorResponse,
+  type SignUpWebauthnResponse,
+  type AuthenticatorAttestationResponse,
+} from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import { isWebAuthnSupported } from "../lib/utils";
 
@@ -40,7 +44,7 @@ export default function WebAuthnSignUpForm({
   const [error, setError] = useState<string | null>(null);
   const [keyNickname, setKeyNickname] = useState<string>("");
   const [challengeData, setChallengeData] =
-    useState<PublicKeyCredentialCreationOptionsJSON | null>(null);
+    useState<SignUpWebauthnResponse | null>(null);
 
   /**
    * Handles the WebAuthn registration flow (sign up with security key/biometrics)
@@ -97,11 +101,13 @@ export default function WebAuthnSignUpForm({
         // and creates a new public/private key pair
         // - The private key is stored securely on the device
         // - The public key will be sent to the server
-        const credential = await navigator.credentials.create({
+        const credential = (await navigator.credentials.create({
           publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
-            response.body,
+            response.body as PublicKeyCredentialCreationOptionsJSON,
           ),
-        });
+        })) as unknown as AuthenticatorAttestationResponse;
+        // the line above is a bit hacky but necessary because of the way the Credential
+        // API works with TypeScript types
 
         if (!credential) {
           setError("No credential was created.");

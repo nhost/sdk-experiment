@@ -2,7 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { createNhostClient } from "../lib/nhost/server";
-import type { ErrorResponse } from "@nhost/nhost-js/auth";
+import type {
+  ErrorResponse,
+  AuthenticatorAssertionResponse,
+} from "@nhost/nhost-js/auth";
 import type { FetchError } from "@nhost/nhost-js/fetch";
 
 /**
@@ -193,7 +196,7 @@ export async function signInWebAuthn() {
  * This is called after the user has completed the WebAuthn authentication
  */
 export async function verifySignInWebAuthn(
-  credential: PublicKeyCredentialJSON,
+  credential: AuthenticatorAssertionResponse,
 ) {
   try {
     // Get the server Nhost client
@@ -202,7 +205,7 @@ export async function verifySignInWebAuthn(
     console.log("Verifying WebAuthn credential:", credential);
 
     const response = await nhost.auth.verifySignInWebAuthn({
-      credential: credential as Credential,
+      credential,
     });
 
     // If we have a session, verification was successful
