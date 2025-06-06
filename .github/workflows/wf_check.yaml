@@ -86,6 +86,17 @@ jobs:
       run: make check
       if: ${{ steps.verify-build.outputs.BUILD_NEEDED == 'yes' }}
 
+    - name: "Check for unexpected file changes"
+      run: |
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "Error: Files were modified during the build/check process:"
+          git status --porcelain
+          git diff
+          exit 1
+        fi
+        echo "No unexpected file changes detected."
+      if: ${{ steps.verify-build.outputs.BUILD_NEEDED == 'yes' }}
+
     - name: "Cache build"
       run: |
         nix store sign --key-file <(echo "${{ secrets.NIX_CACHE_PRIV_KEY }}") --all
