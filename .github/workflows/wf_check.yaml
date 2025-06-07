@@ -81,9 +81,10 @@ jobs:
     - name: "Build artifact"
       run: |
         nix develop .\#${{ inputs.NAME }} -c make build
+      if: ${{ steps.verify-build.outputs.BUILD_NEEDED == 'yes' }}
 
     - name: "Run checks"
-      run: make check
+      run: nix develop .\#${{ inputs.NAME }} -c make check
       if: ${{ steps.verify-build.outputs.BUILD_NEEDED == 'yes' }}
 
     - name: "Check for unexpected file changes"
