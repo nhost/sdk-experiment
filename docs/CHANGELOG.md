@@ -2,7 +2,7 @@
 
 ## main
 
-- 20250607 fix (packages/next-js): use proper types for Webauthn endpoints
+- 20250607 fix (packages/next-js): use proper types for Webauthn endpoints #29
 - 20250601 chore (ci): enabled #26
 
 ## 2.31.0
