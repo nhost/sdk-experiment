@@ -71,7 +71,7 @@ importers:
         specifier: ^4.5.3
         version: 4.5.4(@types/node@22.15.29)(rollup@4.40.2)(typescript@5.8.3)(vite@6.3.5(@types/node@22.15.29)(jiti@2.4.2)(lightningcss@1.27.0)(terser@5.40.0)(yaml@2.8.0))
 
-  demos/ReactNativeWebDemo:
+  demos/ReactNativeDemo:
     dependencies:
       '@expo/vector-icons':
         specifier: ^14.1.0
