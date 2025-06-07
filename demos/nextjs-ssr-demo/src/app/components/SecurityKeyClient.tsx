@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createNhostClient } from "../lib/nhost/client";
 import { isWebAuthnSupported } from "../lib/utils";
+import type { AuthenticatorAttestationResponse } from "@nhost/nhost-js/auth";
 
 /**
  * Represents a WebAuthn security key stored for a user
@@ -113,11 +114,11 @@ export default function SecurityKeyClient({
       const initResponse = await nhost.auth.addSecurityKey();
 
       // Step 2: Browser prompts user for security key or biometric verification
-      const credential = await navigator.credentials.create({
+      const credential = (await navigator.credentials.create({
         publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
-          initResponse.body,
+          initResponse.body as PublicKeyCredentialCreationOptionsJSON,
         ),
-      });
+      })) as unknown as AuthenticatorAttestationResponse;
 
       if (!credential) {
         setErrorMessage("No credential was selected. Please try again.");

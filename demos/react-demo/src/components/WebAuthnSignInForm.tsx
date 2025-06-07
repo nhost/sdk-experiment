@@ -1,7 +1,10 @@
 import { useState, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import { type ErrorResponse } from "@nhost/nhost-js/auth";
+import {
+  type ErrorResponse,
+  type AuthenticatorAssertionResponse,
+} from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import { isWebAuthnSupported } from "../lib/utils";
 
@@ -47,11 +50,13 @@ export default function WebAuthnSignInForm(): JSX.Element {
         // The navigator.credentials.get() API activates the authenticator (fingerprint reader,
         // security key, etc.) and asks the user to verify their identity
         // The authenticator then signs the challenge with the private key
-        const credential = await navigator.credentials.get({
+        const credential = (await navigator.credentials.get({
           publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(
-            response.body,
+            response.body as PublicKeyCredentialRequestOptionsJSON,
           ),
-        });
+        })) as unknown as AuthenticatorAssertionResponse;
+        // the line above is a bit hacky but necessary because of the way the Credential
+        // API works with TypeScript types
 
         if (!credential) {
           setError("No credential was selected.");

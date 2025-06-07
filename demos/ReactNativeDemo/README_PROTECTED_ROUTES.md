@@ -5,6 +5,7 @@ This document explains how protected routes and email/password authentication ar
 ## Overview
 
 The app implements a robust authentication system with:
+
 - Email/password sign-up and sign-in
 - Route protection for authenticated users
 - Multi-factor authentication (MFA) with TOTP
@@ -26,7 +27,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const nhost = useMemo(() => {
-    const subdomain = Constants.expoConfig?.extra?.["NHOST_SUBDOMAIN"] || "local";
+    const subdomain =
+      Constants.expoConfig?.extra?.["NHOST_SUBDOMAIN"] || "local";
     const region = Constants.expoConfig?.extra?.["NHOST_REGION"] || "local";
 
     return createClient({
@@ -35,7 +37,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       storage: new NhostAsyncStorage(), // Custom AsyncStorage adapter
     });
   }, []);
-  
+
   // Session initialization and change listeners...
 };
 ```
@@ -128,10 +130,11 @@ const handleSignUp = async () => {
 ```typescript
 // User authentication with email and password
 const handleSignIn = async () => {
-  const { error, needsEmailVerification, needsMfaOtp } = await nhost.auth.signInEmailPassword({
-    email,
-    password,
-  });
+  const { error, needsEmailVerification, needsMfaOtp } =
+    await nhost.auth.signInEmailPassword({
+      email,
+      password,
+    });
 
   if (needsEmailVerification) {
     setError("Please verify your email before signing in");
@@ -160,7 +163,7 @@ The app supports Time-based One-Time Password (TOTP) authentication:
 // Generate TOTP secret and QR code
 const generateMfa = async () => {
   const { totpSecret, qrCodeDataUrl } = await nhost.auth.generateMfa();
-  
+
   // Display QR code for user to scan with authenticator app
   setQrCode(qrCodeDataUrl);
   setTotpSecret(totpSecret);
@@ -243,17 +246,17 @@ export default class NhostAsyncStorage implements Storage {
 ```typescript
 const handleAuthError = (error: any) => {
   switch (error?.message) {
-    case 'Invalid email or password':
-      setError('Please check your email and password');
+    case "Invalid email or password":
+      setError("Please check your email and password");
       break;
-    case 'Email not verified':
-      setError('Please verify your email before signing in');
+    case "Email not verified":
+      setError("Please verify your email before signing in");
       break;
-    case 'Invalid MFA code':
-      setError('Please enter a valid 6-digit code');
+    case "Invalid MFA code":
+      setError("Please enter a valid 6-digit code");
       break;
     default:
-      setError('An unexpected error occurred');
+      setError("An unexpected error occurred");
   }
 };
 ```
@@ -261,6 +264,7 @@ const handleAuthError = (error: any) => {
 ### Network and Storage Errors
 
 The app handles various error scenarios:
+
 - Network connectivity issues
 - AsyncStorage failures
 - Nhost service unavailability
@@ -279,6 +283,7 @@ The app handles various error scenarios:
 ### Password Requirements
 
 Configure password requirements in your Nhost dashboard:
+
 - Minimum length
 - Character complexity
 - Common password prevention
@@ -303,7 +308,7 @@ Enable debug mode to see authentication state changes:
 // Add to AuthProvider for debugging
 useEffect(() => {
   if (__DEV__) {
-    console.log('Auth state changed:', { isAuthenticated, user: user?.email });
+    console.log("Auth state changed:", { isAuthenticated, user: user?.email });
   }
 }, [isAuthenticated, user]);
 ```

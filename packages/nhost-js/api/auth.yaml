@@ -1651,21 +1651,67 @@ components:
 
     SignInWebauthnResponse:
       type: object
-      additionalProperties: true
-      x-go-type-import:
-        name: protocol
-        path: github.com/go-webauthn/webauthn/protocol
-      x-go-type: protocol.PublicKeyCredentialRequestOptions
-      x-ts-type: PublicKeyCredentialRequestOptionsJSON
+      additionalProperties: false
+      properties:
+        challenge:
+          type: string
+          description: Base64url encoded challenge
+        timeout:
+          type: integer
+          description: Timeout in milliseconds
+        rpId:
+          type: string
+          description: Relying Party identifier
+        allowCredentials:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicKeyCredentialDescriptor"
+          description: List of acceptable credentials
+        userVerification:
+          type: string
+          enum: ["required", "preferred", "discouraged"]
+          default: "preferred"
+          description: User verification requirement
+        extensions:
+          type: object
+          additionalProperties: true
+          description: Client extension inputs
 
     SignUpWebauthnResponse:
       type: object
-      additionalProperties: true
-      x-go-type-import:
-        name: protocol
-        path: github.com/go-webauthn/webauthn/protocol
-      x-go-type: protocol.PublicKeyCredentialCreationOptions
-      x-ts-type: PublicKeyCredentialCreationOptionsJSON
+      additionalProperties: false
+      properties:
+        rp:
+          $ref: "#/components/schemas/PublicKeyCredentialRpEntity"
+        user:
+          $ref: "#/components/schemas/PublicKeyCredentialUserEntity"
+        challenge:
+          type: string
+          description: Base64url encoded challenge
+        pubKeyCredParams:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicKeyCredentialParameters"
+          description: Supported public key algorithms
+        timeout:
+          type: integer
+          description: Timeout in milliseconds
+        excludeCredentials:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicKeyCredentialDescriptor"
+          description: Credentials to exclude
+        authenticatorSelection:
+          $ref: "#/components/schemas/AuthenticatorSelectionCriteria"
+        attestation:
+          type: string
+          enum: ["none", "indirect", "direct", "enterprise"]
+          default: "none"
+          description: Attestation conveyance preference
+        extensions:
+          type: object
+          additionalProperties: true
+          description: Client extension inputs
 
     SignInWebauthnVerifyRequest:
       type: object
@@ -1678,13 +1724,7 @@ components:
           type: string
           deprecated: true
         credential:
-          type: object
-          additionalProperties: true
-          x-go-type-import:
-            name: protocol
-            path: github.com/go-webauthn/webauthn/protocol
-          x-go-type: protocol.CredentialAssertionResponse
-          x-ts-type: Credential
+          $ref: "#/components/schemas/AuthenticatorAssertionResponse"
       required:
         - credential
 
@@ -1693,13 +1733,7 @@ components:
       additionalProperties: false
       properties:
         credential:
-          type: object
-          additionalProperties: true
-          x-go-type-import:
-            name: protocol
-            path: github.com/go-webauthn/webauthn/protocol
-          x-go-type: protocol.CredentialCreationResponse
-          x-ts-type: Credential
+          $ref: "#/components/schemas/AuthenticatorAttestationResponse"
         options:
           $ref: "#/components/schemas/SignUpOptions"
         nickname:
@@ -1710,25 +1744,46 @@ components:
 
     AddSecurityKeyResponse:
       type: object
-      additionalProperties: true
-      x-go-type-import:
-        name: protocol
-        path: github.com/go-webauthn/webauthn/protocol
-      x-go-type: protocol.PublicKeyCredentialCreationOptions
-      x-ts-type: PublicKeyCredentialCreationOptionsJSON
+      additionalProperties: false
+      properties:
+        rp:
+          $ref: "#/components/schemas/PublicKeyCredentialRpEntity"
+        user:
+          $ref: "#/components/schemas/PublicKeyCredentialUserEntity"
+        challenge:
+          type: string
+          description: Base64url encoded challenge
+        pubKeyCredParams:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicKeyCredentialParameters"
+          description: Supported public key algorithms
+        timeout:
+          type: integer
+          description: Timeout in milliseconds
+        excludeCredentials:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicKeyCredentialDescriptor"
+          description: Credentials to exclude
+        authenticatorSelection:
+          $ref: "#/components/schemas/AuthenticatorSelectionCriteria"
+        attestation:
+          type: string
+          enum: ["none", "indirect", "direct", "enterprise"]
+          default: "none"
+          description: Attestation conveyance preference
+        extensions:
+          type: object
+          additionalProperties: true
+          description: Client extension inputs
 
     VerifyAddSecurityKeyRequest:
       type: object
       additionalProperties: false
       properties:
         credential:
-          type: object
-          additionalProperties: true
-          x-go-type-import:
-            name: protocol
-            path: github.com/go-webauthn/webauthn/protocol
-          x-go-type: protocol.CredentialCreationResponse
-          x-ts-type: Credential
+          $ref: "#/components/schemas/AuthenticatorAttestationResponse"
           description: The credential created during registration
         nickname:
           type: string
@@ -1839,6 +1894,139 @@ components:
       required:
         - imageUrl
         - totpSecret
+
+    # WebAuthn Supporting Schema Definitions
+
+    PublicKeyCredentialDescriptor:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          enum: ["public-key"]
+          description: The type of credential
+        id:
+          type: string
+          description: Base64url encoded credential ID
+        transports:
+          type: array
+          items:
+            type: string
+            enum: ["usb", "nfc", "ble", "smart-card", "hybrid", "internal"]
+          description: Hints about how the client might communicate with the authenticator
+      required:
+        - type
+        - id
+
+    PublicKeyCredentialRpEntity:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: Relying Party identifier
+        name:
+          type: string
+          description: Human-readable name for the Relying Party
+      required:
+        - name
+
+    PublicKeyCredentialUserEntity:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: Base64url encoded user handle
+        name:
+          type: string
+          description: Human-readable account name
+        displayName:
+          type: string
+          description: Human-readable display name
+      required:
+        - id
+        - name
+        - displayName
+
+    PublicKeyCredentialParameters:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          enum: ["public-key"]
+          description: The type of credential
+        alg:
+          type: integer
+          description: COSE algorithm identifier
+      required:
+        - type
+        - alg
+
+    AuthenticatorSelectionCriteria:
+      type: object
+      additionalProperties: false
+      properties:
+        authenticatorAttachment:
+          type: string
+          enum: ["platform", "cross-platform"]
+          description: Authenticator attachment preference
+        residentKey:
+          type: string
+          enum: ["discouraged", "preferred", "required"]
+          description: Resident key requirement
+        requireResidentKey:
+          type: boolean
+          default: false
+          description: Whether a resident key is required (legacy)
+        userVerification:
+          type: string
+          enum: ["required", "preferred", "discouraged"]
+          default: "preferred"
+          description: User verification requirement
+
+    AuthenticatorAssertionResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        clientDataJSON:
+          type: string
+          description: Base64url encoded client data JSON
+        authenticatorData:
+          type: string
+          description: Base64url encoded authenticator data
+        signature:
+          type: string
+          description: Base64url encoded assertion signature
+        userHandle:
+          type: string
+          nullable: true
+          description: Base64url encoded user handle
+      required:
+        - clientDataJSON
+        - authenticatorData
+        - signature
+
+    AuthenticatorAttestationResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        clientDataJSON:
+          type: string
+          description: Base64url encoded client data JSON
+        attestationObject:
+          type: string
+          description: Base64url encoded attestation object
+        transports:
+          type: array
+          items:
+            type: string
+            enum: ["usb", "nfc", "ble", "smart-card", "hybrid", "internal"]
+          description: Available transports for the authenticator
+      required:
+        - clientDataJSON
+        - attestationObject
 
   parameters:
     SignInProvider:

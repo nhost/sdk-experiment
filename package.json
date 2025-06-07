@@ -10,7 +10,10 @@
     "build": "pnpm --recursive run build",
     "test": "pnpm --recursive run test",
     "test:audit": "pnpm audit",
-    "format": "pnpm --recursive run format"
+    "format": "pnpm --recursive run format",
+    "clean": "pnpm clean:node_modules && pnpm clean:build",
+    "clean:node_modules": "find . -name 'node_modules' -type d -prune -exec rm -rf {} +",
+    "clean:build": "find . -name 'dist' -type d -prune -exec rm -rf {} + && find . -name '.next' -type d -prune -exec rm -rf {} + && find . -name '*.tsbuildinfo' -type f -delete && find . -name '.turbo' -type d -prune -exec rm -rf {} +"
   },
   "devDependencies": {
     "@eslint/js": "9.26.0",
@@ -21,6 +24,7 @@
     "@types/node": "^22.15.17",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@typescript-eslint/parser": "^8.32.1",
+    "eslint": "9.26.0",
     "eslint-plugin-next": "^0.0.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",

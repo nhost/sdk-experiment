@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { isWebAuthnSupported } from "../lib/utils";
 import { signInWebAuthn, verifySignInWebAuthn } from "../signin/actions";
+import type {
+  SignInWebauthnResponse,
+  AuthenticatorAssertionResponse,
+} from "@nhost/nhost-js/auth";
 
 interface WebAuthnSignInFormProps {
   buttonLabel?: string;
@@ -15,7 +19,7 @@ export default function WebAuthnSignInForm({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [challengeData, setChallengeData] =
-    useState<PublicKeyCredentialRequestOptionsJSON | null>(null);
+    useState<SignInWebauthnResponse | null>(null);
   const router = useRouter();
 
   /**
@@ -56,11 +60,13 @@ export default function WebAuthnSignInForm({
 
       try {
         // Step 2: Browser prompts user for their security key or biometric verification
-        const credential = await navigator.credentials.get({
+        const credential = (await navigator.credentials.get({
           publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(
-            result.publicKeyCredentialRequestOptions,
+            result.publicKeyCredentialRequestOptions as PublicKeyCredentialRequestOptionsJSON,
           ),
-        });
+        })) as unknown as AuthenticatorAssertionResponse;
+        // the line above is a bit hacky but necessary because of the way the Credential
+        // API works with TypeScript types
 
         if (!credential) {
           setError("No credential was selected.");
@@ -70,9 +76,7 @@ export default function WebAuthnSignInForm({
 
         // Step 3: Send the signed challenge to the server for verification
         // Use PublicKeyCredential's built-in serialization method
-        const verifyResult = await verifySignInWebAuthn(
-          (credential as PublicKeyCredential).toJSON(),
-        );
+        const verifyResult = await verifySignInWebAuthn(credential);
 
         if (verifyResult.error) {
           setError(verifyResult.error);

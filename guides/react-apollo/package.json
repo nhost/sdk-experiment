@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "pnpm build:codegen && tsc && vite build",
-    "build:codegen": "pnpm graphql-codegen --config codegen.ts",
+    "build:codegen": "bash codegen-wrapper.sh",
     "test": "pnpm test:audit && pnpm test:typecheck && pnpm test:lint && pnpm test:format && echo \"No tests specified\" && exit 0",
     "test:typecheck": "tsc --noEmit",
     "test:lint": "eslint .",
