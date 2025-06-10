@@ -78,7 +78,7 @@ URL for the GraphQL endpoint.
 ###### Call Signature
 
 ```ts
-post<T>(request: GraphQLRequest, options?: RequestInit): Promise<FetchResponse<GraphQLResponse<T>>>;
+post<TResponseData, TVariables>(request: GraphQLRequest<TVariables>, options?: RequestInit): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
 ```
 
 Execute a GraphQL query operation
@@ -87,52 +87,53 @@ Queries are used to fetch data and should not modify any data on the server.
 
 ###### Type Parameters
 
-| Type Parameter | Default type |
-| -------------- | ------------ |
-| `T`            | `any`        |
+| Type Parameter  | Default type                            |
+| --------------- | --------------------------------------- |
+| `TResponseData` | `any`                                   |
+| `TVariables`    | [`GraphQLVariables`](#graphqlvariables) |
 
 ###### Parameters
 
-| Parameter  | Type                                | Description                                                    |
-| ---------- | ----------------------------------- | -------------------------------------------------------------- |
-| `request`  | [`GraphQLRequest`](#graphqlrequest) | GraphQL request object containing query and optional variables |
-| `options?` | `RequestInit`                       | Additional fetch options to apply to the request               |
+| Parameter  | Type                                                    | Description                                                    |
+| ---------- | ------------------------------------------------------- | -------------------------------------------------------------- |
+| `request`  | [`GraphQLRequest`](#graphqlrequest)&lt;`TVariables`&gt; | GraphQL request object containing query and optional variables |
+| `options?` | `RequestInit`                                           | Additional fetch options to apply to the request               |
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`T`&gt;&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`TResponseData`&gt;&gt;&gt;
 
 Promise with the GraphQL response and metadata
 
 ###### Call Signature
 
 ```ts
-post<T, V>(
-   document: TypedDocumentNode<T, V>,
-   variables?: V,
-   options?: RequestInit): Promise<FetchResponse<GraphQLResponse<T>>>;
+post<TResponseData, TVariables>(
+   document: TypedDocumentNode<TResponseData, TVariables>,
+   variables?: TVariables,
+   options?: RequestInit): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
 ```
 
 Execute a GraphQL query operation using a typed document node
 
 ###### Type Parameters
 
-| Type Parameter | Default type                            |
-| -------------- | --------------------------------------- |
-| `T`            | -                                       |
-| `V`            | [`GraphQLVariables`](#graphqlvariables) |
+| Type Parameter  | Default type                            |
+| --------------- | --------------------------------------- |
+| `TResponseData` | -                                       |
+| `TVariables`    | [`GraphQLVariables`](#graphqlvariables) |
 
 ###### Parameters
 
-| Parameter    | Type                                | Description                                                 |
-| ------------ | ----------------------------------- | ----------------------------------------------------------- |
-| `document`   | `TypedDocumentNode`&lt;`T`, `V`&gt; | TypedDocumentNode containing the query and type information |
-| `variables?` | `V`                                 | Variables for the GraphQL operation                         |
-| `options?`   | `RequestInit`                       | Additional fetch options to apply to the request            |
+| Parameter    | Type                                                     | Description                                                 |
+| ------------ | -------------------------------------------------------- | ----------------------------------------------------------- |
+| `document`   | `TypedDocumentNode`&lt;`TResponseData`, `TVariables`&gt; | TypedDocumentNode containing the query and type information |
+| `variables?` | `TVariables`                                             | Variables for the GraphQL operation                         |
+| `options?`   | `RequestInit`                                            | Additional fetch options to apply to the request            |
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`T`&gt;&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`TResponseData`&gt;&gt;&gt;
 
 Promise with the GraphQL response and metadata
 
@@ -188,9 +189,15 @@ Path in the query where the error occurred
 
 ---
 
-### GraphQLRequest
+### GraphQLRequest&lt;TVariables&gt;
 
 GraphQL request object used for queries and mutations.
+
+#### Type Parameters
+
+| Type Parameter | Default type                            |
+| -------------- | --------------------------------------- |
+| `TVariables`   | [`GraphQLVariables`](#graphqlvariables) |
 
 #### Properties
 
@@ -213,29 +220,29 @@ The GraphQL query or mutation string
 ##### variables?
 
 ```ts
-optional variables: GraphQLVariables;
+optional variables: TVariables;
 ```
 
 Optional variables for parameterized queries
 
 ---
 
-### GraphQLResponse&lt;T&gt;
+### GraphQLResponse&lt;TResponseData&gt;
 
 Standard GraphQL response format as defined by the GraphQL specification.
 
 #### Type Parameters
 
-| Type Parameter | Default type |
-| -------------- | ------------ |
-| `T`            | `any`        |
+| Type Parameter  | Default type |
+| --------------- | ------------ |
+| `TResponseData` | `any`        |
 
 #### Properties
 
 ##### data?
 
 ```ts
-optional data: T;
+optional data: TResponseData;
 ```
 
 The data returned from successful execution
