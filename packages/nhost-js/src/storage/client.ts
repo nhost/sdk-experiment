@@ -539,23 +539,22 @@ export const createAPIClient = (
     params?: GetFileMetadataHeadersParams,
     options?: RequestInit,
   ): Promise<FetchResponse<void>> => {
-    const normalizedParams = new URLSearchParams();
+    const encodedParameters =
+      params &&
+      Object.entries(params)
+        .map(([key, value]) => {
+          const stringValue = Array.isArray(value)
+            ? value.join(",")
+            : typeof value === "object"
+              ? JSON.stringify(value)
+              : (value as string);
+          return `${key}=${encodeURIComponent(stringValue)}`;
+        })
+        .join("&");
 
-    Object.entries(params || {}).forEach(([key, value]) => {
-      if (value !== undefined) {
-        normalizedParams.append(
-          key,
-          value === null ? "null" : value.toString(),
-        );
-      }
-    });
-
-    const stringifiedParams = normalizedParams.toString();
-
-    const url =
-      stringifiedParams.length > 0
-        ? baseURL + `/files/${id}?${stringifiedParams}`
-        : baseURL + `/files/${id}`;
+    const url = encodedParameters
+      ? baseURL + `/files/${id}?${encodedParameters}`
+      : baseURL + `/files/${id}`;
     const res = await fetch(url, {
       ...options,
       method: "HEAD",
@@ -584,23 +583,22 @@ export const createAPIClient = (
     params?: GetFileParams,
     options?: RequestInit,
   ): Promise<FetchResponse<Blob>> => {
-    const normalizedParams = new URLSearchParams();
+    const encodedParameters =
+      params &&
+      Object.entries(params)
+        .map(([key, value]) => {
+          const stringValue = Array.isArray(value)
+            ? value.join(",")
+            : typeof value === "object"
+              ? JSON.stringify(value)
+              : (value as string);
+          return `${key}=${encodeURIComponent(stringValue)}`;
+        })
+        .join("&");
 
-    Object.entries(params || {}).forEach(([key, value]) => {
-      if (value !== undefined) {
-        normalizedParams.append(
-          key,
-          value === null ? "null" : value.toString(),
-        );
-      }
-    });
-
-    const stringifiedParams = normalizedParams.toString();
-
-    const url =
-      stringifiedParams.length > 0
-        ? baseURL + `/files/${id}?${stringifiedParams}`
-        : baseURL + `/files/${id}`;
+    const url = encodedParameters
+      ? baseURL + `/files/${id}?${encodedParameters}`
+      : baseURL + `/files/${id}`;
     const res = await fetch(url, {
       ...options,
       method: "GET",
