@@ -29,10 +29,10 @@ jobs:
             echo "::error::CHANGELOG.md does not exist in ${{ inputs.PROJECT_PATH }}"
             exit 1
           fi
-          
+
           # Validate PR title format
           PR_TITLE="${{ github.event.pull_request.title }}"
-          if ! echo "$PR_TITLE" | grep -Eq "^(feat|fix|chore) \([a-zA-Z0-9_/-]+\): .+$"; then
+          if ! echo "$PR_TITLE" | grep -Eq "^(feat|fix|chore) \(.+): .+$"; then
             echo "::error::PR title '$PR_TITLE' does not follow the required format: 'feat|fix|chore (affected-service): this is the title'"
             exit 1
           fi
@@ -42,10 +42,10 @@ jobs:
 
           # Extract PR number
           PR_NUMBER="${{ github.event.pull_request.number }}"
-          
+
           # Create the expected CHANGELOG entry format with PR title and number
           EXPECTED_ENTRY="$PR_TITLE #$PR_NUMBER"
-          
+
           # Check if PR title with PR number appears in the diff
           if grep -q "$EXPECTED_ENTRY" changelog_diff.txt; then
             echo "PR title with PR number found in ${{ inputs.PROJECT_PATH}}/CHANGELOG.md diff"
