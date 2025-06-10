@@ -2,6 +2,7 @@ import { describe, it, expect } from "@jest/globals";
 import { createClient } from "../index";
 import type { GraphQLResponse } from "../graphql/client";
 import type { FetchError } from "../fetch";
+import { gql } from "@apollo/client";
 
 interface GetUsersResponse {
   users: {
@@ -113,6 +114,79 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
       await nhost.graphql.post({
         query: `query { restricted { id } }`,
       });
+
+      expect(true).toBe(false);
+    } catch (error) {
+      const resp = error as FetchError<GraphQLResponse>;
+      expect(resp.body.errors).toBeDefined();
+      expect(resp.body.errors).toHaveLength(1);
+      const errors = resp.body.errors!;
+      expect(errors[0]?.message).toBe(
+        "field 'restricted' not found in type: 'query_root'",
+      );
+      expect(error.message).toBe(
+        "field 'restricted' not found in type: 'query_root'",
+      );
+      expect(errors[0].extensions?.path).toBe("$.selectionSet.restricted");
+      expect(errors[0].extensions?.code).toBe("validation-failed");
+    }
+  });
+
+  it("query with TypedDocumentNode", async () => {
+    const GetUsersDocument = gql`
+      query GetUsers($limit: Int) {
+        users(limit: $limit) {
+          id
+          displayName
+          metadata
+        }
+      }
+    `;
+
+    const users = await nhost.graphql.post<GetUsersResponse>(GetUsersDocument, {
+      limit: 10,
+    });
+
+    console.log(users.body.data?.users);
+
+    expect(users.body.data?.users).toBeDefined();
+    expect(users.body.data?.users[0].id).toBeDefined();
+    expect(users.body.data?.users[0].displayName).toBeDefined();
+    expect(users.body.data?.users[0].metadata).toBeDefined();
+    expect(users.body.data?.users[0].metadata.source).toBe("test");
+  });
+
+  it("query with TypedDocumentNode without variables", async () => {
+    const GetUsersDocument = gql`
+      query GetUsers($limit: Int) {
+        users(limit: $limit) {
+          id
+          displayName
+          metadata
+        }
+      }
+    `;
+
+    const users = await nhost.graphql.post<GetUsersResponse>(GetUsersDocument);
+
+    console.log(users.body.data?.users);
+
+    expect(users.body.data?.users).toBeDefined();
+    expect(users.body.data?.users[0].id).toBeDefined();
+    expect(users.body.data?.users[0].displayName).toBeDefined();
+    expect(users.body.data?.users[0].metadata).toBeDefined();
+  });
+
+  it("query with TypedDocumentNode errors", async () => {
+    try {
+      const RestrictedQuery = gql`
+        query {
+          restricted {
+            id
+          }
+        }
+      `;
+      await nhost.graphql.post(RestrictedQuery);
 
       expect(true).toBe(false);
     } catch (error) {

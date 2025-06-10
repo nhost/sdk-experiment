@@ -107,9 +107,9 @@ Promise with the GraphQL response and metadata
 ###### Call Signature
 
 ```ts
-post<T>(
-   document: TypedDocumentNode<T, GraphQLVariables>,
-   variables?: GraphQLVariables,
+post<T, V>(
+   document: TypedDocumentNode<T, V>,
+   variables?: V,
    options?: RequestInit): Promise<FetchResponse<GraphQLResponse<T>>>;
 ```
 
@@ -117,17 +117,18 @@ Execute a GraphQL query operation using a typed document node
 
 ###### Type Parameters
 
-| Type Parameter |
-| -------------- |
-| `T`            |
+| Type Parameter | Default type                            |
+| -------------- | --------------------------------------- |
+| `T`            | -                                       |
+| `V`            | [`GraphQLVariables`](#graphqlvariables) |
 
 ###### Parameters
 
-| Parameter    | Type                                                                    | Description                                                 |
-| ------------ | ----------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `document`   | `TypedDocumentNode`&lt;`T`, [`GraphQLVariables`](#graphqlvariables)&gt; | TypedDocumentNode containing the query and type information |
-| `variables?` | [`GraphQLVariables`](#graphqlvariables)                                 | Variables for the GraphQL operation                         |
-| `options?`   | `RequestInit`                                                           | Additional fetch options to apply to the request            |
+| Parameter    | Type                                | Description                                                 |
+| ------------ | ----------------------------------- | ----------------------------------------------------------- |
+| `document`   | `TypedDocumentNode`&lt;`T`, `V`&gt; | TypedDocumentNode containing the query and type information |
+| `variables?` | `V`                                 | Variables for the GraphQL operation                         |
+| `options?`   | `RequestInit`                       | Additional fetch options to apply to the request            |
 
 ###### Returns
 
@@ -252,17 +253,11 @@ Array of errors if execution was unsuccessful or partially successful
 ### GraphQLVariables
 
 ```ts
-type GraphQLVariables = object;
+type GraphQLVariables = Record<string, any>;
 ```
 
 Variables object for GraphQL operations.
 Key-value pairs of variable names and their values.
-
-#### Index Signature
-
-```ts
-[key: string]: any
-```
 
 ## Functions
 

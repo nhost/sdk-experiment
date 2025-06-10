@@ -85,9 +85,9 @@ export interface Client {
    * @param options - Additional fetch options to apply to the request
    * @returns Promise with the GraphQL response and metadata
    */
-  post<T>(
-    document: TypedDocumentNode<T, GraphQLVariables>,
-    variables?: GraphQLVariables,
+  post<T, V = GraphQLVariables>(
+    document: TypedDocumentNode<T, V>,
+    variables?: V,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<T>>>;
 
@@ -151,26 +151,28 @@ export const createAPIClient = (
     request: GraphQLRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<T>>>;
-  function post<T>(
-    document: TypedDocumentNode<T, GraphQLVariables>,
-    variables?: GraphQLVariables,
+  function post<T, V = GraphQLVariables>(
+    document: TypedDocumentNode<T, V>,
+    variables?: V,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<T>>>;
-  function post<T>(
-    requestOrDocument: GraphQLRequest | TypedDocumentNode<T, GraphQLVariables>,
-    variablesOrOptions?: GraphQLVariables | RequestInit,
+  function post<T, V = GraphQLVariables>(
+    requestOrDocument: GraphQLRequest | TypedDocumentNode<T, V>,
+    variablesOrOptions?: V | RequestInit,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<T>>> {
     if (typeof requestOrDocument === "object" && "kind" in requestOrDocument) {
       // Handle TypedDocumentNode
       const request: GraphQLRequest = {
         query: requestOrDocument.loc?.source.body || "",
-        variables: variablesOrOptions,
+        variables: variablesOrOptions as GraphQLVariables,
       };
       return executeOperation(request, options);
     } else {
       // Handle GraphQLRequest
-      return executeOperation(requestOrDocument, variablesOrOptions);
+      const request = requestOrDocument;
+      const requestOptions = variablesOrOptions as RequestInit;
+      return executeOperation(request, requestOptions);
     }
   }
 
