@@ -2,10 +2,10 @@ import eslint from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import globals from 'globals'
 import pluginVue from 'eslint-plugin-vue'
-import { vueTsConfigs } from '@vue/eslint-config-typescript'
+import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
 
-export default tseslint.config(
+export default defineConfigWithVueTs(
   eslint.configs.recommended,
   tseslint.configs.recommendedTypeChecked,
   tseslint.configs.stylistic,
@@ -84,8 +84,8 @@ export default tseslint.config(
       ],
     },
   },
-  // Include Vue TypeScript configurations
-  ...vueTsConfigs.recommended,
-  // Skip formatting rules (handled by Prettier)
+  // // Include Vue TypeScript configurations
+  vueTsConfigs.recommended,
+  // // Skip formatting rules (handled by Prettier)
   skipFormatting,
 )
