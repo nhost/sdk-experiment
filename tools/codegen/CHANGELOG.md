@@ -1,1 +1,2 @@
+- 20250610 fix (tools/codegen;packages/nhost-js): encode URL parameters better #30
 - 20250601 chore (ci): enabled #26

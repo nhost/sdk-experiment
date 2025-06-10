@@ -806,22 +806,22 @@ export const createAPIClient = (
     params?: GetFileMetadataHeadersParams,
     options?: RequestInit,
   ): Promise<FetchResponse<void>> => {
-    const normalizedParams = new URLSearchParams();
-
-    Object.entries(params || {}).forEach(([key, value]) => {
-      if (value !== undefined) {
-        normalizedParams.append(
-          key,
-          value === null ? "null" : value.toString(),
-        );
-      }
-    });
-
-    const stringifiedParams = normalizedParams.toString();
+  const encodedParameters =
+    params &&
+    Object.entries(params)
+      .map(([key, value]) => {
+        const stringValue = Array.isArray(value)
+          ? value.join(',')
+          : typeof value === 'object'
+          ? JSON.stringify(value)
+          : (value as string)
+        return `${key}=${encodeURIComponent(stringValue)}`
+      })
+      .join('&')
 
     const url =
-      stringifiedParams.length > 0
-        ? baseURL + `/files/${id}?${stringifiedParams}`
+     encodedParameters
+        ? baseURL + `/files/${id}?${encodedParameters}`
         : baseURL + `/files/${id}`;
     const res = await fetch(url, {
       ...options,
@@ -853,22 +853,22 @@ export const createAPIClient = (
     params?: GetFileParams,
     options?: RequestInit,
   ): Promise<FetchResponse<Blob>> => {
-    const normalizedParams = new URLSearchParams();
-
-    Object.entries(params || {}).forEach(([key, value]) => {
-      if (value !== undefined) {
-        normalizedParams.append(
-          key,
-          value === null ? "null" : value.toString(),
-        );
-      }
-    });
-
-    const stringifiedParams = normalizedParams.toString();
+  const encodedParameters =
+    params &&
+    Object.entries(params)
+      .map(([key, value]) => {
+        const stringValue = Array.isArray(value)
+          ? value.join(',')
+          : typeof value === 'object'
+          ? JSON.stringify(value)
+          : (value as string)
+        return `${key}=${encodeURIComponent(stringValue)}`
+      })
+      .join('&')
 
     const url =
-      stringifiedParams.length > 0
-        ? baseURL + `/files/${id}?${stringifiedParams}`
+     encodedParameters
+        ? baseURL + `/files/${id}?${encodedParameters}`
         : baseURL + `/files/${id}`;
     const res = await fetch(url, {
       ...options,
@@ -966,22 +966,22 @@ export const createAPIClient = (
     const  verifyTicketURL = (
     params?: VerifyTicketParams,
   ): string => {
-    const normalizedParams = new URLSearchParams();
-
-    Object.entries(params || {}).forEach(([key, value]) => {
-      if (value !== undefined) {
-        normalizedParams.append(
-          key,
-          value === null ? "null" : value.toString(),
-        );
-      }
-    });
-
-    const stringifiedParams = normalizedParams.toString();
+  const encodedParameters =
+    params &&
+    Object.entries(params)
+      .map(([key, value]) => {
+        const stringValue = Array.isArray(value)
+          ? value.join(',')
+          : typeof value === 'object'
+          ? JSON.stringify(value)
+          : (value as string)
+        return `${key}=${encodeURIComponent(stringValue)}`
+      })
+      .join('&')
 
     const url =
-      stringifiedParams.length > 0
-        ? baseURL + `/verify?${stringifiedParams}`
+     encodedParameters
+        ? baseURL + `/verify?${encodedParameters}`
         : baseURL + `/verify`;
     return url;
   };
