@@ -2597,23 +2597,22 @@ export const createAPIClient = (
   };
 
   const verifyTicketURL = (params?: VerifyTicketParams): string => {
-    const normalizedParams = new URLSearchParams();
+    const encodedParameters =
+      params &&
+      Object.entries(params)
+        .map(([key, value]) => {
+          const stringValue = Array.isArray(value)
+            ? value.join(",")
+            : typeof value === "object"
+              ? JSON.stringify(value)
+              : (value as string);
+          return `${key}=${encodeURIComponent(stringValue)}`;
+        })
+        .join("&");
 
-    Object.entries(params || {}).forEach(([key, value]) => {
-      if (value !== undefined) {
-        normalizedParams.append(
-          key,
-          value === null ? "null" : value.toString(),
-        );
-      }
-    });
-
-    const stringifiedParams = normalizedParams.toString();
-
-    const url =
-      stringifiedParams.length > 0
-        ? baseURL + `/verify?${stringifiedParams}`
-        : baseURL + `/verify`;
+    const url = encodedParameters
+      ? baseURL + `/verify?${encodedParameters}`
+      : baseURL + `/verify`;
     return url;
   };
 
@@ -2621,23 +2620,22 @@ export const createAPIClient = (
     provider: SignInProvider,
     params?: SignInProviderParams,
   ): string => {
-    const normalizedParams = new URLSearchParams();
+    const encodedParameters =
+      params &&
+      Object.entries(params)
+        .map(([key, value]) => {
+          const stringValue = Array.isArray(value)
+            ? value.join(",")
+            : typeof value === "object"
+              ? JSON.stringify(value)
+              : (value as string);
+          return `${key}=${encodeURIComponent(stringValue)}`;
+        })
+        .join("&");
 
-    Object.entries(params || {}).forEach(([key, value]) => {
-      if (value !== undefined) {
-        normalizedParams.append(
-          key,
-          value === null ? "null" : value.toString(),
-        );
-      }
-    });
-
-    const stringifiedParams = normalizedParams.toString();
-
-    const url =
-      stringifiedParams.length > 0
-        ? baseURL + `/signin/provider/${provider}?${stringifiedParams}`
-        : baseURL + `/signin/provider/${provider}`;
+    const url = encodedParameters
+      ? baseURL + `/signin/provider/${provider}?${encodedParameters}`
+      : baseURL + `/signin/provider/${provider}`;
     return url;
   };
 

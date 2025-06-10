@@ -72,4 +72,29 @@ describe("Nhost Auth - Sign Up with Email and Password", () => {
       });
     }
   });
+
+  it("should get a valid url for provider sign in with empty parameters", () => {
+    const url = nhostAuth.signInProviderURL("google");
+
+    expect(url).toBe(`https://local.auth.nhost.run/v1/signin/provider/google`);
+  });
+
+  it("should get a valid url for provider sign in with complex parameters", () => {
+    const url = nhostAuth.signInProviderURL("google", {
+      allowedRoles: ["user", "me"],
+      defaultRole: "user",
+      displayName: "Test User",
+      locale: "en",
+      metadata: {
+        source: "test",
+        boolean: true,
+        number: 123,
+      },
+      redirectTo: "https://example.com/callback",
+    });
+
+    expect(url).toBe(
+      `https://local.auth.nhost.run/v1/signin/provider/google?allowedRoles=user%2Cme&defaultRole=user&displayName=Test%20User&locale=en&metadata=%7B%22source%22%3A%22test%22%2C%22boolean%22%3Atrue%2C%22number%22%3A123%7D&redirectTo=https%3A%2F%2Fexample.com%2Fcallback`,
+    );
+  });
 });

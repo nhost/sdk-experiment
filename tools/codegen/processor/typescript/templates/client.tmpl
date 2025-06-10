@@ -87,22 +87,22 @@ export const createAPIClient = (
   ): Promise<FetchResponse<{{ .ReturnType }}>> => {
   {{- end }}
   {{- if .HasQueryParameters }}
-    const normalizedParams = new URLSearchParams();
-
-    Object.entries(params || {}).forEach(([key, value]) => {
-      if (value !== undefined) {
-        normalizedParams.append(
-          key,
-          value === null ? "null" : value.toString(),
-        );
-      }
-    });
-
-    const stringifiedParams = normalizedParams.toString();
+  const encodedParameters =
+    params &&
+    Object.entries(params)
+      .map(([key, value]) => {
+        const stringValue = Array.isArray(value)
+          ? value.join(',')
+          : typeof value === 'object'
+          ? JSON.stringify(value)
+          : (value as string)
+        return `${key}=${encodeURIComponent(stringValue)}`
+      })
+      .join('&')
 
     const url =
-      stringifiedParams.length > 0
-        ? baseURL + `{{ .Path }}?${stringifiedParams}`
+     encodedParameters
+        ? baseURL + `{{ .Path }}?${encodedParameters}`
         : baseURL + `{{ .Path }}`;
   {{- else }}
     const url = baseURL + `{{ .Path }}`;
