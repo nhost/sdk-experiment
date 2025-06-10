@@ -1,39 +1,112 @@
-# vue-demo
+# Nhost Vue Demo
 
-This template should help get you started developing with Vue 3 in Vite.
+This is a Vue.js demonstration of the Nhost SDK, showcasing authentication, user management, and security features.
 
-## Recommended IDE Setup
+## Features
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+This demo includes the following migrated pages and functionality from the React demo:
 
-## Type Support for `.vue` Imports in TS
+### Authentication Pages
+- **Sign In Page** (`/signin`) - Multi-tab authentication with:
+  - Email + Password authentication
+  - Magic link authentication
+  - Social authentication (GitHub)
+  - WebAuthn/Security Key authentication
+- **Sign Up Page** (`/signup`) - User registration with the same authentication methods
+- **Verify Page** (`/verify`) - Email verification and magic link processing
+- **Profile Page** (`/profile`) - Protected user profile management
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+### Profile Management Components
+- **User Information Display** - Shows user details, roles, and session info
+- **Multi-Factor Authentication (MFA) Settings** - Enable/disable TOTP-based MFA
+- **Password Management** - Change user password
+- **Security Keys Management** - Add/remove WebAuthn security keys
 
-## Customize configuration
+## Technical Stack
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- **Vue 3** with Composition API
+- **Vue Router 4** for navigation
+- **TypeScript** for type safety
+- **Vite** for build tooling
+- **Nhost SDK** for backend integration
 
-## Project Setup
+## Getting Started
 
-```sh
-pnpm install
+1. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+
+2. Start the development server:
+   ```bash
+   pnpm dev
+   ```
+
+3. Open [http://localhost:5173](http://localhost:5173) in your browser
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── forms/
+│   │   ├── TabForm.vue          # Multi-tab form component
+│   │   ├── MagicLinkForm.vue    # Magic link authentication
+│   │   ├── WebAuthnSignInForm.vue
+│   │   └── WebAuthnSignUpForm.vue
+│   ├── profile/
+│   │   ├── MFASettings.vue      # MFA management
+│   │   ├── ChangePassword.vue   # Password change
+│   │   └── SecurityKeys.vue     # WebAuthn key management
+│   └── Navigation.vue           # Main navigation
+├── views/
+│   ├── SignIn.vue              # Sign in page
+│   ├── SignUp.vue              # Sign up page
+│   ├── Verify.vue              # Email verification page
+│   └── Profile.vue             # User profile page
+├── lib/
+│   ├── nhost/
+│   │   └── auth.ts             # Auth composable
+│   └── utils.ts                # Utility functions
+└── router/
+    └── index.ts                # Vue Router configuration
 ```
 
-### Compile and Hot-Reload for Development
+## Key Differences from React Version
 
-```sh
-pnpm dev
-```
+- Uses Vue 3 Composition API instead of React hooks
+- Vue Router instead of React Router
+- Vue's reactivity system with `ref` and `reactive`
+- Template-based rendering instead of JSX
+- Event handling with `@click` instead of `onClick`
+- Two-way data binding with `v-model`
 
-### Type-Check, Compile and Minify for Production
+## Authentication Flow
 
-```sh
-pnpm build
-```
+1. **Sign In/Up**: Users can authenticate using multiple methods
+2. **Email Verification**: Magic links and social logins redirect to `/verify` for token processing
+3. **Session Management**: Automatic session handling with Nhost
+4. **Protected Routes**: Profile page requires authentication
+5. **MFA Support**: Optional TOTP-based multi-factor authentication
+6. **WebAuthn Support**: Passwordless authentication with security keys
 
-### Lint with [ESLint](https://eslint.org/)
+## Styling
 
-```sh
-pnpm lint
-```
+The demo uses the same CSS styling as the React version to maintain visual consistency, featuring:
+- Dark theme with gradient accents
+- Glass-morphism card design
+- Responsive layout
+- Consistent button and form styling
+
+## Environment Variables
+
+Configure the following in `.env`:
+- `VITE_NHOST_REGION` - Nhost region (default: "local")
+- `VITE_NHOST_SUBDOMAIN` - Nhost subdomain (default: "local")
+
+## Available Scripts
+
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm preview` - Preview production build
+- `pnpm test` - Run tests and linting
