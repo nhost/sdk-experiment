@@ -12,6 +12,8 @@ import {
   FetchError,
 } from "../fetch";
 
+import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
+
 /**
  * Variables object for GraphQL operations.
  * Key-value pairs of variable names and their values.
@@ -76,6 +78,20 @@ export interface Client {
   ): Promise<FetchResponse<GraphQLResponse<T>>>;
 
   /**
+   * Execute a GraphQL query operation using a typed document node
+   *
+   * @param document - TypedDocumentNode containing the query and type information
+   * @param variables - Variables for the GraphQL operation
+   * @param options - Additional fetch options to apply to the request
+   * @returns Promise with the GraphQL response and metadata
+   */
+  post<T>(
+    document: TypedDocumentNode<T, GraphQLVariables>,
+    variables?: GraphQLVariables,
+    options?: RequestInit,
+  ): Promise<FetchResponse<GraphQLResponse<T>>>;
+
+  /**
    * URL for the GraphQL endpoint.
    */
   url: string;
@@ -131,11 +147,32 @@ export const createAPIClient = (
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const post = <T = any>(
+  function post<T = any>(
     request: GraphQLRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<GraphQLResponse<T>>> =>
-    executeOperation(request, options);
+  ): Promise<FetchResponse<GraphQLResponse<T>>>;
+  function post<T>(
+    document: TypedDocumentNode<T, GraphQLVariables>,
+    variables?: GraphQLVariables,
+    options?: RequestInit,
+  ): Promise<FetchResponse<GraphQLResponse<T>>>;
+  function post<T>(
+    requestOrDocument: GraphQLRequest | TypedDocumentNode<T, GraphQLVariables>,
+    variablesOrOptions?: GraphQLVariables | RequestInit,
+    options?: RequestInit,
+  ): Promise<FetchResponse<GraphQLResponse<T>>> {
+    if (typeof requestOrDocument === "object" && "kind" in requestOrDocument) {
+      // Handle TypedDocumentNode
+      const request: GraphQLRequest = {
+        query: requestOrDocument.loc?.source.body || "",
+        variables: variablesOrOptions,
+      };
+      return executeOperation(request, options);
+    } else {
+      // Handle GraphQLRequest
+      return executeOperation(requestOrDocument, variablesOrOptions);
+    }
+  }
 
   return {
     post,

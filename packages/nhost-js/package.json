@@ -105,6 +105,7 @@
     "node": ">=20"
   },
   "devDependencies": {
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.17",

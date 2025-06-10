@@ -75,6 +75,8 @@ URL for the GraphQL endpoint.
 
 ##### post()
 
+###### Call Signature
+
 ```ts
 post<T>(request: GraphQLRequest, options?: RequestInit): Promise<FetchResponse<GraphQLResponse<T>>>;
 ```
@@ -95,6 +97,37 @@ Queries are used to fetch data and should not modify any data on the server.
 | ---------- | ----------------------------------- | -------------------------------------------------------------- |
 | `request`  | [`GraphQLRequest`](#graphqlrequest) | GraphQL request object containing query and optional variables |
 | `options?` | `RequestInit`                       | Additional fetch options to apply to the request               |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`GraphQLResponse`](#graphqlresponse)&lt;`T`&gt;&gt;&gt;
+
+Promise with the GraphQL response and metadata
+
+###### Call Signature
+
+```ts
+post<T>(
+   document: TypedDocumentNode<T, GraphQLVariables>,
+   variables?: GraphQLVariables,
+   options?: RequestInit): Promise<FetchResponse<GraphQLResponse<T>>>;
+```
+
+Execute a GraphQL query operation using a typed document node
+
+###### Type Parameters
+
+| Type Parameter |
+| -------------- |
+| `T`            |
+
+###### Parameters
+
+| Parameter    | Type                                                                    | Description                                                 |
+| ------------ | ----------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `document`   | `TypedDocumentNode`&lt;`T`, [`GraphQLVariables`](#graphqlvariables)&gt; | TypedDocumentNode containing the query and type information |
+| `variables?` | [`GraphQLVariables`](#graphqlvariables)                                 | Variables for the GraphQL operation                         |
+| `options?`   | `RequestInit`                                                           | Additional fetch options to apply to the request            |
 
 ###### Returns
 
@@ -219,11 +252,17 @@ Array of errors if execution was unsuccessful or partially successful
 ### GraphQLVariables
 
 ```ts
-type GraphQLVariables = Record<string, any>;
+type GraphQLVariables = object;
 ```
 
 Variables object for GraphQL operations.
 Key-value pairs of variable names and their values.
+
+#### Index Signature
+
+```ts
+[key: string]: any
+```
 
 ## Functions
 
