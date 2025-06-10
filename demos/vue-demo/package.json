@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build",
-    "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "test": "pnpm test:audit && pnpm test:typecheck && pnpm test:lint && pnpm test:format && echo \"No tests specified\" && exit 0",
+    "test:typecheck": "vue-tsc --build",
+    "test:lint": "eslint .",
+    "test:format": "prettier --check .",
+    "test:audit": "pnpm audit",
+    "format": "prettier --write .",
+    "preview": "vite preview"
   },
   "dependencies": {
     "vue": "^3.5.13"
