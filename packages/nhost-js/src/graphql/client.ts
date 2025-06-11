@@ -115,7 +115,10 @@ export const createAPIClient = (
   const enhancedFetch = createEnhancedFetch(chainFunctions);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const executeOperation = async <TResponseData = any, TVariables = GraphQLVariables>(
+  const executeOperation = async <
+    TResponseData = any,
+    TVariables = GraphQLVariables,
+  >(
     request: GraphQLRequest<TVariables>,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<TResponseData>>> => {
@@ -157,7 +160,9 @@ export const createAPIClient = (
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
   function post<TResponseData, TVariables = GraphQLVariables>(
-    requestOrDocument: GraphQLRequest<TVariables> | TypedDocumentNode<TResponseData, TVariables>,
+    requestOrDocument:
+      | GraphQLRequest<TVariables>
+      | TypedDocumentNode<TResponseData, TVariables>,
     variablesOrOptions?: TVariables | RequestInit,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<TResponseData>>> {
