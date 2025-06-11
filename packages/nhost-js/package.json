@@ -105,12 +105,12 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "@apollo/client": "^3.13.8",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.17",
     "@types/rollup-plugin-peer-deps-external": "^2.2.5",
+    "graphql-tag": "^2.12.6",
     "jest": "^29.7.0",
     "openapi3-ts": "^4.4.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
