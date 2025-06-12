@@ -2,7 +2,7 @@ import { describe, it, expect } from "@jest/globals";
 import { createClient } from "../index";
 import type { GraphQLResponse } from "../graphql/client";
 import type { FetchError } from "../fetch";
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 interface GetUsersResponse {
   users: {

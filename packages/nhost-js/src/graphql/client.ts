@@ -114,8 +114,8 @@ export const createAPIClient = (
 ): Client => {
   const enhancedFetch = createEnhancedFetch(chainFunctions);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const executeOperation = async <
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     TResponseData = any,
     TVariables = GraphQLVariables,
   >(
