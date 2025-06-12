@@ -12,6 +12,8 @@ import {
   FetchError,
 } from "../fetch";
 
+import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
+
 /**
  * Variables object for GraphQL operations.
  * Key-value pairs of variable names and their values.
@@ -22,11 +24,11 @@ export type GraphQLVariables = Record<string, any>;
 /**
  * GraphQL request object used for queries and mutations.
  */
-export interface GraphQLRequest {
+export interface GraphQLRequest<TVariables = GraphQLVariables> {
   /** The GraphQL query or mutation string */
   query: string;
   /** Optional variables for parameterized queries */
-  variables?: GraphQLVariables;
+  variables?: TVariables;
   /** Optional name of the operation to execute */
   operationName?: string;
 }
@@ -49,9 +51,9 @@ export interface GraphQLError {
  * Standard GraphQL response format as defined by the GraphQL specification.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface GraphQLResponse<T = any> {
+export interface GraphQLResponse<TResponseData = any> {
   /** The data returned from successful execution */
-  data?: T;
+  data?: TResponseData;
   /** Array of errors if execution was unsuccessful or partially successful */
   errors?: GraphQLError[];
 }
@@ -70,10 +72,24 @@ export interface Client {
    * @returns Promise with the GraphQL response and metadata
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  post<T = any>(
-    request: GraphQLRequest,
+  post<TResponseData = any, TVariables = GraphQLVariables>(
+    request: GraphQLRequest<TVariables>,
     options?: RequestInit,
-  ): Promise<FetchResponse<GraphQLResponse<T>>>;
+  ): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
+
+  /**
+   * Execute a GraphQL query operation using a typed document node
+   *
+   * @param document - TypedDocumentNode containing the query and type information
+   * @param variables - Variables for the GraphQL operation
+   * @param options - Additional fetch options to apply to the request
+   * @returns Promise with the GraphQL response and metadata
+   */
+  post<TResponseData, TVariables = GraphQLVariables>(
+    document: TypedDocumentNode<TResponseData, TVariables>,
+    variables?: TVariables,
+    options?: RequestInit,
+  ): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
 
   /**
    * URL for the GraphQL endpoint.
@@ -98,11 +114,14 @@ export const createAPIClient = (
 ): Client => {
   const enhancedFetch = createEnhancedFetch(chainFunctions);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const executeOperation = async <T = any>(
-    request: GraphQLRequest,
+  const executeOperation = async <
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    TResponseData = any,
+    TVariables = GraphQLVariables,
+  >(
+    request: GraphQLRequest<TVariables>,
     options?: RequestInit,
-  ): Promise<FetchResponse<GraphQLResponse<T>>> => {
+  ): Promise<FetchResponse<GraphQLResponse<TResponseData>>> => {
     const response = await enhancedFetch(`${url}`, {
       method: "POST",
       headers: {
@@ -113,9 +132,9 @@ export const createAPIClient = (
     });
 
     const body = await response.text();
-    const data: GraphQLResponse<T> = (
+    const data: GraphQLResponse<TResponseData> = (
       body ? JSON.parse(body) : {}
-    ) as GraphQLResponse<T>;
+    ) as GraphQLResponse<TResponseData>;
 
     const resp = {
       body: data,
@@ -131,11 +150,36 @@ export const createAPIClient = (
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const post = <T = any>(
-    request: GraphQLRequest,
+  function post<TResponseData = any, TVariables = GraphQLVariables>(
+    request: GraphQLRequest<TVariables>,
     options?: RequestInit,
-  ): Promise<FetchResponse<GraphQLResponse<T>>> =>
-    executeOperation(request, options);
+  ): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
+  function post<TResponseData, TVariables = GraphQLVariables>(
+    document: TypedDocumentNode<TResponseData, TVariables>,
+    variables?: TVariables,
+    options?: RequestInit,
+  ): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
+  function post<TResponseData, TVariables = GraphQLVariables>(
+    requestOrDocument:
+      | GraphQLRequest<TVariables>
+      | TypedDocumentNode<TResponseData, TVariables>,
+    variablesOrOptions?: TVariables | RequestInit,
+    options?: RequestInit,
+  ): Promise<FetchResponse<GraphQLResponse<TResponseData>>> {
+    if (typeof requestOrDocument === "object" && "kind" in requestOrDocument) {
+      // Handle TypedDocumentNode
+      const request: GraphQLRequest<TVariables> = {
+        query: requestOrDocument.loc?.source.body || "",
+        variables: variablesOrOptions as TVariables,
+      };
+      return executeOperation(request, options);
+    } else {
+      // Handle GraphQLRequest
+      const request = requestOrDocument;
+      const requestOptions = variablesOrOptions as RequestInit;
+      return executeOperation(request, requestOptions);
+    }
+  }
 
   return {
     post,
