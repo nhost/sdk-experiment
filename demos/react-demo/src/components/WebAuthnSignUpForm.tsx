@@ -85,7 +85,7 @@ export default function WebAuthnSignUpForm({
       // - user account information
       // - challenge to prevent replay attacks
       // - supported algorithms
-      const response = await nhost.auth.signUpWebAuthn({
+      const response = await nhost.auth.signUpWebauthn({
         email,
         options: {
           displayName,
@@ -118,7 +118,7 @@ export default function WebAuthnSignUpForm({
         // Step 3: Send the credential attestation to the server for verification
         // The server verifies the attestation signature and certificate chain,
         // then stores the public key for future authentication attempts
-        const verifyResponse = await nhost.auth.verifySignUpWebAuthn({
+        const verifyResponse = await nhost.auth.verifySignUpWebauthn({
           credential,
           options: {
             displayName: displayName || undefined,

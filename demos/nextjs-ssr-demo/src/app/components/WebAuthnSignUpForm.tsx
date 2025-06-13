@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { isWebAuthnSupported } from "../lib/utils";
-import { signUpWebAuthn, verifySignUpWebAuthn } from "../signup/actions";
+import { signUpWebauthn, verifySignUpWebauthn } from "../signup/actions";
 import type {
   SignUpWebauthnResponse,
   AuthenticatorAttestationResponse,
@@ -58,7 +58,7 @@ export default function WebAuthnSignUpForm({
 
     try {
       // Step 1: Request a registration challenge from the server
-      const result = await signUpWebAuthn({
+      const result = await signUpWebauthn({
         email,
         displayName: displayName || undefined,
       });
@@ -96,7 +96,7 @@ export default function WebAuthnSignUpForm({
 
         // Step 3: Send the credential attestation to the server for verification
         // Use PublicKeyCredential's built-in serialization method
-        const verifyResult = await verifySignUpWebAuthn(
+        const verifyResult = await verifySignUpWebauthn(
           credential,
           keyNickname || `Security Key for ${displayName || email}`,
         );

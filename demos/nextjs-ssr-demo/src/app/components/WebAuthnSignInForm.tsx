@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { isWebAuthnSupported } from "../lib/utils";
-import { signInWebAuthn, verifySignInWebAuthn } from "../signin/actions";
+import { signInWebauthn, verifySignInWebauthn } from "../signin/actions";
 import type {
   SignInWebauthnResponse,
   AuthenticatorAssertionResponse,
@@ -42,7 +42,7 @@ export default function WebAuthnSignInForm({
       }
 
       // Step 1: Request a challenge from the server for credential discovery
-      const result = await signInWebAuthn();
+      const result = await signInWebauthn();
 
       if (result.error) {
         setError(result.error);
@@ -76,7 +76,7 @@ export default function WebAuthnSignInForm({
 
         // Step 3: Send the signed challenge to the server for verification
         // Use PublicKeyCredential's built-in serialization method
-        const verifyResult = await verifySignInWebAuthn(credential);
+        const verifyResult = await verifySignInWebauthn(credential);
 
         if (verifyResult.error) {
           setError(verifyResult.error);

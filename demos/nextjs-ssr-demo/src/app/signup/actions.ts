@@ -99,7 +99,7 @@ export async function sendMagicLink(formData: FormData) {
 /**
  * Initiates WebAuthn registration process (sign up)
  */
-export async function signUpWebAuthn({
+export async function signUpWebauthn({
   email,
   displayName,
 }: {
@@ -116,7 +116,7 @@ export async function signUpWebAuthn({
     const nhost = await createNhostClient();
 
     // Request registration options from server
-    const response = await nhost.auth.signUpWebAuthn({
+    const response = await nhost.auth.signUpWebauthn({
       email,
       options: {
         displayName,
@@ -138,7 +138,7 @@ export async function signUpWebAuthn({
 /**
  * Verifies WebAuthn registration response
  */
-export async function verifySignUpWebAuthn(
+export async function verifySignUpWebauthn(
   credential: AuthenticatorAttestationResponse,
   nickname: string,
 ) {
@@ -146,7 +146,7 @@ export async function verifySignUpWebAuthn(
     // Get the server Nhost client
     const nhost = await createNhostClient();
 
-    const response = await nhost.auth.verifySignUpWebAuthn({
+    const response = await nhost.auth.verifySignUpWebauthn({
       credential,
       nickname,
     });

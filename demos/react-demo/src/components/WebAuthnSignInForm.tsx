@@ -43,7 +43,7 @@ export default function WebAuthnSignInForm(): JSX.Element {
       // Step 1: Request a challenge from the server for credential discovery
       // The server creates a random challenge and sends allowed credential information
       // This prevents replay attacks by ensuring each authentication attempt is unique
-      const response = await nhost.auth.signInWebAuthn();
+      const response = await nhost.auth.signInWebauthn();
 
       try {
         // Step 2: Browser prompts user for their security key or biometric verification
@@ -67,7 +67,7 @@ export default function WebAuthnSignInForm(): JSX.Element {
         // Step 3: Send the signed challenge to the server for verification
         // The server validates the signature using the stored public key
         // If valid, the server creates an authenticated session
-        const verifyResponse = await nhost.auth.verifySignInWebAuthn({
+        const verifyResponse = await nhost.auth.verifySignInWebauthn({
           credential,
         });
 

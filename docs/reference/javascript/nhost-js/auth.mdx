@@ -309,30 +309,6 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;
 
-##### changeUserMfaVerify()
-
-```ts
-changeUserMfaVerify(body: UserMfaRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
-```
-
-Summary: Manage multi-factor authentication
-Activate or deactivate multi-factor authentication for the authenticated user
-
-This method may return different T based on the response code:
-
-- 200: OKResponse
-
-###### Parameters
-
-| Parameter  | Type                                |
-| ---------- | ----------------------------------- |
-| `body`     | [`UserMfaRequest`](#usermfarequest) |
-| `options?` | `RequestInit`                       |
-
-###### Returns
-
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
-
 ##### changeUserPassword()
 
 ```ts
@@ -401,6 +377,29 @@ This method may return different T based on the response code:
 ###### Returns
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+##### elevateWebauthn()
+
+```ts
+elevateWebauthn(options?: RequestInit): Promise<FetchResponse<SignInWebauthnResponse>>;
+```
+
+Summary: Elevate access for an already signed in user using FIDO2 Webauthn
+Generate a Webauthn challenge for elevating user permissions
+
+This method may return different T based on the response code:
+
+- 200: SignInWebauthnResponse
+
+###### Parameters
+
+| Parameter  | Type          |
+| ---------- | ------------- |
+| `options?` | `RequestInit` |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInWebauthnResponse`](#signinwebauthnresponse)&gt;&gt;
 
 ##### getJWKs()
 
@@ -767,38 +766,14 @@ As this method is a redirect, it returns a URL string instead of a Promise
 
 `string`
 
-##### signInVerifyMfaTotp()
+##### signInWebauthn()
 
 ```ts
-signInVerifyMfaTotp(body: SignInMfaTotpRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+signInWebauthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<SignInWebauthnResponse>>;
 ```
 
-Summary: Verify TOTP for MFA
-Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
-
-This method may return different T based on the response code:
-
-- 200: SessionPayload
-
-###### Parameters
-
-| Parameter  | Type                                            |
-| ---------- | ----------------------------------------------- |
-| `body`     | [`SignInMfaTotpRequest`](#signinmfatotprequest) |
-| `options?` | `RequestInit`                                   |
-
-###### Returns
-
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
-
-##### signInWebAuthn()
-
-```ts
-signInWebAuthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<SignInWebauthnResponse>>;
-```
-
-Summary: Sign in with WebAuthn
-Initiate a WebAuthn sign-in process by sending a challenge to the user's device. The user must have previously registered a WebAuthn credential.
+Summary: Sign in with Webauthn
+Initiate a Webauthn sign-in process by sending a challenge to the user's device. The user must have previously registered a Webauthn credential.
 
 This method may return different T based on the response code:
 
@@ -864,14 +839,14 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
-##### signUpWebAuthn()
+##### signUpWebauthn()
 
 ```ts
-signUpWebAuthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<SignUpWebauthnResponse>>;
+signUpWebauthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<SignUpWebauthnResponse>>;
 ```
 
-Summary: Sign up with WebAuthn
-Initiate a WebAuthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
+Summary: Sign up with Webauthn
+Initiate a Webauthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
 
 This method may return different T based on the response code:
 
@@ -911,6 +886,78 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`VerifyAddSecurityKeyResponse`](#verifyaddsecuritykeyresponse)&gt;&gt;
 
+##### verifyChangeUserMfa()
+
+```ts
+verifyChangeUserMfa(body: UserMfaRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
+```
+
+Summary: Manage multi-factor authentication
+Activate or deactivate multi-factor authentication for the authenticated user
+
+This method may return different T based on the response code:
+
+- 200: OKResponse
+
+###### Parameters
+
+| Parameter  | Type                                |
+| ---------- | ----------------------------------- |
+| `body`     | [`UserMfaRequest`](#usermfarequest) |
+| `options?` | `RequestInit`                       |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+##### verifyElevateWebauthn()
+
+```ts
+verifyElevateWebauthn(body: SignInWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+```
+
+Summary: Verify FIDO2 Webauthn authentication using public-key cryptography for elevation
+Complete Webauthn elevation by verifying the authentication response
+
+This method may return different T based on the response code:
+
+- 200: SessionPayload
+
+###### Parameters
+
+| Parameter  | Type                                                          |
+| ---------- | ------------------------------------------------------------- |
+| `body`     | [`SignInWebauthnVerifyRequest`](#signinwebauthnverifyrequest) |
+| `options?` | `RequestInit`                                                 |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
+##### verifySignInMfaTotp()
+
+```ts
+verifySignInMfaTotp(body: SignInMfaTotpRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+```
+
+Summary: Verify TOTP for MFA
+Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
+
+This method may return different T based on the response code:
+
+- 200: SessionPayload
+
+###### Parameters
+
+| Parameter  | Type                                            |
+| ---------- | ----------------------------------------------- |
+| `body`     | [`SignInMfaTotpRequest`](#signinmfatotprequest) |
+| `options?` | `RequestInit`                                   |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
 ##### verifySignInOTPEmail()
 
 ```ts
@@ -934,14 +981,14 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInOTPEmailVerifyResponse`](#signinotpemailverifyresponse)&gt;&gt;
 
-##### verifySignInWebAuthn()
+##### verifySignInWebauthn()
 
 ```ts
-verifySignInWebAuthn(body: SignInWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+verifySignInWebauthn(body: SignInWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
 ```
 
-Summary: Verify WebAuthn sign-in
-Complete the WebAuthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
+Summary: Verify Webauthn sign-in
+Complete the Webauthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
 
 This method may return different T based on the response code:
 
@@ -958,14 +1005,14 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
-##### verifySignUpWebAuthn()
+##### verifySignUpWebauthn()
 
 ```ts
-verifySignUpWebAuthn(body: SignUpWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+verifySignUpWebauthn(body: SignUpWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
 ```
 
-Summary: Verify WebAuthn sign-up
-Complete the WebAuthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
+Summary: Verify Webauthn sign-up
+Complete the Webauthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
 
 This method may return different T based on the response code:
 

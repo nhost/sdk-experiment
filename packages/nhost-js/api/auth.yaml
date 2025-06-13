@@ -147,7 +147,7 @@ paths:
     post:
       summary: "Verify TOTP for MFA"
       description: "Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful."
-      operationId: signInVerifyMfaTotp
+      operationId: verifySignInMfaTotp
       tags:
         - authentication
         - mfa
@@ -237,7 +237,7 @@ paths:
     post:
       summary: "Manage multi-factor authentication"
       description: "Activate or deactivate multi-factor authentication for the authenticated user"
-      operationId: changeUserMfaVerify
+      operationId: verifyChangeUserMfa
       tags:
         - mfa
         - user-management
@@ -875,11 +875,11 @@ paths:
 
   /signin/webauthn:
     post:
-      summary: Sign in with WebAuthn
+      summary: Sign in with Webauthn
       description: >-
-        Initiate a WebAuthn sign-in process by sending a challenge to the user's device.
-        The user must have previously registered a WebAuthn credential.
-      operationId: signInWebAuthn
+        Initiate a Webauthn sign-in process by sending a challenge to the user's device.
+        The user must have previously registered a Webauthn credential.
+      operationId: signInWebauthn
       requestBody:
         content:
           application/json:
@@ -901,11 +901,11 @@ paths:
 
   /signin/webauthn/verify:
     post:
-      summary: Verify WebAuthn sign-in
+      summary: Verify Webauthn sign-in
       description: >-
-        Complete the WebAuthn sign-in process by verifying the response from the user's device.
+        Complete the Webauthn sign-in process by verifying the response from the user's device.
         Returns a session if validation is successful.
-      operationId: verifySignInWebAuthn
+      operationId: verifySignInWebauthn
       requestBody:
         content:
           application/json:
@@ -928,11 +928,11 @@ paths:
 
   /signup/webauthn:
     post:
-      summary: Sign up with WebAuthn
+      summary: Sign up with Webauthn
       description: >-
-        Initiate a WebAuthn sign-up process by sending a challenge to the user's device.
+        Initiate a Webauthn sign-up process by sending a challenge to the user's device.
         The user must not have an existing account.
-      operationId: signUpWebAuthn
+      operationId: signUpWebauthn
       requestBody:
         content:
           application/json:
@@ -954,11 +954,11 @@ paths:
 
   /signup/webauthn/verify:
     post:
-      summary: Verify WebAuthn sign-up
+      summary: Verify Webauthn sign-up
       description: >-
-        Complete the WebAuthn sign-up process by verifying the response from the user's device.
+        Complete the Webauthn sign-up process by verifying the response from the user's device.
         Returns a session if validation is successful.
-      operationId: verifySignUpWebAuthn
+      operationId: verifySignUpWebauthn
       requestBody:
         content:
           application/json:
@@ -1026,6 +1026,63 @@ paths:
                 $ref: "#/components/schemas/VerifyAddSecurityKeyResponse"
           description: >-
             Security key successfully added
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: An error occurred while processing the request
+
+  /elevate/webauthn:
+    post:
+      summary: Elevate access for an already signed in user using FIDO2 Webauthn
+      description: Generate a Webauthn challenge for elevating user permissions
+      operationId: elevateWebauthn
+      tags:
+        - elevate
+        - webauthn
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignInWebauthnResponse"
+          description: >-
+            Challenge sent for elevation
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+          description: An error occurred while processing the request
+
+  /elevate/webauthn/verify:
+    post:
+      summary: Verify FIDO2 Webauthn authentication using public-key cryptography for elevation
+      description: Complete Webauthn elevation by verifying the authentication response
+      operationId: verifyElevateWebauthn
+      tags:
+        - elevate
+        - webauthn
+        - verify
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInWebauthnVerifyRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SessionPayload"
+          description: >-
+            Elevated successfully
         default:
           content:
             application/json:
@@ -1895,7 +1952,7 @@ components:
         - imageUrl
         - totpSecret
 
-    # WebAuthn Supporting Schema Definitions
+    # Webauthn Supporting Schema Definitions
 
     PublicKeyCredentialDescriptor:
       type: object

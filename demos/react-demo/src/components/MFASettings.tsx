@@ -67,7 +67,7 @@ export default function MFASettings({
 
     try {
       // Verify and activate MFA
-      await nhost.auth.changeUserMfaVerify({
+      await nhost.auth.verifyChangeUserMfa({
         activeMfaType: "totp",
         code: verificationCode,
       });
@@ -103,7 +103,7 @@ export default function MFASettings({
 
     try {
       // Disable MFA by setting activeMfaType to empty string
-      await nhost.auth.changeUserMfaVerify({
+      await nhost.auth.verifyChangeUserMfa({
         activeMfaType: "",
         code: disableVerificationCode,
       });

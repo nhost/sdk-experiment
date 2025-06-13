@@ -48,7 +48,7 @@ export default function MFAVerification() {
 
     try {
       // Complete MFA verification
-      await nhost.auth.signInVerifyMfaTotp({
+      await nhost.auth.verifySignInMfaTotp({
         ticket,
         otp: verificationCode,
       });

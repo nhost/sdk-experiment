@@ -1493,7 +1493,7 @@ export interface Client {
      This method may return different T based on the response code:
      - 200: SessionPayload
      */
-  signInVerifyMfaTotp(
+  verifySignInMfaTotp(
     body: SignInMfaTotpRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
@@ -1531,7 +1531,7 @@ export interface Client {
      This method may return different T based on the response code:
      - 200: OKResponse
      */
-  changeUserMfaVerify(
+  verifyChangeUserMfa(
     body: UserMfaRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
@@ -1721,49 +1721,49 @@ export interface Client {
   ): string;
 
   /**
-     Summary: Sign in with WebAuthn
-     Initiate a WebAuthn sign-in process by sending a challenge to the user's device. The user must have previously registered a WebAuthn credential.
+     Summary: Sign in with Webauthn
+     Initiate a Webauthn sign-in process by sending a challenge to the user's device. The user must have previously registered a Webauthn credential.
 
      This method may return different T based on the response code:
      - 200: SignInWebauthnResponse
      */
-  signInWebAuthn(
+  signInWebauthn(
     body?: SignInWebauthnRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SignInWebauthnResponse>>;
 
   /**
-     Summary: Verify WebAuthn sign-in
-     Complete the WebAuthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
+     Summary: Verify Webauthn sign-in
+     Complete the Webauthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
 
      This method may return different T based on the response code:
      - 200: SessionPayload
      */
-  verifySignInWebAuthn(
+  verifySignInWebauthn(
     body: SignInWebauthnVerifyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
 
   /**
-     Summary: Sign up with WebAuthn
-     Initiate a WebAuthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
+     Summary: Sign up with Webauthn
+     Initiate a Webauthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
 
      This method may return different T based on the response code:
      - 200: SignUpWebauthnResponse
      */
-  signUpWebAuthn(
+  signUpWebauthn(
     body: SignUpWebauthnRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SignUpWebauthnResponse>>;
 
   /**
-     Summary: Verify WebAuthn sign-up
-     Complete the WebAuthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
+     Summary: Verify Webauthn sign-up
+     Complete the Webauthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
 
      This method may return different T based on the response code:
      - 200: SessionPayload
      */
-  verifySignUpWebAuthn(
+  verifySignUpWebauthn(
     body: SignUpWebauthnVerifyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
@@ -1790,6 +1790,29 @@ export interface Client {
     body: VerifyAddSecurityKeyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<VerifyAddSecurityKeyResponse>>;
+
+  /**
+     Summary: Elevate access for an already signed in user using FIDO2 Webauthn
+     Generate a Webauthn challenge for elevating user permissions
+
+     This method may return different T based on the response code:
+     - 200: SignInWebauthnResponse
+     */
+  elevateWebauthn(
+    options?: RequestInit,
+  ): Promise<FetchResponse<SignInWebauthnResponse>>;
+
+  /**
+     Summary: Verify FIDO2 Webauthn authentication using public-key cryptography for elevation
+     Complete Webauthn elevation by verifying the authentication response
+
+     This method may return different T based on the response code:
+     - 200: SessionPayload
+     */
+  verifyElevateWebauthn(
+    body: SignInWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>>;
 }
 
 export const createAPIClient = (
@@ -1992,7 +2015,7 @@ export const createAPIClient = (
     } as FetchResponse<SignInEmailPasswordResponse>;
   };
 
-  const signInVerifyMfaTotp = async (
+  const verifySignInMfaTotp = async (
     body: SignInMfaTotpRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
@@ -2095,7 +2118,7 @@ export const createAPIClient = (
     } as FetchResponse<SessionPayload>;
   };
 
-  const changeUserMfaVerify = async (
+  const verifyChangeUserMfa = async (
     body: UserMfaRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
@@ -2639,7 +2662,7 @@ export const createAPIClient = (
     return url;
   };
 
-  const signInWebAuthn = async (
+  const signInWebauthn = async (
     body?: SignInWebauthnRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SignInWebauthnResponse>> => {
@@ -2674,7 +2697,7 @@ export const createAPIClient = (
     } as FetchResponse<SignInWebauthnResponse>;
   };
 
-  const verifySignInWebAuthn = async (
+  const verifySignInWebauthn = async (
     body: SignInWebauthnVerifyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
@@ -2709,7 +2732,7 @@ export const createAPIClient = (
     } as FetchResponse<SessionPayload>;
   };
 
-  const signUpWebAuthn = async (
+  const signUpWebauthn = async (
     body: SignUpWebauthnRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SignUpWebauthnResponse>> => {
@@ -2744,7 +2767,7 @@ export const createAPIClient = (
     } as FetchResponse<SignUpWebauthnResponse>;
   };
 
-  const verifySignUpWebAuthn = async (
+  const verifySignUpWebauthn = async (
     body: SignUpWebauthnVerifyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
@@ -2846,6 +2869,73 @@ export const createAPIClient = (
     } as FetchResponse<VerifyAddSecurityKeyResponse>;
   };
 
+  const elevateWebauthn = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<SignInWebauthnResponse>> => {
+    const url = baseURL + `/elevate/webauthn`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SignInWebauthnResponse = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SignInWebauthnResponse>;
+  };
+
+  const verifyElevateWebauthn = async (
+    body: SignInWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const url = baseURL + `/elevate/webauthn/verify`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+  };
+
   return {
     baseURL,
     pushChainFunction,
@@ -2855,10 +2945,10 @@ export const createAPIClient = (
     refreshToken,
     signOut,
     signInEmailPassword,
-    signInVerifyMfaTotp,
+    verifySignInMfaTotp,
     signInPasswordlessEmail,
     signUpEmailPassword,
-    changeUserMfaVerify,
+    verifyChangeUserMfa,
     changeUserMfa,
     getJWKs,
     createPAT,
@@ -2875,11 +2965,13 @@ export const createAPIClient = (
     sendPasswordResetEmail,
     verifyTicketURL,
     signInProviderURL,
-    signInWebAuthn,
-    verifySignInWebAuthn,
-    signUpWebAuthn,
-    verifySignUpWebAuthn,
+    signInWebauthn,
+    verifySignInWebauthn,
+    signUpWebauthn,
+    verifySignUpWebauthn,
     addSecurityKey,
     verifyAddSecurityKey,
+    elevateWebauthn,
+    verifyElevateWebauthn,
   };
 };
