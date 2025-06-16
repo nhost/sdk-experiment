@@ -777,123 +777,11 @@ export interface SignUpWebauthnRequest {
 }
 
 /**
- * User verification requirement
- */
-export type SignInWebauthnResponseUserVerification =
-  | "required"
-  | "preferred"
-  | "discouraged";
-
-/**
- * 
- @property challenge (`string`) - Base64url encoded challenge
- @property allowCredentials? (`PublicKeyCredentialDescriptor[]`) - List of acceptable credentials
- @property extensions? (`Record<string, unknown>`) - Client extension inputs
- @property hints? (`string[]`) - Hints to help guide the user experience
- @property rpId? (`string`) - Relying Party identifier
- @property timeout? (`number`) - Timeout in milliseconds
- @property userVerification? (`SignInWebauthnResponseUserVerification`) - User verification requirement*/
-export interface SignInWebauthnResponse {
-  /**
-   * Base64url encoded challenge
-   */
-  challenge: string;
-  /**
-   * List of acceptable credentials
-   */
-  allowCredentials?: PublicKeyCredentialDescriptor[];
-  /**
-   * Client extension inputs
-   */
-  extensions?: Record<string, unknown>;
-  /**
-   * Hints to help guide the user experience
-   */
-  hints?: string[];
-  /**
-   * Relying Party identifier
-   */
-  rpId?: string;
-  /**
-   * Timeout in milliseconds
-   */
-  timeout?: number;
-  /**
-   * User verification requirement
-   */
-  userVerification?: SignInWebauthnResponseUserVerification;
-}
-
-/**
- * Attestation conveyance preference
- */
-export type SignUpWebauthnResponseAttestation =
-  | "none"
-  | "indirect"
-  | "direct"
-  | "enterprise";
-
-/**
- * 
- @property rp (`PublicKeyCredentialRpEntity`) - 
- @property user (`PublicKeyCredentialUserEntity`) - 
- @property challenge (`string`) - Base64url encoded challenge
- @property pubKeyCredParams (`PublicKeyCredentialParameters[]`) - Supported public key algorithms
- @property timeout? (`number`) - Timeout in milliseconds
- @property excludeCredentials? (`PublicKeyCredentialDescriptor[]`) - Credentials to exclude
- @property authenticatorSelection? (`AuthenticatorSelectionCriteria`) - 
- @property attestation? (`SignUpWebauthnResponseAttestation`) - Attestation conveyance preference
- @property extensions? (`Record<string, unknown>`) - Client extension inputs
- @property hints? (`string[]`) - Hints to help guide the user experience*/
-export interface SignUpWebauthnResponse {
-  /**
-   *
-   */
-  rp: PublicKeyCredentialRpEntity;
-  /**
-   *
-   */
-  user: PublicKeyCredentialUserEntity;
-  /**
-   * Base64url encoded challenge
-   */
-  challenge: string;
-  /**
-   * Supported public key algorithms
-   */
-  pubKeyCredParams: PublicKeyCredentialParameters[];
-  /**
-   * Timeout in milliseconds
-   */
-  timeout?: number;
-  /**
-   * Credentials to exclude
-   */
-  excludeCredentials?: PublicKeyCredentialDescriptor[];
-  /**
-   *
-   */
-  authenticatorSelection?: AuthenticatorSelectionCriteria;
-  /**
-   * Attestation conveyance preference
-   */
-  attestation?: SignUpWebauthnResponseAttestation;
-  /**
-   * Client extension inputs
-   */
-  extensions?: Record<string, unknown>;
-  /**
-   * Hints to help guide the user experience
-   */
-  hints?: string[];
-}
-
-/**
  * 
  @property email? (`string`) - A valid email. Deprecated, no longer used
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
- @property credential (`AuthenticatorAssertionResponse`) - */
+ @property credential (`CredentialAssertionResponse`) - */
 export interface SignInWebauthnVerifyRequest {
   /**
    * A valid email. Deprecated, no longer used
@@ -904,7 +792,7 @@ export interface SignInWebauthnVerifyRequest {
   /**
    *
    */
-  credential: AuthenticatorAssertionResponse;
+  credential: CredentialAssertionResponse;
 }
 
 /**
@@ -1134,31 +1022,6 @@ export interface TotpGenerateResponse {
 }
 
 /**
- * The type of credential
- */
-export type PublicKeyCredentialDescriptorType = "public-key";
-
-/**
- * 
- @property id (`string`) - Base64url encoded credential ID
- @property transports? (`string[]`) - Hints about how the client might communicate with the authenticator
- @property type (`PublicKeyCredentialDescriptorType`) - The type of credential*/
-export interface PublicKeyCredentialDescriptor {
-  /**
-   * Base64url encoded credential ID
-   */
-  id: string;
-  /**
-   * Hints about how the client might communicate with the authenticator
-   */
-  transports?: string[];
-  /**
-   * The type of credential
-   */
-  type: PublicKeyCredentialDescriptorType;
-}
-
-/**
  * 
  @property id? (`string`) - Relying Party identifier
  @property name (`string`) - Human-readable name for the Relying Party*/
@@ -1305,6 +1168,334 @@ export interface AuthenticatorAttestationResponse {
    */
   transports?: string[];
 }
+
+/**
+ * Base64url-encoded binary data
+ */
+export type URLEncodedBase64 = string;
+
+/**
+ * 
+ @property challenge (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property timeout? (`number`) - A time, in milliseconds, that the caller is willing to wait for the call to complete
+ @property rpId? (`string`) - The RP ID the credential should be scoped to
+ @property allowCredentials? (`PublicKeyCredentialDescriptor[]`) - A list of CredentialDescriptor objects representing public key credentials acceptable to the caller
+ @property userVerification? (`UserVerificationRequirement`) - A requirement for user verification for the operation
+ @property hints? (`PublicKeyCredentialHints[]`) - Hints to help guide the user through the experience
+ @property extensions? (`Record<string, unknown>`) - Additional parameters requesting additional processing by the client and authenticator*/
+export interface PublicKeyCredentialRequestOptions {
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  challenge: string;
+  /**
+   * A time, in milliseconds, that the caller is willing to wait for the call to complete
+   */
+  timeout?: number;
+  /**
+   * The RP ID the credential should be scoped to
+   */
+  rpId?: string;
+  /**
+   * A list of CredentialDescriptor objects representing public key credentials acceptable to the caller
+   */
+  allowCredentials?: PublicKeyCredentialDescriptor[];
+  /**
+   * A requirement for user verification for the operation
+   */
+  userVerification?: UserVerificationRequirement;
+  /**
+   * Hints to help guide the user through the experience
+   */
+  hints?: PublicKeyCredentialHints[];
+  /**
+   * Additional parameters requesting additional processing by the client and authenticator
+   */
+  extensions?: Record<string, unknown>;
+}
+
+/**
+ * A requirement for user verification for the operation
+ */
+export type UserVerificationRequirement =
+  | "required"
+  | "preferred"
+  | "discouraged";
+
+/**
+ * Hints to help guide the user through the experience
+ */
+export type PublicKeyCredentialHints =
+  | "security-key"
+  | "client-device"
+  | "hybrid";
+
+/**
+ * 
+ @property type (`CredentialType`) - The valid credential types
+ @property id (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property transports? (`AuthenticatorTransport[]`) - The authenticator transports that can be used*/
+export interface PublicKeyCredentialDescriptor {
+  /**
+   * The valid credential types
+   */
+  type: CredentialType;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  id: string;
+  /**
+   * The authenticator transports that can be used
+   */
+  transports?: AuthenticatorTransport[];
+}
+
+/**
+ * The valid credential types
+ */
+export type CredentialType = "public-key";
+
+/**
+ * The authenticator transports that can be used
+ */
+export type AuthenticatorTransport =
+  | "usb"
+  | "nfc"
+  | "ble"
+  | "smart-card"
+  | "hybrid"
+  | "internal";
+
+/**
+ * 
+ @property id (`string`) - The credential's identifier
+ @property type (`string`) - The credential type represented by this object
+ @property rawId (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property authenticatorAttachment? (`string`) - The authenticator attachment
+ @property response (`AuthenticatorAssertionResponse`) - */
+export interface CredentialAssertionResponse {
+  /**
+   * The credential's identifier
+   */
+  id: string;
+  /**
+   * The credential type represented by this object
+   */
+  type: string;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  rawId: string;
+  /**
+   * The authenticator attachment
+   */
+  authenticatorAttachment?: string;
+  /**
+   *
+   */
+  response: AuthenticatorAssertionResponse;
+}
+
+/**
+ * 
+ @property id (`string`) - The credential's identifier
+ @property type (`string`) - The credential type represented by this object
+ @property rawId (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property authenticatorAttachment? (`string`) - The authenticator attachment*/
+export interface PublicKeyCredential {
+  /**
+   * The credential's identifier
+   */
+  id: string;
+  /**
+   * The credential type represented by this object
+   */
+  type: string;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  rawId: string;
+  /**
+   * The authenticator attachment
+   */
+  authenticatorAttachment?: string;
+}
+
+/**
+ * 
+ @property rp (`RelyingPartyEntity`) - 
+ @property user (`UserEntity`) - 
+ @property challenge (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property pubKeyCredParams (`CredentialParameter[]`) - The desired credential types and their respective cryptographic parameters
+ @property timeout? (`number`) - A time, in milliseconds, that the caller is willing to wait for the call to complete
+ @property excludeCredentials? (`PublicKeyCredentialDescriptor[]`) - A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
+ @property authenticatorSelection? (`AuthenticatorSelection`) - 
+ @property hints? (`PublicKeyCredentialHints[]`) - Hints to help guide the user through the experience
+ @property attestation? (`ConveyancePreference`) - The attestation conveyance preference
+ @property attestationFormats? (`AttestationFormat[]`) - The preferred attestation statement formats
+ @property extensions? (`Record<string, unknown>`) - Additional parameters requesting additional processing by the client and authenticator*/
+export interface PublicKeyCredentialCreationOptions {
+  /**
+   *
+   */
+  rp: RelyingPartyEntity;
+  /**
+   *
+   */
+  user: UserEntity;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  challenge: string;
+  /**
+   * The desired credential types and their respective cryptographic parameters
+   */
+  pubKeyCredParams: CredentialParameter[];
+  /**
+   * A time, in milliseconds, that the caller is willing to wait for the call to complete
+   */
+  timeout?: number;
+  /**
+   * A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
+   */
+  excludeCredentials?: PublicKeyCredentialDescriptor[];
+  /**
+   *
+   */
+  authenticatorSelection?: AuthenticatorSelection;
+  /**
+   * Hints to help guide the user through the experience
+   */
+  hints?: PublicKeyCredentialHints[];
+  /**
+   * The attestation conveyance preference
+   */
+  attestation?: ConveyancePreference;
+  /**
+   * The preferred attestation statement formats
+   */
+  attestationFormats?: AttestationFormat[];
+  /**
+   * Additional parameters requesting additional processing by the client and authenticator
+   */
+  extensions?: Record<string, unknown>;
+}
+
+/**
+ * 
+ @property name (`string`) - A human-palatable name for the entity
+ @property id (`string`) - A unique identifier for the Relying Party entity, which sets the RP ID*/
+export interface RelyingPartyEntity {
+  /**
+   * A human-palatable name for the entity
+   */
+  name: string;
+  /**
+   * A unique identifier for the Relying Party entity, which sets the RP ID
+   */
+  id: string;
+}
+
+/**
+ * 
+ @property name (`string`) - A human-palatable name for the entity
+ @property displayName (`string`) - A human-palatable name for the user account, intended only for display
+ @property id (`string`) - The user handle of the user account entity*/
+export interface UserEntity {
+  /**
+   * A human-palatable name for the entity
+   */
+  name: string;
+  /**
+   * A human-palatable name for the user account, intended only for display
+   */
+  displayName: string;
+  /**
+   * The user handle of the user account entity
+   */
+  id: string;
+}
+
+/**
+ * 
+ @property type (`CredentialType`) - The valid credential types
+ @property alg (`number`) - The cryptographic algorithm identifier*/
+export interface CredentialParameter {
+  /**
+   * The valid credential types
+   */
+  type: CredentialType;
+  /**
+   * The cryptographic algorithm identifier
+   */
+  alg: number;
+}
+
+/**
+ * 
+ @property authenticatorAttachment? (`AuthenticatorAttachment`) - The authenticator attachment modality
+ @property requireResidentKey? (`boolean`) - Whether the authenticator must create a client-side-resident public key credential source
+ @property residentKey? (`ResidentKeyRequirement`) - The resident key requirement
+ @property userVerification? (`UserVerificationRequirement`) - A requirement for user verification for the operation*/
+export interface AuthenticatorSelection {
+  /**
+   * The authenticator attachment modality
+   */
+  authenticatorAttachment?: AuthenticatorAttachment;
+  /**
+   * Whether the authenticator must create a client-side-resident public key credential source
+   */
+  requireResidentKey?: boolean;
+  /**
+   * The resident key requirement
+   */
+  residentKey?: ResidentKeyRequirement;
+  /**
+   * A requirement for user verification for the operation
+   */
+  userVerification?: UserVerificationRequirement;
+}
+
+/**
+ * The authenticator attachment modality
+ */
+export type AuthenticatorAttachment = "platform" | "cross-platform";
+
+/**
+ * The resident key requirement
+ */
+export type ResidentKeyRequirement = "discouraged" | "preferred" | "required";
+
+/**
+ * The attestation conveyance preference
+ */
+export type ConveyancePreference =
+  | "none"
+  | "indirect"
+  | "direct"
+  | "enterprise";
+
+/**
+ * The attestation statement format
+ */
+export type AttestationFormat =
+  | "packed"
+  | "tpm"
+  | "android-key"
+  | "android-safetynet"
+  | "fido-u2f"
+  | "apple"
+  | "none";
 
 /**
  *
@@ -1740,12 +1931,12 @@ export interface Client {
      Initiate a Webauthn sign-in process by sending a challenge to the user's device. The user must have previously registered a Webauthn credential.
 
      This method may return different T based on the response code:
-     - 200: SignInWebauthnResponse
+     - 200: PublicKeyCredentialRequestOptions
      */
   signInWebauthn(
     body?: SignInWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SignInWebauthnResponse>>;
+  ): Promise<FetchResponse<PublicKeyCredentialRequestOptions>>;
 
   /**
      Summary: Verify Webauthn sign-in
@@ -1764,12 +1955,12 @@ export interface Client {
      Initiate a Webauthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
 
      This method may return different T based on the response code:
-     - 200: SignUpWebauthnResponse
+     - 200: PublicKeyCredentialCreationOptions
      */
   signUpWebauthn(
     body: SignUpWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SignUpWebauthnResponse>>;
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 
   /**
      Summary: Verify Webauthn sign-up
@@ -1811,11 +2002,11 @@ export interface Client {
      Generate a Webauthn challenge for elevating user permissions
 
      This method may return different T based on the response code:
-     - 200: SignInWebauthnResponse
+     - 200: PublicKeyCredentialRequestOptions
      */
   elevateWebauthn(
     options?: RequestInit,
-  ): Promise<FetchResponse<SignInWebauthnResponse>>;
+  ): Promise<FetchResponse<PublicKeyCredentialRequestOptions>>;
 
   /**
      Summary: Verify FIDO2 Webauthn authentication using public-key cryptography for elevation
@@ -2680,7 +2871,7 @@ export const createAPIClient = (
   const signInWebauthn = async (
     body?: SignInWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SignInWebauthnResponse>> => {
+  ): Promise<FetchResponse<PublicKeyCredentialRequestOptions>> => {
     const url = baseURL + `/signin/webauthn`;
     const res = await fetch(url, {
       ...options,
@@ -2701,7 +2892,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: SignInWebauthnResponse = responseBody
+    const payload: PublicKeyCredentialRequestOptions = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -2709,7 +2900,7 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<SignInWebauthnResponse>;
+    } as FetchResponse<PublicKeyCredentialRequestOptions>;
   };
 
   const verifySignInWebauthn = async (
@@ -2750,7 +2941,7 @@ export const createAPIClient = (
   const signUpWebauthn = async (
     body: SignUpWebauthnRequest,
     options?: RequestInit,
-  ): Promise<FetchResponse<SignUpWebauthnResponse>> => {
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>> => {
     const url = baseURL + `/signup/webauthn`;
     const res = await fetch(url, {
       ...options,
@@ -2771,7 +2962,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: SignUpWebauthnResponse = responseBody
+    const payload: PublicKeyCredentialCreationOptions = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -2779,7 +2970,7 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<SignUpWebauthnResponse>;
+    } as FetchResponse<PublicKeyCredentialCreationOptions>;
   };
 
   const verifySignUpWebauthn = async (
@@ -2886,7 +3077,7 @@ export const createAPIClient = (
 
   const elevateWebauthn = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<SignInWebauthnResponse>> => {
+  ): Promise<FetchResponse<PublicKeyCredentialRequestOptions>> => {
     const url = baseURL + `/elevate/webauthn`;
     const res = await fetch(url, {
       ...options,
@@ -2905,7 +3096,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: SignInWebauthnResponse = responseBody
+    const payload: PublicKeyCredentialRequestOptions = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -2913,7 +3104,7 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<SignInWebauthnResponse>;
+    } as FetchResponse<PublicKeyCredentialRequestOptions>;
   };
 
   const verifyElevateWebauthn = async (

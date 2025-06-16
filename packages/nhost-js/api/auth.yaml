@@ -891,7 +891,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SignInWebauthnResponse"
+                $ref: "#/components/schemas/PublicKeyCredentialRequestOptions"
           description: >-
             Challenge sent
 
@@ -944,7 +944,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SignUpWebauthnResponse"
+                $ref: "#/components/schemas/PublicKeyCredentialCreationOptions"
           description: >-
             Challenge sent
 
@@ -1048,7 +1048,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SignInWebauthnResponse"
+                $ref: "#/components/schemas/PublicKeyCredentialRequestOptions"
           description: >-
             Challenge sent for elevation
         default:
@@ -1706,87 +1706,6 @@ components:
       required:
         - email
 
-    SignInWebauthnResponse:
-      type: object
-      additionalProperties: false
-      properties:
-        challenge:
-          type: string
-          description: Base64url encoded challenge
-        allowCredentials:
-          type: array
-          items:
-            $ref: "#/components/schemas/PublicKeyCredentialDescriptor"
-          description: List of acceptable credentials
-        extensions:
-          type: object
-          additionalProperties: true
-          description: Client extension inputs
-        hints:
-          type: array
-          items:
-            type: string
-          description: Hints to help guide the user experience
-        rpId:
-          type: string
-          description: Relying Party identifier
-        timeout:
-          type: integer
-          description: Timeout in milliseconds
-        userVerification:
-          type: string
-          enum: ["required", "preferred", "discouraged"]
-          default: "preferred"
-          description: User verification requirement
-      required:
-        - challenge
-
-    SignUpWebauthnResponse:
-      type: object
-      additionalProperties: false
-      properties:
-        rp:
-          $ref: "#/components/schemas/PublicKeyCredentialRpEntity"
-        user:
-          $ref: "#/components/schemas/PublicKeyCredentialUserEntity"
-        challenge:
-          type: string
-          description: Base64url encoded challenge
-        pubKeyCredParams:
-          type: array
-          items:
-            $ref: "#/components/schemas/PublicKeyCredentialParameters"
-          description: Supported public key algorithms
-        timeout:
-          type: integer
-          description: Timeout in milliseconds
-        excludeCredentials:
-          type: array
-          items:
-            $ref: "#/components/schemas/PublicKeyCredentialDescriptor"
-          description: Credentials to exclude
-        authenticatorSelection:
-          $ref: "#/components/schemas/AuthenticatorSelectionCriteria"
-        attestation:
-          type: string
-          enum: ["none", "indirect", "direct", "enterprise"]
-          default: "none"
-          description: Attestation conveyance preference
-        extensions:
-          type: object
-          additionalProperties: true
-          description: Client extension inputs
-        hints:
-          type: array
-          items:
-            type: string
-          description: Hints to help guide the user experience
-      required:
-        - challenge
-        - rp
-        - user
-        - pubKeyCredParams
-
     SignInWebauthnVerifyRequest:
       type: object
       additionalProperties: false
@@ -1798,7 +1717,7 @@ components:
           type: string
           deprecated: true
         credential:
-          $ref: "#/components/schemas/AuthenticatorAssertionResponse"
+          $ref: "#/components/schemas/CredentialAssertionResponse"
       required:
         - credential
 
@@ -1980,28 +1899,6 @@ components:
         - totpSecret
 
     # Webauthn Supporting Schema Definitions
-
-    PublicKeyCredentialDescriptor:
-      type: object
-      additionalProperties: false
-      properties:
-        id:
-          type: string
-          description: Base64url encoded credential ID
-        transports:
-          type: array
-          items:
-            type: string
-            enum: ["usb", "nfc", "ble", "smart-card", "hybrid", "internal"]
-          description: Hints about how the client might communicate with the authenticator
-        type:
-          type: string
-          enum: ["public-key"]
-          description: The type of credential
-      required:
-        - id
-        - type
-
     PublicKeyCredentialRpEntity:
       type: object
       additionalProperties: false
@@ -2111,6 +2008,310 @@ components:
       required:
         - clientDataJSON
         - attestationObject
+
+    URLEncodedBase64:
+      type: string
+      format: byte
+      description: Base64url-encoded binary data
+
+    PublicKeyCredentialRequestOptions:
+      type: object
+      additionalProperties: false
+      properties:
+        challenge:
+          $ref: "#/components/schemas/URLEncodedBase64"
+          description: A challenge intended to be used for generating the newly created credential's attestation object
+        timeout:
+          type: integer
+          description: A time, in milliseconds, that the caller is willing to wait for the call to complete
+        rpId:
+          type: string
+          description: The RP ID the credential should be scoped to
+        allowCredentials:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicKeyCredentialDescriptor"
+          description: A list of CredentialDescriptor objects representing public key credentials acceptable to the caller
+        userVerification:
+          $ref: "#/components/schemas/UserVerificationRequirement"
+          description: A requirement for user verification for the operation
+        hints:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicKeyCredentialHints"
+          description: Hints to help guide the user through the experience
+        extensions:
+          $ref: "#/components/schemas/AuthenticationExtensions"
+          description: Additional parameters requesting additional processing by the client and authenticator
+      required:
+        - challenge
+
+    UserVerificationRequirement:
+      type: string
+      enum:
+        - required
+        - preferred
+        - discouraged
+      default: preferred
+      description: A requirement for user verification for the operation
+
+    PublicKeyCredentialHints:
+      type: string
+      enum:
+        - security-key
+        - client-device
+        - hybrid
+      description: Hints to help guide the user through the experience
+
+    AuthenticationExtensions:
+      type: object
+      additionalProperties: true
+      description: Additional parameters requesting additional processing by the client and authenticator
+
+    PublicKeyCredentialDescriptor:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          $ref: "#/components/schemas/CredentialType"
+          description: The valid credential types
+        id:
+          $ref: "#/components/schemas/URLEncodedBase64"
+          description: CredentialID The ID of a credential to allow/disallow
+        transports:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuthenticatorTransport"
+          description: The authenticator transports that can be used
+      required:
+        - type
+        - id
+
+    CredentialType:
+      type: string
+      enum:
+        - public-key
+      description: The valid credential types
+
+    AuthenticatorTransport:
+      type: string
+      enum:
+        - usb
+        - nfc
+        - ble
+        - smart-card
+        - hybrid
+        - internal
+      description: The authenticator transports that can be used
+
+    CredentialAssertionResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: The credential's identifier
+        type:
+          type: string
+          description: The credential type represented by this object
+        rawId:
+          $ref: "#/components/schemas/URLEncodedBase64"
+          description: The raw credential ID
+        # clientExtensionResults:
+        #   $ref: "#/components/schemas/AuthenticationExtensionsClientOutputs"
+        #   description: The client extension results
+        authenticatorAttachment:
+          type: string
+          description: The authenticator attachment
+        response:
+          $ref: "#/components/schemas/AuthenticatorAssertionResponse"
+          description: The authenticator assertion response
+      required:
+        - id
+        - type
+        - rawId
+        - response
+
+    PublicKeyCredential:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: The credential's identifier
+        type:
+          type: string
+          description: The credential type represented by this object
+        rawId:
+          $ref: "#/components/schemas/URLEncodedBase64"
+          description: The raw credential ID
+        # clientExtensionResults:
+        #   $ref: "#/components/schemas/AuthenticationExtensionsClientOutputs"
+        #   description: The client extension results
+        authenticatorAttachment:
+          type: string
+          description: The authenticator attachment
+      required:
+        - id
+        - type
+        - rawId
+
+    # AuthenticationExtensionsClientOutputs:
+    #   type: object
+    #   additionalProperties: true
+    #   description: Map of extension outputs from the client
+
+    PublicKeyCredentialCreationOptions:
+      type: object
+      additionalProperties: false
+      properties:
+        rp:
+          $ref: "#/components/schemas/RelyingPartyEntity"
+          description: The relying party entity
+        user:
+          $ref: "#/components/schemas/UserEntity"
+          description: The user entity
+        challenge:
+          $ref: "#/components/schemas/URLEncodedBase64"
+          description: A challenge intended to be used for generating the newly created credential's attestation object
+        pubKeyCredParams:
+          type: array
+          items:
+            $ref: "#/components/schemas/CredentialParameter"
+          description: The desired credential types and their respective cryptographic parameters
+        timeout:
+          type: integer
+          description: A time, in milliseconds, that the caller is willing to wait for the call to complete
+        excludeCredentials:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicKeyCredentialDescriptor"
+          description: A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
+        authenticatorSelection:
+          $ref: "#/components/schemas/AuthenticatorSelection"
+          description: The authenticator selection criteria
+        hints:
+          type: array
+          items:
+            $ref: "#/components/schemas/PublicKeyCredentialHints"
+          description: Hints to help guide the user through the experience
+        attestation:
+          $ref: "#/components/schemas/ConveyancePreference"
+          description: The preferred attestation conveyance preference
+        attestationFormats:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttestationFormat"
+          description: The preferred attestation statement formats
+        extensions:
+          $ref: "#/components/schemas/AuthenticationExtensions"
+          description: Additional parameters requesting additional processing by the client and authenticator
+      required:
+        - rp
+        - user
+        - challenge
+        - pubKeyCredParams
+
+    RelyingPartyEntity:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          description: A human-palatable name for the entity
+        id:
+          type: string
+          description: A unique identifier for the Relying Party entity, which sets the RP ID
+      required:
+        - name
+        - id
+
+    UserEntity:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          description: A human-palatable name for the entity
+        displayName:
+          type: string
+          description: A human-palatable name for the user account, intended only for display
+        id:
+          type: string
+          description: The user handle of the user account entity
+      required:
+        - name
+        - displayName
+        - id
+
+    CredentialParameter:
+      type: object
+      additionalProperties: false
+      properties:
+        type:
+          $ref: "#/components/schemas/CredentialType"
+          description: The credential type
+        alg:
+          type: integer
+          description: The cryptographic algorithm identifier
+      required:
+        - type
+        - alg
+
+    AuthenticatorSelection:
+      type: object
+      additionalProperties: false
+      properties:
+        authenticatorAttachment:
+          $ref: "#/components/schemas/AuthenticatorAttachment"
+          description: The authenticator attachment preference
+        requireResidentKey:
+          type: boolean
+          description: Whether the authenticator must create a client-side-resident public key credential source
+        residentKey:
+          $ref: "#/components/schemas/ResidentKeyRequirement"
+          description: The resident key requirement
+        userVerification:
+          $ref: "#/components/schemas/UserVerificationRequirement"
+          description: The user verification requirement
+
+    AuthenticatorAttachment:
+      type: string
+      enum:
+        - platform
+        - cross-platform
+      description: The authenticator attachment modality
+
+    ResidentKeyRequirement:
+      type: string
+      enum:
+        - discouraged
+        - preferred
+        - required
+      default: discouraged
+      description: The resident key requirement
+
+    ConveyancePreference:
+      type: string
+      enum:
+        - none
+        - indirect
+        - direct
+        - enterprise
+      default: none
+      description: The attestation conveyance preference
+
+    AttestationFormat:
+      type: string
+      enum:
+        - packed
+        - tpm
+        - android-key
+        - android-safetynet
+        - fido-u2f
+        - apple
+        - none
+      description: The attestation statement format
 
   parameters:
     SignInProvider:
