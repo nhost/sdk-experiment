@@ -135,6 +135,38 @@ user: PublicKeyCredentialUserEntity;
 
 ---
 
+### AuthenticationExtensionsClientOutputs
+
+Map of extension outputs from the client
+
+#### Properties
+
+##### appid?
+
+```ts
+optional appid: boolean;
+```
+
+Application identifier extension output
+
+##### credProps?
+
+```ts
+optional credProps: CredentialPropertiesOutput;
+```
+
+Credential properties extension output
+
+##### hmacCreateSecret?
+
+```ts
+optional hmacCreateSecret: boolean;
+```
+
+HMAC secret extension output
+
+---
+
 ### AuthenticatorAssertionResponse
 
 #### Properties
@@ -1213,6 +1245,14 @@ optional authenticatorAttachment: string;
 
 The authenticator attachment
 
+##### clientExtensionResults?
+
+```ts
+optional clientExtensionResults: AuthenticationExtensionsClientOutputs;
+```
+
+Map of extension outputs from the client
+
 ##### id
 
 ```ts
@@ -1260,6 +1300,14 @@ optional authenticatorAttachment: string;
 ```
 
 The authenticator attachment
+
+##### clientExtensionResults?
+
+```ts
+optional clientExtensionResults: AuthenticationExtensionsClientOutputs;
+```
+
+Map of extension outputs from the client
 
 ##### id
 
@@ -1316,6 +1364,22 @@ type: "public-key";
 ```
 
 (`CredentialType`) - The valid credential types
+
+---
+
+### CredentialPropertiesOutput
+
+Credential properties extension output
+
+#### Properties
+
+##### rk?
+
+```ts
+optional rk: boolean;
+```
+
+Indicates if the credential is a resident key
 
 ---
 
@@ -1529,6 +1593,14 @@ optional authenticatorAttachment: string;
 ```
 
 The authenticator attachment
+
+##### clientExtensionResults?
+
+```ts
+optional clientExtensionResults: AuthenticationExtensionsClientOutputs;
+```
+
+Map of extension outputs from the client
 
 ##### id
 
