@@ -229,6 +229,9 @@ importers:
       '@nhost/nhost-js':
         specifier: workspace:*
         version: link:../../packages/nhost-js
+      '@simplewebauthn/browser':
+        specifier: ^13.1.0
+        version: 13.1.0
       react:
         specifier: ^19.1.0
         version: 19.1.0

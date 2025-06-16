@@ -1,11 +1,10 @@
 import { useState, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/nhost/AuthProvider";
-import {
-  type ErrorResponse,
-} from "@nhost/nhost-js/auth";
+import { type ErrorResponse } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import { isWebAuthnSupported } from "../lib/utils";
+import { startAuthentication } from "@simplewebauthn/browser";
 
 /**
  * WebAuthnSignInForm provides a passwordless authentication flow using WebAuthn (FIDO2) protocol.
@@ -49,13 +48,9 @@ export default function WebAuthnSignInForm(): JSX.Element {
         // The navigator.credentials.get() API activates the authenticator (fingerprint reader,
         // security key, etc.) and asks the user to verify their identity
         // The authenticator then signs the challenge with the private key
-        const credential = (await navigator.credentials.get({
-          publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(
-            response.body,
-          ),
-        }));
-        // the line above is a bit hacky but necessary because of the way the Credential
-        // API works with TypeScript types
+        const credential = await startAuthentication({
+          optionsJSON: response.body,
+        });
 
         if (!credential) {
           setError("No credential was selected.");
@@ -67,7 +62,7 @@ export default function WebAuthnSignInForm(): JSX.Element {
         // The server validates the signature using the stored public key
         // If valid, the server creates an authenticated session
         const verifyResponse = await nhost.auth.verifySignInWebauthn({
-          credential: (credential as PublicKeyCredential).toJSON(),
+          credential,
         });
 
         // Step 4: Handle authentication result

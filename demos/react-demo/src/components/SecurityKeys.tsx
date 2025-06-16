@@ -1,11 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
-import type {
-  ErrorResponse,
-  AuthenticatorAttestationResponse,
-} from "@nhost/nhost-js/auth";
+import type { ErrorResponse } from "@nhost/nhost-js/auth";
 import { isWebAuthnSupported } from "../lib/utils";
+import { startRegistration } from "@simplewebauthn/browser";
 
 /**
  * Represents a WebAuthn security key stored for a user
@@ -183,13 +181,9 @@ export default function SecurityKeys() {
       // Step 2: Browser prompts user for security key or biometric verification
       // The browser creates a new credential pair (public/private) and stores
       // the private key securely on the device
-      const credential = (await navigator.credentials.create({
-        publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
-          initResponse.body as PublicKeyCredentialCreationOptionsJSON,
-        ),
-      })) as unknown as AuthenticatorAttestationResponse;
-      // the line above is a bit hacky but necessary because of the way the Credential
-      // API works with TypeScript types
+      const credential = await startRegistration({
+        optionsJSON: initResponse.body,
+      });
 
       if (!credential) {
         setErrorMessage("No credential was selected. Please try again.");
