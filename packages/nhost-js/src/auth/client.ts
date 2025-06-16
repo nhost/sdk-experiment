@@ -797,14 +797,14 @@ export interface SignInWebauthnVerifyRequest {
 
 /**
  * 
- @property credential (`AuthenticatorAttestationResponse`) - 
+ @property credential (`CredentialCreationResponse`) - 
  @property options? (`SignUpOptions`) - 
  @property nickname? (`string`) - Nickname for the security key*/
 export interface SignUpWebauthnVerifyRequest {
   /**
    *
    */
-  credential: AuthenticatorAttestationResponse;
+  credential: CredentialCreationResponse;
   /**
    *
    */
@@ -881,13 +881,13 @@ export interface AddSecurityKeyResponse {
 
 /**
  * 
- @property credential (`AuthenticatorAttestationResponse`) - 
+ @property credential (`CredentialCreationResponse`) - 
  @property nickname? (`string`) - Optional nickname for the security key*/
 export interface VerifyAddSecurityKeyRequest {
   /**
    *
    */
-  credential: AuthenticatorAttestationResponse;
+  credential: CredentialCreationResponse;
   /**
    * Optional nickname for the security key
    */
@@ -1147,26 +1147,6 @@ export interface AuthenticatorAssertionResponse {
    * Base64url encoded user handle
    */
   userHandle?: string;
-}
-
-/**
- * 
- @property clientDataJSON (`string`) - Base64url encoded client data JSON
- @property attestationObject (`string`) - Base64url encoded attestation object
- @property transports? (`string[]`) - Available transports for the authenticator*/
-export interface AuthenticatorAttestationResponse {
-  /**
-   * Base64url encoded client data JSON
-   */
-  clientDataJSON: string;
-  /**
-   * Base64url encoded attestation object
-   */
-  attestationObject: string;
-  /**
-   * Available transports for the authenticator
-   */
-  transports?: string[];
 }
 
 /**
@@ -1496,6 +1476,95 @@ export type AttestationFormat =
   | "fido-u2f"
   | "apple"
   | "none";
+
+/**
+ * 
+ @property id (`string`) - The credential's identifier
+ @property type (`string`) - The credential type represented by this object
+ @property rawId (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property authenticatorAttachment? (`string`) - The authenticator attachment
+ @property response (`AuthenticatorAttestationResponse`) - */
+export interface CredentialCreationResponse {
+  /**
+   * The credential's identifier
+   */
+  id: string;
+  /**
+   * The credential type represented by this object
+   */
+  type: string;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  rawId: string;
+  /**
+   * The authenticator attachment
+   */
+  authenticatorAttachment?: string;
+  /**
+   *
+   */
+  response: AuthenticatorAttestationResponse;
+}
+
+/**
+ * 
+ @property clientDataJSON (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property transports? (`string[]`) - The authenticator transports
+ @property authenticatorData? (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property publicKey? (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property publicKeyAlgorithm? (`number`) - The public key algorithm identifier
+    *    Format - int64
+ @property attestationObject (`string`) - Base64url-encoded binary data
+    *    Format - byte*/
+export interface AuthenticatorAttestationResponse {
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  clientDataJSON: string;
+  /**
+   * The authenticator transports
+   */
+  transports?: string[];
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  authenticatorData?: string;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  publicKey?: string;
+  /**
+   * The public key algorithm identifier
+   *    Format - int64
+   */
+  publicKeyAlgorithm?: number;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  attestationObject: string;
+}
+
+/**
+ * 
+ @property clientDataJSON (`string`) - Base64url-encoded binary data
+    *    Format - byte*/
+export interface AuthenticatorResponse {
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  clientDataJSON: string;
+}
 
 /**
  *
@@ -1979,11 +2048,11 @@ export interface Client {
      
 
      This method may return different T based on the response code:
-     - 200: AddSecurityKeyResponse
+     - 200: PublicKeyCredentialCreationOptions
      */
   addSecurityKey(
     options?: RequestInit,
-  ): Promise<FetchResponse<AddSecurityKeyResponse>>;
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 
   /**
      Summary: Verify adding of a new webauthn security key
@@ -3010,7 +3079,7 @@ export const createAPIClient = (
 
   const addSecurityKey = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<AddSecurityKeyResponse>> => {
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>> => {
     const url = baseURL + `/user/webauthn/add`;
     const res = await fetch(url, {
       ...options,
@@ -3029,7 +3098,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: AddSecurityKeyResponse = responseBody
+    const payload: PublicKeyCredentialCreationOptions = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -3037,7 +3106,7 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<AddSecurityKeyResponse>;
+    } as FetchResponse<PublicKeyCredentialCreationOptions>;
   };
 
   const verifyAddSecurityKey = async (

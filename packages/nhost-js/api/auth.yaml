@@ -993,7 +993,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AddSecurityKeyResponse"
+                $ref: "#/components/schemas/PublicKeyCredentialCreationOptions"
           description: >-
             Challenge created for registering a new security key
         default:
@@ -1726,7 +1726,7 @@ components:
       additionalProperties: false
       properties:
         credential:
-          $ref: "#/components/schemas/AuthenticatorAttestationResponse"
+          $ref: "#/components/schemas/CredentialCreationResponse"
         options:
           $ref: "#/components/schemas/SignUpOptions"
         nickname:
@@ -1786,7 +1786,7 @@ components:
       additionalProperties: false
       properties:
         credential:
-          $ref: "#/components/schemas/AuthenticatorAttestationResponse"
+          $ref: "#/components/schemas/CredentialCreationResponse"
           description: The credential created during registration
         nickname:
           type: string
@@ -1988,26 +1988,6 @@ components:
         - clientDataJSON
         - authenticatorData
         - signature
-
-    AuthenticatorAttestationResponse:
-      type: object
-      additionalProperties: false
-      properties:
-        clientDataJSON:
-          type: string
-          description: Base64url encoded client data JSON
-        attestationObject:
-          type: string
-          description: Base64url encoded attestation object
-        transports:
-          type: array
-          items:
-            type: string
-            enum: ["usb", "nfc", "ble", "smart-card", "hybrid", "internal"]
-          description: Available transports for the authenticator
-      required:
-        - clientDataJSON
-        - attestationObject
 
     URLEncodedBase64:
       type: string
@@ -2312,6 +2292,73 @@ components:
         - apple
         - none
       description: The attestation statement format
+
+    CredentialCreationResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: The credential's identifier
+        type:
+          type: string
+          description: The credential type represented by this object
+        rawId:
+          $ref: "#/components/schemas/URLEncodedBase64"
+          description: The raw credential ID
+        # clientExtensionResults:
+        #   $ref: "#/components/schemas/AuthenticationExtensionsClientOutputs"
+        #   description: The client extension results
+        authenticatorAttachment:
+          type: string
+          description: The authenticator attachment
+        response:
+          $ref: "#/components/schemas/AuthenticatorAttestationResponse"
+          description: The authenticator attestation response
+      required:
+        - id
+        - type
+        - rawId
+        - response
+
+    AuthenticatorAttestationResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        clientDataJSON:
+          $ref: "#/components/schemas/URLEncodedBase64"
+          description: The client data JSON
+        transports:
+          type: array
+          items:
+            type: string
+          description: The authenticator transports
+        authenticatorData:
+          $ref: "#/components/schemas/URLEncodedBase64"
+          description: The authenticator data
+        publicKey:
+          $ref: "#/components/schemas/URLEncodedBase64"
+          description: The credential public key
+        publicKeyAlgorithm:
+          type: integer
+          format: int64
+          description: The public key algorithm identifier
+        attestationObject:
+          $ref: "#/components/schemas/URLEncodedBase64"
+          description: The attestation object containing authenticator data and attestation statement
+      required:
+        - clientDataJSON
+        - attestationObject
+
+    AuthenticatorResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        clientDataJSON:
+          $ref: "#/components/schemas/URLEncodedBase64"
+          description: JSON serialization of the client data passed to the authenticator
+      required:
+        - clientDataJSON
 
   parameters:
     SignInProvider:
