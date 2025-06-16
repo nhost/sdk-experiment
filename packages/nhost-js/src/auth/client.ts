@@ -1256,6 +1256,7 @@ export type AuthenticatorTransport =
  @property type (`string`) - The credential type represented by this object
  @property rawId (`string`) - Base64url-encoded binary data
     *    Format - byte
+ @property clientExtensionResults? (`AuthenticationExtensionsClientOutputs`) - Map of extension outputs from the client
  @property authenticatorAttachment? (`string`) - The authenticator attachment
  @property response (`AuthenticatorAssertionResponse`) - */
 export interface CredentialAssertionResponse {
@@ -1273,6 +1274,10 @@ export interface CredentialAssertionResponse {
    */
   rawId: string;
   /**
+   * Map of extension outputs from the client
+   */
+  clientExtensionResults?: AuthenticationExtensionsClientOutputs;
+  /**
    * The authenticator attachment
    */
   authenticatorAttachment?: string;
@@ -1288,6 +1293,7 @@ export interface CredentialAssertionResponse {
  @property type (`string`) - The credential type represented by this object
  @property rawId (`string`) - Base64url-encoded binary data
     *    Format - byte
+ @property clientExtensionResults? (`AuthenticationExtensionsClientOutputs`) - Map of extension outputs from the client
  @property authenticatorAttachment? (`string`) - The authenticator attachment*/
 export interface PublicKeyCredential {
   /**
@@ -1304,9 +1310,43 @@ export interface PublicKeyCredential {
    */
   rawId: string;
   /**
+   * Map of extension outputs from the client
+   */
+  clientExtensionResults?: AuthenticationExtensionsClientOutputs;
+  /**
    * The authenticator attachment
    */
   authenticatorAttachment?: string;
+}
+
+/**
+ * Map of extension outputs from the client
+ @property appid? (`boolean`) - Application identifier extension output
+ @property credProps? (`CredentialPropertiesOutput`) - Credential properties extension output
+ @property hmacCreateSecret? (`boolean`) - HMAC secret extension output*/
+export interface AuthenticationExtensionsClientOutputs {
+  /**
+   * Application identifier extension output
+   */
+  appid?: boolean;
+  /**
+   * Credential properties extension output
+   */
+  credProps?: CredentialPropertiesOutput;
+  /**
+   * HMAC secret extension output
+   */
+  hmacCreateSecret?: boolean;
+}
+
+/**
+ * Credential properties extension output
+ @property rk? (`boolean`) - Indicates if the credential is a resident key*/
+export interface CredentialPropertiesOutput {
+  /**
+   * Indicates if the credential is a resident key
+   */
+  rk?: boolean;
 }
 
 /**
@@ -1483,6 +1523,7 @@ export type AttestationFormat =
  @property type (`string`) - The credential type represented by this object
  @property rawId (`string`) - Base64url-encoded binary data
     *    Format - byte
+ @property clientExtensionResults? (`AuthenticationExtensionsClientOutputs`) - Map of extension outputs from the client
  @property authenticatorAttachment? (`string`) - The authenticator attachment
  @property response (`AuthenticatorAttestationResponse`) - */
 export interface CredentialCreationResponse {
@@ -1499,6 +1540,10 @@ export interface CredentialCreationResponse {
    *    Format - byte
    */
   rawId: string;
+  /**
+   * Map of extension outputs from the client
+   */
+  clientExtensionResults?: AuthenticationExtensionsClientOutputs;
   /**
    * The authenticator attachment
    */

@@ -2097,9 +2097,9 @@ components:
         rawId:
           $ref: "#/components/schemas/URLEncodedBase64"
           description: The raw credential ID
-        # clientExtensionResults:
-        #   $ref: "#/components/schemas/AuthenticationExtensionsClientOutputs"
-        #   description: The client extension results
+        clientExtensionResults:
+          $ref: "#/components/schemas/AuthenticationExtensionsClientOutputs"
+          description: The client extension results
         authenticatorAttachment:
           type: string
           description: The authenticator attachment
@@ -2125,9 +2125,9 @@ components:
         rawId:
           $ref: "#/components/schemas/URLEncodedBase64"
           description: The raw credential ID
-        # clientExtensionResults:
-        #   $ref: "#/components/schemas/AuthenticationExtensionsClientOutputs"
-        #   description: The client extension results
+        clientExtensionResults:
+          $ref: "#/components/schemas/AuthenticationExtensionsClientOutputs"
+          description: The client extension results
         authenticatorAttachment:
           type: string
           description: The authenticator attachment
@@ -2136,10 +2136,29 @@ components:
         - type
         - rawId
 
-    # AuthenticationExtensionsClientOutputs:
-    #   type: object
-    #   additionalProperties: true
-    #   description: Map of extension outputs from the client
+    AuthenticationExtensionsClientOutputs:
+      type: object
+      additionalProperties: true
+      description: Map of extension outputs from the client
+      properties:
+        appid:
+          type: boolean
+          description: Application identifier extension output
+        credProps:
+          $ref: "#/components/schemas/CredentialPropertiesOutput"
+          description: Credential properties extension output
+        hmacCreateSecret:
+          type: boolean
+          description: HMAC secret extension output
+
+    CredentialPropertiesOutput:
+      type: object
+      additionalProperties: false
+      description: Credential properties extension output
+      properties:
+        rk:
+          type: boolean
+          description: Indicates if the credential is a resident key
 
     PublicKeyCredentialCreationOptions:
       type: object
@@ -2306,9 +2325,9 @@ components:
         rawId:
           $ref: "#/components/schemas/URLEncodedBase64"
           description: The raw credential ID
-        # clientExtensionResults:
-        #   $ref: "#/components/schemas/AuthenticationExtensionsClientOutputs"
-        #   description: The client extension results
+        clientExtensionResults:
+          $ref: "#/components/schemas/AuthenticationExtensionsClientOutputs"
+          description: The client extension results
         authenticatorAttachment:
           type: string
           description: The authenticator attachment
