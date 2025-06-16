@@ -183,7 +183,18 @@ Base64url encoded user handle
 attestationObject: string;
 ```
 
-(`string`) - Base64url encoded attestation object
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### authenticatorData?
+
+```ts
+optional authenticatorData: string;
+```
+
+Base64url-encoded binary data
+Format - byte
 
 ##### clientDataJSON
 
@@ -191,7 +202,27 @@ attestationObject: string;
 clientDataJSON: string;
 ```
 
-(`string`) - Base64url encoded client data JSON
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### publicKey?
+
+```ts
+optional publicKey: string;
+```
+
+Base64url-encoded binary data
+Format - byte
+
+##### publicKeyAlgorithm?
+
+```ts
+optional publicKeyAlgorithm: number;
+```
+
+The public key algorithm identifier
+Format - int64
 
 ##### transports?
 
@@ -199,7 +230,61 @@ clientDataJSON: string;
 optional transports: string[];
 ```
 
-Available transports for the authenticator
+The authenticator transports
+
+---
+
+### AuthenticatorResponse
+
+#### Properties
+
+##### clientDataJSON
+
+```ts
+clientDataJSON: string;
+```
+
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+---
+
+### AuthenticatorSelection
+
+#### Properties
+
+##### authenticatorAttachment?
+
+```ts
+optional authenticatorAttachment: AuthenticatorAttachment;
+```
+
+The authenticator attachment modality
+
+##### requireResidentKey?
+
+```ts
+optional requireResidentKey: boolean;
+```
+
+Whether the authenticator must create a client-side-resident public key credential source
+
+##### residentKey?
+
+```ts
+optional residentKey: ResidentKeyRequirement;
+```
+
+The resident key requirement
+
+##### userVerification?
+
+```ts
+optional userVerification: UserVerificationRequirement;
+```
+
+A requirement for user verification for the operation
 
 ---
 
@@ -256,14 +341,14 @@ baseURL: string;
 ##### addSecurityKey()
 
 ```ts
-addSecurityKey(options?: RequestInit): Promise<FetchResponse<AddSecurityKeyResponse>>;
+addSecurityKey(options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 ```
 
 Summary: Initialize adding of a new webauthn security key
 
 This method may return different T based on the response code:
 
-- 200: AddSecurityKeyResponse
+- 200: PublicKeyCredentialCreationOptions
 
 ###### Parameters
 
@@ -273,7 +358,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`AddSecurityKeyResponse`](#addsecuritykeyresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`PublicKeyCredentialCreationOptions`](#publickeycredentialcreationoptions)&gt;&gt;
 
 ##### changeUserEmail()
 
@@ -393,7 +478,7 @@ This method may return different T based on the response code:
 ##### elevateWebauthn()
 
 ```ts
-elevateWebauthn(options?: RequestInit): Promise<FetchResponse<SignInWebauthnResponse>>;
+elevateWebauthn(options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialRequestOptions>>;
 ```
 
 Summary: Elevate access for an already signed in user using FIDO2 Webauthn
@@ -401,7 +486,7 @@ Generate a Webauthn challenge for elevating user permissions
 
 This method may return different T based on the response code:
 
-- 200: SignInWebauthnResponse
+- 200: PublicKeyCredentialRequestOptions
 
 ###### Parameters
 
@@ -411,7 +496,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInWebauthnResponse`](#signinwebauthnresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`PublicKeyCredentialRequestOptions`](#publickeycredentialrequestoptions)&gt;&gt;
 
 ##### getJWKs()
 
@@ -781,7 +866,7 @@ As this method is a redirect, it returns a URL string instead of a Promise
 ##### signInWebauthn()
 
 ```ts
-signInWebauthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<SignInWebauthnResponse>>;
+signInWebauthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialRequestOptions>>;
 ```
 
 Summary: Sign in with Webauthn
@@ -789,7 +874,7 @@ Initiate a Webauthn sign-in process by sending a challenge to the user's device.
 
 This method may return different T based on the response code:
 
-- 200: SignInWebauthnResponse
+- 200: PublicKeyCredentialRequestOptions
 
 ###### Parameters
 
@@ -800,7 +885,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInWebauthnResponse`](#signinwebauthnresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`PublicKeyCredentialRequestOptions`](#publickeycredentialrequestoptions)&gt;&gt;
 
 ##### signOut()
 
@@ -854,7 +939,7 @@ This method may return different T based on the response code:
 ##### signUpWebauthn()
 
 ```ts
-signUpWebauthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<SignUpWebauthnResponse>>;
+signUpWebauthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 ```
 
 Summary: Sign up with Webauthn
@@ -862,7 +947,7 @@ Initiate a Webauthn sign-up process by sending a challenge to the user's device.
 
 This method may return different T based on the response code:
 
-- 200: SignUpWebauthnResponse
+- 200: PublicKeyCredentialCreationOptions
 
 ###### Parameters
 
@@ -873,7 +958,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignUpWebauthnResponse`](#signupwebauthnresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`PublicKeyCredentialCreationOptions`](#publickeycredentialcreationoptions)&gt;&gt;
 
 ##### verifyAddSecurityKey()
 
@@ -1116,6 +1201,124 @@ personalAccessToken: string;
 
 ---
 
+### CredentialAssertionResponse
+
+#### Properties
+
+##### authenticatorAttachment?
+
+```ts
+optional authenticatorAttachment: string;
+```
+
+The authenticator attachment
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - The credential's identifier
+
+##### rawId
+
+```ts
+rawId: string;
+```
+
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### response
+
+```ts
+response: AuthenticatorAssertionResponse;
+```
+
+(`AuthenticatorAssertionResponse`) -
+
+##### type
+
+```ts
+type: string;
+```
+
+(`string`) - The credential type represented by this object
+
+---
+
+### CredentialCreationResponse
+
+#### Properties
+
+##### authenticatorAttachment?
+
+```ts
+optional authenticatorAttachment: string;
+```
+
+The authenticator attachment
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - The credential's identifier
+
+##### rawId
+
+```ts
+rawId: string;
+```
+
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### response
+
+```ts
+response: AuthenticatorAttestationResponse;
+```
+
+(`AuthenticatorAttestationResponse`) -
+
+##### type
+
+```ts
+type: string;
+```
+
+(`string`) - The credential type represented by this object
+
+---
+
+### CredentialParameter
+
+#### Properties
+
+##### alg
+
+```ts
+alg: number;
+```
+
+(`number`) - The cryptographic algorithm identifier
+
+##### type
+
+```ts
+type: "public-key";
+```
+
+(`CredentialType`) - The valid credential types
+
+---
+
 ### ErrorResponse
 
 Standardized error response
@@ -1315,6 +1518,140 @@ Format - uri
 
 ---
 
+### PublicKeyCredential
+
+#### Properties
+
+##### authenticatorAttachment?
+
+```ts
+optional authenticatorAttachment: string;
+```
+
+The authenticator attachment
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - The credential's identifier
+
+##### rawId
+
+```ts
+rawId: string;
+```
+
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### type
+
+```ts
+type: string;
+```
+
+(`string`) - The credential type represented by this object
+
+---
+
+### PublicKeyCredentialCreationOptions
+
+#### Properties
+
+##### attestation?
+
+```ts
+optional attestation: ConveyancePreference;
+```
+
+The attestation conveyance preference
+
+##### attestationFormats?
+
+```ts
+optional attestationFormats: AttestationFormat[];
+```
+
+The preferred attestation statement formats
+
+##### authenticatorSelection?
+
+```ts
+optional authenticatorSelection: AuthenticatorSelection;
+```
+
+##### challenge
+
+```ts
+challenge: string;
+```
+
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### excludeCredentials?
+
+```ts
+optional excludeCredentials: PublicKeyCredentialDescriptor[];
+```
+
+A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
+
+##### extensions?
+
+```ts
+optional extensions: Record<string, unknown>;
+```
+
+Additional parameters requesting additional processing by the client and authenticator
+
+##### hints?
+
+```ts
+optional hints: PublicKeyCredentialHints[];
+```
+
+Hints to help guide the user through the experience
+
+##### pubKeyCredParams
+
+```ts
+pubKeyCredParams: CredentialParameter[];
+```
+
+(`CredentialParameter[]`) - The desired credential types and their respective cryptographic parameters
+
+##### rp
+
+```ts
+rp: RelyingPartyEntity;
+```
+
+(`RelyingPartyEntity`) -
+
+##### timeout?
+
+```ts
+optional timeout: number;
+```
+
+A time, in milliseconds, that the caller is willing to wait for the call to complete
+
+##### user
+
+```ts
+user: UserEntity;
+```
+
+(`UserEntity`) -
+
+---
+
 ### PublicKeyCredentialDescriptor
 
 #### Properties
@@ -1325,15 +1662,17 @@ Format - uri
 id: string;
 ```
 
-(`string`) - Base64url encoded credential ID
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
 
 ##### transports?
 
 ```ts
-optional transports: string[];
+optional transports: AuthenticatorTransport[];
 ```
 
-Hints about how the client might communicate with the authenticator
+The authenticator transports that can be used
 
 ##### type
 
@@ -1341,7 +1680,7 @@ Hints about how the client might communicate with the authenticator
 type: "public-key";
 ```
 
-(`PublicKeyCredentialDescriptorType`) - The type of credential
+(`CredentialType`) - The valid credential types
 
 ---
 
@@ -1364,6 +1703,70 @@ type: "public-key";
 ```
 
 (`PublicKeyCredentialParametersType`) - The type of credential
+
+---
+
+### PublicKeyCredentialRequestOptions
+
+#### Properties
+
+##### allowCredentials?
+
+```ts
+optional allowCredentials: PublicKeyCredentialDescriptor[];
+```
+
+A list of CredentialDescriptor objects representing public key credentials acceptable to the caller
+
+##### challenge
+
+```ts
+challenge: string;
+```
+
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### extensions?
+
+```ts
+optional extensions: Record<string, unknown>;
+```
+
+Additional parameters requesting additional processing by the client and authenticator
+
+##### hints?
+
+```ts
+optional hints: PublicKeyCredentialHints[];
+```
+
+Hints to help guide the user through the experience
+
+##### rpId?
+
+```ts
+optional rpId: string;
+```
+
+The RP ID the credential should be scoped to
+
+##### timeout?
+
+```ts
+optional timeout: number;
+```
+
+A time, in milliseconds, that the caller is willing to wait for the call to complete
+
+##### userVerification?
+
+```ts
+optional userVerification: UserVerificationRequirement;
+```
+
+A requirement for user verification for the operation
 
 ---
 
@@ -1435,6 +1838,28 @@ refreshToken: string;
 
 - Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
 - Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+---
+
+### RelyingPartyEntity
+
+#### Properties
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - A unique identifier for the Relying Party entity, which sets the RP ID
+
+##### name
+
+```ts
+name: string;
+```
+
+(`string`) - A human-palatable name for the entity
 
 ---
 
@@ -1843,68 +2268,6 @@ Format - email
 
 ---
 
-### SignInWebauthnResponse
-
-#### Properties
-
-##### allowCredentials?
-
-```ts
-optional allowCredentials: PublicKeyCredentialDescriptor[];
-```
-
-List of acceptable credentials
-
-##### challenge
-
-```ts
-challenge: string;
-```
-
-(`string`) - Base64url encoded challenge
-
-##### extensions?
-
-```ts
-optional extensions: Record<string, unknown>;
-```
-
-Client extension inputs
-
-##### hints?
-
-```ts
-optional hints: string[];
-```
-
-Hints to help guide the user experience
-
-##### rpId?
-
-```ts
-optional rpId: string;
-```
-
-Relying Party identifier
-
-##### timeout?
-
-```ts
-optional timeout: number;
-```
-
-Timeout in milliseconds
-
-##### userVerification?
-
-```ts
-optional userVerification: SignInWebauthnResponseUserVerification;
-```
-
-User verification requirement
-
----
-
 ### SignInWebauthnVerifyRequest
 
 #### Properties
@@ -1912,10 +2275,10 @@ User verification requirement
 ##### credential
 
 ```ts
-credential: AuthenticatorAssertionResponse;
+credential: CredentialAssertionResponse;
 ```
 
-(`AuthenticatorAssertionResponse`) -
+(`CredentialAssertionResponse`) -
 
 ##### email?
 
@@ -2071,90 +2434,6 @@ optional options: SignUpOptions;
 
 ---
 
-### SignUpWebauthnResponse
-
-#### Properties
-
-##### attestation?
-
-```ts
-optional attestation: SignUpWebauthnResponseAttestation;
-```
-
-Attestation conveyance preference
-
-##### authenticatorSelection?
-
-```ts
-optional authenticatorSelection: AuthenticatorSelectionCriteria;
-```
-
-##### challenge
-
-```ts
-challenge: string;
-```
-
-(`string`) - Base64url encoded challenge
-
-##### excludeCredentials?
-
-```ts
-optional excludeCredentials: PublicKeyCredentialDescriptor[];
-```
-
-Credentials to exclude
-
-##### extensions?
-
-```ts
-optional extensions: Record<string, unknown>;
-```
-
-Client extension inputs
-
-##### hints?
-
-```ts
-optional hints: string[];
-```
-
-Hints to help guide the user experience
-
-##### pubKeyCredParams
-
-```ts
-pubKeyCredParams: PublicKeyCredentialParameters[];
-```
-
-(`PublicKeyCredentialParameters[]`) - Supported public key algorithms
-
-##### rp
-
-```ts
-rp: PublicKeyCredentialRpEntity;
-```
-
-(`PublicKeyCredentialRpEntity`) -
-
-##### timeout?
-
-```ts
-optional timeout: number;
-```
-
-Timeout in milliseconds
-
-##### user
-
-```ts
-user: PublicKeyCredentialUserEntity;
-```
-
-(`PublicKeyCredentialUserEntity`) -
-
----
-
 ### SignUpWebauthnVerifyRequest
 
 #### Properties
@@ -2162,10 +2441,10 @@ user: PublicKeyCredentialUserEntity;
 ##### credential
 
 ```ts
-credential: AuthenticatorAttestationResponse;
+credential: CredentialCreationResponse;
 ```
 
-(`AuthenticatorAttestationResponse`) -
+(`CredentialCreationResponse`) -
 
 ##### nickname?
 
@@ -2448,6 +2727,36 @@ optional options: OptionsRedirectTo;
 
 ---
 
+### UserEntity
+
+#### Properties
+
+##### displayName
+
+```ts
+displayName: string;
+```
+
+(`string`) - A human-palatable name for the user account, intended only for display
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - The user handle of the user account entity
+
+##### name
+
+```ts
+name: string;
+```
+
+(`string`) - A human-palatable name for the entity
+
+---
+
 ### UserMfaRequest
 
 Request to activate or deactivate multi-factor authentication
@@ -2532,10 +2841,10 @@ optional options: OptionsRedirectTo;
 ##### credential
 
 ```ts
-credential: AuthenticatorAttestationResponse;
+credential: CredentialCreationResponse;
 ```
 
-(`AuthenticatorAttestationResponse`) -
+(`CredentialCreationResponse`) -
 
 ##### nickname?
 
@@ -2623,6 +2932,33 @@ Attestation conveyance preference
 
 ---
 
+### AttestationFormat
+
+```ts
+type AttestationFormat =
+  | "packed"
+  | "tpm"
+  | "android-key"
+  | "android-safetynet"
+  | "fido-u2f"
+  | "apple"
+  | "none";
+```
+
+The attestation statement format
+
+---
+
+### AuthenticatorAttachment
+
+```ts
+type AuthenticatorAttachment = "platform" | "cross-platform";
+```
+
+The authenticator attachment modality
+
+---
+
 ### AuthenticatorSelectionCriteriaAuthenticatorAttachment
 
 ```ts
@@ -2658,6 +2994,42 @@ type AuthenticatorSelectionCriteriaUserVerification =
 ```
 
 User verification requirement
+
+---
+
+### AuthenticatorTransport
+
+```ts
+type AuthenticatorTransport =
+  | "usb"
+  | "nfc"
+  | "ble"
+  | "smart-card"
+  | "hybrid"
+  | "internal";
+```
+
+The authenticator transports that can be used
+
+---
+
+### ConveyancePreference
+
+```ts
+type ConveyancePreference = "none" | "indirect" | "direct" | "enterprise";
+```
+
+The attestation conveyance preference
+
+---
+
+### CredentialType
+
+```ts
+type CredentialType = "public-key";
+```
+
+The valid credential types
 
 ---
 
@@ -2712,13 +3084,13 @@ type OKResponse = "OK";
 
 ---
 
-### PublicKeyCredentialDescriptorType
+### PublicKeyCredentialHints
 
 ```ts
-type PublicKeyCredentialDescriptorType = "public-key";
+type PublicKeyCredentialHints = "security-key" | "client-device" | "hybrid";
 ```
 
-The type of credential
+Hints to help guide the user through the experience
 
 ---
 
@@ -2742,6 +3114,16 @@ Target URL for the redirect
 
 ---
 
+### ResidentKeyRequirement
+
+```ts
+type ResidentKeyRequirement = "discouraged" | "preferred" | "required";
+```
+
+The resident key requirement
+
+---
+
 ### SignInProvider
 
 ```ts
@@ -2753,33 +3135,6 @@ type SignInProvider =
   | "discord"
   | "spotify";
 ```
-
----
-
-### SignInWebauthnResponseUserVerification
-
-```ts
-type SignInWebauthnResponseUserVerification =
-  | "required"
-  | "preferred"
-  | "discouraged";
-```
-
-User verification requirement
-
----
-
-### SignUpWebauthnResponseAttestation
-
-```ts
-type SignUpWebauthnResponseAttestation =
-  | "none"
-  | "indirect"
-  | "direct"
-  | "enterprise";
-```
-
-Attestation conveyance preference
 
 ---
 
@@ -2807,6 +3162,16 @@ Type of the ticket
 
 ---
 
+### URLEncodedBase64
+
+```ts
+type URLEncodedBase64 = string;
+```
+
+Base64url-encoded binary data
+
+---
+
 ### UserDeanonymizeRequestSignInMethod
 
 ```ts
@@ -2824,6 +3189,16 @@ type UserMfaRequestActiveMfaType = "totp" | "";
 ```
 
 Type of MFA to activate. Use empty string to disable MFA.
+
+---
+
+### UserVerificationRequirement
+
+```ts
+type UserVerificationRequirement = "required" | "preferred" | "discouraged";
+```
+
+A requirement for user verification for the operation
 
 ## Functions
 
