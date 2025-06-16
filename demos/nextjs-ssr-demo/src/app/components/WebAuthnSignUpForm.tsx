@@ -4,10 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { isWebAuthnSupported } from "../lib/utils";
 import { signUpWebauthn, verifySignUpWebauthn } from "../signup/actions";
-import type {
-  SignUpWebauthnResponse,
-  AuthenticatorAttestationResponse,
-} from "@nhost/nhost-js/auth";
+import type { PublicKeyCredentialCreationOptions } from "@nhost/nhost-js/auth";
+import { startRegistration } from "@simplewebauthn/browser";
 
 interface WebAuthnSignUpFormProps {
   buttonLabel?: string;
@@ -22,7 +20,7 @@ export default function WebAuthnSignUpForm({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [challengeData, setChallengeData] =
-    useState<SignUpWebauthnResponse | null>(null);
+    useState<PublicKeyCredentialCreationOptions | null>(null);
   const router = useRouter();
 
   /**
@@ -80,13 +78,9 @@ export default function WebAuthnSignUpForm({
 
       try {
         // Step 2: Browser prompts user to create a new credential
-        const credential = (await navigator.credentials.create({
-          publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
-            result.publicKeyCredentialCreationOptions as PublicKeyCredentialCreationOptionsJSON,
-          ),
-        })) as unknown as AuthenticatorAttestationResponse;
-        // the line above is a bit hacky but necessary because of the way the Credential
-        // API works with TypeScript types
+        const credential = await startRegistration({
+          optionsJSON: result.publicKeyCredentialCreationOptions,
+        });
 
         if (!credential) {
           setError("No credential was created.");

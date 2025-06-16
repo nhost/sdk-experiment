@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createNhostClient } from "../lib/nhost/server";
 import type {
   ErrorResponse,
-  AuthenticatorAssertionResponse,
+  CredentialAssertionResponse,
 } from "@nhost/nhost-js/auth";
 import type { FetchError } from "@nhost/nhost-js/fetch";
 
@@ -196,7 +196,7 @@ export async function signInWebauthn() {
  * This is called after the user has completed the WebAuthn authentication
  */
 export async function verifySignInWebauthn(
-  credential: AuthenticatorAssertionResponse,
+  credential: CredentialAssertionResponse,
 ) {
   try {
     // Get the server Nhost client
