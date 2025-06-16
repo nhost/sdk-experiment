@@ -69,13 +69,13 @@ Attestation conveyance preference
 optional authenticatorSelection: AuthenticatorSelectionCriteria;
 ```
 
-##### challenge?
+##### challenge
 
 ```ts
-optional challenge: string;
+challenge: string;
 ```
 
-Base64url encoded challenge
+(`string`) - Base64url encoded challenge
 
 ##### excludeCredentials?
 
@@ -93,19 +93,29 @@ optional extensions: Record<string, unknown>;
 
 Client extension inputs
 
-##### pubKeyCredParams?
+##### hints?
 
 ```ts
-optional pubKeyCredParams: PublicKeyCredentialParameters[];
+optional hints: string[];
 ```
 
-Supported public key algorithms
+Hints to help guide the user experience
 
-##### rp?
+##### pubKeyCredParams
 
 ```ts
-optional rp: PublicKeyCredentialRpEntity;
+pubKeyCredParams: PublicKeyCredentialParameters[];
 ```
+
+(`PublicKeyCredentialParameters[]`) - Supported public key algorithms
+
+##### rp
+
+```ts
+rp: PublicKeyCredentialRpEntity;
+```
+
+(`PublicKeyCredentialRpEntity`) -
 
 ##### timeout?
 
@@ -115,11 +125,13 @@ optional timeout: number;
 
 Timeout in milliseconds
 
-##### user?
+##### user
 
 ```ts
-optional user: PublicKeyCredentialUserEntity;
+user: PublicKeyCredentialUserEntity;
 ```
+
+(`PublicKeyCredentialUserEntity`) -
 
 ---
 
@@ -1843,13 +1855,13 @@ optional allowCredentials: PublicKeyCredentialDescriptor[];
 
 List of acceptable credentials
 
-##### challenge?
+##### challenge
 
 ```ts
-optional challenge: string;
+challenge: string;
 ```
 
-Base64url encoded challenge
+(`string`) - Base64url encoded challenge
 
 ##### extensions?
 
@@ -1858,6 +1870,14 @@ optional extensions: Record<string, unknown>;
 ```
 
 Client extension inputs
+
+##### hints?
+
+```ts
+optional hints: string[];
+```
+
+Hints to help guide the user experience
 
 ##### rpId?
 
@@ -2069,13 +2089,13 @@ Attestation conveyance preference
 optional authenticatorSelection: AuthenticatorSelectionCriteria;
 ```
 
-##### challenge?
+##### challenge
 
 ```ts
-optional challenge: string;
+challenge: string;
 ```
 
-Base64url encoded challenge
+(`string`) - Base64url encoded challenge
 
 ##### excludeCredentials?
 
@@ -2093,19 +2113,29 @@ optional extensions: Record<string, unknown>;
 
 Client extension inputs
 
-##### pubKeyCredParams?
+##### hints?
 
 ```ts
-optional pubKeyCredParams: PublicKeyCredentialParameters[];
+optional hints: string[];
 ```
 
-Supported public key algorithms
+Hints to help guide the user experience
 
-##### rp?
+##### pubKeyCredParams
 
 ```ts
-optional rp: PublicKeyCredentialRpEntity;
+pubKeyCredParams: PublicKeyCredentialParameters[];
 ```
+
+(`PublicKeyCredentialParameters[]`) - Supported public key algorithms
+
+##### rp
+
+```ts
+rp: PublicKeyCredentialRpEntity;
+```
+
+(`PublicKeyCredentialRpEntity`) -
 
 ##### timeout?
 
@@ -2115,11 +2145,13 @@ optional timeout: number;
 
 Timeout in milliseconds
 
-##### user?
+##### user
 
 ```ts
-optional user: PublicKeyCredentialUserEntity;
+user: PublicKeyCredentialUserEntity;
 ```
+
+(`PublicKeyCredentialUserEntity`) -
 
 ---
 

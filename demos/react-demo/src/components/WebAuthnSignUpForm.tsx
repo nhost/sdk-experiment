@@ -103,9 +103,9 @@ export default function WebAuthnSignUpForm({
         // - The public key will be sent to the server
         const credential = (await navigator.credentials.create({
           publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
-            response.body as PublicKeyCredentialCreationOptionsJSON,
+            response.body,
           ),
-        })) as unknown as AuthenticatorAttestationResponse;
+        }));
         // the line above is a bit hacky but necessary because of the way the Credential
         // API works with TypeScript types
 

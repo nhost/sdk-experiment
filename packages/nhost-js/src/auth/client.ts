@@ -786,37 +786,42 @@ export type SignInWebauthnResponseUserVerification =
 
 /**
  * 
- @property challenge? (`string`) - Base64url encoded challenge
- @property timeout? (`number`) - Timeout in milliseconds
- @property rpId? (`string`) - Relying Party identifier
+ @property challenge (`string`) - Base64url encoded challenge
  @property allowCredentials? (`PublicKeyCredentialDescriptor[]`) - List of acceptable credentials
- @property userVerification? (`SignInWebauthnResponseUserVerification`) - User verification requirement
- @property extensions? (`Record<string, unknown>`) - Client extension inputs*/
+ @property extensions? (`Record<string, unknown>`) - Client extension inputs
+ @property hints? (`string[]`) - Hints to help guide the user experience
+ @property rpId? (`string`) - Relying Party identifier
+ @property timeout? (`number`) - Timeout in milliseconds
+ @property userVerification? (`SignInWebauthnResponseUserVerification`) - User verification requirement*/
 export interface SignInWebauthnResponse {
   /**
    * Base64url encoded challenge
    */
-  challenge?: string;
-  /**
-   * Timeout in milliseconds
-   */
-  timeout?: number;
-  /**
-   * Relying Party identifier
-   */
-  rpId?: string;
+  challenge: string;
   /**
    * List of acceptable credentials
    */
   allowCredentials?: PublicKeyCredentialDescriptor[];
   /**
-   * User verification requirement
-   */
-  userVerification?: SignInWebauthnResponseUserVerification;
-  /**
    * Client extension inputs
    */
   extensions?: Record<string, unknown>;
+  /**
+   * Hints to help guide the user experience
+   */
+  hints?: string[];
+  /**
+   * Relying Party identifier
+   */
+  rpId?: string;
+  /**
+   * Timeout in milliseconds
+   */
+  timeout?: number;
+  /**
+   * User verification requirement
+   */
+  userVerification?: SignInWebauthnResponseUserVerification;
 }
 
 /**
@@ -830,32 +835,33 @@ export type SignUpWebauthnResponseAttestation =
 
 /**
  * 
- @property rp? (`PublicKeyCredentialRpEntity`) - 
- @property user? (`PublicKeyCredentialUserEntity`) - 
- @property challenge? (`string`) - Base64url encoded challenge
- @property pubKeyCredParams? (`PublicKeyCredentialParameters[]`) - Supported public key algorithms
+ @property rp (`PublicKeyCredentialRpEntity`) - 
+ @property user (`PublicKeyCredentialUserEntity`) - 
+ @property challenge (`string`) - Base64url encoded challenge
+ @property pubKeyCredParams (`PublicKeyCredentialParameters[]`) - Supported public key algorithms
  @property timeout? (`number`) - Timeout in milliseconds
  @property excludeCredentials? (`PublicKeyCredentialDescriptor[]`) - Credentials to exclude
  @property authenticatorSelection? (`AuthenticatorSelectionCriteria`) - 
  @property attestation? (`SignUpWebauthnResponseAttestation`) - Attestation conveyance preference
- @property extensions? (`Record<string, unknown>`) - Client extension inputs*/
+ @property extensions? (`Record<string, unknown>`) - Client extension inputs
+ @property hints? (`string[]`) - Hints to help guide the user experience*/
 export interface SignUpWebauthnResponse {
   /**
    *
    */
-  rp?: PublicKeyCredentialRpEntity;
+  rp: PublicKeyCredentialRpEntity;
   /**
    *
    */
-  user?: PublicKeyCredentialUserEntity;
+  user: PublicKeyCredentialUserEntity;
   /**
    * Base64url encoded challenge
    */
-  challenge?: string;
+  challenge: string;
   /**
    * Supported public key algorithms
    */
-  pubKeyCredParams?: PublicKeyCredentialParameters[];
+  pubKeyCredParams: PublicKeyCredentialParameters[];
   /**
    * Timeout in milliseconds
    */
@@ -876,6 +882,10 @@ export interface SignUpWebauthnResponse {
    * Client extension inputs
    */
   extensions?: Record<string, unknown>;
+  /**
+   * Hints to help guide the user experience
+   */
+  hints?: string[];
 }
 
 /**
@@ -928,32 +938,33 @@ export type AddSecurityKeyResponseAttestation =
 
 /**
  * 
- @property rp? (`PublicKeyCredentialRpEntity`) - 
- @property user? (`PublicKeyCredentialUserEntity`) - 
- @property challenge? (`string`) - Base64url encoded challenge
- @property pubKeyCredParams? (`PublicKeyCredentialParameters[]`) - Supported public key algorithms
+ @property rp (`PublicKeyCredentialRpEntity`) - 
+ @property user (`PublicKeyCredentialUserEntity`) - 
+ @property challenge (`string`) - Base64url encoded challenge
+ @property pubKeyCredParams (`PublicKeyCredentialParameters[]`) - Supported public key algorithms
  @property timeout? (`number`) - Timeout in milliseconds
  @property excludeCredentials? (`PublicKeyCredentialDescriptor[]`) - Credentials to exclude
  @property authenticatorSelection? (`AuthenticatorSelectionCriteria`) - 
  @property attestation? (`AddSecurityKeyResponseAttestation`) - Attestation conveyance preference
- @property extensions? (`Record<string, unknown>`) - Client extension inputs*/
+ @property extensions? (`Record<string, unknown>`) - Client extension inputs
+ @property hints? (`string[]`) - Hints to help guide the user experience*/
 export interface AddSecurityKeyResponse {
   /**
    *
    */
-  rp?: PublicKeyCredentialRpEntity;
+  rp: PublicKeyCredentialRpEntity;
   /**
    *
    */
-  user?: PublicKeyCredentialUserEntity;
+  user: PublicKeyCredentialUserEntity;
   /**
    * Base64url encoded challenge
    */
-  challenge?: string;
+  challenge: string;
   /**
    * Supported public key algorithms
    */
-  pubKeyCredParams?: PublicKeyCredentialParameters[];
+  pubKeyCredParams: PublicKeyCredentialParameters[];
   /**
    * Timeout in milliseconds
    */
@@ -974,6 +985,10 @@ export interface AddSecurityKeyResponse {
    * Client extension inputs
    */
   extensions?: Record<string, unknown>;
+  /**
+   * Hints to help guide the user experience
+   */
+  hints?: string[];
 }
 
 /**
@@ -1125,14 +1140,10 @@ export type PublicKeyCredentialDescriptorType = "public-key";
 
 /**
  * 
- @property type (`PublicKeyCredentialDescriptorType`) - The type of credential
  @property id (`string`) - Base64url encoded credential ID
- @property transports? (`string[]`) - Hints about how the client might communicate with the authenticator*/
+ @property transports? (`string[]`) - Hints about how the client might communicate with the authenticator
+ @property type (`PublicKeyCredentialDescriptorType`) - The type of credential*/
 export interface PublicKeyCredentialDescriptor {
-  /**
-   * The type of credential
-   */
-  type: PublicKeyCredentialDescriptorType;
   /**
    * Base64url encoded credential ID
    */
@@ -1141,6 +1152,10 @@ export interface PublicKeyCredentialDescriptor {
    * Hints about how the client might communicate with the authenticator
    */
   transports?: string[];
+  /**
+   * The type of credential
+   */
+  type: PublicKeyCredentialDescriptorType;
 }
 
 /**

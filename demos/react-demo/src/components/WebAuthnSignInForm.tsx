@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import {
   type ErrorResponse,
-  type AuthenticatorAssertionResponse,
 } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import { isWebAuthnSupported } from "../lib/utils";
@@ -52,9 +51,9 @@ export default function WebAuthnSignInForm(): JSX.Element {
         // The authenticator then signs the challenge with the private key
         const credential = (await navigator.credentials.get({
           publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(
-            response.body as PublicKeyCredentialRequestOptionsJSON,
+            response.body,
           ),
-        })) as unknown as AuthenticatorAssertionResponse;
+        }));
         // the line above is a bit hacky but necessary because of the way the Credential
         // API works with TypeScript types
 
@@ -68,7 +67,7 @@ export default function WebAuthnSignInForm(): JSX.Element {
         // The server validates the signature using the stored public key
         // If valid, the server creates an authenticated session
         const verifyResponse = await nhost.auth.verifySignInWebauthn({
-          credential,
+          credential: (credential as PublicKeyCredential).toJSON(),
         });
 
         // Step 4: Handle authentication result

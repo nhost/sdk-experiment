@@ -1713,26 +1713,33 @@ components:
         challenge:
           type: string
           description: Base64url encoded challenge
-        timeout:
-          type: integer
-          description: Timeout in milliseconds
-        rpId:
-          type: string
-          description: Relying Party identifier
         allowCredentials:
           type: array
           items:
             $ref: "#/components/schemas/PublicKeyCredentialDescriptor"
           description: List of acceptable credentials
+        extensions:
+          type: object
+          additionalProperties: true
+          description: Client extension inputs
+        hints:
+          type: array
+          items:
+            type: string
+          description: Hints to help guide the user experience
+        rpId:
+          type: string
+          description: Relying Party identifier
+        timeout:
+          type: integer
+          description: Timeout in milliseconds
         userVerification:
           type: string
           enum: ["required", "preferred", "discouraged"]
           default: "preferred"
           description: User verification requirement
-        extensions:
-          type: object
-          additionalProperties: true
-          description: Client extension inputs
+      required:
+        - challenge
 
     SignUpWebauthnResponse:
       type: object
@@ -1769,6 +1776,16 @@ components:
           type: object
           additionalProperties: true
           description: Client extension inputs
+        hints:
+          type: array
+          items:
+            type: string
+          description: Hints to help guide the user experience
+      required:
+        - challenge
+        - rp
+        - user
+        - pubKeyCredParams
 
     SignInWebauthnVerifyRequest:
       type: object
@@ -1834,6 +1851,16 @@ components:
           type: object
           additionalProperties: true
           description: Client extension inputs
+        hints:
+          type: array
+          items:
+            type: string
+          description: Hints to help guide the user experience
+      required:
+        - challenge
+        - rp
+        - user
+        - pubKeyCredParams
 
     VerifyAddSecurityKeyRequest:
       type: object
@@ -1958,10 +1985,6 @@ components:
       type: object
       additionalProperties: false
       properties:
-        type:
-          type: string
-          enum: ["public-key"]
-          description: The type of credential
         id:
           type: string
           description: Base64url encoded credential ID
@@ -1971,9 +1994,13 @@ components:
             type: string
             enum: ["usb", "nfc", "ble", "smart-card", "hybrid", "internal"]
           description: Hints about how the client might communicate with the authenticator
+        type:
+          type: string
+          enum: ["public-key"]
+          description: The type of credential
       required:
-        - type
         - id
+        - type
 
     PublicKeyCredentialRpEntity:
       type: object
