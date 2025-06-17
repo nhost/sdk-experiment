@@ -816,70 +816,6 @@ export interface SignUpWebauthnVerifyRequest {
 }
 
 /**
- * Attestation conveyance preference
- */
-export type AddSecurityKeyResponseAttestation =
-  | "none"
-  | "indirect"
-  | "direct"
-  | "enterprise";
-
-/**
- * 
- @property rp (`PublicKeyCredentialRpEntity`) - 
- @property user (`PublicKeyCredentialUserEntity`) - 
- @property challenge (`string`) - Base64url encoded challenge
- @property pubKeyCredParams (`PublicKeyCredentialParameters[]`) - Supported public key algorithms
- @property timeout? (`number`) - Timeout in milliseconds
- @property excludeCredentials? (`PublicKeyCredentialDescriptor[]`) - Credentials to exclude
- @property authenticatorSelection? (`AuthenticatorSelectionCriteria`) - 
- @property attestation? (`AddSecurityKeyResponseAttestation`) - Attestation conveyance preference
- @property extensions? (`Record<string, unknown>`) - Client extension inputs
- @property hints? (`string[]`) - Hints to help guide the user experience*/
-export interface AddSecurityKeyResponse {
-  /**
-   *
-   */
-  rp: PublicKeyCredentialRpEntity;
-  /**
-   *
-   */
-  user: PublicKeyCredentialUserEntity;
-  /**
-   * Base64url encoded challenge
-   */
-  challenge: string;
-  /**
-   * Supported public key algorithms
-   */
-  pubKeyCredParams: PublicKeyCredentialParameters[];
-  /**
-   * Timeout in milliseconds
-   */
-  timeout?: number;
-  /**
-   * Credentials to exclude
-   */
-  excludeCredentials?: PublicKeyCredentialDescriptor[];
-  /**
-   *
-   */
-  authenticatorSelection?: AuthenticatorSelectionCriteria;
-  /**
-   * Attestation conveyance preference
-   */
-  attestation?: AddSecurityKeyResponseAttestation;
-  /**
-   * Client extension inputs
-   */
-  extensions?: Record<string, unknown>;
-  /**
-   * Hints to help guide the user experience
-   */
-  hints?: string[];
-}
-
-/**
  * 
  @property credential (`CredentialCreationResponse`) - 
  @property nickname? (`string`) - Optional nickname for the security key*/
@@ -1019,109 +955,6 @@ export interface TotpGenerateResponse {
    *    Example - `"ABCDEFGHIJK23456"`
    */
   totpSecret: string;
-}
-
-/**
- * 
- @property id? (`string`) - Relying Party identifier
- @property name (`string`) - Human-readable name for the Relying Party*/
-export interface PublicKeyCredentialRpEntity {
-  /**
-   * Relying Party identifier
-   */
-  id?: string;
-  /**
-   * Human-readable name for the Relying Party
-   */
-  name: string;
-}
-
-/**
- * 
- @property id (`string`) - Base64url encoded user handle
- @property name (`string`) - Human-readable account name
- @property displayName (`string`) - Human-readable display name*/
-export interface PublicKeyCredentialUserEntity {
-  /**
-   * Base64url encoded user handle
-   */
-  id: string;
-  /**
-   * Human-readable account name
-   */
-  name: string;
-  /**
-   * Human-readable display name
-   */
-  displayName: string;
-}
-
-/**
- * The type of credential
- */
-export type PublicKeyCredentialParametersType = "public-key";
-
-/**
- * 
- @property type (`PublicKeyCredentialParametersType`) - The type of credential
- @property alg (`number`) - COSE algorithm identifier*/
-export interface PublicKeyCredentialParameters {
-  /**
-   * The type of credential
-   */
-  type: PublicKeyCredentialParametersType;
-  /**
-   * COSE algorithm identifier
-   */
-  alg: number;
-}
-
-/**
- * Authenticator attachment preference
- */
-export type AuthenticatorSelectionCriteriaAuthenticatorAttachment =
-  | "platform"
-  | "cross-platform";
-
-/**
- * Resident key requirement
- */
-export type AuthenticatorSelectionCriteriaResidentKey =
-  | "discouraged"
-  | "preferred"
-  | "required";
-
-/**
- * User verification requirement
- */
-export type AuthenticatorSelectionCriteriaUserVerification =
-  | "required"
-  | "preferred"
-  | "discouraged";
-
-/**
- * 
- @property authenticatorAttachment? (`AuthenticatorSelectionCriteriaAuthenticatorAttachment`) - Authenticator attachment preference
- @property residentKey? (`AuthenticatorSelectionCriteriaResidentKey`) - Resident key requirement
- @property requireResidentKey? (`boolean`) - Whether a resident key is required (legacy)
- @property userVerification? (`AuthenticatorSelectionCriteriaUserVerification`) - User verification requirement*/
-export interface AuthenticatorSelectionCriteria {
-  /**
-   * Authenticator attachment preference
-   */
-  authenticatorAttachment?: AuthenticatorSelectionCriteriaAuthenticatorAttachment;
-  /**
-   * Resident key requirement
-   */
-  residentKey?: AuthenticatorSelectionCriteriaResidentKey;
-  /**
-   * Whether a resident key is required (legacy)
-   */
-  requireResidentKey?: boolean;
-  /**
-   * User verification requirement
-   */
-  userVerification?: AuthenticatorSelectionCriteriaUserVerification;
 }
 
 /**
@@ -1285,38 +1118,6 @@ export interface CredentialAssertionResponse {
    *
    */
   response: AuthenticatorAssertionResponse;
-}
-
-/**
- * 
- @property id (`string`) - The credential's identifier
- @property type (`string`) - The credential type represented by this object
- @property rawId (`string`) - Base64url-encoded binary data
-    *    Format - byte
- @property clientExtensionResults? (`AuthenticationExtensionsClientOutputs`) - Map of extension outputs from the client
- @property authenticatorAttachment? (`string`) - The authenticator attachment*/
-export interface PublicKeyCredential {
-  /**
-   * The credential's identifier
-   */
-  id: string;
-  /**
-   * The credential type represented by this object
-   */
-  type: string;
-  /**
-   * Base64url-encoded binary data
-   *    Format - byte
-   */
-  rawId: string;
-  /**
-   * Map of extension outputs from the client
-   */
-  clientExtensionResults?: AuthenticationExtensionsClientOutputs;
-  /**
-   * The authenticator attachment
-   */
-  authenticatorAttachment?: string;
 }
 
 /**
@@ -1597,18 +1398,6 @@ export interface AuthenticatorAttestationResponse {
    *    Format - byte
    */
   attestationObject: string;
-}
-
-/**
- * 
- @property clientDataJSON (`string`) - Base64url-encoded binary data
-    *    Format - byte*/
-export interface AuthenticatorResponse {
-  /**
-   * Base64url-encoded binary data
-   *    Format - byte
-   */
-  clientDataJSON: string;
 }
 
 /**
