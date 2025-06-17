@@ -67,7 +67,7 @@ export default function MfaVerification(): JSX.Element {
       // We already imported nhost client at the top of the file
 
       // Verify MFA code
-      const response = await nhost.auth.signInVerifyMfaTotp({
+      const response = await nhost.auth.verifySignInMfaTotp({
         ticket,
         otp,
       });

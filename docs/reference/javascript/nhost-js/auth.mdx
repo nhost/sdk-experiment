@@ -51,75 +51,35 @@ try {
 
 ## Interfaces
 
-### AddSecurityKeyResponse
+### AuthenticationExtensionsClientOutputs
+
+Map of extension outputs from the client
 
 #### Properties
 
-##### attestation?
+##### appid?
 
 ```ts
-optional attestation: AddSecurityKeyResponseAttestation;
+optional appid: boolean;
 ```
 
-Attestation conveyance preference
+Application identifier extension output
 
-##### authenticatorSelection?
+##### credProps?
 
 ```ts
-optional authenticatorSelection: AuthenticatorSelectionCriteria;
+optional credProps: CredentialPropertiesOutput;
 ```
 
-##### challenge?
+Credential properties extension output
+
+##### hmacCreateSecret?
 
 ```ts
-optional challenge: string;
+optional hmacCreateSecret: boolean;
 ```
 
-Base64url encoded challenge
-
-##### excludeCredentials?
-
-```ts
-optional excludeCredentials: PublicKeyCredentialDescriptor[];
-```
-
-Credentials to exclude
-
-##### extensions?
-
-```ts
-optional extensions: Record<string, unknown>;
-```
-
-Client extension inputs
-
-##### pubKeyCredParams?
-
-```ts
-optional pubKeyCredParams: PublicKeyCredentialParameters[];
-```
-
-Supported public key algorithms
-
-##### rp?
-
-```ts
-optional rp: PublicKeyCredentialRpEntity;
-```
-
-##### timeout?
-
-```ts
-optional timeout: number;
-```
-
-Timeout in milliseconds
-
-##### user?
-
-```ts
-optional user: PublicKeyCredentialUserEntity;
-```
+HMAC secret extension output
 
 ---
 
@@ -171,7 +131,18 @@ Base64url encoded user handle
 attestationObject: string;
 ```
 
-(`string`) - Base64url encoded attestation object
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### authenticatorData?
+
+```ts
+optional authenticatorData: string;
+```
+
+Base64url-encoded binary data
+Format - byte
 
 ##### clientDataJSON
 
@@ -179,7 +150,27 @@ attestationObject: string;
 clientDataJSON: string;
 ```
 
-(`string`) - Base64url encoded client data JSON
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### publicKey?
+
+```ts
+optional publicKey: string;
+```
+
+Base64url-encoded binary data
+Format - byte
+
+##### publicKeyAlgorithm?
+
+```ts
+optional publicKeyAlgorithm: number;
+```
+
+The public key algorithm identifier
+Format - int64
 
 ##### transports?
 
@@ -187,21 +178,21 @@ clientDataJSON: string;
 optional transports: string[];
 ```
 
-Available transports for the authenticator
+The authenticator transports
 
 ---
 
-### AuthenticatorSelectionCriteria
+### AuthenticatorSelection
 
 #### Properties
 
 ##### authenticatorAttachment?
 
 ```ts
-optional authenticatorAttachment: AuthenticatorSelectionCriteriaAuthenticatorAttachment;
+optional authenticatorAttachment: AuthenticatorAttachment;
 ```
 
-Authenticator attachment preference
+The authenticator attachment modality
 
 ##### requireResidentKey?
 
@@ -209,23 +200,23 @@ Authenticator attachment preference
 optional requireResidentKey: boolean;
 ```
 
-Whether a resident key is required (legacy)
+Whether the authenticator must create a client-side-resident public key credential source
 
 ##### residentKey?
 
 ```ts
-optional residentKey: AuthenticatorSelectionCriteriaResidentKey;
+optional residentKey: ResidentKeyRequirement;
 ```
 
-Resident key requirement
+The resident key requirement
 
 ##### userVerification?
 
 ```ts
-optional userVerification: AuthenticatorSelectionCriteriaUserVerification;
+optional userVerification: UserVerificationRequirement;
 ```
 
-User verification requirement
+A requirement for user verification for the operation
 
 ---
 
@@ -244,14 +235,14 @@ baseURL: string;
 ##### addSecurityKey()
 
 ```ts
-addSecurityKey(options?: RequestInit): Promise<FetchResponse<AddSecurityKeyResponse>>;
+addSecurityKey(options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 ```
 
 Summary: Initialize adding of a new webauthn security key
 
 This method may return different T based on the response code:
 
-- 200: AddSecurityKeyResponse
+- 200: PublicKeyCredentialCreationOptions
 
 ###### Parameters
 
@@ -261,7 +252,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`AddSecurityKeyResponse`](#addsecuritykeyresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`PublicKeyCredentialCreationOptions`](#publickeycredentialcreationoptions)&gt;&gt;
 
 ##### changeUserEmail()
 
@@ -308,30 +299,6 @@ This method may return different T based on the response code:
 ###### Returns
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`TotpGenerateResponse`](#totpgenerateresponse)&gt;&gt;
-
-##### changeUserMfaVerify()
-
-```ts
-changeUserMfaVerify(body: UserMfaRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
-```
-
-Summary: Manage multi-factor authentication
-Activate or deactivate multi-factor authentication for the authenticated user
-
-This method may return different T based on the response code:
-
-- 200: OKResponse
-
-###### Parameters
-
-| Parameter  | Type                                |
-| ---------- | ----------------------------------- |
-| `body`     | [`UserMfaRequest`](#usermfarequest) |
-| `options?` | `RequestInit`                       |
-
-###### Returns
-
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
 ##### changeUserPassword()
 
@@ -401,6 +368,29 @@ This method may return different T based on the response code:
 ###### Returns
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+##### elevateWebauthn()
+
+```ts
+elevateWebauthn(options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialRequestOptions>>;
+```
+
+Summary: Elevate access for an already signed in user using FIDO2 Webauthn
+Generate a Webauthn challenge for elevating user permissions
+
+This method may return different T based on the response code:
+
+- 200: PublicKeyCredentialRequestOptions
+
+###### Parameters
+
+| Parameter  | Type          |
+| ---------- | ------------- |
+| `options?` | `RequestInit` |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`PublicKeyCredentialRequestOptions`](#publickeycredentialrequestoptions)&gt;&gt;
 
 ##### getJWKs()
 
@@ -767,42 +757,18 @@ As this method is a redirect, it returns a URL string instead of a Promise
 
 `string`
 
-##### signInVerifyMfaTotp()
+##### signInWebauthn()
 
 ```ts
-signInVerifyMfaTotp(body: SignInMfaTotpRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+signInWebauthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialRequestOptions>>;
 ```
 
-Summary: Verify TOTP for MFA
-Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
+Summary: Sign in with Webauthn
+Initiate a Webauthn sign-in process by sending a challenge to the user's device. The user must have previously registered a Webauthn credential.
 
 This method may return different T based on the response code:
 
-- 200: SessionPayload
-
-###### Parameters
-
-| Parameter  | Type                                            |
-| ---------- | ----------------------------------------------- |
-| `body`     | [`SignInMfaTotpRequest`](#signinmfatotprequest) |
-| `options?` | `RequestInit`                                   |
-
-###### Returns
-
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
-
-##### signInWebAuthn()
-
-```ts
-signInWebAuthn(body?: SignInWebauthnRequest, options?: RequestInit): Promise<FetchResponse<SignInWebauthnResponse>>;
-```
-
-Summary: Sign in with WebAuthn
-Initiate a WebAuthn sign-in process by sending a challenge to the user's device. The user must have previously registered a WebAuthn credential.
-
-This method may return different T based on the response code:
-
-- 200: SignInWebauthnResponse
+- 200: PublicKeyCredentialRequestOptions
 
 ###### Parameters
 
@@ -813,7 +779,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInWebauthnResponse`](#signinwebauthnresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`PublicKeyCredentialRequestOptions`](#publickeycredentialrequestoptions)&gt;&gt;
 
 ##### signOut()
 
@@ -864,18 +830,18 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
-##### signUpWebAuthn()
+##### signUpWebauthn()
 
 ```ts
-signUpWebAuthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<SignUpWebauthnResponse>>;
+signUpWebauthn(body: SignUpWebauthnRequest, options?: RequestInit): Promise<FetchResponse<PublicKeyCredentialCreationOptions>>;
 ```
 
-Summary: Sign up with WebAuthn
-Initiate a WebAuthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
+Summary: Sign up with Webauthn
+Initiate a Webauthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
 
 This method may return different T based on the response code:
 
-- 200: SignUpWebauthnResponse
+- 200: PublicKeyCredentialCreationOptions
 
 ###### Parameters
 
@@ -886,7 +852,7 @@ This method may return different T based on the response code:
 
 ###### Returns
 
-`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignUpWebauthnResponse`](#signupwebauthnresponse)&gt;&gt;
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`PublicKeyCredentialCreationOptions`](#publickeycredentialcreationoptions)&gt;&gt;
 
 ##### verifyAddSecurityKey()
 
@@ -911,6 +877,78 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`VerifyAddSecurityKeyResponse`](#verifyaddsecuritykeyresponse)&gt;&gt;
 
+##### verifyChangeUserMfa()
+
+```ts
+verifyChangeUserMfa(body: UserMfaRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
+```
+
+Summary: Manage multi-factor authentication
+Activate or deactivate multi-factor authentication for the authenticated user
+
+This method may return different T based on the response code:
+
+- 200: OKResponse
+
+###### Parameters
+
+| Parameter  | Type                                |
+| ---------- | ----------------------------------- |
+| `body`     | [`UserMfaRequest`](#usermfarequest) |
+| `options?` | `RequestInit`                       |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
+
+##### verifyElevateWebauthn()
+
+```ts
+verifyElevateWebauthn(body: SignInWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+```
+
+Summary: Verify FIDO2 Webauthn authentication using public-key cryptography for elevation
+Complete Webauthn elevation by verifying the authentication response
+
+This method may return different T based on the response code:
+
+- 200: SessionPayload
+
+###### Parameters
+
+| Parameter  | Type                                                          |
+| ---------- | ------------------------------------------------------------- |
+| `body`     | [`SignInWebauthnVerifyRequest`](#signinwebauthnverifyrequest) |
+| `options?` | `RequestInit`                                                 |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
+##### verifySignInMfaTotp()
+
+```ts
+verifySignInMfaTotp(body: SignInMfaTotpRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+```
+
+Summary: Verify TOTP for MFA
+Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
+
+This method may return different T based on the response code:
+
+- 200: SessionPayload
+
+###### Parameters
+
+| Parameter  | Type                                            |
+| ---------- | ----------------------------------------------- |
+| `body`     | [`SignInMfaTotpRequest`](#signinmfatotprequest) |
+| `options?` | `RequestInit`                                   |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
+
 ##### verifySignInOTPEmail()
 
 ```ts
@@ -934,14 +972,14 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInOTPEmailVerifyResponse`](#signinotpemailverifyresponse)&gt;&gt;
 
-##### verifySignInWebAuthn()
+##### verifySignInWebauthn()
 
 ```ts
-verifySignInWebAuthn(body: SignInWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+verifySignInWebauthn(body: SignInWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
 ```
 
-Summary: Verify WebAuthn sign-in
-Complete the WebAuthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
+Summary: Verify Webauthn sign-in
+Complete the Webauthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
 
 This method may return different T based on the response code:
 
@@ -958,14 +996,14 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SessionPayload`](#sessionpayload)&gt;&gt;
 
-##### verifySignUpWebAuthn()
+##### verifySignUpWebauthn()
 
 ```ts
-verifySignUpWebAuthn(body: SignUpWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
+verifySignUpWebauthn(body: SignUpWebauthnVerifyRequest, options?: RequestInit): Promise<FetchResponse<SessionPayload>>;
 ```
 
-Summary: Verify WebAuthn sign-up
-Complete the WebAuthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
+Summary: Verify Webauthn sign-up
+Complete the Webauthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
 
 This method may return different T based on the response code:
 
@@ -1054,6 +1092,156 @@ personalAccessToken: string;
 
 - Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
 - Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+---
+
+### CredentialAssertionResponse
+
+#### Properties
+
+##### authenticatorAttachment?
+
+```ts
+optional authenticatorAttachment: string;
+```
+
+The authenticator attachment
+
+##### clientExtensionResults?
+
+```ts
+optional clientExtensionResults: AuthenticationExtensionsClientOutputs;
+```
+
+Map of extension outputs from the client
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - The credential's identifier
+
+##### rawId
+
+```ts
+rawId: string;
+```
+
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### response
+
+```ts
+response: AuthenticatorAssertionResponse;
+```
+
+(`AuthenticatorAssertionResponse`) -
+
+##### type
+
+```ts
+type: string;
+```
+
+(`string`) - The credential type represented by this object
+
+---
+
+### CredentialCreationResponse
+
+#### Properties
+
+##### authenticatorAttachment?
+
+```ts
+optional authenticatorAttachment: string;
+```
+
+The authenticator attachment
+
+##### clientExtensionResults?
+
+```ts
+optional clientExtensionResults: AuthenticationExtensionsClientOutputs;
+```
+
+Map of extension outputs from the client
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - The credential's identifier
+
+##### rawId
+
+```ts
+rawId: string;
+```
+
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### response
+
+```ts
+response: AuthenticatorAttestationResponse;
+```
+
+(`AuthenticatorAttestationResponse`) -
+
+##### type
+
+```ts
+type: string;
+```
+
+(`string`) - The credential type represented by this object
+
+---
+
+### CredentialParameter
+
+#### Properties
+
+##### alg
+
+```ts
+alg: number;
+```
+
+(`number`) - The cryptographic algorithm identifier
+
+##### type
+
+```ts
+type: "public-key";
+```
+
+(`CredentialType`) - The valid credential types
+
+---
+
+### CredentialPropertiesOutput
+
+Credential properties extension output
+
+#### Properties
+
+##### rk?
+
+```ts
+optional rk: boolean;
+```
+
+Indicates if the credential is a resident key
 
 ---
 
@@ -1256,6 +1444,100 @@ Format - uri
 
 ---
 
+### PublicKeyCredentialCreationOptions
+
+#### Properties
+
+##### attestation?
+
+```ts
+optional attestation: ConveyancePreference;
+```
+
+The attestation conveyance preference
+
+##### attestationFormats?
+
+```ts
+optional attestationFormats: AttestationFormat[];
+```
+
+The preferred attestation statement formats
+
+##### authenticatorSelection?
+
+```ts
+optional authenticatorSelection: AuthenticatorSelection;
+```
+
+##### challenge
+
+```ts
+challenge: string;
+```
+
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
+
+##### excludeCredentials?
+
+```ts
+optional excludeCredentials: PublicKeyCredentialDescriptor[];
+```
+
+A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
+
+##### extensions?
+
+```ts
+optional extensions: Record<string, unknown>;
+```
+
+Additional parameters requesting additional processing by the client and authenticator
+
+##### hints?
+
+```ts
+optional hints: PublicKeyCredentialHints[];
+```
+
+Hints to help guide the user through the experience
+
+##### pubKeyCredParams
+
+```ts
+pubKeyCredParams: CredentialParameter[];
+```
+
+(`CredentialParameter[]`) - The desired credential types and their respective cryptographic parameters
+
+##### rp
+
+```ts
+rp: RelyingPartyEntity;
+```
+
+(`RelyingPartyEntity`) -
+
+##### timeout?
+
+```ts
+optional timeout: number;
+```
+
+A time, in milliseconds, that the caller is willing to wait for the call to complete
+
+##### user
+
+```ts
+user: UserEntity;
+```
+
+(`UserEntity`) -
+
+---
+
 ### PublicKeyCredentialDescriptor
 
 #### Properties
@@ -1266,15 +1548,17 @@ Format - uri
 id: string;
 ```
 
-(`string`) - Base64url encoded credential ID
+(`string`) - Base64url-encoded binary data
+
+- Format - byte
 
 ##### transports?
 
 ```ts
-optional transports: string[];
+optional transports: AuthenticatorTransport[];
 ```
 
-Hints about how the client might communicate with the authenticator
+The authenticator transports that can be used
 
 ##### type
 
@@ -1282,81 +1566,71 @@ Hints about how the client might communicate with the authenticator
 type: "public-key";
 ```
 
-(`PublicKeyCredentialDescriptorType`) - The type of credential
+(`CredentialType`) - The valid credential types
 
 ---
 
-### PublicKeyCredentialParameters
+### PublicKeyCredentialRequestOptions
 
 #### Properties
 
-##### alg
+##### allowCredentials?
 
 ```ts
-alg: number;
+optional allowCredentials: PublicKeyCredentialDescriptor[];
 ```
 
-(`number`) - COSE algorithm identifier
+A list of CredentialDescriptor objects representing public key credentials acceptable to the caller
 
-##### type
+##### challenge
 
 ```ts
-type: "public-key";
+challenge: string;
 ```
 
-(`PublicKeyCredentialParametersType`) - The type of credential
+(`string`) - Base64url-encoded binary data
 
----
+- Format - byte
 
-### PublicKeyCredentialRpEntity
-
-#### Properties
-
-##### id?
+##### extensions?
 
 ```ts
-optional id: string;
+optional extensions: Record<string, unknown>;
 ```
 
-Relying Party identifier
+Additional parameters requesting additional processing by the client and authenticator
 
-##### name
+##### hints?
 
 ```ts
-name: string;
+optional hints: PublicKeyCredentialHints[];
 ```
 
-(`string`) - Human-readable name for the Relying Party
+Hints to help guide the user through the experience
 
----
-
-### PublicKeyCredentialUserEntity
-
-#### Properties
-
-##### displayName
+##### rpId?
 
 ```ts
-displayName: string;
+optional rpId: string;
 ```
 
-(`string`) - Human-readable display name
+The RP ID the credential should be scoped to
 
-##### id
+##### timeout?
 
 ```ts
-id: string;
+optional timeout: number;
 ```
 
-(`string`) - Base64url encoded user handle
+A time, in milliseconds, that the caller is willing to wait for the call to complete
 
-##### name
+##### userVerification?
 
 ```ts
-name: string;
+optional userVerification: UserVerificationRequirement;
 ```
 
-(`string`) - Human-readable account name
+A requirement for user verification for the operation
 
 ---
 
@@ -1376,6 +1650,28 @@ refreshToken: string;
 
 - Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
 - Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+---
+
+### RelyingPartyEntity
+
+#### Properties
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - A unique identifier for the Relying Party entity, which sets the RP ID
+
+##### name
+
+```ts
+name: string;
+```
+
+(`string`) - A human-palatable name for the entity
 
 ---
 
@@ -1784,60 +2080,6 @@ Format - email
 
 ---
 
-### SignInWebauthnResponse
-
-#### Properties
-
-##### allowCredentials?
-
-```ts
-optional allowCredentials: PublicKeyCredentialDescriptor[];
-```
-
-List of acceptable credentials
-
-##### challenge?
-
-```ts
-optional challenge: string;
-```
-
-Base64url encoded challenge
-
-##### extensions?
-
-```ts
-optional extensions: Record<string, unknown>;
-```
-
-Client extension inputs
-
-##### rpId?
-
-```ts
-optional rpId: string;
-```
-
-Relying Party identifier
-
-##### timeout?
-
-```ts
-optional timeout: number;
-```
-
-Timeout in milliseconds
-
-##### userVerification?
-
-```ts
-optional userVerification: SignInWebauthnResponseUserVerification;
-```
-
-User verification requirement
-
----
-
 ### SignInWebauthnVerifyRequest
 
 #### Properties
@@ -1845,10 +2087,10 @@ User verification requirement
 ##### credential
 
 ```ts
-credential: AuthenticatorAssertionResponse;
+credential: CredentialAssertionResponse;
 ```
 
-(`AuthenticatorAssertionResponse`) -
+(`CredentialAssertionResponse`) -
 
 ##### email?
 
@@ -2004,78 +2246,6 @@ optional options: SignUpOptions;
 
 ---
 
-### SignUpWebauthnResponse
-
-#### Properties
-
-##### attestation?
-
-```ts
-optional attestation: SignUpWebauthnResponseAttestation;
-```
-
-Attestation conveyance preference
-
-##### authenticatorSelection?
-
-```ts
-optional authenticatorSelection: AuthenticatorSelectionCriteria;
-```
-
-##### challenge?
-
-```ts
-optional challenge: string;
-```
-
-Base64url encoded challenge
-
-##### excludeCredentials?
-
-```ts
-optional excludeCredentials: PublicKeyCredentialDescriptor[];
-```
-
-Credentials to exclude
-
-##### extensions?
-
-```ts
-optional extensions: Record<string, unknown>;
-```
-
-Client extension inputs
-
-##### pubKeyCredParams?
-
-```ts
-optional pubKeyCredParams: PublicKeyCredentialParameters[];
-```
-
-Supported public key algorithms
-
-##### rp?
-
-```ts
-optional rp: PublicKeyCredentialRpEntity;
-```
-
-##### timeout?
-
-```ts
-optional timeout: number;
-```
-
-Timeout in milliseconds
-
-##### user?
-
-```ts
-optional user: PublicKeyCredentialUserEntity;
-```
-
----
-
 ### SignUpWebauthnVerifyRequest
 
 #### Properties
@@ -2083,10 +2253,10 @@ optional user: PublicKeyCredentialUserEntity;
 ##### credential
 
 ```ts
-credential: AuthenticatorAttestationResponse;
+credential: CredentialCreationResponse;
 ```
 
-(`AuthenticatorAttestationResponse`) -
+(`CredentialCreationResponse`) -
 
 ##### nickname?
 
@@ -2369,6 +2539,36 @@ optional options: OptionsRedirectTo;
 
 ---
 
+### UserEntity
+
+#### Properties
+
+##### displayName
+
+```ts
+displayName: string;
+```
+
+(`string`) - A human-palatable name for the user account, intended only for display
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - The user handle of the user account entity
+
+##### name
+
+```ts
+name: string;
+```
+
+(`string`) - A human-palatable name for the entity
+
+---
+
 ### UserMfaRequest
 
 Request to activate or deactivate multi-factor authentication
@@ -2453,10 +2653,10 @@ optional options: OptionsRedirectTo;
 ##### credential
 
 ```ts
-credential: AuthenticatorAttestationResponse;
+credential: CredentialCreationResponse;
 ```
 
-(`AuthenticatorAttestationResponse`) -
+(`CredentialCreationResponse`) -
 
 ##### nickname?
 
@@ -2530,55 +2730,66 @@ Type of the ticket. Deprecated, no longer used
 
 ## Type Aliases
 
-### AddSecurityKeyResponseAttestation
+### AttestationFormat
 
 ```ts
-type AddSecurityKeyResponseAttestation =
-  | "none"
-  | "indirect"
-  | "direct"
-  | "enterprise";
+type AttestationFormat =
+  | "packed"
+  | "tpm"
+  | "android-key"
+  | "android-safetynet"
+  | "fido-u2f"
+  | "apple"
+  | "none";
 ```
 
-Attestation conveyance preference
+The attestation statement format
 
 ---
 
-### AuthenticatorSelectionCriteriaAuthenticatorAttachment
+### AuthenticatorAttachment
 
 ```ts
-type AuthenticatorSelectionCriteriaAuthenticatorAttachment =
-  | "platform"
-  | "cross-platform";
+type AuthenticatorAttachment = "platform" | "cross-platform";
 ```
 
-Authenticator attachment preference
+The authenticator attachment modality
 
 ---
 
-### AuthenticatorSelectionCriteriaResidentKey
+### AuthenticatorTransport
 
 ```ts
-type AuthenticatorSelectionCriteriaResidentKey =
-  | "discouraged"
-  | "preferred"
-  | "required";
+type AuthenticatorTransport =
+  | "usb"
+  | "nfc"
+  | "ble"
+  | "smart-card"
+  | "hybrid"
+  | "internal";
 ```
 
-Resident key requirement
+The authenticator transports that can be used
 
 ---
 
-### AuthenticatorSelectionCriteriaUserVerification
+### ConveyancePreference
 
 ```ts
-type AuthenticatorSelectionCriteriaUserVerification =
-  | "required"
-  | "preferred"
-  | "discouraged";
+type ConveyancePreference = "none" | "indirect" | "direct" | "enterprise";
 ```
 
-User verification requirement
+The attestation conveyance preference
+
+---
+
+### CredentialType
+
+```ts
+type CredentialType = "public-key";
+```
+
+The valid credential types
 
 ---
 
@@ -2633,23 +2844,13 @@ type OKResponse = "OK";
 
 ---
 
-### PublicKeyCredentialDescriptorType
+### PublicKeyCredentialHints
 
 ```ts
-type PublicKeyCredentialDescriptorType = "public-key";
+type PublicKeyCredentialHints = "security-key" | "client-device" | "hybrid";
 ```
 
-The type of credential
-
----
-
-### PublicKeyCredentialParametersType
-
-```ts
-type PublicKeyCredentialParametersType = "public-key";
-```
-
-The type of credential
+Hints to help guide the user through the experience
 
 ---
 
@@ -2660,6 +2861,16 @@ type RedirectToQuery = string;
 ```
 
 Target URL for the redirect
+
+---
+
+### ResidentKeyRequirement
+
+```ts
+type ResidentKeyRequirement = "discouraged" | "preferred" | "required";
+```
+
+The resident key requirement
 
 ---
 
@@ -2674,33 +2885,6 @@ type SignInProvider =
   | "discord"
   | "spotify";
 ```
-
----
-
-### SignInWebauthnResponseUserVerification
-
-```ts
-type SignInWebauthnResponseUserVerification =
-  | "required"
-  | "preferred"
-  | "discouraged";
-```
-
-User verification requirement
-
----
-
-### SignUpWebauthnResponseAttestation
-
-```ts
-type SignUpWebauthnResponseAttestation =
-  | "none"
-  | "indirect"
-  | "direct"
-  | "enterprise";
-```
-
-Attestation conveyance preference
 
 ---
 
@@ -2728,6 +2912,16 @@ Type of the ticket
 
 ---
 
+### URLEncodedBase64
+
+```ts
+type URLEncodedBase64 = string;
+```
+
+Base64url-encoded binary data
+
+---
+
 ### UserDeanonymizeRequestSignInMethod
 
 ```ts
@@ -2745,6 +2939,16 @@ type UserMfaRequestActiveMfaType = "totp" | "";
 ```
 
 Type of MFA to activate. Use empty string to disable MFA.
+
+---
+
+### UserVerificationRequirement
+
+```ts
+type UserVerificationRequirement = "required" | "preferred" | "discouraged";
+```
+
+A requirement for user verification for the operation
 
 ## Functions
 

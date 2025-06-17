@@ -3,11 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { isWebAuthnSupported } from "../lib/utils";
-import { signInWebAuthn, verifySignInWebAuthn } from "../signin/actions";
-import type {
-  SignInWebauthnResponse,
-  AuthenticatorAssertionResponse,
-} from "@nhost/nhost-js/auth";
+import { signInWebauthn, verifySignInWebauthn } from "../signin/actions";
+import type { PublicKeyCredentialRequestOptions } from "@nhost/nhost-js/auth";
+import { startAuthentication } from "@simplewebauthn/browser";
 
 interface WebAuthnSignInFormProps {
   buttonLabel?: string;
@@ -19,7 +17,7 @@ export default function WebAuthnSignInForm({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [challengeData, setChallengeData] =
-    useState<SignInWebauthnResponse | null>(null);
+    useState<PublicKeyCredentialRequestOptions | null>(null);
   const router = useRouter();
 
   /**
@@ -42,7 +40,7 @@ export default function WebAuthnSignInForm({
       }
 
       // Step 1: Request a challenge from the server for credential discovery
-      const result = await signInWebAuthn();
+      const result = await signInWebauthn();
 
       if (result.error) {
         setError(result.error);
@@ -60,13 +58,9 @@ export default function WebAuthnSignInForm({
 
       try {
         // Step 2: Browser prompts user for their security key or biometric verification
-        const credential = (await navigator.credentials.get({
-          publicKey: PublicKeyCredential.parseRequestOptionsFromJSON(
-            result.publicKeyCredentialRequestOptions as PublicKeyCredentialRequestOptionsJSON,
-          ),
-        })) as unknown as AuthenticatorAssertionResponse;
-        // the line above is a bit hacky but necessary because of the way the Credential
-        // API works with TypeScript types
+        const credential = await startAuthentication({
+          optionsJSON: result.publicKeyCredentialRequestOptions,
+        });
 
         if (!credential) {
           setError("No credential was selected.");
@@ -76,7 +70,7 @@ export default function WebAuthnSignInForm({
 
         // Step 3: Send the signed challenge to the server for verification
         // Use PublicKeyCredential's built-in serialization method
-        const verifyResult = await verifySignInWebAuthn(credential);
+        const verifyResult = await verifySignInWebauthn(credential);
 
         if (verifyResult.error) {
           setError(verifyResult.error);

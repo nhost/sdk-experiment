@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createNhostClient } from "../lib/nhost/server";
 import type {
   ErrorResponse,
-  AuthenticatorAssertionResponse,
+  CredentialAssertionResponse,
 } from "@nhost/nhost-js/auth";
 import type { FetchError } from "@nhost/nhost-js/fetch";
 
@@ -72,7 +72,7 @@ export async function verifyMfa(formData: FormData) {
     const nhost = await createNhostClient();
 
     // Verify MFA code
-    const response = await nhost.auth.signInVerifyMfaTotp({
+    const response = await nhost.auth.verifySignInMfaTotp({
       ticket,
       otp,
     });
@@ -171,13 +171,13 @@ export async function getProviderSignInUrl(provider: "github") {
  * Initiates WebAuthn sign in process
  * Server side function that gets authentication options from Nhost
  */
-export async function signInWebAuthn() {
+export async function signInWebauthn() {
   try {
     // Get the server Nhost client
     const nhost = await createNhostClient();
 
     // Request authentication options from server
-    const response = await nhost.auth.signInWebAuthn({});
+    const response = await nhost.auth.signInWebauthn({});
 
     // Return the challenge data for the client
     return {
@@ -195,8 +195,8 @@ export async function signInWebAuthn() {
  * Verifies WebAuthn authentication response
  * This is called after the user has completed the WebAuthn authentication
  */
-export async function verifySignInWebAuthn(
-  credential: AuthenticatorAssertionResponse,
+export async function verifySignInWebauthn(
+  credential: CredentialAssertionResponse,
 ) {
   try {
     // Get the server Nhost client
@@ -204,7 +204,7 @@ export async function verifySignInWebAuthn(
 
     console.log("Verifying WebAuthn credential:", credential);
 
-    const response = await nhost.auth.verifySignInWebAuthn({
+    const response = await nhost.auth.verifySignInWebauthn({
       credential,
     });
 

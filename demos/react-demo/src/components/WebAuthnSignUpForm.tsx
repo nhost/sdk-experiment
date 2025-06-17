@@ -2,11 +2,11 @@ import { useState, type JSX } from "react";
 import { useAuth } from "../lib/nhost/AuthProvider";
 import {
   type ErrorResponse,
-  type SignUpWebauthnResponse,
-  type AuthenticatorAttestationResponse,
+  type PublicKeyCredentialCreationOptions,
 } from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import { isWebAuthnSupported } from "../lib/utils";
+import { startRegistration } from "@simplewebauthn/browser";
 
 /**
  * WebAuthn Registration (Sign Up) Flow
@@ -44,7 +44,7 @@ export default function WebAuthnSignUpForm({
   const [error, setError] = useState<string | null>(null);
   const [keyNickname, setKeyNickname] = useState<string>("");
   const [challengeData, setChallengeData] =
-    useState<SignUpWebauthnResponse | null>(null);
+    useState<PublicKeyCredentialCreationOptions | null>(null);
 
   /**
    * Handles the WebAuthn registration flow (sign up with security key/biometrics)
@@ -85,7 +85,7 @@ export default function WebAuthnSignUpForm({
       // - user account information
       // - challenge to prevent replay attacks
       // - supported algorithms
-      const response = await nhost.auth.signUpWebAuthn({
+      const response = await nhost.auth.signUpWebauthn({
         email,
         options: {
           displayName,
@@ -101,13 +101,9 @@ export default function WebAuthnSignUpForm({
         // and creates a new public/private key pair
         // - The private key is stored securely on the device
         // - The public key will be sent to the server
-        const credential = (await navigator.credentials.create({
-          publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
-            response.body as PublicKeyCredentialCreationOptionsJSON,
-          ),
-        })) as unknown as AuthenticatorAttestationResponse;
-        // the line above is a bit hacky but necessary because of the way the Credential
-        // API works with TypeScript types
+        const credential = await startRegistration({
+          optionsJSON: response.body,
+        });
 
         if (!credential) {
           setError("No credential was created.");
@@ -118,7 +114,7 @@ export default function WebAuthnSignUpForm({
         // Step 3: Send the credential attestation to the server for verification
         // The server verifies the attestation signature and certificate chain,
         // then stores the public key for future authentication attempts
-        const verifyResponse = await nhost.auth.verifySignUpWebAuthn({
+        const verifyResponse = await nhost.auth.verifySignUpWebauthn({
           credential,
           options: {
             displayName: displayName || undefined,

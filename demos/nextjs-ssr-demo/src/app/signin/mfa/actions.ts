@@ -23,7 +23,7 @@ export async function verifyMfa(formData: FormData): Promise<void> {
     const nhost = await createNhostClient();
 
     // Verify MFA code
-    const response = await nhost.auth.signInVerifyMfaTotp({
+    const response = await nhost.auth.verifySignInMfaTotp({
       ticket,
       otp,
     });

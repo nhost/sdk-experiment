@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createNhostClient } from "../lib/nhost/server";
 import type {
   ErrorResponse,
-  AuthenticatorAttestationResponse,
+  CredentialCreationResponse,
 } from "@nhost/nhost-js/auth";
 import type { FetchError } from "@nhost/nhost-js/fetch";
 
@@ -99,7 +99,7 @@ export async function sendMagicLink(formData: FormData) {
 /**
  * Initiates WebAuthn registration process (sign up)
  */
-export async function signUpWebAuthn({
+export async function signUpWebauthn({
   email,
   displayName,
 }: {
@@ -116,7 +116,7 @@ export async function signUpWebAuthn({
     const nhost = await createNhostClient();
 
     // Request registration options from server
-    const response = await nhost.auth.signUpWebAuthn({
+    const response = await nhost.auth.signUpWebauthn({
       email,
       options: {
         displayName,
@@ -138,15 +138,15 @@ export async function signUpWebAuthn({
 /**
  * Verifies WebAuthn registration response
  */
-export async function verifySignUpWebAuthn(
-  credential: AuthenticatorAttestationResponse,
+export async function verifySignUpWebauthn(
+  credential: CredentialCreationResponse,
   nickname: string,
 ) {
   try {
     // Get the server Nhost client
     const nhost = await createNhostClient();
 
-    const response = await nhost.auth.verifySignUpWebAuthn({
+    const response = await nhost.auth.verifySignUpWebauthn({
       credential,
       nickname,
     });

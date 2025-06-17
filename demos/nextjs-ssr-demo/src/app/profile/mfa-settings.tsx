@@ -61,7 +61,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
 
     try {
       // Verify and activate MFA
-      const response = await nhost.auth.changeUserMfaVerify({
+      const response = await nhost.auth.verifyChangeUserMfa({
         activeMfaType: "totp",
         code: verificationCode,
       });
@@ -102,7 +102,7 @@ export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
     try {
       // Disable MFA by setting activeMfaType to empty string
       // We need to provide the current TOTP code to verify identity
-      const response = await nhost.auth.changeUserMfaVerify({
+      const response = await nhost.auth.verifyChangeUserMfa({
         activeMfaType: "",
         code: disableVerificationCode,
       });
