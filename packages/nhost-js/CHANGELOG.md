@@ -1,3 +1,7 @@
+# 5.0.0-beta.6
+
+- fix (packages/nhost-js): added missing endpoints (storage) and baseURL (functions) #33
+
 # 5.0.0-beta.5
 
 - fix (packages/nhost-js): improve some function names, webauthn types and added elevate endpoints #32
