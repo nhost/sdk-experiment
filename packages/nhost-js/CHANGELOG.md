@@ -1,6 +1,6 @@
 # 5.0.0-beta.6
 
-- fix (packages/nhost-js): added missing endpoints (storage) and baseURL (functions) #33
+- fix (packages/nhost-js): added missing endpoints (storage) and baseURL (functions) #35
 
 # 5.0.0-beta.5
 
