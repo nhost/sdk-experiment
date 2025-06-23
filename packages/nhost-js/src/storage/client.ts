@@ -282,6 +282,56 @@ export interface ReplaceFileBody {
 }
 
 /**
+ * 
+ @property files? (`string[]`) - */
+export interface ListOrphanedFilesResponse200 {
+  /**
+   *
+   */
+  files?: string[];
+}
+
+/**
+ * 
+ @property files? (`string[]`) - */
+export interface DeleteOrphanedFilesResponse200 {
+  /**
+   *
+   */
+  files?: string[];
+}
+
+/**
+ * 
+ @property metadata? (`FileSummary[]`) - */
+export interface ListBrokenMetadataResponse200 {
+  /**
+   *
+   */
+  metadata?: FileSummary[];
+}
+
+/**
+ * 
+ @property metadata? (`FileSummary[]`) - */
+export interface DeleteBrokenMetadataResponse200 {
+  /**
+   *
+   */
+  metadata?: FileSummary[];
+}
+
+/**
+ * 
+ @property metadata? (`FileSummary[]`) - */
+export interface ListFilesNotUploadedResponse200 {
+  /**
+   *
+   */
+  metadata?: FileSummary[];
+}
+
+/**
  * Parameters for the getFileMetadataHeaders method.
     @property q? (number) - Image quality (1-100). Only applies to JPEG, WebP and PNG files
   
@@ -446,6 +496,81 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
      - 400: ErrorResponse
      */
   deleteFile(id: string, options?: RequestInit): Promise<FetchResponse<void>>;
+
+  /**
+     Summary: Retrieve presigned URL to retrieve the file
+     Retrieve presigned URL to retrieve the file. Expiration of the URL is
+determined by bucket configuration
+
+
+     This method may return different T based on the response code:
+     - 200: PresignedURLResponse
+     - 400: ErrorResponse
+     */
+  getPresignedURL(
+    id: string,
+    options?: RequestInit,
+  ): Promise<FetchResponse<PresignedURLResponse>>;
+
+  /**
+     Summary: Lists orphaned files
+     Orphaned files are files that are present in the storage but have no associated metadata. This is an admin operation that requires the Hasura admin secret.
+
+     This method may return different T based on the response code:
+     - 200: ListOrphanedFilesResponse200
+     - 400: ErrorResponse
+     */
+  listOrphanedFiles(
+    options?: RequestInit,
+  ): Promise<FetchResponse<ListOrphanedFilesResponse200>>;
+
+  /**
+     Summary: Deletes orphaned files
+     Orphaned files are files that are present in the storage but have no associated metadata. This is an admin operation that requires the Hasura admin secret.
+
+     This method may return different T based on the response code:
+     - 200: DeleteOrphanedFilesResponse200
+     - 400: ErrorResponse
+     */
+  deleteOrphanedFiles(
+    options?: RequestInit,
+  ): Promise<FetchResponse<DeleteOrphanedFilesResponse200>>;
+
+  /**
+     Summary: Lists broken metadata
+     Broken metadata is defined as metadata that has isUploaded = true but there is no file in the storage matching it. This is an admin operation that requires the Hasura admin secret.
+
+     This method may return different T based on the response code:
+     - 200: ListBrokenMetadataResponse200
+     - 400: ErrorResponse
+     */
+  listBrokenMetadata(
+    options?: RequestInit,
+  ): Promise<FetchResponse<ListBrokenMetadataResponse200>>;
+
+  /**
+     Summary: Delete broken metadata
+     Broken metadata is defined as metadata that has isUploaded = true but there is no file in the storage matching it. This is an admin operation that requires the Hasura admin secret.
+
+     This method may return different T based on the response code:
+     - 200: DeleteBrokenMetadataResponse200
+     - 400: ErrorResponse
+     */
+  deleteBrokenMetadata(
+    options?: RequestInit,
+  ): Promise<FetchResponse<DeleteBrokenMetadataResponse200>>;
+
+  /**
+     Summary: Lists files that haven't been uploaded
+     That is, metadata that has isUploaded = false. This is an admin operation that requires the Hasura admin secret.
+
+     This method may return different T based on the response code:
+     - 200: ListFilesNotUploadedResponse200
+     - 400: ErrorResponse
+     */
+  listFilesNotUploaded(
+    options?: RequestInit,
+  ): Promise<FetchResponse<ListFilesNotUploadedResponse200>>;
 }
 
 export const createAPIClient = (
@@ -688,6 +813,199 @@ export const createAPIClient = (
     } as FetchResponse<void>;
   };
 
+  const getPresignedURL = async (
+    id: string,
+    options?: RequestInit,
+  ): Promise<FetchResponse<PresignedURLResponse>> => {
+    const url = baseURL + `/files/${id}/presignedurl`;
+    const res = await fetch(url, {
+      ...options,
+      method: "GET",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: PresignedURLResponse = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<PresignedURLResponse>;
+  };
+
+  const listOrphanedFiles = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<ListOrphanedFilesResponse200>> => {
+    const url = baseURL + `/ops/list-orphans`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: ListOrphanedFilesResponse200 = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<ListOrphanedFilesResponse200>;
+  };
+
+  const deleteOrphanedFiles = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<DeleteOrphanedFilesResponse200>> => {
+    const url = baseURL + `/ops/delete-orphans`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: DeleteOrphanedFilesResponse200 = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<DeleteOrphanedFilesResponse200>;
+  };
+
+  const listBrokenMetadata = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<ListBrokenMetadataResponse200>> => {
+    const url = baseURL + `/ops/list-broken-metadata`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: ListBrokenMetadataResponse200 = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<ListBrokenMetadataResponse200>;
+  };
+
+  const deleteBrokenMetadata = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<DeleteBrokenMetadataResponse200>> => {
+    const url = baseURL + `/ops/delete-broken-metadata`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: DeleteBrokenMetadataResponse200 = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<DeleteBrokenMetadataResponse200>;
+  };
+
+  const listFilesNotUploaded = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<ListFilesNotUploadedResponse200>> => {
+    const url = baseURL + `/ops/list-not-uploaded`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: ListFilesNotUploadedResponse200 = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<ListFilesNotUploadedResponse200>;
+  };
+
   return {
     baseURL,
     pushChainFunction,
@@ -697,5 +1015,11 @@ export const createAPIClient = (
     getFile,
     replaceFile,
     deleteFile,
+    getPresignedURL,
+    listOrphanedFiles,
+    deleteOrphanedFiles,
+    listBrokenMetadata,
+    deleteBrokenMetadata,
+    listFilesNotUploaded,
   };
 };
