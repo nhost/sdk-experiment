@@ -16,6 +16,8 @@ import {
  * Functions client interface providing methods for executing serverless function calls
  */
 export interface Client {
+  baseURL: string;
+
   /**
    * Execute a request to a serverless function
    * The response body will be automatically parsed based on the content type into the following types:
@@ -91,6 +93,7 @@ export const createAPIClient = (
 
   // Return client object with the fetch method
   return {
+    baseURL,
     fetch,
   } as Client;
 };
