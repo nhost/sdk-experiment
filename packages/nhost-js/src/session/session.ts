@@ -5,9 +5,9 @@ import type { Session as AuthSession } from "../auth";
  */
 export interface DecodedToken {
   /** Token expiration time as Date object */
-  exp?: Date;
+  exp?: number;
   /** Token issued at time as Date object */
-  iat?: Date;
+  iat?: number;
   /** Token issuer */
   iss?: string;
   /** Token subject (user ID) */
@@ -29,16 +29,20 @@ export const decodeUserSession = (accessToken: string): DecodedToken => {
     throw new Error("Invalid access token format");
   }
 
-  const decodedToken = JSON.parse(atob(s[1])) as Record<string, unknown>;
+  const decodedToken = JSON.parse(
+    typeof atob !== "undefined"
+      ? atob(s[1])
+      : Buffer.from(s[1], "base64").toString("utf-8"),
+  );
 
   // Convert iat and exp to Date objects
   const iat =
     typeof decodedToken["iat"] === "number"
-      ? new Date(decodedToken["iat"] * 1000)
+      ? decodedToken["iat"] * 1000 // Convert seconds to milliseconds
       : undefined;
   const exp =
     typeof decodedToken["exp"] === "number"
-      ? new Date(decodedToken["exp"] * 1000)
+      ? decodedToken["exp"] * 1000 // Convert seconds to milliseconds
       : undefined;
 
   // Process Hasura claims - dynamically convert PostgreSQL array notation to arrays

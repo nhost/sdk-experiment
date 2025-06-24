@@ -143,23 +143,29 @@ const _refreshSession = async (
  * @private
  */
 const _needsRefresh = (storage: SessionStorage, marginSeconds = 60) => {
+    console.log("_needsRefresh")
   const session = storage.get();
   if (!session) {
+    console.log("No session found in storage");
     return { session: null, needsRefresh: false, sessionExpired: false };
   }
 
   if (!session.decodedToken || !session.decodedToken.exp) {
+    console.log("Session does not have a valid decoded token or expiration");
     return { session: null, needsRefresh: false, sessionExpired: false };
   }
 
   const currentTime = Date.now();
-  if (session.decodedToken.exp.valueOf() - currentTime > marginSeconds * 1000) {
+  console.log("Current time:", currentTime);
+    console.log("Session expiration time:", session.decodedToken.exp);
+  if (session.decodedToken.exp - currentTime > marginSeconds * 1000) {
+    console.log("Session does not need refresh");
     return { session, needsRefresh: false, sessionExpired: false };
   }
 
   return {
     session,
     needsRefresh: true,
-    sessionExpired: session.decodedToken.exp.valueOf() < currentTime,
+    sessionExpired: session.decodedToken.exp < currentTime,
   };
 };
