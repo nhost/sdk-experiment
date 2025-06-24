@@ -5,12 +5,13 @@
  * across page reloads and browser sessions.
  */
 
-import type { Session } from "../auth";
 import {
   type SessionStorageBackend,
   LocalStorage,
   MemoryStorage,
 } from "./storageBackend";
+import { decodeUserSession, type Session } from "./session";
+import type { Session as AuthSession } from "../auth";
 
 /**
  * Callback function type for session change subscriptions
@@ -45,9 +46,15 @@ export class SessionStorage {
    * Sets the session in the underlying storage and notifies subscribers
    * @param value - The session to store
    */
-  set(value: Session): void {
-    this.storage.set(value);
-    this.notifySubscribers(value);
+  set(value: AuthSession): void {
+    const decodedToken = decodeUserSession(value.accessToken);
+    const decodedSession = {
+      ...value,
+      decodedToken: decodedToken,
+    };
+
+    this.storage.set(decodedSession);
+    this.notifySubscribers(decodedSession);
   }
 
   /**

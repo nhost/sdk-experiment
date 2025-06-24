@@ -59,7 +59,7 @@ Gets the session from cookies
 
 ###### Returns
 
-`null` \| [`Session`](auth#session)
+`null` \| [`Session`](#session)
 
 The stored session or null if not found
 
@@ -93,9 +93,9 @@ Sets the session in a cookie
 
 ###### Parameters
 
-| Parameter | Type                          | Description          |
-| --------- | ----------------------------- | -------------------- |
-| `value`   | [`Session`](auth#session) | The session to store |
+| Parameter | Type                  | Description          |
+| --------- | --------------------- | -------------------- |
+| `value`   | [`Session`](#session) | The session to store |
 
 ###### Returns
 
@@ -149,7 +149,7 @@ Gets the session from localStorage
 
 ###### Returns
 
-`null` \| [`Session`](auth#session)
+`null` \| [`Session`](#session)
 
 The stored session or null if not found
 
@@ -183,9 +183,9 @@ Sets the session in localStorage
 
 ###### Parameters
 
-| Parameter | Type                          | Description          |
-| --------- | ----------------------------- | -------------------- |
-| `value`   | [`Session`](auth#session) | The session to store |
+| Parameter | Type                  | Description          |
+| --------- | --------------------- | -------------------- |
+| `value`   | [`Session`](#session) | The session to store |
 
 ###### Returns
 
@@ -230,7 +230,7 @@ Gets the session from memory
 
 ###### Returns
 
-`null` \| [`Session`](auth#session)
+`null` \| [`Session`](#session)
 
 The stored session or null if not set
 
@@ -264,9 +264,9 @@ Sets the session in memory
 
 ###### Parameters
 
-| Parameter | Type                          | Description          |
-| --------- | ----------------------------- | -------------------- |
-| `value`   | [`Session`](auth#session) | The session to store |
+| Parameter | Type                  | Description          |
+| --------- | --------------------- | -------------------- |
+| `value`   | [`Session`](#session) | The session to store |
 
 ###### Returns
 
@@ -315,7 +315,7 @@ Gets the session from the underlying storage
 
 ###### Returns
 
-`null` \| [`Session`](auth#session)
+`null` \| [`Session`](#session)
 
 The stored session or null if not found
 
@@ -377,6 +377,93 @@ Sets the session in the underlying storage and notifies subscribers
 
 ## Interfaces
 
+### Session
+
+User authentication session containing tokens and user information
+
+#### Extends
+
+- [`Session`](auth#session)
+
+#### Properties
+
+##### accessToken
+
+```ts
+accessToken: string;
+```
+
+JWT token for authenticating API requests
+Example - `"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."`
+
+###### Inherited from
+
+[`Session`](auth#session).[`accessToken`](auth#session#accesstoken)
+
+##### accessTokenExpiresIn
+
+```ts
+accessTokenExpiresIn: number;
+```
+
+Expiration time of the access token in seconds
+Example - `900`
+Format - int64
+
+###### Inherited from
+
+[`Session`](auth#session).[`accessTokenExpiresIn`](auth#session#accesstokenexpiresin)
+
+##### decodedToken
+
+```ts
+decodedToken: DecodedToken;
+```
+
+Decoded JWT token payload with processed timestamps and Hasura claims
+
+##### refreshToken
+
+```ts
+refreshToken: string;
+```
+
+Token used to refresh the access token
+Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
+Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+###### Inherited from
+
+[`Session`](auth#session).[`refreshToken`](auth#session#refreshtoken-3)
+
+##### refreshTokenId
+
+```ts
+refreshTokenId: string;
+```
+
+Identifier for the refresh token
+Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
+Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+
+###### Inherited from
+
+[`Session`](auth#session).[`refreshTokenId`](auth#session#refreshtokenid)
+
+##### user?
+
+```ts
+optional user: User;
+```
+
+User profile and account information
+
+###### Inherited from
+
+[`Session`](auth#session).[`user`](auth#session#user-1)
+
+---
+
 ### SessionStorageBackend
 
 Session storage interface for session persistence.
@@ -394,7 +481,7 @@ Get the current session from storage
 
 ###### Returns
 
-`null` \| [`Session`](auth#session)
+`null` \| [`Session`](#session)
 
 The stored session or null if not found
 
@@ -420,9 +507,9 @@ Set the session in storage
 
 ###### Parameters
 
-| Parameter | Type                          | Description          |
-| --------- | ----------------------------- | -------------------- |
-| `value`   | [`Session`](auth#session) | The session to store |
+| Parameter | Type                  | Description          |
+| --------- | --------------------- | -------------------- |
+| `value`   | [`Session`](#session) | The session to store |
 
 ###### Returns
 
@@ -440,9 +527,9 @@ Callback function type for session change subscriptions
 
 #### Parameters
 
-| Parameter | Type                                    |
-| --------- | --------------------------------------- |
-| `session` | [`Session`](auth#session) \| `null` |
+| Parameter | Type                            |
+| --------- | ------------------------------- |
+| `session` | [`Session`](#session) \| `null` |
 
 #### Returns
 
@@ -507,6 +594,6 @@ refresh the token using the provided auth client.
 
 #### Returns
 
-`Promise`&lt;`null` \| [`Session`](auth#session)&gt;
+`Promise`&lt;`null` \| [`Session`](#session)&gt;
 
 A promise that resolves to the current session (refreshed if needed) or null if no session exists

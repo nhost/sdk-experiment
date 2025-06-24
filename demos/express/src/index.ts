@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import { createServerClient } from "@nhost/nhost-js";
-import { type Session } from "@nhost/nhost-js/auth";
+import { type Session } from "@nhost/nhost-js/session";
 import { type FileMetadata } from "@nhost/nhost-js/storage";
 
 const app = express();

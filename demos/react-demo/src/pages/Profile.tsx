@@ -103,16 +103,7 @@ export default function Profile(): JSX.Element {
 
       <div className="glass-card p-8 mb-6">
         <h3 className="text-xl mb-4">Session Information</h3>
-        <pre>
-          {JSON.stringify(
-            {
-              refreshTokenId: session?.refreshTokenId,
-              accessTokenExpiresIn: session?.accessTokenExpiresIn,
-            },
-            null,
-            2,
-          )}
-        </pre>
+        <pre>{JSON.stringify(session, null, 2)}</pre>
       </div>
 
       <MFASettings
