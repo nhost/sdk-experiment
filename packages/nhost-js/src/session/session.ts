@@ -33,7 +33,7 @@ export const decodeUserSession = (accessToken: string): DecodedToken => {
     typeof atob !== "undefined"
       ? atob(s[1])
       : Buffer.from(s[1], "base64").toString("utf-8"),
-  );
+  ) as Record<string, unknown>;
 
   // Convert iat and exp to Date objects
   const iat =

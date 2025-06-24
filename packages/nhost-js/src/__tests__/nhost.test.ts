@@ -21,8 +21,8 @@ describe("Nhost Client - Decode User Session", () => {
     const session = nhost.getUserSession();
 
     expect(session).toBeTruthy();
-    expect(session?.decodedToken.exp).toBeInstanceOf(Date);
-    expect(session?.decodedToken.iat).toBeInstanceOf(Date);
+    expect(session?.decodedToken.exp).toBe(1750415361000);
+    expect(session?.decodedToken.iat).toBe(1750415296000);
     expect(session?.decodedToken.iss).toBe("hasura-auth");
     expect(session?.decodedToken.sub).toBe(
       "550e8400-e29b-41d4-a716-446655440044",
