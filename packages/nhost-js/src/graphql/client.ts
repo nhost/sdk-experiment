@@ -167,10 +167,15 @@ export const createAPIClient = (
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<TResponseData>>> {
     if (typeof requestOrDocument === "object" && "kind" in requestOrDocument) {
-      // Handle TypedDocumentNode
+      const definition = requestOrDocument.definitions[0];
+
       const request: GraphQLRequest<TVariables> = {
         query: requestOrDocument.loc?.source.body || "",
         variables: variablesOrOptions as TVariables,
+        operationName:
+          definition && "name" in definition
+            ? definition.name?.value
+            : undefined,
       };
       return executeOperation(request, options);
     } else {
