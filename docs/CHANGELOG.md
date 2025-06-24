@@ -2,6 +2,7 @@
 
 ## main
 
+- 20250624 feat (packages/nhost-js): add decoded token to session storage #37
 - 20250623 fix (packages/nhost-js): added missing endpoints (storage) and baseURL (functions) #35
 - 20250617 fix (packages/nhost-js): improve some function names, webauthn types and added elevate endpoints #32
 - 20250610 feat (packages/nhost-js): graphl client's post now supports TypedDocumentNode #31
