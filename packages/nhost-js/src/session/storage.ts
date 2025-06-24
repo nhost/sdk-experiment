@@ -48,18 +48,13 @@ export class SessionStorage {
    */
   set(value: AuthSession): void {
     const decodedToken = decodeUserSession(value.accessToken);
-    if (!decodedToken) {
-      throw new Error("Invalid access token format");
-    }
+    const decodedSession = {
+      ...value,
+      decodedToken: decodedToken,
+    };
 
-    this.storage.set({
-      ...value,
-      decodedToken: decodedToken,
-    });
-    this.notifySubscribers({
-      ...value,
-      decodedToken: decodedToken,
-    });
+    this.storage.set(decodedSession);
+    this.notifySubscribers(decodedSession);
   }
 
   /**

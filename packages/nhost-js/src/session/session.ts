@@ -23,7 +23,7 @@ export interface Session extends AuthSession {
   decodedToken: DecodedToken;
 }
 
-export const decodeUserSession = (accessToken: string): DecodedToken | null => {
+export const decodeUserSession = (accessToken: string): DecodedToken => {
   const s = accessToken.split(".");
   if (s.length !== 3 || !s[1]) {
     throw new Error("Invalid access token format");
@@ -64,7 +64,7 @@ export const decodeUserSession = (accessToken: string): DecodedToken | null => {
     iat,
     exp,
     "https://hasura.io/jwt/claims": processedClaims,
-  } as DecodedToken;
+  };
 };
 
 const isPostgresArray = (value: string): boolean => {
