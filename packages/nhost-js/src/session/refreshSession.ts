@@ -1,8 +1,5 @@
-import {
-  type Client as AuthClient,
-  type Session,
-  type ErrorResponse,
-} from "../auth";
+import { type Client as AuthClient, type ErrorResponse } from "../auth";
+import { type Session } from "./session";
 
 import { type SessionStorage } from "./storage";
 import type { FetchResponse } from "../fetch";

@@ -1,7 +1,6 @@
 import {
   createAPIClient as createAuthClient,
   type Client as AuthClient,
-  type Session,
 } from "./auth";
 import {
   createAPIClient as createStorageClient,
@@ -26,6 +25,7 @@ import {
   detectStorage,
   SessionStorage,
   type SessionStorageBackend,
+  type Session,
   refreshSession,
 } from "./session/";
 
