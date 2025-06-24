@@ -50,11 +50,13 @@ export const refreshSession = async (
     try {
       // we retry the refresh token in case of transient error
       // or race conditions
+      console.warn("error refreshing session, retrying:", error);
       return await _refreshSession(auth, storage, marginSeconds);
     } catch (error) {
       const errResponse = error as FetchResponse<ErrorResponse>;
       if (errResponse?.status === 401) {
         // this probably means the refresh token is invalid
+        console.error("session probably expired");
         storage.remove();
       }
       return null;
