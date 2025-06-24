@@ -1,3 +1,7 @@
+# dev
+
+- fix: packages/nhost-js: extract query name from TypedDocumentNode #36
+
 # 5.0.0-beta.6
 
 - fix (packages/nhost-js): added missing endpoints (storage) and baseURL (functions) #35
