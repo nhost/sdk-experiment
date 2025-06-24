@@ -32,6 +32,12 @@ jobs:
 
           # Validate PR title format
           PR_TITLE="${{ github.event.pull_request.title }}"
+
+          if [ "$PR_TITLE" = "chore: release" ]; then
+            echo "PR title is 'chore: release', skipping further checks"
+            exit 0
+          fi
+
           if ! echo "$PR_TITLE" | grep -Eq "^(feat|fix|chore) \(.+): .+$"; then
             echo "::error::PR title '$PR_TITLE' does not follow the required format: 'feat|fix|chore (affected-service): this is the title'"
             exit 1
