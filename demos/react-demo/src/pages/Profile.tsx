@@ -105,10 +105,7 @@ export default function Profile(): JSX.Element {
         <h3 className="text-xl mb-4">Session Information</h3>
         <pre>
           {JSON.stringify(
-            {
-              refreshTokenId: session?.refreshTokenId,
-              accessTokenExpiresIn: session?.accessTokenExpiresIn,
-            },
+            session,
             null,
             2,
           )}
