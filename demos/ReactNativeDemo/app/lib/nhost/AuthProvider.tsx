@@ -7,7 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { createClient, type NhostClient } from "@nhost/nhost-js";
-import { type Session } from "@nhost/nhost-js/auth";
+import { type Session } from "@nhost/nhost-js/session";
 import Constants from "expo-constants";
 import NhostAsyncStorage from "./AsyncStorage";
 
