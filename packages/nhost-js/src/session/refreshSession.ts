@@ -50,13 +50,11 @@ export const refreshSession = async (
     try {
       // we retry the refresh token in case of transient error
       // or race conditions
-      console.warn("error refreshing session, retrying:", error);
       return await _refreshSession(auth, storage, marginSeconds);
     } catch (error) {
       const errResponse = error as FetchResponse<ErrorResponse>;
       if (errResponse?.status === 401) {
         // this probably means the refresh token is invalid
-        console.error("session probably expired");
         storage.remove();
       }
       return null;
@@ -143,23 +141,17 @@ const _refreshSession = async (
  * @private
  */
 const _needsRefresh = (storage: SessionStorage, marginSeconds = 60) => {
-    console.log("_needsRefresh")
   const session = storage.get();
   if (!session) {
-    console.log("No session found in storage");
     return { session: null, needsRefresh: false, sessionExpired: false };
   }
 
   if (!session.decodedToken || !session.decodedToken.exp) {
-    console.log("Session does not have a valid decoded token or expiration");
     return { session: null, needsRefresh: false, sessionExpired: false };
   }
 
   const currentTime = Date.now();
-  console.log("Current time:", currentTime);
-    console.log("Session expiration time:", session.decodedToken.exp);
   if (session.decodedToken.exp - currentTime > marginSeconds * 1000) {
-    console.log("Session does not need refresh");
     return { session, needsRefresh: false, sessionExpired: false };
   }
 

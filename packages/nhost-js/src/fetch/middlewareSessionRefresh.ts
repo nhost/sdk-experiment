@@ -45,7 +45,6 @@ export const sessionRefreshMiddleware = (
       }
 
       try {
-          console.log("sessionRefreshMiddleware");
         await refreshSession(auth, storage, marginSeconds);
       } catch {
         // do nothing, we still want to call the next function
@@ -63,7 +62,6 @@ export const sessionRefreshMiddleware = (
  */
 function shouldSkipTokenHandling(url: string, options: RequestInit): boolean {
   const headers = new Headers(options.headers || {});
-  console.log("shouldSkipTokenHandling", url);
 
   // If Authorization header is explicitly set, skip token handling
   if (headers.has("Authorization")) {
