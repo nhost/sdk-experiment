@@ -113,19 +113,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     // Monitor page visibility changes (tab switching, window minimizing)
-    document.addEventListener('visibilitychange', () => {
+    document.addEventListener("visibilitychange", () => {
       if (!document.hidden) {
         checkSessionOnFocus();
       }
     });
 
     // Monitor window focus events (clicking back into the browser window)
-    window.addEventListener('focus', checkSessionOnFocus);
+    window.addEventListener("focus", checkSessionOnFocus);
 
     // Cleanup event listeners on component unmount
     return () => {
-      document.removeEventListener('visibilitychange', checkSessionOnFocus);
-      window.removeEventListener('focus', checkSessionOnFocus);
+      document.removeEventListener("visibilitychange", checkSessionOnFocus);
+      window.removeEventListener("focus", checkSessionOnFocus);
     };
   }, [nhost]);
 
@@ -169,4 +169,3 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
-
