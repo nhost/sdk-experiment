@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createNhostClient } from "../lib/nhost/client";
+import { useAuth } from "../lib/nhost/AuthProvider";
 import Image from "next/image";
 
 interface MFASettingsProps {
@@ -9,7 +9,7 @@ interface MFASettingsProps {
 }
 
 export default function MFASettings({ initialMfaEnabled }: MFASettingsProps) {
-  const nhost = createNhostClient();
+  const { nhost } = useAuth();
   const [isMfaEnabled, setIsMfaEnabled] = useState(initialMfaEnabled);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
