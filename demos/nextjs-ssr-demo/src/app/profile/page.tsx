@@ -19,7 +19,7 @@ export default async function Profile() {
 
   if (session?.user?.id) {
     try {
-      const response = await nhost.graphql.post<GetUserMfaStatusResponse>({
+      const response = await nhost.graphql.request<GetUserMfaStatusResponse>({
         query: `
           query GetUserMfaStatus($userId: uuid!) {
             user(id: $userId) {

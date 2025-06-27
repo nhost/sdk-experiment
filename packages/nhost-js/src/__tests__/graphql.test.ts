@@ -50,7 +50,7 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
   });
 
   it("query", async () => {
-    const users = await nhost.graphql.post<GetUsersResponse>({
+    const users = await nhost.graphql.request<GetUsersResponse>({
       query: `query GetUsers {
           users {
             id
@@ -70,7 +70,7 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
   });
 
   it("mutate", async () => {
-    const resp = await nhost.graphql.post<UpdateUsersDisplayNameResponse>({
+    const resp = await nhost.graphql.request<UpdateUsersDisplayNameResponse>({
       query: `mutation UpdateUsersDisplayName($id: uuid!, $displayName: String!) {
           updateUser(pk_columns: {id: $id}, _set: {displayName: $displayName}) {
             id
@@ -91,7 +91,7 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
 
   it("errors: bad query", async () => {
     try {
-      await nhost.graphql.post({
+      await nhost.graphql.request({
         query: `wrong query`,
       });
 
@@ -111,7 +111,7 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
 
   it("errors: no permissions or doesn't exist", async () => {
     try {
-      await nhost.graphql.post({
+      await nhost.graphql.request({
         query: `query { restricted { id } }`,
       });
 
@@ -143,9 +143,12 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
       }
     `;
 
-    const users = await nhost.graphql.post<GetUsersResponse>(GetUsersDocument, {
-      limit: 10,
-    });
+    const users = await nhost.graphql.request<GetUsersResponse>(
+      GetUsersDocument,
+      {
+        limit: 10,
+      },
+    );
 
     console.log(users.body.data?.users);
 
@@ -167,7 +170,8 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
       }
     `;
 
-    const users = await nhost.graphql.post<GetUsersResponse>(GetUsersDocument);
+    const users =
+      await nhost.graphql.request<GetUsersResponse>(GetUsersDocument);
 
     console.log(users.body.data?.users);
 
@@ -186,7 +190,7 @@ describe("Nhost - Sign Up with Email and Password and upload file", () => {
           }
         }
       `;
-      await nhost.graphql.post(RestrictedQuery);
+      await nhost.graphql.request(RestrictedQuery);
 
       expect(true).toBe(false);
     } catch (error) {

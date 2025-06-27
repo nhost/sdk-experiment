@@ -55,7 +55,7 @@ export default function SecurityKeys() {
     try {
       // Query the database for all security keys registered to this user
       const response: FetchResponse<SecurityKeysResponse> =
-        await nhost.graphql.post({
+        await nhost.graphql.request({
           query: `
           query GetUserSecurityKeys($userId: uuid!) {
             user(id: $userId) {
@@ -95,7 +95,7 @@ export default function SecurityKeys() {
       // Send request to server to delete the security key
       // This removes the stored public key from the server database
       // so it can no longer be used for authentication
-      const response = await nhost.graphql.post({
+      const response = await nhost.graphql.request({
         query: `
           mutation DeleteSecurityKey($keyId: uuid!) {
             deleteAuthUserSecurityKey(id: $keyId) {

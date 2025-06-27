@@ -47,7 +47,7 @@ export default function Upload() {
 
     try {
       // Fetch files using GraphQL query
-      const response = await nhost.graphql.post<GraphqlGetFilesResponse>({
+      const response = await nhost.graphql.request<GraphqlGetFilesResponse>({
         query: `query GetFiles {
           files {
             id
