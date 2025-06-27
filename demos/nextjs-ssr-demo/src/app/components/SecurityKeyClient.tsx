@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createNhostClient } from "../lib/nhost/client";
+import { useAuth } from "../lib/nhost/AuthProvider";
 import { isWebAuthnSupported } from "../lib/utils";
 import { startRegistration } from "@simplewebauthn/browser";
 
@@ -25,7 +25,7 @@ export default function SecurityKeyClient({
   serverError,
 }: SecurityKeyClientProps) {
   const router = useRouter();
-  const nhost = createNhostClient();
+  const { nhost } = useAuth();
   const [securityKeys, setSecurityKeys] =
     useState<SecurityKey[]>(initialSecurityKeys);
   const [isRegistering, setIsRegistering] = useState(false);

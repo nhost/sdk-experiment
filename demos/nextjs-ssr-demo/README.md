@@ -44,6 +44,11 @@ The special integration code needed to handle server + client components and the
 - `src/app/lib/nhost/server/index.tsx` - This file exports:
   - `createNhostClient` initializes an Nhost client using CookieStorage to be used in server components.
   - `handleNhostMiddleware` handles the initialization of an Nhost client that can be used in Next.js middleware and refreshes the session if needed.
+- `src/app/lib/nhost/AuthProvider.tsx` - This file provides:
+  - Client-side authentication context with session state management
+  - Cross-tab session synchronization using `sessionStorage.onChange`
+  - Refresh token change detection for middleware-driven session updates
+  - Page visibility and focus event handling for session state consistency
 
 The key differences in the implementation:
 
@@ -51,6 +56,8 @@ The key differences in the implementation:
 
   - Uses `CookieStorage` for persistent session management
   - Enables client-side operations like file uploads and MFA configuration
+  - Provides authentication context with cross-tab session synchronization
+  - Handles session state changes from middleware and other tabs
 
 - **Server Components**
   - Custom storage implementation utilizing cookies compatible with Next.js server components
@@ -66,6 +73,8 @@ A key aspect of this integration is how the session is persisted across server a
 - The middleware implementation has its own cookie handling to read from request cookies and write to response cookies
 - The session is stored using the default session key from the SDK (`nhostSession`)
 - The refresh token mechanism is handled by the middleware to ensure session continuity
+- Client-side AuthProvider synchronizes session state across tabs and detects middleware-driven session changes
+- Cross-tab session expiration is handled by monitoring `sessionStorage.onChange` events
 
 ### Middleware for Route Protection
 
@@ -94,7 +103,7 @@ You can find all the relevant code in the folders:
 
 The profile page is a server component that fetches the session data from the persisted session cookie. In addition, the profile page allows users to configure their MFA.
 
-There are two peculiarities with the profile page:
+There are three peculiarities with the profile page:
 
 1. The session is read on the server from the cookie so the profile can be rendered server-side.
 2. The MFA configuration is done using a client component to provide interactivity.

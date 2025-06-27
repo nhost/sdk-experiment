@@ -1,3 +1,5 @@
+"use client";
+
 import {
   createContext,
   useContext,
@@ -7,12 +9,14 @@ import {
   useRef,
   type ReactNode,
 } from "react";
-import { createClient, type NhostClient } from "@nhost/nhost-js";
+import { useRouter } from "next/navigation";
 import { type Session } from "@nhost/nhost-js/auth";
+import { createClient, type NhostClient } from "@nhost/nhost-js";
+import { CookieStorage } from "@nhost/nhost-js/session";
 
 /**
  * Authentication context interface providing access to user session state and Nhost client.
- * Used throughout the React application to access authentication-related data and operations.
+ * Used throughout the application to access authentication-related data and operations.
  */
 interface AuthContextType {
   /** Current authenticated user object, null if not authenticated */
@@ -27,7 +31,6 @@ interface AuthContextType {
   nhost: NhostClient;
 }
 
-// Create React context for authentication state and nhost client
 const AuthContext = createContext<AuthContextType | null>(null);
 
 interface AuthProviderProps {
@@ -35,14 +38,21 @@ interface AuthProviderProps {
 }
 
 /**
- * AuthProvider component that provides authentication context to the React application.
+ * AuthProvider component that provides authentication context to the Next.js application.
  *
  * This component handles:
- * - Initializing the Nhost client with default EventEmitterStorage
+ * - Initializing the Nhost client with cookie-based session storage
  * - Managing authentication state (user, session, loading, authenticated status)
  * - Cross-tab session synchronization using sessionStorage.onChange events
+ * - Detecting middleware-driven session changes through refresh token monitoring
  * - Page visibility and focus event handling to maintain session consistency
- * - Client-side only session management (no server-side rendering)
+ * - Server-side state synchronization via router.refresh() when sessions change
+ *
+ * Key features:
+ * - Uses CookieStorage for session persistence across server/client boundaries
+ * - Tracks refresh token changes to detect server-side session updates
+ * - Automatically refreshes page when session state changes from other sources
+ * - Provides reactive authentication state for client components
  */
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<Session["user"] | null>(null);
@@ -50,21 +60,25 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const lastRefreshTokenIdRef = useRef<string | null>(null);
+  const router = useRouter();
 
-  // Initialize Nhost client with default SessionStorage (local storage)
+  // Initialize Nhost client with cookie-based storage for server/client session sharing
   const nhost = useMemo(
     () =>
       createClient({
-        region: import.meta.env.VITE_NHOST_REGION || "local",
-        subdomain: import.meta.env.VITE_NHOST_SUBDOMAIN || "local",
+        region: process.env["NHOST_REGION"] || "local",
+        subdomain: process.env["NHOST_SUBDOMAIN"] || "local",
+        storage: new CookieStorage({
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+        }),
       }),
     [],
   );
 
   /**
    * Handles session reload when refresh token changes.
-   * This detects when the session has been updated from other tabs.
-   * Unlike the Next.js version, this only updates local state without server synchronization.
+   * This detects when the session has been updated by middleware or other tabs.
    *
    * @param currentRefreshTokenId - The current refresh token ID to compare against stored value
    */
@@ -77,6 +91,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(currentSession?.user || null);
       setSession(currentSession);
       setIsAuthenticated(!!currentSession);
+
+      // Trigger Next.js page refresh to sync server-side state with client changes
+      router.refresh();
     }
   };
 
@@ -101,33 +118,32 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return unsubscribe;
   }, [nhost]);
 
-  // Handle session changes from page focus events (for additional session consistency)
+  // Handle session changes from server-side middleware and page focus events
   useEffect(() => {
     /**
      * Checks for session changes when page becomes visible or focused.
-     * In the React SPA context, this provides additional consistency checks
-     * though it's less critical than in the Next.js SSR version.
+     * This catches middleware-driven session updates that occur server-side.
      */
     const checkSessionOnFocus = () => {
       reloadSession(nhost.getUserSession()?.refreshTokenId ?? null);
     };
 
     // Monitor page visibility changes (tab switching, window minimizing)
-    document.addEventListener('visibilitychange', () => {
+    document.addEventListener("visibilitychange", () => {
       if (!document.hidden) {
         checkSessionOnFocus();
       }
     });
 
     // Monitor window focus events (clicking back into the browser window)
-    window.addEventListener('focus', checkSessionOnFocus);
+    window.addEventListener("focus", checkSessionOnFocus);
 
     // Cleanup event listeners on component unmount
     return () => {
-      document.removeEventListener('visibilitychange', checkSessionOnFocus);
-      window.removeEventListener('focus', checkSessionOnFocus);
+      document.removeEventListener("visibilitychange", checkSessionOnFocus);
+      window.removeEventListener("focus", checkSessionOnFocus);
     };
-  }, [nhost]);
+  }, [nhost, router]);
 
   const value: AuthContextType = {
     user,
@@ -169,4 +185,3 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
-
