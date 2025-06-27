@@ -37,7 +37,7 @@ if (response.body.session) {
 }
 
 // Use GraphQL features
-const response = await nhost.graphql.post({
+const response = await nhost.graphql.request({
   query: `
     query GetUsers {
       users {

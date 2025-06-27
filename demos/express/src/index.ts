@@ -73,7 +73,7 @@ app.post("/cookies", async (req: Request, res: Response) => {
   const nhost = nhostClientFromCookies(req);
 
   try {
-    const response = await nhost.graphql.post<GraphqlGetFilesResponse>({
+    const response = await nhost.graphql.request<GraphqlGetFilesResponse>({
       query: `query GetFiles {
             files {
               id
@@ -99,7 +99,7 @@ app.post("/cookies", async (req: Request, res: Response) => {
 app.post("/auth-header", async (req: Request, res: Response) => {
   const nhost = nhostClientFromAuthHeader(req);
   try {
-    const response = await nhost.graphql.post<GraphqlGetFilesResponse>({
+    const response = await nhost.graphql.request<GraphqlGetFilesResponse>({
       query: `query GetFiles {
               files {
                 id

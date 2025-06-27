@@ -29,7 +29,7 @@ export default function Profile() {
 
       try {
         // Correctly structure GraphQL query with parameters
-        const response = await nhost.graphql.post<MfaStatusResponse>({
+        const response = await nhost.graphql.request<MfaStatusResponse>({
           query: `
               query GetUserMfaStatus($userId: uuid!) {
                 user(id: $userId) {

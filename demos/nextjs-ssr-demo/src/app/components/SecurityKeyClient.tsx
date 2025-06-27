@@ -52,7 +52,7 @@ export default function SecurityKeyClient({
 
     try {
       // Send request to server to delete the security key
-      await nhost.graphql.post({
+      await nhost.graphql.request({
         query: `
           mutation DeleteSecurityKey($keyId: uuid!) {
             deleteAuthUserSecurityKey(id: $keyId) {

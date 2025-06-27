@@ -15,7 +15,7 @@ export const useAuthenticatedFetcher = <TData, TVariables>(
         typeof document === "object" ? document.variables : undefined;
       const mergedVariables = variables || documentVariables;
 
-      const resp = await nhost.graphql.post<TData>({
+      const resp = await nhost.graphql.request<TData>({
         query,
         variables: mergedVariables as Record<string, unknown>,
       });

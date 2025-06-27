@@ -23,7 +23,7 @@ test("error handling for graphql", async () => {
   });
 
   try {
-    await nhost.graphql.post({
+    await nhost.graphql.request({
       query: `
         query GetRestrictedObject {
           restrictedObject {

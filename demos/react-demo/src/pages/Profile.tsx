@@ -27,7 +27,7 @@ export default function Profile(): JSX.Element {
       try {
         // Correctly structure GraphQL query with parameters
         const response: FetchResponse<MfaStatusResponse> =
-          await nhost.graphql.post({
+          await nhost.graphql.request({
             query: `
             query GetUserMfaStatus($userId: uuid!) {
               user(id: $userId) {
