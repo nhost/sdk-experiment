@@ -40,7 +40,7 @@ export default async function SecurityKeys() {
 
     try {
       // Server-side fetch of security keys
-      const response = await nhost.graphql.post<SecurityKeysData>({
+      const response = await nhost.graphql.request<SecurityKeysData>({
         query: `
           query GetUserSecurityKeys($userId: uuid!) {
             user(id: $userId) {

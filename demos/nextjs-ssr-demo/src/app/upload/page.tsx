@@ -15,7 +15,7 @@ export default async function UploadPage() {
   let error: string | null = null;
 
   try {
-    const response = await nhost.graphql.post<GetFilesResponse>({
+    const response = await nhost.graphql.request<GetFilesResponse>({
       query: `
         query GetFiles {
           files {

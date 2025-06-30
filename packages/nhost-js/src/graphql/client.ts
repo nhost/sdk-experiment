@@ -72,7 +72,7 @@ export interface Client {
    * @returns Promise with the GraphQL response and metadata
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  post<TResponseData = any, TVariables = GraphQLVariables>(
+  request<TResponseData = any, TVariables = GraphQLVariables>(
     request: GraphQLRequest<TVariables>,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
@@ -85,7 +85,7 @@ export interface Client {
    * @param options - Additional fetch options to apply to the request
    * @returns Promise with the GraphQL response and metadata
    */
-  post<TResponseData, TVariables = GraphQLVariables>(
+  request<TResponseData, TVariables = GraphQLVariables>(
     document: TypedDocumentNode<TResponseData, TVariables>,
     variables?: TVariables,
     options?: RequestInit,
@@ -150,16 +150,16 @@ export const createAPIClient = (
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function post<TResponseData = any, TVariables = GraphQLVariables>(
+  function request<TResponseData = any, TVariables = GraphQLVariables>(
     request: GraphQLRequest<TVariables>,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
-  function post<TResponseData, TVariables = GraphQLVariables>(
+  function request<TResponseData, TVariables = GraphQLVariables>(
     document: TypedDocumentNode<TResponseData, TVariables>,
     variables?: TVariables,
     options?: RequestInit,
   ): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
-  function post<TResponseData, TVariables = GraphQLVariables>(
+  function request<TResponseData, TVariables = GraphQLVariables>(
     requestOrDocument:
       | GraphQLRequest<TVariables>
       | TypedDocumentNode<TResponseData, TVariables>,
@@ -187,7 +187,7 @@ export const createAPIClient = (
   }
 
   return {
-    post,
+    request,
     url,
   } as Client;
 };

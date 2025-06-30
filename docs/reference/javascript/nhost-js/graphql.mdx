@@ -23,7 +23,7 @@ const nhost = createClient({
 });
 
 try {
-  await nhost.graphql.post({
+  await nhost.graphql.request({
     query: `
       query GetRestrictedObject {
         restrictedObject {
@@ -73,12 +73,12 @@ URL for the GraphQL endpoint.
 
 #### Methods
 
-##### post()
+##### request()
 
 ###### Call Signature
 
 ```ts
-post<TResponseData, TVariables>(request: GraphQLRequest<TVariables>, options?: RequestInit): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
+request<TResponseData, TVariables>(request: GraphQLRequest<TVariables>, options?: RequestInit): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
 ```
 
 Execute a GraphQL query operation
@@ -108,7 +108,7 @@ Promise with the GraphQL response and metadata
 ###### Call Signature
 
 ```ts
-post<TResponseData, TVariables>(
+request<TResponseData, TVariables>(
    document: TypedDocumentNode<TResponseData, TVariables>,
    variables?: TVariables,
    options?: RequestInit): Promise<FetchResponse<GraphQLResponse<TResponseData>>>;
