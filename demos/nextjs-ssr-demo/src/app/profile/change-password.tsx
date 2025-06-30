@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createNhostClient } from "../lib/nhost/client";
+import { useAuth } from "../lib/nhost/AuthProvider";
 import type { ErrorResponse } from "@nhost/nhost-js/auth";
 import type { FetchError } from "@nhost/nhost-js/fetch";
 
@@ -12,8 +12,7 @@ export default function ChangePassword() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  // Create the client for the component
-  const nhost = createNhostClient();
+  const { nhost } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
