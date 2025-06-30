@@ -10,6 +10,8 @@
  *
  * {@includeCode ./__tests__/docstrings.test.ts#errorHandling}
  *
+ * {@includeCode ./__tests__/docstrings.test.ts#errorHandlingError}
+ *
  * @module graphql
  * @packageDocumentation
  */

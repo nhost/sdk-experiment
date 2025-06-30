@@ -1,7 +1,7 @@
 import { test, expect } from "@jest/globals";
 import { createClient } from "../../";
-import type { GraphQLResponse } from "../../graphql/client";
-import type { FetchError } from "../../fetch";
+import { GraphQLResponse } from "../../graphql/client";
+import { FetchError } from "../../fetch";
 
 test("error handling for graphql", async () => {
   const subdomain = "local";
@@ -33,6 +33,10 @@ test("error handling for graphql", async () => {
       `,
     });
   } catch (error) {
+    if (!(error instanceof FetchError)) {
+      throw error;
+    }
+
     const resp = error as FetchError<GraphQLResponse>;
 
     console.log("Error:", JSON.stringify(resp, null, 2));
@@ -66,5 +70,40 @@ test("error handling for graphql", async () => {
     );
     expect(errors[0].extensions?.path).toBe("$.selectionSet.restrictedObject");
     expect(errors[0].extensions?.code).toBe("validation-failed");
+  }
+});
+
+test("error handling for graphql as a generic error", async () => {
+  const subdomain = "local";
+  const region = "local";
+
+  //#region errorHandlingError
+  const nhost = createClient({
+    subdomain,
+    region,
+  });
+
+  try {
+    await nhost.graphql.post({
+      query: `
+        query GetRestrictedObject {
+          restrictedObject {
+            restrictedField
+          }
+        }
+      `,
+    });
+  } catch (error) {
+    if (!(error instanceof Error)) {
+      throw error;
+    }
+
+    console.log("Error:", error.message);
+    // Error: field 'restrictedObject' not found in type: 'query_root'
+    //#endregion errorHandlingError
+
+    expect(error.message).toBe(
+      "field 'restrictedObject' not found in type: 'query_root'",
+    );
   }
 });
