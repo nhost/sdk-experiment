@@ -17,7 +17,7 @@
  *
  * Create a client instance to interact with Nhost services:
  *
- * {@includeCode ./__tests__/docstrings.test.ts:11-111}
+ * {@includeCode ./__tests__/docstrings.test.ts:11-115}
  *
  * @packageDocumentation
  */

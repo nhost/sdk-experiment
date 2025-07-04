@@ -3,13 +3,38 @@
  * Typically you would use this module via the main [Nhost client](main#createclient)
  * but you can also use it directly if you have a specific use case.
  *
+ * ## Import
+ *
+ * You can import and use this package with:
+ *
+ * ```ts
+ * import { createClient } from "@nhost/nhost-js/functions";
+ * ```
+ *
+ * ## Usage
+ *
+ * You can use this library by passing the path to the function you want to call and any body
+ * or fetch options you want to apply (optional):
+ *
+ * {@includeCode ./__tests__/docstrings.test.ts:2,4,9-20}
+ *
+ * The post method above is a convenience method for executing a POST request with a JSON body.
+ * For more generic requests, you can use the `fetch` method instead:
+ *
+ * {@includeCode ./__tests__/docstrings.test.ts:2,4,30-43}
+ *
  * ## Error handling
  *
- * The SDK will throw errors in most operations if the request return a status >=400 or
- * if the request fails entirely (i.e., due to network errors). A continuation you can see
- * how you can handle errors thrown by the SDK when the status is >=400.
+ * The SDK will throw errors in most operations if the request returns a status >=300 or
+ * if the request fails entirely (i.e., due to network errors). The type of the error
+ * will be a `FetchError<T>`:
  *
- * {@includeCode ./__tests__/docstrings.test.ts#errorHandling}
+ * {@includeCode ./__tests__/docstrings.test.ts:2-4,53-64,67-79,84}
+ *
+ * This type extends the standard `Error` type so if you want to just log the error you can
+ * do so like this:
+ *
+ * {@includeCode ./__tests__/docstrings.test.ts:2-4,91-102,105-112,115}
  *
  * @module functions
  * @packageDocumentation

@@ -124,6 +124,35 @@ describe("Test Storage API", () => {
     expect(await body.text()).toBe("beep-boop");
   });
 
+  it("using post method", async () => {
+    const resp = await nhost.functions.post<EchoResponse>("/echo", {
+      message: "Hello, world!",
+    });
+
+    expect(resp.status).toBe(200);
+    expect(resp.headers.get("content-type")).toBe("application/json");
+    expect(resp.headers.get("content-encoding")).toBe("gzip");
+    expect(resp.body.method).toBe("POST");
+    expect(resp.body.body).toEqual({
+      message: "Hello, world!",
+    });
+    expect(resp.body.headers.accept).toBe("application/json");
+    expect(resp.body.headers["authorization"]).toBeDefined();
+    expect(resp.body.headers["accept-encoding"]).toBe("br, gzip, deflate");
+    expect(resp.body.headers["accept-language"]).toBe("*");
+    expect(resp.body.headers["content-length"]).toBe("27");
+    expect(resp.body.headers["content-type"]).toBe("application/json");
+    expect(resp.body.headers.host).toBe("local.functions.local.nhost.run");
+    expect(resp.body.headers["sec-fetch-mode"]).toBe("cors");
+    expect(resp.body.headers["user-agent"]).toBe("node");
+    expect(resp.body.headers["x-forwarded-host"]).toBe(
+      "local.functions.local.nhost.run",
+    );
+    expect(resp.body.headers["x-forwarded-port"]).toBe("443");
+    expect(resp.body.headers["x-forwarded-proto"]).toBe("https");
+    expect(resp.body.headers["x-replaced-path"]).toBe("/v1/echo");
+  });
+
   it("error handling", async () => {
     try {
       await nhost.functions.fetch<undefined>("/crash", {

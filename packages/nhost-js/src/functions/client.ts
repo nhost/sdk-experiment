@@ -33,6 +33,27 @@ export interface Client {
     path: string,
     options?: RequestInit,
   ): Promise<FetchResponse<T>>;
+
+  /**
+   * Executes a POST request to a serverless function with a JSON body
+   *
+   * This is a convenience method assuming the request is a POST with JSON body
+   * setting the `Content-Type` and 'Accept' headers to `application/json` and
+   * automatically stringifying the body.
+   *
+   * For a more generic request, use the `fetch` method instead.
+   *
+   * @param path - The path to the serverless function
+   * @param body - The JSON body to send in the request
+   * @param options - Additional fetch options to apply to the request
+   * @returns Promise with the function response and metadata
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  post<T = any>(
+    path: string,
+    body?: unknown,
+    options?: RequestInit,
+  ): Promise<FetchResponse<T>>;
 }
 
 /**
@@ -91,9 +112,45 @@ export const createAPIClient = (
     };
   };
 
+  /**
+   * Executes a POST request to a serverless function with a JSON body
+   *
+   * This is a convenience method assuming the request is a POST with JSON body
+   * setting the `Content-Type` and 'Accept' headers to `application/json` and
+   * automatically stringifying the body.
+   *
+   * For a more generic request, use the `fetch` method instead.
+   *
+   * @param path - The path to the serverless function
+   * @param body - The JSON body to send in the request
+   * @param options - Additional fetch options to apply to the request
+   * @returns Promise with the function response and metadata
+   */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const post = async <T = any>(
+    path: string,
+    body?: unknown,
+    options: RequestInit = {},
+  ): Promise<FetchResponse<T | string | Blob>> => {
+    // Ensure the method is POST and set the body
+    const requestOptions: RequestInit = {
+      ...options,
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    };
+
+    return fetch<T>(path, requestOptions);
+  };
+
   // Return client object with the fetch method
   return {
     baseURL,
     fetch,
+    post,
   } as Client;
 };

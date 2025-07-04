@@ -248,7 +248,8 @@ try {
     throw error;
   }
 
-  console.log("Error:", JSON.stringify(error.body, null, 2));
+  const resp = error as FetchError<GraphQLResponse>;
+  console.log("Error:", JSON.stringify(resp.body, null, 2));
   // Error: {
   //   "body": {
   //     "errors": [

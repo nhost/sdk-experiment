@@ -106,9 +106,13 @@ test("mainExample", async () => {
   // }
 
   // make a request to a serverless function
-  const funcResp = await nhost.functions.fetch("/helloworld");
+  const funcResp = await nhost.functions.post("/helloworld", {
+    message: "Hello, World!",
+  });
   console.log(JSON.stringify(funcResp.body, null, 2));
-  // "Hello, World!"
+  // {
+  //   "message": "Hello, World!"
+  // }
 
   expect(uplFilesResp.status).toBe(201);
 

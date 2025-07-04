@@ -2,15 +2,53 @@ import { test, expect } from "@jest/globals";
 import { createClient } from "@nhost/nhost-js";
 import { FetchError } from "@nhost/nhost-js/fetch";
 
-test("error handling for graphql", async () => {
+test("basic", async () => {
   const subdomain = "local";
   const region = "local";
 
-  //#region errorHandling
-  // Needs the following imports:
-  //
-  // import { FetchError } from "@nhost/nhost-js/fetch";
-  //
+  const nhost = createClient({
+    subdomain,
+    region,
+  });
+
+  const funcResp = await nhost.functions.post("/helloworld", {
+    message: "Hello, World!",
+  });
+  console.log(JSON.stringify(funcResp.body, null, 2));
+  // {
+  //   "message": "Hello, World!"
+  // }
+
+  expect(funcResp.status).toBe(200);
+  expect(funcResp.body).toEqual({ message: "Hello, World!" });
+});
+
+test("fetch", async () => {
+  const subdomain = "local";
+  const region = "local";
+
+  const nhost = createClient({
+    subdomain,
+    region,
+  });
+
+  const funcResp = await nhost.functions.fetch("/helloworld", {
+    method: "GET",
+    headers: {
+      Accept: "text/plain",
+      ContentType: "application/json",
+    },
+  });
+  console.log(funcResp.body);
+  // "Hello, World!"
+
+  expect(funcResp.status).toBe(200);
+  expect(funcResp.body).toBe("Hello, World!");
+});
+
+test("error handling for functions", async () => {
+  const subdomain = "local";
+  const region = "local";
 
   const nhost = createClient({
     subdomain,
@@ -18,42 +56,61 @@ test("error handling for graphql", async () => {
   });
 
   try {
-    await nhost.functions.fetch("/crash", {
-      method: "POST",
+    await nhost.functions.fetch("/helloworld", {
+      method: "GET",
       headers: {
-        Accept: "application/json",
+        Accept: "application/octet-stream",
       },
     });
+
+    expect(true).toBe(false); // This line should not be reached
   } catch (error) {
-    const resp = error as FetchError<string>;
-    console.log("Error:", resp);
+    if (!(error instanceof FetchError)) {
+      throw error; // Re-throw if it's not a FetchError
+    }
+
+    console.log("Error:", JSON.stringify(error, null, 2));
     // Error: {
-    //   status: 500,
-    //   body: '<!DOCTYPE html>\n' +
-    //     '<html lang="en">\n' +
-    //     '<head>\n' +
-    //     '<meta charset="utf-8">\n' +
-    //     '<title>Error</title>\n' +
-    //     '</head>\n' +
-    //     '<body>\n' +
-    //     '<pre>Error: This is an unhandled error<br> &nbsp; &nbsp;at default (/opt/project/functions/crash.ts:4:11)<br> &nbsp; &nbsp;at Layer.handle [as handle_request] (/usr/local/lib/node_modules/express/lib/router/layer.js:95:5)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:144:13)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)<br> &nbsp; &nbsp;at next (/usr/local/lib/node_modules/express/lib/router/route.js:140:7)</pre>\n' +
-    //     '</body>\n' +
-    //     '</html>\n',
-    //   headers: Headers {
-    //     'content-length': '1055',
-    //     'content-security-policy': "default-src 'none'",
-    //     'content-type': 'text/html; charset=utf-8',
-    //     date: 'Tue, 13 May 2025 11:20:04 GMT',
-    //     'x-content-type-options': 'nosniff'
-    //   }
+    //   "body": "Unsupported Accept Header",
+    //   "status": 400,
+    //   "headers": {...}
     // }
     //
     // error handling...
-    //#endregion errorHandling
 
-    expect(resp.status).toBe(500);
-    expect(resp.headers.get("content-type")).toBe("text/html; charset=utf-8");
-    expect(resp.headers.get("content-length")).toBe("1055");
-    expect(resp.body).toBeDefined();
+    expect(error.status).toBe(400);
+    expect(error.headers.get("content-type")).toBe("text/plain; charset=utf-8");
+    expect(error.body).toBe("Unsupported Accept Header");
+  }
+});
+
+test("error handling for functions error type", async () => {
+  const subdomain = "local";
+  const region = "local";
+
+  const nhost = createClient({
+    subdomain,
+    region,
+  });
+
+  try {
+    await nhost.functions.fetch("/helloworld", {
+      method: "GET",
+      headers: {
+        Accept: "application/octet-stream",
+      },
+    });
+
+    expect(true).toBe(false); // This line should not be reached
+  } catch (error) {
+    if (!(error instanceof Error)) {
+      throw error; // Re-throw if it's not a FetchError
+    }
+
+    console.log("Error:", error.message);
+    // Error: Unsupported Accept Header
+    // error handling...
+
+    expect(error.message).toBe("Unsupported Accept Header");
   }
 });

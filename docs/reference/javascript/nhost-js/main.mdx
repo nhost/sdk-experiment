@@ -116,9 +116,13 @@ console.log(JSON.stringify(graphResp, null, 2));
 // }
 
 // make a request to a serverless function
-const funcResp = await nhost.functions.fetch("/helloworld");
+const funcResp = await nhost.functions.post("/helloworld", {
+  message: "Hello, World!",
+});
 console.log(JSON.stringify(funcResp.body, null, 2));
-// "Hello, World!"
+// {
+//   "message": "Hello, World!"
+// }
 ```
 
 ## Classes
