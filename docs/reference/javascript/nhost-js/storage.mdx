@@ -2,32 +2,92 @@ This is the main module to interact with Nhost's Storage service.
 Typically you would use this module via the main [Nhost client](main#createclient)
 but you can also use it directly if you have a specific use case.
 
-## Error handling
+## Import
 
-The SDK will throw errors in most operations if the request return a status >=400 or
-if the request fails entirely (i.e., due to network errors). A continuation you can see
-how you can handle errors thrown by the SDK when the status is >=400.
+You can import and use this package with:
 
 ```ts
-// Needs the following imports:
-//
-// import {
-//   type ErrorResponse,
-// } from "@nhost/nhost-js/storage";
-// import {
-//   type FetchError,
-// } from "@nhost/nhost-js/fetch";
-//
+import { createClient } from "@nhost/nhost-js/storage";
+```
+
+## Usage
+
+You can use this library to upload files, download files, and delete files:
+
+```ts
+import { createClient } from "@nhost/nhost-js";
+
 const nhost = createClient({
   subdomain,
   region,
 });
+
+// Sign up/in to authenticate
+await nhost.auth.signUpEmailPassword({
+  email: `test-${Date.now()}@example.com`,
+  password: "password123",
+});
+
+// Upload files to storage
+const uploadResp = await nhost.storage.uploadFiles({
+  "file[]": [
+    new File(["test content"], "test-file.txt", { type: "text/plain" }),
+  ],
+});
+console.log(JSON.stringify(uploadResp, null, 2));
+// {
+//   "body": {
+//     "processedFiles": [
+//       {
+//         "id": "412f4ec0-e347-4e1e-ad5a-8fecb6cb51ed",
+//         "name": "test-file.txt",
+//         "size": 12,
+//         "bucketId": "default",
+//         "etag": "\"9473fdd0d880a43c21b7778d34872157\"",
+//         "createdAt": "2025-07-04T08:27:26.018321+00:00",
+//         "updatedAt": "2025-07-04T08:27:26.021849+00:00",
+//         "isUploaded": true,
+//         "mimeType": "text/plain",
+//         "uploadedByUserId": "",
+//         "metadata": null
+//       }
+//     ]
+//   },
+//   "status": 201,
+//   "headers": {}
+// }
+
+const fileId = uploadResp.body.processedFiles[0].id;
+
+// Download a file from storage
+const downloadResp = await nhost.storage.getFile(fileId);
+console.log("Downloaded file content:", await downloadResp.body.text());
+// Downloaded file content: test content
+
+// Delete the file
+await nhost.storage.deleteFile(fileId);
+```
+
+## Error handling
+
+The SDK will throw errors in most operations if the request returns a status >=300 or
+if the request fails entirely (i.e., due to network errors). The type of the error
+will be a `FetchError<ErrorResponse>`:
+
+```ts
+import { createClient } from "@nhost/nhost-js";
+import { type ErrorResponse } from "@nhost/nhost-js/storage";
+import { type FetchError } from "@nhost/nhost-js/fetch";
+
+const nhost = createClient({
+  subdomain,
+  region,
+});
+
 try {
   await nhost.storage.uploadFiles({
     "file[]": [new File(["test1"], "file-1", { type: "text/plain" })],
   });
-
-  expect(true).toBe(false); // This should not be reached
 } catch (error) {
   const err = error as FetchError<ErrorResponse>;
   console.log("Error:", err);
@@ -42,6 +102,35 @@ try {
   // }
 
   // error handling...
+}
+```
+
+This type extends the standard `Error` type so if you want to just log the error you can
+do so like this:
+
+```ts
+import { createClient } from "@nhost/nhost-js";
+import { type ErrorResponse } from "@nhost/nhost-js/storage";
+import { type FetchError } from "@nhost/nhost-js/fetch";
+
+const nhost = createClient({
+  subdomain,
+  region,
+});
+
+try {
+  await nhost.storage.uploadFiles({
+    "file[]": [new File(["test1"], "file-1", { type: "text/plain" })],
+  });
+} catch (error) {
+  if (!(error instanceof Error)) {
+    throw error; // Re-throw if it's not an Error
+  }
+
+  console.log("Error:", error.message);
+  // Error: you are not authorized
+  // error handling...
+}
 ```
 
 ## Interfaces
