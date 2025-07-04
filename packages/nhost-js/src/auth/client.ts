@@ -6,90 +6,156 @@ import { FetchError, createEnhancedFetch } from "../fetch";
 import type { ChainFunction, FetchResponse } from "../fetch";
 
 /**
- * JSON Web Key Set for verifying JWT signatures
- @property keys (`JWK[]`) - Array of public keys*/
-export interface JWKSet {
-  /**
-   * Array of public keys
-   */
-  keys: JWK[];
-}
+ * The attestation statement format
+ */
+export type AttestationFormat =
+  | "packed"
+  | "tpm"
+  | "android-key"
+  | "android-safetynet"
+  | "fido-u2f"
+  | "apple"
+  | "none";
 
 /**
- * JSON Web Key for JWT verification
- @property alg (`string`) - Algorithm used with this key
-    *    Example - `"RS256"`
- @property e (`string`) - RSA public exponent
-    *    Example - `"AQAB"`
- @property kid (`string`) - Key ID
-    *    Example - `"key-id-1"`
- @property kty (`string`) - Key type
-    *    Example - `"RSA"`
- @property n (`string`) - RSA modulus
-    *    Example - `"abcd1234..."`
- @property use (`string`) - Key usage
-    *    Example - `"sig"`*/
-export interface JWK {
+ * Map of extension outputs from the client
+ @property appid? (`boolean`) - Application identifier extension output
+ @property credProps? (`CredentialPropertiesOutput`) - Credential properties extension output
+ @property hmacCreateSecret? (`boolean`) - HMAC secret extension output*/
+export interface AuthenticationExtensionsClientOutputs {
   /**
-   * Algorithm used with this key
-   *    Example - `"RS256"`
+   * Application identifier extension output
    */
-  alg: string;
+  appid?: boolean;
   /**
-   * RSA public exponent
-   *    Example - `"AQAB"`
+   * Credential properties extension output
    */
-  e: string;
+  credProps?: CredentialPropertiesOutput;
   /**
-   * Key ID
-   *    Example - `"key-id-1"`
+   * HMAC secret extension output
    */
-  kid: string;
-  /**
-   * Key type
-   *    Example - `"RSA"`
-   */
-  kty: string;
-  /**
-   * RSA modulus
-   *    Example - `"abcd1234..."`
-   */
-  n: string;
-  /**
-   * Key usage
-   *    Example - `"sig"`
-   */
-  use: string;
-}
-
-/**
- * Request to refresh an access token
- @property refreshToken (`string`) - Refresh token used to generate a new access token
-    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
-    *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b*/
-export interface RefreshTokenRequest {
-  /**
-   * Refresh token used to generate a new access token
-   *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
-   *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
-   */
-  refreshToken: string;
+  hmacCreateSecret?: boolean;
 }
 
 /**
  * 
- @property refreshToken (`string`) - Refresh token for the current session
- @property all? (`boolean`) - Sign out from all connected devices*/
-export interface SignOutSchema {
+ @property clientDataJSON (`string`) - Base64url encoded client data JSON
+ @property authenticatorData (`string`) - Base64url encoded authenticator data
+ @property signature (`string`) - Base64url encoded assertion signature
+ @property userHandle? (`string`) - Base64url encoded user handle*/
+export interface AuthenticatorAssertionResponse {
   /**
-   * Refresh token for the current session
+   * Base64url encoded client data JSON
    */
-  refreshToken: string;
+  clientDataJSON: string;
   /**
-   * Sign out from all connected devices
+   * Base64url encoded authenticator data
    */
-  all?: boolean;
+  authenticatorData: string;
+  /**
+   * Base64url encoded assertion signature
+   */
+  signature: string;
+  /**
+   * Base64url encoded user handle
+   */
+  userHandle?: string;
 }
+
+/**
+ * The authenticator attachment modality
+ */
+export type AuthenticatorAttachment = "platform" | "cross-platform";
+
+/**
+ * 
+ @property clientDataJSON (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property transports? (`string[]`) - The authenticator transports
+ @property authenticatorData? (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property publicKey? (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property publicKeyAlgorithm? (`number`) - The public key algorithm identifier
+    *    Format - int64
+ @property attestationObject (`string`) - Base64url-encoded binary data
+    *    Format - byte*/
+export interface AuthenticatorAttestationResponse {
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  clientDataJSON: string;
+  /**
+   * The authenticator transports
+   */
+  transports?: string[];
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  authenticatorData?: string;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  publicKey?: string;
+  /**
+   * The public key algorithm identifier
+   *    Format - int64
+   */
+  publicKeyAlgorithm?: number;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  attestationObject: string;
+}
+
+/**
+ * 
+ @property authenticatorAttachment? (`AuthenticatorAttachment`) - The authenticator attachment modality
+ @property requireResidentKey? (`boolean`) - Whether the authenticator must create a client-side-resident public key credential source
+ @property residentKey? (`ResidentKeyRequirement`) - The resident key requirement
+ @property userVerification? (`UserVerificationRequirement`) - A requirement for user verification for the operation*/
+export interface AuthenticatorSelection {
+  /**
+   * The authenticator attachment modality
+   */
+  authenticatorAttachment?: AuthenticatorAttachment;
+  /**
+   * Whether the authenticator must create a client-side-resident public key credential source
+   */
+  requireResidentKey?: boolean;
+  /**
+   * The resident key requirement
+   */
+  residentKey?: ResidentKeyRequirement;
+  /**
+   * A requirement for user verification for the operation
+   */
+  userVerification?: UserVerificationRequirement;
+}
+
+/**
+ * The authenticator transports that can be used
+ */
+export type AuthenticatorTransport =
+  | "usb"
+  | "nfc"
+  | "ble"
+  | "smart-card"
+  | "hybrid"
+  | "internal";
+
+/**
+ * The attestation conveyance preference
+ */
+export type ConveyancePreference =
+  | "none"
+  | "indirect"
+  | "direct"
+  | "enterprise";
 
 /**
  * 
@@ -132,6 +198,110 @@ export interface CreatePATResponse {
    */
   personalAccessToken: string;
 }
+
+/**
+ * 
+ @property id (`string`) - The credential's identifier
+ @property type (`string`) - The credential type represented by this object
+ @property rawId (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property clientExtensionResults? (`AuthenticationExtensionsClientOutputs`) - Map of extension outputs from the client
+ @property authenticatorAttachment? (`string`) - The authenticator attachment
+ @property response (`AuthenticatorAssertionResponse`) - */
+export interface CredentialAssertionResponse {
+  /**
+   * The credential's identifier
+   */
+  id: string;
+  /**
+   * The credential type represented by this object
+   */
+  type: string;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  rawId: string;
+  /**
+   * Map of extension outputs from the client
+   */
+  clientExtensionResults?: AuthenticationExtensionsClientOutputs;
+  /**
+   * The authenticator attachment
+   */
+  authenticatorAttachment?: string;
+  /**
+   *
+   */
+  response: AuthenticatorAssertionResponse;
+}
+
+/**
+ * 
+ @property id (`string`) - The credential's identifier
+ @property type (`string`) - The credential type represented by this object
+ @property rawId (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property clientExtensionResults? (`AuthenticationExtensionsClientOutputs`) - Map of extension outputs from the client
+ @property authenticatorAttachment? (`string`) - The authenticator attachment
+ @property response (`AuthenticatorAttestationResponse`) - */
+export interface CredentialCreationResponse {
+  /**
+   * The credential's identifier
+   */
+  id: string;
+  /**
+   * The credential type represented by this object
+   */
+  type: string;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  rawId: string;
+  /**
+   * Map of extension outputs from the client
+   */
+  clientExtensionResults?: AuthenticationExtensionsClientOutputs;
+  /**
+   * The authenticator attachment
+   */
+  authenticatorAttachment?: string;
+  /**
+   *
+   */
+  response: AuthenticatorAttestationResponse;
+}
+
+/**
+ * 
+ @property type (`CredentialType`) - The valid credential types
+ @property alg (`number`) - The cryptographic algorithm identifier*/
+export interface CredentialParameter {
+  /**
+   * The valid credential types
+   */
+  type: CredentialType;
+  /**
+   * The cryptographic algorithm identifier
+   */
+  alg: number;
+}
+
+/**
+ * Credential properties extension output
+ @property rk? (`boolean`) - Indicates if the credential is a resident key*/
+export interface CredentialPropertiesOutput {
+  /**
+   * Indicates if the credential is a resident key
+   */
+  rk?: boolean;
+}
+
+/**
+ * The valid credential types
+ */
+export type CredentialType = "public-key";
 
 /**
  * Error code identifying the specific application error
@@ -188,18 +358,85 @@ export interface ErrorResponse {
 }
 
 /**
- * Response for email-password authentication that may include a session or MFA challenge
- @property session? (`Session`) - User authentication session containing tokens and user information
- @property mfa? (`MFAChallengePayload`) - Challenge payload for multi-factor authentication*/
-export interface SignInEmailPasswordResponse {
+ *
+ */
+export type IdTokenProvider = "apple" | "google";
+
+/**
+ * JSON Web Key for JWT verification
+ @property alg (`string`) - Algorithm used with this key
+    *    Example - `"RS256"`
+ @property e (`string`) - RSA public exponent
+    *    Example - `"AQAB"`
+ @property kid (`string`) - Key ID
+    *    Example - `"key-id-1"`
+ @property kty (`string`) - Key type
+    *    Example - `"RSA"`
+ @property n (`string`) - RSA modulus
+    *    Example - `"abcd1234..."`
+ @property use (`string`) - Key usage
+    *    Example - `"sig"`*/
+export interface JWK {
   /**
-   * User authentication session containing tokens and user information
+   * Algorithm used with this key
+   *    Example - `"RS256"`
    */
-  session?: Session;
+  alg: string;
   /**
-   * Challenge payload for multi-factor authentication
+   * RSA public exponent
+   *    Example - `"AQAB"`
    */
-  mfa?: MFAChallengePayload;
+  e: string;
+  /**
+   * Key ID
+   *    Example - `"key-id-1"`
+   */
+  kid: string;
+  /**
+   * Key type
+   *    Example - `"RSA"`
+   */
+  kty: string;
+  /**
+   * RSA modulus
+   *    Example - `"abcd1234..."`
+   */
+  n: string;
+  /**
+   * Key usage
+   *    Example - `"sig"`
+   */
+  use: string;
+}
+
+/**
+ * JSON Web Key Set for verifying JWT signatures
+ @property keys (`JWK[]`) - Array of public keys*/
+export interface JWKSet {
+  /**
+   * Array of public keys
+   */
+  keys: JWK[];
+}
+
+/**
+ * 
+ @property provider (`IdTokenProvider`) - 
+ @property idToken (`string`) - Apple ID token
+ @property nonce? (`string`) - Nonce used during sign in process*/
+export interface LinkIdTokenRequest {
+  /**
+   *
+   */
+  provider: IdTokenProvider;
+  /**
+   * Apple ID token
+   */
+  idToken: string;
+  /**
+   * Nonce used during sign in process
+   */
+  nonce?: string;
 }
 
 /**
@@ -215,14 +452,191 @@ export interface MFAChallengePayload {
 }
 
 /**
- * Container for session information
- @property session? (`Session`) - User authentication session containing tokens and user information*/
-export interface SessionPayload {
+ *
+ */
+export type OKResponse = "OK";
+
+/**
+ * 
+ @property redirectTo? (`string`) - 
+    *    Example - `"https://my-app.com/catch-redirection"`
+    *    Format - uri*/
+export interface OptionsRedirectTo {
   /**
-   * User authentication session containing tokens and user information
+   *
+   *    Example - `"https://my-app.com/catch-redirection"`
+   *    Format - uri
    */
-  session?: Session;
+  redirectTo?: string;
 }
+
+/**
+ * 
+ @property rp (`RelyingPartyEntity`) - 
+ @property user (`UserEntity`) - 
+ @property challenge (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property pubKeyCredParams (`CredentialParameter[]`) - The desired credential types and their respective cryptographic parameters
+ @property timeout? (`number`) - A time, in milliseconds, that the caller is willing to wait for the call to complete
+ @property excludeCredentials? (`PublicKeyCredentialDescriptor[]`) - A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
+ @property authenticatorSelection? (`AuthenticatorSelection`) - 
+ @property hints? (`PublicKeyCredentialHints[]`) - Hints to help guide the user through the experience
+ @property attestation? (`ConveyancePreference`) - The attestation conveyance preference
+ @property attestationFormats? (`AttestationFormat[]`) - The preferred attestation statement formats
+ @property extensions? (`Record<string, unknown>`) - Additional parameters requesting additional processing by the client and authenticator*/
+export interface PublicKeyCredentialCreationOptions {
+  /**
+   *
+   */
+  rp: RelyingPartyEntity;
+  /**
+   *
+   */
+  user: UserEntity;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  challenge: string;
+  /**
+   * The desired credential types and their respective cryptographic parameters
+   */
+  pubKeyCredParams: CredentialParameter[];
+  /**
+   * A time, in milliseconds, that the caller is willing to wait for the call to complete
+   */
+  timeout?: number;
+  /**
+   * A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
+   */
+  excludeCredentials?: PublicKeyCredentialDescriptor[];
+  /**
+   *
+   */
+  authenticatorSelection?: AuthenticatorSelection;
+  /**
+   * Hints to help guide the user through the experience
+   */
+  hints?: PublicKeyCredentialHints[];
+  /**
+   * The attestation conveyance preference
+   */
+  attestation?: ConveyancePreference;
+  /**
+   * The preferred attestation statement formats
+   */
+  attestationFormats?: AttestationFormat[];
+  /**
+   * Additional parameters requesting additional processing by the client and authenticator
+   */
+  extensions?: Record<string, unknown>;
+}
+
+/**
+ * 
+ @property type (`CredentialType`) - The valid credential types
+ @property id (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property transports? (`AuthenticatorTransport[]`) - The authenticator transports that can be used*/
+export interface PublicKeyCredentialDescriptor {
+  /**
+   * The valid credential types
+   */
+  type: CredentialType;
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  id: string;
+  /**
+   * The authenticator transports that can be used
+   */
+  transports?: AuthenticatorTransport[];
+}
+
+/**
+ * Hints to help guide the user through the experience
+ */
+export type PublicKeyCredentialHints =
+  | "security-key"
+  | "client-device"
+  | "hybrid";
+
+/**
+ * 
+ @property challenge (`string`) - Base64url-encoded binary data
+    *    Format - byte
+ @property timeout? (`number`) - A time, in milliseconds, that the caller is willing to wait for the call to complete
+ @property rpId? (`string`) - The RP ID the credential should be scoped to
+ @property allowCredentials? (`PublicKeyCredentialDescriptor[]`) - A list of CredentialDescriptor objects representing public key credentials acceptable to the caller
+ @property userVerification? (`UserVerificationRequirement`) - A requirement for user verification for the operation
+ @property hints? (`PublicKeyCredentialHints[]`) - Hints to help guide the user through the experience
+ @property extensions? (`Record<string, unknown>`) - Additional parameters requesting additional processing by the client and authenticator*/
+export interface PublicKeyCredentialRequestOptions {
+  /**
+   * Base64url-encoded binary data
+   *    Format - byte
+   */
+  challenge: string;
+  /**
+   * A time, in milliseconds, that the caller is willing to wait for the call to complete
+   */
+  timeout?: number;
+  /**
+   * The RP ID the credential should be scoped to
+   */
+  rpId?: string;
+  /**
+   * A list of CredentialDescriptor objects representing public key credentials acceptable to the caller
+   */
+  allowCredentials?: PublicKeyCredentialDescriptor[];
+  /**
+   * A requirement for user verification for the operation
+   */
+  userVerification?: UserVerificationRequirement;
+  /**
+   * Hints to help guide the user through the experience
+   */
+  hints?: PublicKeyCredentialHints[];
+  /**
+   * Additional parameters requesting additional processing by the client and authenticator
+   */
+  extensions?: Record<string, unknown>;
+}
+
+/**
+ * Request to refresh an access token
+ @property refreshToken (`string`) - Refresh token used to generate a new access token
+    *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
+    *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b*/
+export interface RefreshTokenRequest {
+  /**
+   * Refresh token used to generate a new access token
+   *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
+   *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
+   */
+  refreshToken: string;
+}
+
+/**
+ * 
+ @property name (`string`) - A human-palatable name for the entity
+ @property id (`string`) - A unique identifier for the Relying Party entity, which sets the RP ID*/
+export interface RelyingPartyEntity {
+  /**
+   * A human-palatable name for the entity
+   */
+  name: string;
+  /**
+   * A unique identifier for the Relying Party entity, which sets the RP ID
+   */
+  id: string;
+}
+
+/**
+ * The resident key requirement
+ */
+export type ResidentKeyRequirement = "discouraged" | "preferred" | "required";
 
 /**
  * User authentication session containing tokens and user information
@@ -269,6 +683,176 @@ export interface Session {
 }
 
 /**
+ * Container for session information
+ @property session? (`Session`) - User authentication session containing tokens and user information*/
+export interface SessionPayload {
+  /**
+   * User authentication session containing tokens and user information
+   */
+  session?: Session;
+}
+
+/**
+ * 
+ @property displayName? (`string`) - 
+    *    Example - `"John Smith"`
+ @property locale? (`string`) - A two-characters locale
+    *    Example - `"en"`
+    *    MinLength - 2
+    *    MaxLength - 2
+ @property metadata? (`Record<string, unknown>`) - 
+    *    Example - `{"firstName":"John","lastName":"Smith"}`*/
+export interface SignInAnonymousRequest {
+  /**
+   *
+   *    Example - `"John Smith"`
+   */
+  displayName?: string;
+  /**
+   * A two-characters locale
+   *    Example - `"en"`
+   *    MinLength - 2
+   *    MaxLength - 2
+   */
+  locale?: string;
+  /**
+   *
+   *    Example - `{"firstName":"John","lastName":"Smith"}`
+   */
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Request to authenticate using email and password
+ @property email (`string`) - User's email address
+    *    Example - `"john.smith@nhost.io"`
+    *    Format - email
+ @property password (`string`) - User's password
+    *    Example - `"Str0ngPassw#ord-94|%"`
+    *    MinLength - 3
+    *    MaxLength - 50*/
+export interface SignInEmailPasswordRequest {
+  /**
+   * User's email address
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
+   */
+  email: string;
+  /**
+   * User's password
+   *    Example - `"Str0ngPassw#ord-94|%"`
+   *    MinLength - 3
+   *    MaxLength - 50
+   */
+  password: string;
+}
+
+/**
+ * Response for email-password authentication that may include a session or MFA challenge
+ @property session? (`Session`) - User authentication session containing tokens and user information
+ @property mfa? (`MFAChallengePayload`) - Challenge payload for multi-factor authentication*/
+export interface SignInEmailPasswordResponse {
+  /**
+   * User authentication session containing tokens and user information
+   */
+  session?: Session;
+  /**
+   * Challenge payload for multi-factor authentication
+   */
+  mfa?: MFAChallengePayload;
+}
+
+/**
+ * 
+ @property provider (`IdTokenProvider`) - 
+ @property idToken (`string`) - Apple ID token
+ @property nonce? (`string`) - Nonce used during sign in process
+ @property options? (`SignUpOptions`) - */
+export interface SignInIdTokenRequest {
+  /**
+   *
+   */
+  provider: IdTokenProvider;
+  /**
+   * Apple ID token
+   */
+  idToken: string;
+  /**
+   * Nonce used during sign in process
+   */
+  nonce?: string;
+  /**
+   *
+   */
+  options?: SignUpOptions;
+}
+
+/**
+ * 
+ @property ticket (`string`) - Ticket
+    *    Pattern - ^mfaTotp:.*$
+ @property otp (`string`) - One time password*/
+export interface SignInMfaTotpRequest {
+  /**
+   * Ticket
+   *    Pattern - ^mfaTotp:.*$
+   */
+  ticket: string;
+  /**
+   * One time password
+   */
+  otp: string;
+}
+
+/**
+ * 
+ @property email (`string`) - A valid email
+    *    Example - `"john.smith@nhost.io"`
+    *    Format - email
+ @property options? (`SignUpOptions`) - */
+export interface SignInOTPEmailRequest {
+  /**
+   * A valid email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
+   */
+  email: string;
+  /**
+   *
+   */
+  options?: SignUpOptions;
+}
+
+/**
+ * 
+ @property otp (`string`) - One time password
+ @property email (`string`) - A valid email
+    *    Example - `"john.smith@nhost.io"`
+    *    Format - email*/
+export interface SignInOTPEmailVerifyRequest {
+  /**
+   * One time password
+   */
+  otp: string;
+  /**
+   * A valid email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
+   */
+  email: string;
+}
+
+/**
+ * 
+ @property session? (`Session`) - User authentication session containing tokens and user information*/
+export interface SignInOTPEmailVerifyResponse {
+  /**
+   * User authentication session containing tokens and user information
+   */
+  session?: Session;
+}
+
+/**
  * 
  @property personalAccessToken (`string`) - PAT
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
@@ -281,6 +865,223 @@ export interface SignInPATRequest {
    */
   personalAccessToken: string;
 }
+
+/**
+ * 
+ @property email (`string`) - A valid email
+    *    Example - `"john.smith@nhost.io"`
+    *    Format - email
+ @property options? (`SignUpOptions`) - */
+export interface SignInPasswordlessEmailRequest {
+  /**
+   * A valid email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
+   */
+  email: string;
+  /**
+   *
+   */
+  options?: SignUpOptions;
+}
+
+/**
+ * 
+ @property email? (`string`) - A valid email
+    *    Example - `"john.smith@nhost.io"`
+    *    Format - email*/
+export interface SignInWebauthnRequest {
+  /**
+   * A valid email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
+   */
+  email?: string;
+}
+
+/**
+ * 
+ @property email? (`string`) - A valid email. Deprecated, no longer used
+    *    Example - `"john.smith@nhost.io"`
+    *    Format - email
+ @property credential (`CredentialAssertionResponse`) - */
+export interface SignInWebauthnVerifyRequest {
+  /**
+   * A valid email. Deprecated, no longer used
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
+   */
+  email?: string;
+  /**
+   *
+   */
+  credential: CredentialAssertionResponse;
+}
+
+/**
+ * 
+ @property refreshToken (`string`) - Refresh token for the current session
+ @property all? (`boolean`) - Sign out from all connected devices*/
+export interface SignOutSchema {
+  /**
+   * Refresh token for the current session
+   */
+  refreshToken: string;
+  /**
+   * Sign out from all connected devices
+   */
+  all?: boolean;
+}
+
+/**
+ * Request to register a new user with email and password
+ @property email (`string`) - Email address for the new user account
+    *    Example - `"john.smith@nhost.io"`
+    *    Format - email
+ @property password (`string`) - Password for the new user account
+    *    Example - `"Str0ngPassw#ord-94|%"`
+    *    MinLength - 3
+    *    MaxLength - 50
+ @property options? (`SignUpOptions`) - */
+export interface SignUpEmailPasswordRequest {
+  /**
+   * Email address for the new user account
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
+   */
+  email: string;
+  /**
+   * Password for the new user account
+   *    Example - `"Str0ngPassw#ord-94|%"`
+   *    MinLength - 3
+   *    MaxLength - 50
+   */
+  password: string;
+  /**
+   *
+   */
+  options?: SignUpOptions;
+}
+
+/**
+ * 
+ @property allowedRoles? (`string[]`) - 
+    *    Example - `["me","user"]`
+ @property defaultRole? (`string`) - 
+    *    Example - `"user"`
+ @property displayName? (`string`) - 
+    *    Example - `"John Smith"`
+    *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
+    *    MaxLength - 32
+ @property locale? (`string`) - A two-characters locale
+    *    Example - `"en"`
+    *    MinLength - 2
+    *    MaxLength - 2
+ @property metadata? (`Record<string, unknown>`) - 
+    *    Example - `{"firstName":"John","lastName":"Smith"}`
+ @property redirectTo? (`string`) - 
+    *    Example - `"https://my-app.com/catch-redirection"`
+    *    Format - uri*/
+export interface SignUpOptions {
+  /**
+   *
+   *    Example - `["me","user"]`
+   */
+  allowedRoles?: string[];
+  /**
+   *
+   *    Example - `"user"`
+   */
+  defaultRole?: string;
+  /**
+   *
+   *    Example - `"John Smith"`
+   *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
+   *    MaxLength - 32
+   */
+  displayName?: string;
+  /**
+   * A two-characters locale
+   *    Example - `"en"`
+   *    MinLength - 2
+   *    MaxLength - 2
+   */
+  locale?: string;
+  /**
+   *
+   *    Example - `{"firstName":"John","lastName":"Smith"}`
+   */
+  metadata?: Record<string, unknown>;
+  /**
+   *
+   *    Example - `"https://my-app.com/catch-redirection"`
+   *    Format - uri
+   */
+  redirectTo?: string;
+}
+
+/**
+ * 
+ @property email (`string`) - A valid email
+    *    Example - `"john.smith@nhost.io"`
+    *    Format - email
+ @property options? (`SignUpOptions`) - */
+export interface SignUpWebauthnRequest {
+  /**
+   * A valid email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
+   */
+  email: string;
+  /**
+   *
+   */
+  options?: SignUpOptions;
+}
+
+/**
+ * 
+ @property credential (`CredentialCreationResponse`) - 
+ @property options? (`SignUpOptions`) - 
+ @property nickname? (`string`) - Nickname for the security key*/
+export interface SignUpWebauthnVerifyRequest {
+  /**
+   *
+   */
+  credential: CredentialCreationResponse;
+  /**
+   *
+   */
+  options?: SignUpOptions;
+  /**
+   * Nickname for the security key
+   */
+  nickname?: string;
+}
+
+/**
+ * Response containing TOTP setup information for MFA
+ @property imageUrl (`string`) - URL to QR code image for scanning with an authenticator app
+    *    Example - `"data:image/png;base64,iVBORw0KGg..."`
+ @property totpSecret (`string`) - TOTP secret key for manual setup with an authenticator app
+    *    Example - `"ABCDEFGHIJK23456"`*/
+export interface TotpGenerateResponse {
+  /**
+   * URL to QR code image for scanning with an authenticator app
+   *    Example - `"data:image/png;base64,iVBORw0KGg..."`
+   */
+  imageUrl: string;
+  /**
+   * TOTP secret key for manual setup with an authenticator app
+   *    Example - `"ABCDEFGHIJK23456"`
+   */
+  totpSecret: string;
+}
+
+/**
+ * Base64url-encoded binary data
+ */
+export type URLEncodedBase64 = string;
 
 /**
  * User profile and account information
@@ -475,21 +1276,46 @@ export interface UserEmailSendVerificationEmailRequest {
 
 /**
  * 
- @property email (`string`) - A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
- @property options? (`OptionsRedirectTo`) - */
-export interface UserPasswordResetRequest {
+ @property name (`string`) - A human-palatable name for the entity
+ @property displayName (`string`) - A human-palatable name for the user account, intended only for display
+ @property id (`string`) - The user handle of the user account entity*/
+export interface UserEntity {
   /**
-   * A valid email
-   *    Example - `"john.smith@nhost.io"`
-   *    Format - email
+   * A human-palatable name for the entity
    */
-  email: string;
+  name: string;
   /**
-   *
+   * A human-palatable name for the user account, intended only for display
    */
-  options?: OptionsRedirectTo;
+  displayName: string;
+  /**
+   * The user handle of the user account entity
+   */
+  id: string;
+}
+
+/**
+ * Type of MFA to activate. Use empty string to disable MFA.
+ */
+export type UserMfaRequestActiveMfaType = "totp" | "";
+
+/**
+ * Request to activate or deactivate multi-factor authentication
+ @property code (`string`) - Verification code from the authenticator app when activating MFA
+    *    Example - `"123456"`
+ @property activeMfaType? (`UserMfaRequestActiveMfaType`) - Type of MFA to activate. Use empty string to disable MFA.
+    *    Example - `"totp"`*/
+export interface UserMfaRequest {
+  /**
+   * Verification code from the authenticator app when activating MFA
+   *    Example - `"123456"`
+   */
+  code: string;
+  /**
+   * Type of MFA to activate. Use empty string to disable MFA.
+   *    Example - `"totp"`
+   */
+  activeMfaType?: UserMfaRequestActiveMfaType;
 }
 
 /**
@@ -516,304 +1342,31 @@ export interface UserPasswordRequest {
 }
 
 /**
- *
+ * 
+ @property email (`string`) - A valid email
+    *    Example - `"john.smith@nhost.io"`
+    *    Format - email
+ @property options? (`OptionsRedirectTo`) - */
+export interface UserPasswordResetRequest {
+  /**
+   * A valid email
+   *    Example - `"john.smith@nhost.io"`
+   *    Format - email
+   */
+  email: string;
+  /**
+   *
+   */
+  options?: OptionsRedirectTo;
+}
+
+/**
+ * A requirement for user verification for the operation
  */
-export type OKResponse = "OK";
-
-/**
- * 
- @property redirectTo? (`string`) - 
-    *    Example - `"https://my-app.com/catch-redirection"`
-    *    Format - uri*/
-export interface OptionsRedirectTo {
-  /**
-   *
-   *    Example - `"https://my-app.com/catch-redirection"`
-   *    Format - uri
-   */
-  redirectTo?: string;
-}
-
-/**
- * 
- @property displayName? (`string`) - 
-    *    Example - `"John Smith"`
- @property locale? (`string`) - A two-characters locale
-    *    Example - `"en"`
-    *    MinLength - 2
-    *    MaxLength - 2
- @property metadata? (`Record<string, unknown>`) - 
-    *    Example - `{"firstName":"John","lastName":"Smith"}`*/
-export interface SignInAnonymousRequest {
-  /**
-   *
-   *    Example - `"John Smith"`
-   */
-  displayName?: string;
-  /**
-   * A two-characters locale
-   *    Example - `"en"`
-   *    MinLength - 2
-   *    MaxLength - 2
-   */
-  locale?: string;
-  /**
-   *
-   *    Example - `{"firstName":"John","lastName":"Smith"}`
-   */
-  metadata?: Record<string, unknown>;
-}
-
-/**
- * Request to authenticate using email and password
- @property email (`string`) - User's email address
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
- @property password (`string`) - User's password
-    *    Example - `"Str0ngPassw#ord-94|%"`
-    *    MinLength - 3
-    *    MaxLength - 50*/
-export interface SignInEmailPasswordRequest {
-  /**
-   * User's email address
-   *    Example - `"john.smith@nhost.io"`
-   *    Format - email
-   */
-  email: string;
-  /**
-   * User's password
-   *    Example - `"Str0ngPassw#ord-94|%"`
-   *    MinLength - 3
-   *    MaxLength - 50
-   */
-  password: string;
-}
-
-/**
- * 
- @property email (`string`) - A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
- @property options? (`SignUpOptions`) - */
-export interface SignInPasswordlessEmailRequest {
-  /**
-   * A valid email
-   *    Example - `"john.smith@nhost.io"`
-   *    Format - email
-   */
-  email: string;
-  /**
-   *
-   */
-  options?: SignUpOptions;
-}
-
-/**
- * 
- @property email (`string`) - A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
- @property options? (`SignUpOptions`) - */
-export interface SignInOTPEmailRequest {
-  /**
-   * A valid email
-   *    Example - `"john.smith@nhost.io"`
-   *    Format - email
-   */
-  email: string;
-  /**
-   *
-   */
-  options?: SignUpOptions;
-}
-
-/**
- * 
- @property otp (`string`) - One time password
- @property email (`string`) - A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email*/
-export interface SignInOTPEmailVerifyRequest {
-  /**
-   * One time password
-   */
-  otp: string;
-  /**
-   * A valid email
-   *    Example - `"john.smith@nhost.io"`
-   *    Format - email
-   */
-  email: string;
-}
-
-/**
- * 
- @property session? (`Session`) - User authentication session containing tokens and user information*/
-export interface SignInOTPEmailVerifyResponse {
-  /**
-   * User authentication session containing tokens and user information
-   */
-  session?: Session;
-}
-
-/**
- * Request to register a new user with email and password
- @property email (`string`) - Email address for the new user account
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
- @property password (`string`) - Password for the new user account
-    *    Example - `"Str0ngPassw#ord-94|%"`
-    *    MinLength - 3
-    *    MaxLength - 50
- @property options? (`SignUpOptions`) - */
-export interface SignUpEmailPasswordRequest {
-  /**
-   * Email address for the new user account
-   *    Example - `"john.smith@nhost.io"`
-   *    Format - email
-   */
-  email: string;
-  /**
-   * Password for the new user account
-   *    Example - `"Str0ngPassw#ord-94|%"`
-   *    MinLength - 3
-   *    MaxLength - 50
-   */
-  password: string;
-  /**
-   *
-   */
-  options?: SignUpOptions;
-}
-
-/**
- * 
- @property allowedRoles? (`string[]`) - 
-    *    Example - `["me","user"]`
- @property defaultRole? (`string`) - 
-    *    Example - `"user"`
- @property displayName? (`string`) - 
-    *    Example - `"John Smith"`
-    *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-    *    MaxLength - 32
- @property locale? (`string`) - A two-characters locale
-    *    Example - `"en"`
-    *    MinLength - 2
-    *    MaxLength - 2
- @property metadata? (`Record<string, unknown>`) - 
-    *    Example - `{"firstName":"John","lastName":"Smith"}`
- @property redirectTo? (`string`) - 
-    *    Example - `"https://my-app.com/catch-redirection"`
-    *    Format - uri*/
-export interface SignUpOptions {
-  /**
-   *
-   *    Example - `["me","user"]`
-   */
-  allowedRoles?: string[];
-  /**
-   *
-   *    Example - `"user"`
-   */
-  defaultRole?: string;
-  /**
-   *
-   *    Example - `"John Smith"`
-   *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
-   *    MaxLength - 32
-   */
-  displayName?: string;
-  /**
-   * A two-characters locale
-   *    Example - `"en"`
-   *    MinLength - 2
-   *    MaxLength - 2
-   */
-  locale?: string;
-  /**
-   *
-   *    Example - `{"firstName":"John","lastName":"Smith"}`
-   */
-  metadata?: Record<string, unknown>;
-  /**
-   *
-   *    Example - `"https://my-app.com/catch-redirection"`
-   *    Format - uri
-   */
-  redirectTo?: string;
-}
-
-/**
- * 
- @property email? (`string`) - A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email*/
-export interface SignInWebauthnRequest {
-  /**
-   * A valid email
-   *    Example - `"john.smith@nhost.io"`
-   *    Format - email
-   */
-  email?: string;
-}
-
-/**
- * 
- @property email (`string`) - A valid email
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
- @property options? (`SignUpOptions`) - */
-export interface SignUpWebauthnRequest {
-  /**
-   * A valid email
-   *    Example - `"john.smith@nhost.io"`
-   *    Format - email
-   */
-  email: string;
-  /**
-   *
-   */
-  options?: SignUpOptions;
-}
-
-/**
- * 
- @property email? (`string`) - A valid email. Deprecated, no longer used
-    *    Example - `"john.smith@nhost.io"`
-    *    Format - email
- @property credential (`CredentialAssertionResponse`) - */
-export interface SignInWebauthnVerifyRequest {
-  /**
-   * A valid email. Deprecated, no longer used
-   *    Example - `"john.smith@nhost.io"`
-   *    Format - email
-   */
-  email?: string;
-  /**
-   *
-   */
-  credential: CredentialAssertionResponse;
-}
-
-/**
- * 
- @property credential (`CredentialCreationResponse`) - 
- @property options? (`SignUpOptions`) - 
- @property nickname? (`string`) - Nickname for the security key*/
-export interface SignUpWebauthnVerifyRequest {
-  /**
-   *
-   */
-  credential: CredentialCreationResponse;
-  /**
-   *
-   */
-  options?: SignUpOptions;
-  /**
-   * Nickname for the security key
-   */
-  nickname?: string;
-}
+export type UserVerificationRequirement =
+  | "required"
+  | "preferred"
+  | "discouraged";
 
 /**
  * 
@@ -848,557 +1401,9 @@ export interface VerifyAddSecurityKeyResponse {
 }
 
 /**
- * 
- @property provider (`IdTokenProvider`) - 
- @property idToken (`string`) - Apple ID token
- @property nonce? (`string`) - Nonce used during sign in process
- @property options? (`SignUpOptions`) - */
-export interface SignInIdTokenRequest {
-  /**
-   *
-   */
-  provider: IdTokenProvider;
-  /**
-   * Apple ID token
-   */
-  idToken: string;
-  /**
-   * Nonce used during sign in process
-   */
-  nonce?: string;
-  /**
-   *
-   */
-  options?: SignUpOptions;
-}
-
-/**
- * 
- @property ticket (`string`) - Ticket
-    *    Pattern - ^mfaTotp:.*$
- @property otp (`string`) - One time password*/
-export interface SignInMfaTotpRequest {
-  /**
-   * Ticket
-   *    Pattern - ^mfaTotp:.*$
-   */
-  ticket: string;
-  /**
-   * One time password
-   */
-  otp: string;
-}
-
-/**
- *
+ * Target URL for the redirect
  */
-export type IdTokenProvider = "apple" | "google";
-
-/**
- * 
- @property provider (`IdTokenProvider`) - 
- @property idToken (`string`) - Apple ID token
- @property nonce? (`string`) - Nonce used during sign in process*/
-export interface LinkIdTokenRequest {
-  /**
-   *
-   */
-  provider: IdTokenProvider;
-  /**
-   * Apple ID token
-   */
-  idToken: string;
-  /**
-   * Nonce used during sign in process
-   */
-  nonce?: string;
-}
-
-/**
- * Type of MFA to activate. Use empty string to disable MFA.
- */
-export type UserMfaRequestActiveMfaType = "totp" | "";
-
-/**
- * Request to activate or deactivate multi-factor authentication
- @property code (`string`) - Verification code from the authenticator app when activating MFA
-    *    Example - `"123456"`
- @property activeMfaType? (`UserMfaRequestActiveMfaType`) - Type of MFA to activate. Use empty string to disable MFA.
-    *    Example - `"totp"`*/
-export interface UserMfaRequest {
-  /**
-   * Verification code from the authenticator app when activating MFA
-   *    Example - `"123456"`
-   */
-  code: string;
-  /**
-   * Type of MFA to activate. Use empty string to disable MFA.
-   *    Example - `"totp"`
-   */
-  activeMfaType?: UserMfaRequestActiveMfaType;
-}
-
-/**
- * Response containing TOTP setup information for MFA
- @property imageUrl (`string`) - URL to QR code image for scanning with an authenticator app
-    *    Example - `"data:image/png;base64,iVBORw0KGg..."`
- @property totpSecret (`string`) - TOTP secret key for manual setup with an authenticator app
-    *    Example - `"ABCDEFGHIJK23456"`*/
-export interface TotpGenerateResponse {
-  /**
-   * URL to QR code image for scanning with an authenticator app
-   *    Example - `"data:image/png;base64,iVBORw0KGg..."`
-   */
-  imageUrl: string;
-  /**
-   * TOTP secret key for manual setup with an authenticator app
-   *    Example - `"ABCDEFGHIJK23456"`
-   */
-  totpSecret: string;
-}
-
-/**
- * 
- @property clientDataJSON (`string`) - Base64url encoded client data JSON
- @property authenticatorData (`string`) - Base64url encoded authenticator data
- @property signature (`string`) - Base64url encoded assertion signature
- @property userHandle? (`string`) - Base64url encoded user handle*/
-export interface AuthenticatorAssertionResponse {
-  /**
-   * Base64url encoded client data JSON
-   */
-  clientDataJSON: string;
-  /**
-   * Base64url encoded authenticator data
-   */
-  authenticatorData: string;
-  /**
-   * Base64url encoded assertion signature
-   */
-  signature: string;
-  /**
-   * Base64url encoded user handle
-   */
-  userHandle?: string;
-}
-
-/**
- * Base64url-encoded binary data
- */
-export type URLEncodedBase64 = string;
-
-/**
- * 
- @property challenge (`string`) - Base64url-encoded binary data
-    *    Format - byte
- @property timeout? (`number`) - A time, in milliseconds, that the caller is willing to wait for the call to complete
- @property rpId? (`string`) - The RP ID the credential should be scoped to
- @property allowCredentials? (`PublicKeyCredentialDescriptor[]`) - A list of CredentialDescriptor objects representing public key credentials acceptable to the caller
- @property userVerification? (`UserVerificationRequirement`) - A requirement for user verification for the operation
- @property hints? (`PublicKeyCredentialHints[]`) - Hints to help guide the user through the experience
- @property extensions? (`Record<string, unknown>`) - Additional parameters requesting additional processing by the client and authenticator*/
-export interface PublicKeyCredentialRequestOptions {
-  /**
-   * Base64url-encoded binary data
-   *    Format - byte
-   */
-  challenge: string;
-  /**
-   * A time, in milliseconds, that the caller is willing to wait for the call to complete
-   */
-  timeout?: number;
-  /**
-   * The RP ID the credential should be scoped to
-   */
-  rpId?: string;
-  /**
-   * A list of CredentialDescriptor objects representing public key credentials acceptable to the caller
-   */
-  allowCredentials?: PublicKeyCredentialDescriptor[];
-  /**
-   * A requirement for user verification for the operation
-   */
-  userVerification?: UserVerificationRequirement;
-  /**
-   * Hints to help guide the user through the experience
-   */
-  hints?: PublicKeyCredentialHints[];
-  /**
-   * Additional parameters requesting additional processing by the client and authenticator
-   */
-  extensions?: Record<string, unknown>;
-}
-
-/**
- * A requirement for user verification for the operation
- */
-export type UserVerificationRequirement =
-  | "required"
-  | "preferred"
-  | "discouraged";
-
-/**
- * Hints to help guide the user through the experience
- */
-export type PublicKeyCredentialHints =
-  | "security-key"
-  | "client-device"
-  | "hybrid";
-
-/**
- * 
- @property type (`CredentialType`) - The valid credential types
- @property id (`string`) - Base64url-encoded binary data
-    *    Format - byte
- @property transports? (`AuthenticatorTransport[]`) - The authenticator transports that can be used*/
-export interface PublicKeyCredentialDescriptor {
-  /**
-   * The valid credential types
-   */
-  type: CredentialType;
-  /**
-   * Base64url-encoded binary data
-   *    Format - byte
-   */
-  id: string;
-  /**
-   * The authenticator transports that can be used
-   */
-  transports?: AuthenticatorTransport[];
-}
-
-/**
- * The valid credential types
- */
-export type CredentialType = "public-key";
-
-/**
- * The authenticator transports that can be used
- */
-export type AuthenticatorTransport =
-  | "usb"
-  | "nfc"
-  | "ble"
-  | "smart-card"
-  | "hybrid"
-  | "internal";
-
-/**
- * 
- @property id (`string`) - The credential's identifier
- @property type (`string`) - The credential type represented by this object
- @property rawId (`string`) - Base64url-encoded binary data
-    *    Format - byte
- @property clientExtensionResults? (`AuthenticationExtensionsClientOutputs`) - Map of extension outputs from the client
- @property authenticatorAttachment? (`string`) - The authenticator attachment
- @property response (`AuthenticatorAssertionResponse`) - */
-export interface CredentialAssertionResponse {
-  /**
-   * The credential's identifier
-   */
-  id: string;
-  /**
-   * The credential type represented by this object
-   */
-  type: string;
-  /**
-   * Base64url-encoded binary data
-   *    Format - byte
-   */
-  rawId: string;
-  /**
-   * Map of extension outputs from the client
-   */
-  clientExtensionResults?: AuthenticationExtensionsClientOutputs;
-  /**
-   * The authenticator attachment
-   */
-  authenticatorAttachment?: string;
-  /**
-   *
-   */
-  response: AuthenticatorAssertionResponse;
-}
-
-/**
- * Map of extension outputs from the client
- @property appid? (`boolean`) - Application identifier extension output
- @property credProps? (`CredentialPropertiesOutput`) - Credential properties extension output
- @property hmacCreateSecret? (`boolean`) - HMAC secret extension output*/
-export interface AuthenticationExtensionsClientOutputs {
-  /**
-   * Application identifier extension output
-   */
-  appid?: boolean;
-  /**
-   * Credential properties extension output
-   */
-  credProps?: CredentialPropertiesOutput;
-  /**
-   * HMAC secret extension output
-   */
-  hmacCreateSecret?: boolean;
-}
-
-/**
- * Credential properties extension output
- @property rk? (`boolean`) - Indicates if the credential is a resident key*/
-export interface CredentialPropertiesOutput {
-  /**
-   * Indicates if the credential is a resident key
-   */
-  rk?: boolean;
-}
-
-/**
- * 
- @property rp (`RelyingPartyEntity`) - 
- @property user (`UserEntity`) - 
- @property challenge (`string`) - Base64url-encoded binary data
-    *    Format - byte
- @property pubKeyCredParams (`CredentialParameter[]`) - The desired credential types and their respective cryptographic parameters
- @property timeout? (`number`) - A time, in milliseconds, that the caller is willing to wait for the call to complete
- @property excludeCredentials? (`PublicKeyCredentialDescriptor[]`) - A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
- @property authenticatorSelection? (`AuthenticatorSelection`) - 
- @property hints? (`PublicKeyCredentialHints[]`) - Hints to help guide the user through the experience
- @property attestation? (`ConveyancePreference`) - The attestation conveyance preference
- @property attestationFormats? (`AttestationFormat[]`) - The preferred attestation statement formats
- @property extensions? (`Record<string, unknown>`) - Additional parameters requesting additional processing by the client and authenticator*/
-export interface PublicKeyCredentialCreationOptions {
-  /**
-   *
-   */
-  rp: RelyingPartyEntity;
-  /**
-   *
-   */
-  user: UserEntity;
-  /**
-   * Base64url-encoded binary data
-   *    Format - byte
-   */
-  challenge: string;
-  /**
-   * The desired credential types and their respective cryptographic parameters
-   */
-  pubKeyCredParams: CredentialParameter[];
-  /**
-   * A time, in milliseconds, that the caller is willing to wait for the call to complete
-   */
-  timeout?: number;
-  /**
-   * A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
-   */
-  excludeCredentials?: PublicKeyCredentialDescriptor[];
-  /**
-   *
-   */
-  authenticatorSelection?: AuthenticatorSelection;
-  /**
-   * Hints to help guide the user through the experience
-   */
-  hints?: PublicKeyCredentialHints[];
-  /**
-   * The attestation conveyance preference
-   */
-  attestation?: ConveyancePreference;
-  /**
-   * The preferred attestation statement formats
-   */
-  attestationFormats?: AttestationFormat[];
-  /**
-   * Additional parameters requesting additional processing by the client and authenticator
-   */
-  extensions?: Record<string, unknown>;
-}
-
-/**
- * 
- @property name (`string`) - A human-palatable name for the entity
- @property id (`string`) - A unique identifier for the Relying Party entity, which sets the RP ID*/
-export interface RelyingPartyEntity {
-  /**
-   * A human-palatable name for the entity
-   */
-  name: string;
-  /**
-   * A unique identifier for the Relying Party entity, which sets the RP ID
-   */
-  id: string;
-}
-
-/**
- * 
- @property name (`string`) - A human-palatable name for the entity
- @property displayName (`string`) - A human-palatable name for the user account, intended only for display
- @property id (`string`) - The user handle of the user account entity*/
-export interface UserEntity {
-  /**
-   * A human-palatable name for the entity
-   */
-  name: string;
-  /**
-   * A human-palatable name for the user account, intended only for display
-   */
-  displayName: string;
-  /**
-   * The user handle of the user account entity
-   */
-  id: string;
-}
-
-/**
- * 
- @property type (`CredentialType`) - The valid credential types
- @property alg (`number`) - The cryptographic algorithm identifier*/
-export interface CredentialParameter {
-  /**
-   * The valid credential types
-   */
-  type: CredentialType;
-  /**
-   * The cryptographic algorithm identifier
-   */
-  alg: number;
-}
-
-/**
- * 
- @property authenticatorAttachment? (`AuthenticatorAttachment`) - The authenticator attachment modality
- @property requireResidentKey? (`boolean`) - Whether the authenticator must create a client-side-resident public key credential source
- @property residentKey? (`ResidentKeyRequirement`) - The resident key requirement
- @property userVerification? (`UserVerificationRequirement`) - A requirement for user verification for the operation*/
-export interface AuthenticatorSelection {
-  /**
-   * The authenticator attachment modality
-   */
-  authenticatorAttachment?: AuthenticatorAttachment;
-  /**
-   * Whether the authenticator must create a client-side-resident public key credential source
-   */
-  requireResidentKey?: boolean;
-  /**
-   * The resident key requirement
-   */
-  residentKey?: ResidentKeyRequirement;
-  /**
-   * A requirement for user verification for the operation
-   */
-  userVerification?: UserVerificationRequirement;
-}
-
-/**
- * The authenticator attachment modality
- */
-export type AuthenticatorAttachment = "platform" | "cross-platform";
-
-/**
- * The resident key requirement
- */
-export type ResidentKeyRequirement = "discouraged" | "preferred" | "required";
-
-/**
- * The attestation conveyance preference
- */
-export type ConveyancePreference =
-  | "none"
-  | "indirect"
-  | "direct"
-  | "enterprise";
-
-/**
- * The attestation statement format
- */
-export type AttestationFormat =
-  | "packed"
-  | "tpm"
-  | "android-key"
-  | "android-safetynet"
-  | "fido-u2f"
-  | "apple"
-  | "none";
-
-/**
- * 
- @property id (`string`) - The credential's identifier
- @property type (`string`) - The credential type represented by this object
- @property rawId (`string`) - Base64url-encoded binary data
-    *    Format - byte
- @property clientExtensionResults? (`AuthenticationExtensionsClientOutputs`) - Map of extension outputs from the client
- @property authenticatorAttachment? (`string`) - The authenticator attachment
- @property response (`AuthenticatorAttestationResponse`) - */
-export interface CredentialCreationResponse {
-  /**
-   * The credential's identifier
-   */
-  id: string;
-  /**
-   * The credential type represented by this object
-   */
-  type: string;
-  /**
-   * Base64url-encoded binary data
-   *    Format - byte
-   */
-  rawId: string;
-  /**
-   * Map of extension outputs from the client
-   */
-  clientExtensionResults?: AuthenticationExtensionsClientOutputs;
-  /**
-   * The authenticator attachment
-   */
-  authenticatorAttachment?: string;
-  /**
-   *
-   */
-  response: AuthenticatorAttestationResponse;
-}
-
-/**
- * 
- @property clientDataJSON (`string`) - Base64url-encoded binary data
-    *    Format - byte
- @property transports? (`string[]`) - The authenticator transports
- @property authenticatorData? (`string`) - Base64url-encoded binary data
-    *    Format - byte
- @property publicKey? (`string`) - Base64url-encoded binary data
-    *    Format - byte
- @property publicKeyAlgorithm? (`number`) - The public key algorithm identifier
-    *    Format - int64
- @property attestationObject (`string`) - Base64url-encoded binary data
-    *    Format - byte*/
-export interface AuthenticatorAttestationResponse {
-  /**
-   * Base64url-encoded binary data
-   *    Format - byte
-   */
-  clientDataJSON: string;
-  /**
-   * The authenticator transports
-   */
-  transports?: string[];
-  /**
-   * Base64url-encoded binary data
-   *    Format - byte
-   */
-  authenticatorData?: string;
-  /**
-   * Base64url-encoded binary data
-   *    Format - byte
-   */
-  publicKey?: string;
-  /**
-   * The public key algorithm identifier
-   *    Format - int64
-   */
-  publicKeyAlgorithm?: number;
-  /**
-   * Base64url-encoded binary data
-   *    Format - byte
-   */
-  attestationObject: string;
-}
+export type RedirectToQuery = string;
 
 /**
  *
@@ -1426,11 +1431,6 @@ export type TicketTypeQuery =
   | "passwordReset";
 
 /**
- * Target URL for the redirect
- */
-export type RedirectToQuery = string;
-
-/**
  * 
  @property version (`string`) - The version of the authentication service
     *    Example - `"1.2.3"`*/
@@ -1442,37 +1442,6 @@ export interface GetVersionResponse200 {
   version: string;
 }
 
-/**
- * Parameters for the verifyTicket method.
-    @property ticket (TicketQuery) - Ticket
-  
-    *    Ticket
-    @property type? (TicketTypeQuery) - Type of the ticket. Deprecated, no longer used
-  
-    *    Type of the ticket
-    @property redirectTo (RedirectToQuery) - Target URL for the redirect
-  
-    *    Target URL for the redirect*/
-export interface VerifyTicketParams {
-  /**
-   * Ticket
-  
-    *    Ticket
-   */
-  ticket: TicketQuery;
-  /**
-   * Type of the ticket. Deprecated, no longer used
-  
-    *    Type of the ticket
-   */
-  type?: TicketTypeQuery;
-  /**
-   * Target URL for the redirect
-  
-    *    Target URL for the redirect
-   */
-  redirectTo: RedirectToQuery;
-}
 /**
  * Parameters for the signInProvider method.
     @property allowedRoles? (string[]) - Array of allowed roles for the user
@@ -1526,18 +1495,72 @@ export interface SignInProviderParams {
    */
   connect?: string;
 }
+/**
+ * Parameters for the verifyTicket method.
+    @property ticket (TicketQuery) - Ticket
+  
+    *    Ticket
+    @property type? (TicketTypeQuery) - Type of the ticket. Deprecated, no longer used
+  
+    *    Type of the ticket
+    @property redirectTo (RedirectToQuery) - Target URL for the redirect
+  
+    *    Target URL for the redirect*/
+export interface VerifyTicketParams {
+  /**
+   * Ticket
+  
+    *    Ticket
+   */
+  ticket: TicketQuery;
+  /**
+   * Type of the ticket. Deprecated, no longer used
+  
+    *    Type of the ticket
+   */
+  type?: TicketTypeQuery;
+  /**
+   * Target URL for the redirect
+  
+    *    Target URL for the redirect
+   */
+  redirectTo: RedirectToQuery;
+}
 
 export interface Client {
   baseURL: string;
   pushChainFunction(chainFunction: ChainFunction): void;
   /**
-     Summary: Health check (HEAD)
-     Verify if the authentication service is operational using HEAD method
+     Summary: Get public keys for JWT verification in JWK Set format
+     
 
      This method may return different T based on the response code:
-     - 200: void
+     - 200: JWKSet
      */
-  healthCheckHead(options?: RequestInit): Promise<FetchResponse<void>>;
+  getJWKs(options?: RequestInit): Promise<FetchResponse<JWKSet>>;
+
+  /**
+     Summary: Elevate access for an already signed in user using FIDO2 Webauthn
+     Generate a Webauthn challenge for elevating user permissions
+
+     This method may return different T based on the response code:
+     - 200: PublicKeyCredentialRequestOptions
+     */
+  elevateWebauthn(
+    options?: RequestInit,
+  ): Promise<FetchResponse<PublicKeyCredentialRequestOptions>>;
+
+  /**
+     Summary: Verify FIDO2 Webauthn authentication using public-key cryptography for elevation
+     Complete Webauthn elevation by verifying the authentication response
+
+     This method may return different T based on the response code:
+     - 200: SessionPayload
+     */
+  verifyElevateWebauthn(
+    body: SignInWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>>;
 
   /**
      Summary: Health check (GET)
@@ -1549,99 +1572,23 @@ export interface Client {
   healthCheckGet(options?: RequestInit): Promise<FetchResponse<OKResponse>>;
 
   /**
-     Summary: Get service version
-     Retrieve version information about the authentication service
+     Summary: Health check (HEAD)
+     Verify if the authentication service is operational using HEAD method
 
      This method may return different T based on the response code:
-     - 200: GetVersionResponse200
+     - 200: void
      */
-  getVersion(
-    options?: RequestInit,
-  ): Promise<FetchResponse<GetVersionResponse200>>;
+  healthCheckHead(options?: RequestInit): Promise<FetchResponse<void>>;
 
   /**
-     Summary: Refresh access token
-     Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued.
-
-     This method may return different T based on the response code:
-     - 200: Session
-     */
-  refreshToken(
-    body: RefreshTokenRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<Session>>;
-
-  /**
-     Summary: Sign out
+     Summary: Link a user account with the provider's account using an id token
      
 
      This method may return different T based on the response code:
      - 200: OKResponse
      */
-  signOut(
-    body: SignOutSchema,
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>>;
-
-  /**
-     Summary: Sign in with email and password
-     Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
-
-     This method may return different T based on the response code:
-     - 200: SignInEmailPasswordResponse
-     */
-  signInEmailPassword(
-    body: SignInEmailPasswordRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<SignInEmailPasswordResponse>>;
-
-  /**
-     Summary: Verify TOTP for MFA
-     Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
-
-     This method may return different T based on the response code:
-     - 200: SessionPayload
-     */
-  verifySignInMfaTotp(
-    body: SignInMfaTotpRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>>;
-
-  /**
-     Summary: Sign in with magic link email
-     Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options.
-
-     This method may return different T based on the response code:
-     - 200: OKResponse
-     */
-  signInPasswordlessEmail(
-    body: SignInPasswordlessEmailRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>>;
-
-  /**
-     Summary: Sign up with email and password
-     Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session.
-
-     This method may return different T based on the response code:
-     - 200: SessionPayload
-     - 403: ErrorResponse
-     - 409: ErrorResponse
-     */
-  signUpEmailPassword(
-    body: SignUpEmailPasswordRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>>;
-
-  /**
-     Summary: Manage multi-factor authentication
-     Activate or deactivate multi-factor authentication for the authenticated user
-
-     This method may return different T based on the response code:
-     - 200: OKResponse
-     */
-  verifyChangeUserMfa(
-    body: UserMfaRequest,
+  linkIdToken(
+    body: LinkIdTokenRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
@@ -1655,15 +1602,6 @@ export interface Client {
   changeUserMfa(
     options?: RequestInit,
   ): Promise<FetchResponse<TotpGenerateResponse>>;
-
-  /**
-     Summary: Get public keys for JWT verification in JWK Set format
-     
-
-     This method may return different T based on the response code:
-     - 200: JWKSet
-     */
-  getJWKs(options?: RequestInit): Promise<FetchResponse<JWKSet>>;
 
   /**
      Summary: Create a Personal Access Token (PAT)
@@ -1686,6 +1624,42 @@ export interface Client {
      */
   signInAnonymous(
     body?: SignInAnonymousRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>>;
+
+  /**
+     Summary: Sign in with email and password
+     Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
+
+     This method may return different T based on the response code:
+     - 200: SignInEmailPasswordResponse
+     */
+  signInEmailPassword(
+    body: SignInEmailPasswordRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SignInEmailPasswordResponse>>;
+
+  /**
+     Summary: Sign in with in an id token
+     
+
+     This method may return different T based on the response code:
+     - 200: SessionPayload
+     */
+  signInIdToken(
+    body: SignInIdTokenRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>>;
+
+  /**
+     Summary: Verify TOTP for MFA
+     Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
+
+     This method may return different T based on the response code:
+     - 200: SessionPayload
+     */
+  verifySignInMfaTotp(
+    body: SignInMfaTotpRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
 
@@ -1714,6 +1688,18 @@ export interface Client {
   ): Promise<FetchResponse<SignInOTPEmailVerifyResponse>>;
 
   /**
+     Summary: Sign in with magic link email
+     Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options.
+
+     This method may return different T based on the response code:
+     - 200: OKResponse
+     */
+  signInPasswordlessEmail(
+    body: SignInPasswordlessEmailRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>>;
+
+  /**
      Summary: Sign in with Personal Access Token (PAT)
      
 
@@ -1724,98 +1710,6 @@ export interface Client {
     body: SignInPATRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
-
-  /**
-     Summary: Sign in with in an id token
-     
-
-     This method may return different T based on the response code:
-     - 200: SessionPayload
-     */
-  signInIdToken(
-    body: SignInIdTokenRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>>;
-
-  /**
-     Summary: Link a user account with the provider's account using an id token
-     
-
-     This method may return different T based on the response code:
-     - 200: OKResponse
-     */
-  linkIdToken(
-    body: LinkIdTokenRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>>;
-
-  /**
-     Summary: Deanonymize an anonymous user in adding missing email or email+password, depending on the chosen authentication method. Will send a confirmation email if the server is configured to do so
-     
-
-     This method may return different T based on the response code:
-     - 200: OKResponse
-     */
-  deanonymizeUser(
-    body: UserDeanonymizeRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>>;
-
-  /**
-     Summary: Change user email
-     
-
-     This method may return different T based on the response code:
-     - 200: OKResponse
-     */
-  changeUserEmail(
-    body: UserEmailChangeRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>>;
-
-  /**
-     Summary: Send verification email
-     
-
-     This method may return different T based on the response code:
-     - 200: OKResponse
-     */
-  sendVerificationEmail(
-    body: UserEmailSendVerificationEmailRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>>;
-
-  /**
-     Summary: Change user password. The user must be authenticated or provide a ticket
-     
-
-     This method may return different T based on the response code:
-     - 200: OKResponse
-     */
-  changeUserPassword(
-    body: UserPasswordRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>>;
-
-  /**
-     Summary: Request a password reset. An email with a verification link will be sent to the user's address
-     
-
-     This method may return different T based on the response code:
-     - 200: OKResponse
-     */
-  sendPasswordResetEmail(
-    body: UserPasswordResetRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>>;
-
-  /**
-     Summary: Verify tickets created by email verification, email passwordless authentication (magic link), or password reset
-     
-
-     As this method is a redirect, it returns a URL string instead of a Promise
-     */
-  verifyTicketURL(params?: VerifyTicketParams, options?: RequestInit): string;
 
   /**
      Summary: Sign in with an oauth2 provider
@@ -1854,6 +1748,32 @@ export interface Client {
   ): Promise<FetchResponse<SessionPayload>>;
 
   /**
+     Summary: Sign out
+     
+
+     This method may return different T based on the response code:
+     - 200: OKResponse
+     */
+  signOut(
+    body: SignOutSchema,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>>;
+
+  /**
+     Summary: Sign up with email and password
+     Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session.
+
+     This method may return different T based on the response code:
+     - 200: SessionPayload
+     - 403: ErrorResponse
+     - 409: ErrorResponse
+     */
+  signUpEmailPassword(
+    body: SignUpEmailPasswordRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>>;
+
+  /**
      Summary: Sign up with Webauthn
      Initiate a Webauthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
 
@@ -1876,6 +1796,90 @@ export interface Client {
     body: SignUpWebauthnVerifyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>>;
+
+  /**
+     Summary: Refresh access token
+     Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued.
+
+     This method may return different T based on the response code:
+     - 200: Session
+     */
+  refreshToken(
+    body: RefreshTokenRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<Session>>;
+
+  /**
+     Summary: Deanonymize an anonymous user in adding missing email or email+password, depending on the chosen authentication method. Will send a confirmation email if the server is configured to do so
+     
+
+     This method may return different T based on the response code:
+     - 200: OKResponse
+     */
+  deanonymizeUser(
+    body: UserDeanonymizeRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>>;
+
+  /**
+     Summary: Change user email
+     
+
+     This method may return different T based on the response code:
+     - 200: OKResponse
+     */
+  changeUserEmail(
+    body: UserEmailChangeRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>>;
+
+  /**
+     Summary: Send verification email
+     
+
+     This method may return different T based on the response code:
+     - 200: OKResponse
+     */
+  sendVerificationEmail(
+    body: UserEmailSendVerificationEmailRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>>;
+
+  /**
+     Summary: Manage multi-factor authentication
+     Activate or deactivate multi-factor authentication for the authenticated user
+
+     This method may return different T based on the response code:
+     - 200: OKResponse
+     */
+  verifyChangeUserMfa(
+    body: UserMfaRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>>;
+
+  /**
+     Summary: Change user password. The user must be authenticated or provide a ticket
+     
+
+     This method may return different T based on the response code:
+     - 200: OKResponse
+     */
+  changeUserPassword(
+    body: UserPasswordRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>>;
+
+  /**
+     Summary: Request a password reset. An email with a verification link will be sent to the user's address
+     
+
+     This method may return different T based on the response code:
+     - 200: OKResponse
+     */
+  sendPasswordResetEmail(
+    body: UserPasswordResetRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>>;
 
   /**
      Summary: Initialize adding of a new webauthn security key
@@ -1901,27 +1905,23 @@ export interface Client {
   ): Promise<FetchResponse<VerifyAddSecurityKeyResponse>>;
 
   /**
-     Summary: Elevate access for an already signed in user using FIDO2 Webauthn
-     Generate a Webauthn challenge for elevating user permissions
+     Summary: Verify tickets created by email verification, email passwordless authentication (magic link), or password reset
+     
 
-     This method may return different T based on the response code:
-     - 200: PublicKeyCredentialRequestOptions
+     As this method is a redirect, it returns a URL string instead of a Promise
      */
-  elevateWebauthn(
-    options?: RequestInit,
-  ): Promise<FetchResponse<PublicKeyCredentialRequestOptions>>;
+  verifyTicketURL(params?: VerifyTicketParams, options?: RequestInit): string;
 
   /**
-     Summary: Verify FIDO2 Webauthn authentication using public-key cryptography for elevation
-     Complete Webauthn elevation by verifying the authentication response
+     Summary: Get service version
+     Retrieve version information about the authentication service
 
      This method may return different T based on the response code:
-     - 200: SessionPayload
+     - 200: GetVersionResponse200
      */
-  verifyElevateWebauthn(
-    body: SignInWebauthnVerifyRequest,
+  getVersion(
     options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>>;
+  ): Promise<FetchResponse<GetVersionResponse200>>;
 }
 
 export const createAPIClient = (
@@ -1934,13 +1934,13 @@ export const createAPIClient = (
     chainFunctions.push(chainFunction);
     fetch = createEnhancedFetch(chainFunctions);
   };
-  const healthCheckHead = async (
+  const getJWKs = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<void>> => {
-    const url = baseURL + `/healthz`;
+  ): Promise<FetchResponse<JWKSet>> => {
+    const url = baseURL + `/.well-known/jwks.json`;
     const res = await fetch(url, {
       ...options,
-      method: "HEAD",
+      method: "GET",
       headers: {
         ...options?.headers,
       },
@@ -1952,13 +1952,83 @@ export const createAPIClient = (
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const payload: void = undefined;
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: JWKSet = responseBody ? JSON.parse(responseBody) : {};
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<void>;
+    } as FetchResponse<JWKSet>;
+  };
+
+  const elevateWebauthn = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<PublicKeyCredentialRequestOptions>> => {
+    const url = baseURL + `/elevate/webauthn`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: PublicKeyCredentialRequestOptions = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<PublicKeyCredentialRequestOptions>;
+  };
+
+  const verifyElevateWebauthn = async (
+    body: SignInWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const url = baseURL + `/elevate/webauthn/verify`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
   };
 
   const healthCheckGet = async (
@@ -1991,13 +2061,13 @@ export const createAPIClient = (
     } as FetchResponse<OKResponse>;
   };
 
-  const getVersion = async (
+  const healthCheckHead = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<GetVersionResponse200>> => {
-    const url = baseURL + `/version`;
+  ): Promise<FetchResponse<void>> => {
+    const url = baseURL + `/healthz`;
     const res = await fetch(url, {
       ...options,
-      method: "GET",
+      method: "HEAD",
       headers: {
         ...options?.headers,
       },
@@ -2009,229 +2079,20 @@ export const createAPIClient = (
       throw new FetchError(payload, res.status, res.headers);
     }
 
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: GetVersionResponse200 = responseBody
-      ? JSON.parse(responseBody)
-      : {};
+    const payload: void = undefined;
 
     return {
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<GetVersionResponse200>;
+    } as FetchResponse<void>;
   };
 
-  const refreshToken = async (
-    body: RefreshTokenRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<Session>> => {
-    const url = baseURL + `/token`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: Session = responseBody ? JSON.parse(responseBody) : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<Session>;
-  };
-
-  const signOut = async (
-    body: SignOutSchema,
+  const linkIdToken = async (
+    body: LinkIdTokenRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
-    const url = baseURL + `/signout`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<OKResponse>;
-  };
-
-  const signInEmailPassword = async (
-    body: SignInEmailPasswordRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<SignInEmailPasswordResponse>> => {
-    const url = baseURL + `/signin/email-password`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: SignInEmailPasswordResponse = responseBody
-      ? JSON.parse(responseBody)
-      : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<SignInEmailPasswordResponse>;
-  };
-
-  const verifySignInMfaTotp = async (
-    body: SignInMfaTotpRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>> => {
-    const url = baseURL + `/signin/mfa/totp`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: SessionPayload = responseBody
-      ? JSON.parse(responseBody)
-      : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<SessionPayload>;
-  };
-
-  const signInPasswordlessEmail = async (
-    body: SignInPasswordlessEmailRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
-    const url = baseURL + `/signin/passwordless/email`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<OKResponse>;
-  };
-
-  const signUpEmailPassword = async (
-    body: SignUpEmailPasswordRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>> => {
-    const url = baseURL + `/signup/email-password`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: SessionPayload = responseBody
-      ? JSON.parse(responseBody)
-      : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<SessionPayload>;
-  };
-
-  const verifyChangeUserMfa = async (
-    body: UserMfaRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<OKResponse>> => {
-    const url = baseURL + `/user/mfa`;
+    const url = baseURL + `/link/idtoken`;
     const res = await fetch(url, {
       ...options,
       method: "POST",
@@ -2292,36 +2153,6 @@ export const createAPIClient = (
     } as FetchResponse<TotpGenerateResponse>;
   };
 
-  const getJWKs = async (
-    options?: RequestInit,
-  ): Promise<FetchResponse<JWKSet>> => {
-    const url = baseURL + `/.well-known/jwks.json`;
-    const res = await fetch(url, {
-      ...options,
-      method: "GET",
-      headers: {
-        ...options?.headers,
-      },
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: JWKSet = responseBody ? JSON.parse(responseBody) : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<JWKSet>;
-  };
-
   const createPAT = async (
     body: CreatePATRequest,
     options?: RequestInit,
@@ -2362,6 +2193,111 @@ export const createAPIClient = (
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
     const url = baseURL + `/signin/anonymous`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+  };
+
+  const signInEmailPassword = async (
+    body: SignInEmailPasswordRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SignInEmailPasswordResponse>> => {
+    const url = baseURL + `/signin/email-password`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SignInEmailPasswordResponse = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SignInEmailPasswordResponse>;
+  };
+
+  const signInIdToken = async (
+    body: SignInIdTokenRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const url = baseURL + `/signin/idtoken`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+  };
+
+  const verifySignInMfaTotp = async (
+    body: SignInMfaTotpRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const url = baseURL + `/signin/mfa/totp`;
     const res = await fetch(url, {
       ...options,
       method: "POST",
@@ -2460,6 +2396,39 @@ export const createAPIClient = (
     } as FetchResponse<SignInOTPEmailVerifyResponse>;
   };
 
+  const signInPasswordlessEmail = async (
+    body: SignInPasswordlessEmailRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>> => {
+    const url = baseURL + `/signin/passwordless/email`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<OKResponse>;
+  };
+
   const signInPAT = async (
     body: SignInPATRequest,
     options?: RequestInit,
@@ -2495,11 +2464,69 @@ export const createAPIClient = (
     } as FetchResponse<SessionPayload>;
   };
 
-  const signInIdToken = async (
-    body: SignInIdTokenRequest,
+  const signInProviderURL = (
+    provider: SignInProvider,
+    params?: SignInProviderParams,
+  ): string => {
+    const encodedParameters =
+      params &&
+      Object.entries(params)
+        .map(([key, value]) => {
+          const stringValue = Array.isArray(value)
+            ? value.join(",")
+            : typeof value === "object"
+              ? JSON.stringify(value)
+              : (value as string);
+          return `${key}=${encodeURIComponent(stringValue)}`;
+        })
+        .join("&");
+
+    const url = encodedParameters
+      ? baseURL + `/signin/provider/${provider}?${encodedParameters}`
+      : baseURL + `/signin/provider/${provider}`;
+    return url;
+  };
+
+  const signInWebauthn = async (
+    body?: SignInWebauthnRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<PublicKeyCredentialRequestOptions>> => {
+    const url = baseURL + `/signin/webauthn`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: PublicKeyCredentialRequestOptions = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<PublicKeyCredentialRequestOptions>;
+  };
+
+  const verifySignInWebauthn = async (
+    body: SignInWebauthnVerifyRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<SessionPayload>> => {
-    const url = baseURL + `/signin/idtoken`;
+    const url = baseURL + `/signin/webauthn/verify`;
     const res = await fetch(url, {
       ...options,
       method: "POST",
@@ -2530,11 +2557,11 @@ export const createAPIClient = (
     } as FetchResponse<SessionPayload>;
   };
 
-  const linkIdToken = async (
-    body: LinkIdTokenRequest,
+  const signOut = async (
+    body: SignOutSchema,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
-    const url = baseURL + `/link/idtoken`;
+    const url = baseURL + `/signout`;
     const res = await fetch(url, {
       ...options,
       method: "POST",
@@ -2561,6 +2588,144 @@ export const createAPIClient = (
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
+  };
+
+  const signUpEmailPassword = async (
+    body: SignUpEmailPasswordRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const url = baseURL + `/signup/email-password`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+  };
+
+  const signUpWebauthn = async (
+    body: SignUpWebauthnRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>> => {
+    const url = baseURL + `/signup/webauthn`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: PublicKeyCredentialCreationOptions = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<PublicKeyCredentialCreationOptions>;
+  };
+
+  const verifySignUpWebauthn = async (
+    body: SignUpWebauthnVerifyRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SessionPayload>> => {
+    const url = baseURL + `/signup/webauthn/verify`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SessionPayload = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SessionPayload>;
+  };
+
+  const refreshToken = async (
+    body: RefreshTokenRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<Session>> => {
+    const url = baseURL + `/token`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: Session = responseBody ? JSON.parse(responseBody) : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<Session>;
   };
 
   const deanonymizeUser = async (
@@ -2662,6 +2827,39 @@ export const createAPIClient = (
     } as FetchResponse<OKResponse>;
   };
 
+  const verifyChangeUserMfa = async (
+    body: UserMfaRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>> => {
+    const url = baseURL + `/user/mfa`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<OKResponse>;
+  };
+
   const changeUserPassword = async (
     body: UserPasswordRequest,
     options?: RequestInit,
@@ -2726,189 +2924,6 @@ export const createAPIClient = (
       status: res.status,
       headers: res.headers,
     } as FetchResponse<OKResponse>;
-  };
-
-  const verifyTicketURL = (params?: VerifyTicketParams): string => {
-    const encodedParameters =
-      params &&
-      Object.entries(params)
-        .map(([key, value]) => {
-          const stringValue = Array.isArray(value)
-            ? value.join(",")
-            : typeof value === "object"
-              ? JSON.stringify(value)
-              : (value as string);
-          return `${key}=${encodeURIComponent(stringValue)}`;
-        })
-        .join("&");
-
-    const url = encodedParameters
-      ? baseURL + `/verify?${encodedParameters}`
-      : baseURL + `/verify`;
-    return url;
-  };
-
-  const signInProviderURL = (
-    provider: SignInProvider,
-    params?: SignInProviderParams,
-  ): string => {
-    const encodedParameters =
-      params &&
-      Object.entries(params)
-        .map(([key, value]) => {
-          const stringValue = Array.isArray(value)
-            ? value.join(",")
-            : typeof value === "object"
-              ? JSON.stringify(value)
-              : (value as string);
-          return `${key}=${encodeURIComponent(stringValue)}`;
-        })
-        .join("&");
-
-    const url = encodedParameters
-      ? baseURL + `/signin/provider/${provider}?${encodedParameters}`
-      : baseURL + `/signin/provider/${provider}`;
-    return url;
-  };
-
-  const signInWebauthn = async (
-    body?: SignInWebauthnRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<PublicKeyCredentialRequestOptions>> => {
-    const url = baseURL + `/signin/webauthn`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: PublicKeyCredentialRequestOptions = responseBody
-      ? JSON.parse(responseBody)
-      : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<PublicKeyCredentialRequestOptions>;
-  };
-
-  const verifySignInWebauthn = async (
-    body: SignInWebauthnVerifyRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>> => {
-    const url = baseURL + `/signin/webauthn/verify`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: SessionPayload = responseBody
-      ? JSON.parse(responseBody)
-      : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<SessionPayload>;
-  };
-
-  const signUpWebauthn = async (
-    body: SignUpWebauthnRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<PublicKeyCredentialCreationOptions>> => {
-    const url = baseURL + `/signup/webauthn`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: PublicKeyCredentialCreationOptions = responseBody
-      ? JSON.parse(responseBody)
-      : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<PublicKeyCredentialCreationOptions>;
-  };
-
-  const verifySignUpWebauthn = async (
-    body: SignUpWebauthnVerifyRequest,
-    options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>> => {
-    const url = baseURL + `/signup/webauthn/verify`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...options?.headers,
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: SessionPayload = responseBody
-      ? JSON.parse(responseBody)
-      : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<SessionPayload>;
   };
 
   const addSecurityKey = async (
@@ -2978,51 +2993,36 @@ export const createAPIClient = (
     } as FetchResponse<VerifyAddSecurityKeyResponse>;
   };
 
-  const elevateWebauthn = async (
-    options?: RequestInit,
-  ): Promise<FetchResponse<PublicKeyCredentialRequestOptions>> => {
-    const url = baseURL + `/elevate/webauthn`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        ...options?.headers,
-      },
-    });
+  const verifyTicketURL = (params?: VerifyTicketParams): string => {
+    const encodedParameters =
+      params &&
+      Object.entries(params)
+        .map(([key, value]) => {
+          const stringValue = Array.isArray(value)
+            ? value.join(",")
+            : typeof value === "object"
+              ? JSON.stringify(value)
+              : (value as string);
+          return `${key}=${encodeURIComponent(stringValue)}`;
+        })
+        .join("&");
 
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: PublicKeyCredentialRequestOptions = responseBody
-      ? JSON.parse(responseBody)
-      : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<PublicKeyCredentialRequestOptions>;
+    const url = encodedParameters
+      ? baseURL + `/verify?${encodedParameters}`
+      : baseURL + `/verify`;
+    return url;
   };
 
-  const verifyElevateWebauthn = async (
-    body: SignInWebauthnVerifyRequest,
+  const getVersion = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<SessionPayload>> => {
-    const url = baseURL + `/elevate/webauthn/verify`;
+  ): Promise<FetchResponse<GetVersionResponse200>> => {
+    const url = baseURL + `/version`;
     const res = await fetch(url, {
       ...options,
-      method: "POST",
+      method: "GET",
       headers: {
-        "Content-Type": "application/json",
         ...options?.headers,
       },
-      body: JSON.stringify(body),
     });
 
     if (res.status >= 300) {
@@ -3034,7 +3034,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: SessionPayload = responseBody
+    const payload: GetVersionResponse200 = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -3042,45 +3042,45 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<SessionPayload>;
+    } as FetchResponse<GetVersionResponse200>;
   };
 
   return {
     baseURL,
     pushChainFunction,
-    healthCheckHead,
-    healthCheckGet,
-    getVersion,
-    refreshToken,
-    signOut,
-    signInEmailPassword,
-    verifySignInMfaTotp,
-    signInPasswordlessEmail,
-    signUpEmailPassword,
-    verifyChangeUserMfa,
-    changeUserMfa,
     getJWKs,
+    elevateWebauthn,
+    verifyElevateWebauthn,
+    healthCheckGet,
+    healthCheckHead,
+    linkIdToken,
+    changeUserMfa,
     createPAT,
     signInAnonymous,
+    signInEmailPassword,
+    signInIdToken,
+    verifySignInMfaTotp,
     signInOTPEmail,
     verifySignInOTPEmail,
+    signInPasswordlessEmail,
     signInPAT,
-    signInIdToken,
-    linkIdToken,
-    deanonymizeUser,
-    changeUserEmail,
-    sendVerificationEmail,
-    changeUserPassword,
-    sendPasswordResetEmail,
-    verifyTicketURL,
     signInProviderURL,
     signInWebauthn,
     verifySignInWebauthn,
+    signOut,
+    signUpEmailPassword,
     signUpWebauthn,
     verifySignUpWebauthn,
+    refreshToken,
+    deanonymizeUser,
+    changeUserEmail,
+    sendVerificationEmail,
+    verifyChangeUserMfa,
+    changeUserPassword,
+    sendPasswordResetEmail,
     addSecurityKey,
     verifyAddSecurityKey,
-    elevateWebauthn,
-    verifyElevateWebauthn,
+    verifyTicketURL,
+    getVersion,
   };
 };
