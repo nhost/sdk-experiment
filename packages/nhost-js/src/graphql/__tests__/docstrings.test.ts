@@ -9,7 +9,6 @@ const region = "local";
 
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 test("request", async () => {
-  //#region request
   const nhost = createClient({
     subdomain,
     region,
@@ -59,7 +58,6 @@ test("request", async () => {
   //     genre: 'Action'
   //   }
   // ]
-  //#endregion request
 
   expect(resp.body.data).toBeDefined();
   expect(resp.body.data?.movies).toStrictEqual([
@@ -98,7 +96,6 @@ test("request", async () => {
 /* eslint-enable @typescript-eslint/no-unsafe-member-access */
 
 test("request typed", async () => {
-  //#region requestTyped
   const nhost = createClient({
     subdomain,
     region,
@@ -160,7 +157,6 @@ test("request typed", async () => {
   //     genre: 'Action'
   //   }
   // ]
-  //#endregion requestTyped
 
   expect(resp.body.data).toBeDefined();
   expect(resp.body.data?.movies).toStrictEqual([
@@ -198,7 +194,6 @@ test("request typed", async () => {
 });
 
 test("request with qql", async () => {
-  //#region requestGql
   const nhost = createClient({
     subdomain,
     region,
@@ -261,7 +256,6 @@ test("request with qql", async () => {
   //     genre: 'Action'
   //   }
   // ]
-  //#endregion requestGql
 
   expect(resp.body.data).toBeDefined();
   expect(resp.body.data?.movies).toStrictEqual([
@@ -299,16 +293,6 @@ test("request with qql", async () => {
 });
 
 test("error handling for graphql", async () => {
-  //#region errorHandling
-  // Needs the following imports:
-  //
-  // import {
-  //   type GraphQLResponse,
-  // } from "@nhost/nhost-js/graphql";
-  // import {
-  //   type FetchError,
-  // } from "@nhost/fetch";
-  //
   const nhost = createClient({
     subdomain,
     region,
@@ -324,9 +308,11 @@ test("error handling for graphql", async () => {
         }
       `,
     });
+
+    expect(true).toBe(false); // This should not be reached
   } catch (error) {
     if (!(error instanceof FetchError)) {
-      throw error;
+      throw error; // Re-throw if it's not a FetchError
     }
 
     const resp = error as FetchError<GraphQLResponse>;
@@ -346,9 +332,8 @@ test("error handling for graphql", async () => {
     //   "status": 200,
     //   "headers": {}
     // }
-    //
+
     // error handling...
-    //#endregion errorHandling
 
     expect(resp.body.errors).toBeDefined();
     expect(resp.body.errors).toHaveLength(1);
@@ -365,7 +350,6 @@ test("error handling for graphql", async () => {
 });
 
 test("error handling for graphql as a generic error", async () => {
-  //#region errorHandlingError
   const nhost = createClient({
     subdomain,
     region,
@@ -381,14 +365,15 @@ test("error handling for graphql as a generic error", async () => {
         }
       `,
     });
+
+    expect(true).toBe(false); // This should not be reached
   } catch (error) {
     if (!(error instanceof Error)) {
-      throw error;
+      throw error; // Re-throw if it's not an Error
     }
 
     console.log("Error:", error.message);
     // Error: field 'restrictedObject' not found in type: 'query_root'
-    //#endregion errorHandlingError
 
     expect(error.message).toBe(
       "field 'restrictedObject' not found in type: 'query_root'",
