@@ -3,8 +3,8 @@ import {
   createAPIClient,
   type SignUpEmailPasswordRequest,
   type ErrorResponse,
-} from "../auth/client";
-import { type FetchError } from "../fetch";
+} from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
 
 describe("Nhost Auth - Sign Up with Email and Password", () => {
   const nhostAuth = createAPIClient("https://local.auth.nhost.run/v1");

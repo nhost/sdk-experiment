@@ -4271,6 +4271,363 @@ input jsonb_comparison_exp {
 }
 
 """
+columns and relationships of "movies"
+"""
+type movies {
+  created_at: timestamptz
+  director: String
+  genre: String
+  id: uuid!
+  rating: numeric
+  release_year: Int
+  title: String!
+  updated_at: timestamptz
+}
+
+"""
+aggregated selection of "movies"
+"""
+type movies_aggregate {
+  aggregate: movies_aggregate_fields
+  nodes: [movies!]!
+}
+
+"""
+aggregate fields of "movies"
+"""
+type movies_aggregate_fields {
+  avg: movies_avg_fields
+  count(columns: [movies_select_column!], distinct: Boolean): Int!
+  max: movies_max_fields
+  min: movies_min_fields
+  stddev: movies_stddev_fields
+  stddev_pop: movies_stddev_pop_fields
+  stddev_samp: movies_stddev_samp_fields
+  sum: movies_sum_fields
+  var_pop: movies_var_pop_fields
+  var_samp: movies_var_samp_fields
+  variance: movies_variance_fields
+}
+
+"""
+aggregate avg on columns
+"""
+type movies_avg_fields {
+  rating: Float
+  release_year: Float
+}
+
+"""
+Boolean expression to filter rows from the table "movies". All fields are combined with a logical 'AND'.
+"""
+input movies_bool_exp {
+  _and: [movies_bool_exp!]
+  _not: movies_bool_exp
+  _or: [movies_bool_exp!]
+  created_at: timestamptz_comparison_exp
+  director: String_comparison_exp
+  genre: String_comparison_exp
+  id: uuid_comparison_exp
+  rating: numeric_comparison_exp
+  release_year: Int_comparison_exp
+  title: String_comparison_exp
+  updated_at: timestamptz_comparison_exp
+}
+
+"""
+unique or primary key constraints on table "movies"
+"""
+enum movies_constraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  movies_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "movies"
+"""
+input movies_inc_input {
+  rating: numeric
+  release_year: Int
+}
+
+"""
+input type for inserting data into table "movies"
+"""
+input movies_insert_input {
+  created_at: timestamptz
+  director: String
+  genre: String
+  id: uuid
+  rating: numeric
+  release_year: Int
+  title: String
+  updated_at: timestamptz
+}
+
+"""
+aggregate max on columns
+"""
+type movies_max_fields {
+  created_at: timestamptz
+  director: String
+  genre: String
+  id: uuid
+  rating: numeric
+  release_year: Int
+  title: String
+  updated_at: timestamptz
+}
+
+"""
+aggregate min on columns
+"""
+type movies_min_fields {
+  created_at: timestamptz
+  director: String
+  genre: String
+  id: uuid
+  rating: numeric
+  release_year: Int
+  title: String
+  updated_at: timestamptz
+}
+
+"""
+response of any mutation on the table "movies"
+"""
+type movies_mutation_response {
+  """
+  number of rows affected by the mutation
+  """
+  affected_rows: Int!
+  """
+  data from the rows affected by the mutation
+  """
+  returning: [movies!]!
+}
+
+"""
+on_conflict condition type for table "movies"
+"""
+input movies_on_conflict {
+  constraint: movies_constraint!
+  update_columns: [movies_update_column!]! = []
+  where: movies_bool_exp
+}
+
+"""
+Ordering options when selecting data from "movies".
+"""
+input movies_order_by {
+  created_at: order_by
+  director: order_by
+  genre: order_by
+  id: order_by
+  rating: order_by
+  release_year: order_by
+  title: order_by
+  updated_at: order_by
+}
+
+"""
+primary key columns input for table: movies
+"""
+input movies_pk_columns_input {
+  id: uuid!
+}
+
+"""
+select columns of table "movies"
+"""
+enum movies_select_column {
+  """
+  column name
+  """
+  created_at
+  """
+  column name
+  """
+  director
+  """
+  column name
+  """
+  genre
+  """
+  column name
+  """
+  id
+  """
+  column name
+  """
+  rating
+  """
+  column name
+  """
+  release_year
+  """
+  column name
+  """
+  title
+  """
+  column name
+  """
+  updated_at
+}
+
+"""
+input type for updating data in table "movies"
+"""
+input movies_set_input {
+  created_at: timestamptz
+  director: String
+  genre: String
+  id: uuid
+  rating: numeric
+  release_year: Int
+  title: String
+  updated_at: timestamptz
+}
+
+"""
+aggregate stddev on columns
+"""
+type movies_stddev_fields {
+  rating: Float
+  release_year: Float
+}
+
+"""
+aggregate stddev_pop on columns
+"""
+type movies_stddev_pop_fields {
+  rating: Float
+  release_year: Float
+}
+
+"""
+aggregate stddev_samp on columns
+"""
+type movies_stddev_samp_fields {
+  rating: Float
+  release_year: Float
+}
+
+"""
+Streaming cursor of the table "movies"
+"""
+input movies_stream_cursor_input {
+  """
+  Stream column input with initial value
+  """
+  initial_value: movies_stream_cursor_value_input!
+  """
+  cursor ordering
+  """
+  ordering: cursor_ordering
+}
+
+"""
+Initial value of the column from where the streaming should start
+"""
+input movies_stream_cursor_value_input {
+  created_at: timestamptz
+  director: String
+  genre: String
+  id: uuid
+  rating: numeric
+  release_year: Int
+  title: String
+  updated_at: timestamptz
+}
+
+"""
+aggregate sum on columns
+"""
+type movies_sum_fields {
+  rating: numeric
+  release_year: Int
+}
+
+"""
+update columns of table "movies"
+"""
+enum movies_update_column {
+  """
+  column name
+  """
+  created_at
+  """
+  column name
+  """
+  director
+  """
+  column name
+  """
+  genre
+  """
+  column name
+  """
+  id
+  """
+  column name
+  """
+  rating
+  """
+  column name
+  """
+  release_year
+  """
+  column name
+  """
+  title
+  """
+  column name
+  """
+  updated_at
+}
+
+input movies_updates {
+  """
+  increments the numeric columns with given value of the filtered values
+  """
+  _inc: movies_inc_input
+  """
+  sets the columns of the filtered rows to the given values
+  """
+  _set: movies_set_input
+  """
+  filter the rows which have to be updated
+  """
+  where: movies_bool_exp!
+}
+
+"""
+aggregate var_pop on columns
+"""
+type movies_var_pop_fields {
+  rating: Float
+  release_year: Float
+}
+
+"""
+aggregate var_samp on columns
+"""
+type movies_var_samp_fields {
+  rating: Float
+  release_year: Float
+}
+
+"""
+aggregate variance on columns
+"""
+type movies_variance_fields {
+  rating: Float
+  release_year: Float
+}
+
+"""
 mutation root
 """
 type mutation_root {
@@ -4482,6 +4839,19 @@ type mutation_root {
     """
     where: virus_bool_exp!
   ): virus_mutation_response
+  """
+  delete data from the table: "movies"
+  """
+  delete_movies(
+    """
+    filter the rows which have to be deleted
+    """
+    where: movies_bool_exp!
+  ): movies_mutation_response
+  """
+  delete single row from the table: "movies"
+  """
+  delete_movies_by_pk(id: uuid!): movies
   """
   insert a single row into the table: "attachments"
   """
@@ -4898,6 +5268,32 @@ type mutation_root {
     """
     on_conflict: virus_on_conflict
   ): virus_mutation_response
+  """
+  insert data into the table: "movies"
+  """
+  insert_movies(
+    """
+    the rows to be inserted
+    """
+    objects: [movies_insert_input!]!
+    """
+    upsert condition
+    """
+    on_conflict: movies_on_conflict
+  ): movies_mutation_response
+  """
+  insert a single row into the table: "movies"
+  """
+  insert_movies_one(
+    """
+    the row to be inserted
+    """
+    object: movies_insert_input!
+    """
+    upsert condition
+    """
+    on_conflict: movies_on_conflict
+  ): movies
   """
   update single row of the table: "attachments"
   """
@@ -5617,6 +6013,46 @@ type mutation_root {
     updates: [files_updates!]!
   ): [files_mutation_response]
   """
+  update data of the table: "movies"
+  """
+  update_movies(
+    """
+    increments the numeric columns with given value of the filtered values
+    """
+    _inc: movies_inc_input
+    """
+    sets the columns of the filtered rows to the given values
+    """
+    _set: movies_set_input
+    """
+    filter the rows which have to be updated
+    """
+    where: movies_bool_exp!
+  ): movies_mutation_response
+  """
+  update single row of the table: "movies"
+  """
+  update_movies_by_pk(
+    """
+    increments the numeric columns with given value of the filtered values
+    """
+    _inc: movies_inc_input
+    """
+    sets the columns of the filtered rows to the given values
+    """
+    _set: movies_set_input
+    pk_columns: movies_pk_columns_input!
+  ): movies
+  """
+  update multiples rows of table: "movies"
+  """
+  update_movies_many(
+    """
+    updates to execute, in order
+    """
+    updates: [movies_updates!]!
+  ): [movies_mutation_response]
+  """
   update multiples rows of table: "auth.users"
   """
   update_users_many(
@@ -5924,6 +6360,23 @@ input ninjaTurtles_updates {
   filter the rows which have to be updated
   """
   where: ninjaTurtles_bool_exp!
+}
+
+scalar numeric
+
+"""
+Boolean expression to compare columns of type "numeric". All fields are combined with logical 'AND'.
+"""
+input numeric_comparison_exp {
+  _eq: numeric
+  _gt: numeric
+  _gte: numeric
+  _in: [numeric!]
+  _is_null: Boolean
+  _lt: numeric
+  _lte: numeric
+  _neq: numeric
+  _nin: [numeric!]
 }
 
 """
@@ -6605,6 +7058,60 @@ type query_root {
     """
     where: files_bool_exp
   ): files_aggregate!
+  """
+  fetch data from the table: "movies"
+  """
+  movies(
+    """
+    distinct select on columns
+    """
+    distinct_on: [movies_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [movies_order_by!]
+    """
+    filter the rows returned
+    """
+    where: movies_bool_exp
+  ): [movies!]!
+  """
+  fetch aggregated fields from the table: "movies"
+  """
+  movies_aggregate(
+    """
+    distinct select on columns
+    """
+    distinct_on: [movies_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [movies_order_by!]
+    """
+    filter the rows returned
+    """
+    where: movies_bool_exp
+  ): movies_aggregate!
+  """
+  fetch data from the table: "movies" using primary key columns
+  """
+  movies_by_pk(id: uuid!): movies
   """
   fetch data from the table: "ninja_turtles" using primary key columns
   """
@@ -7676,6 +8183,77 @@ type subscription_root {
     """
     where: files_bool_exp
   ): [files!]!
+  """
+  fetch data from the table: "movies"
+  """
+  movies(
+    """
+    distinct select on columns
+    """
+    distinct_on: [movies_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [movies_order_by!]
+    """
+    filter the rows returned
+    """
+    where: movies_bool_exp
+  ): [movies!]!
+  """
+  fetch aggregated fields from the table: "movies"
+  """
+  movies_aggregate(
+    """
+    distinct select on columns
+    """
+    distinct_on: [movies_select_column!]
+    """
+    limit the number of rows returned
+    """
+    limit: Int
+    """
+    skip the first n rows. Use only with order_by
+    """
+    offset: Int
+    """
+    sort the rows by one or more columns
+    """
+    order_by: [movies_order_by!]
+    """
+    filter the rows returned
+    """
+    where: movies_bool_exp
+  ): movies_aggregate!
+  """
+  fetch data from the table: "movies" using primary key columns
+  """
+  movies_by_pk(id: uuid!): movies
+  """
+  fetch data from the table in a streaming manner: "movies"
+  """
+  movies_stream(
+    """
+    maximum number of rows returned in a single batch
+    """
+    batch_size: Int!
+    """
+    cursor to stream the results returned by the query
+    """
+    cursor: [movies_stream_cursor_input]!
+    """
+    filter the rows returned
+    """
+    where: movies_bool_exp
+  ): [movies!]!
   """
   fetch data from the table: "ninja_turtles" using primary key columns
   """

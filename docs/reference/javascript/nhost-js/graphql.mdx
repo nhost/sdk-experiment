@@ -1,22 +1,134 @@
 This is the main module to interact with Nhost's GraphQL service.
-Typically you would use this modula via the main [Nhost client](main#createclient)
+Typically you would use this module via the main [Nhost client](main#createclient)
 but you can also use it directly if you have a specific use case.
+
+## Import
+
+```ts
+import { createClient } from "@nhost/nhost-js/graphql";
+```
+
+## Usage
+
+The `request` method provides type-safe GraphQL operations with full TypeScript support.
+You can leverage generics to type your responses and use GraphQL document nodes for better
+integration with third-party libraries.
+
+### Basic Usage
+
+```ts
+import { createClient } from "@nhost/nhost-js";
+
+const nhost = createClient({
+  subdomain,
+  region,
+});
+
+const resp = await nhost.graphql.request({
+  query: `query GetMovies {
+          movies {
+            id
+            title
+            director
+            genre
+          }
+        }`,
+});
+```
+
+### Using String Queries with Type Generics
+
+You can type your GraphQL queries and responses using TypeScript generics:
+
+```ts
+import { createClient } from "@nhost/nhost-js";
+
+const nhost = createClient({
+  subdomain,
+  region,
+});
+
+// This is optional but allows you to type the response
+// Tools like Apollo Client or The Guild's GraphQL Code Generator
+// can generate these document nodes for you.
+interface Movies {
+  movies: {
+    id: string;
+    title: string;
+    director: string;
+    genre: string;
+  }[];
+}
+
+const resp = await nhost.graphql.request<Movies>({
+  query: `query GetMovies {
+          movies {
+            id
+            title
+            director
+            genre
+          }
+        }`,
+});
+```
+
+### Using GraphQL Document Nodes
+
+For better integration with third-party libraries like Apollo Client or The Guild's GraphQL
+Code Generator, you can use GraphQL document nodes created with `gql` template literal tags:
+
+```ts
+import { createClient } from "@nhost/nhost-js";
+import gql from "graphql-tag";
+
+const nhost = createClient({
+  subdomain,
+  region,
+});
+
+// This is optional but allows you to type the response
+// Tools like Apollo Client or The Guild's GraphQL Code Generator
+// can generate these document nodes for you.
+interface Movies {
+  movies: {
+    id: string;
+    title: string;
+    director: string;
+    genre: string;
+  }[];
+}
+
+const getMoviesQuery = gql`
+  query GetMovies {
+    movies {
+      id
+      title
+      director
+      genre
+    }
+  }
+`;
+
+const resp = await nhost.graphql.request<Movies>(getMoviesQuery);
+```
+
+Using document nodes enables:
+
+- Better IDE support with syntax highlighting and validation
+- Integration with code generation tools
+- Compatibility with Apollo Client and other GraphQL libraries
 
 ## Error handling
 
-The SDK will throw errors in gaphql operations that respond with the errors attribute
-with length > 0.
+The SDK will throw errors in GraphQL operations that respond with an errors attribute
+with length > 0. The error will be an instance of `FetchError<GraphQLResponse>` and will
+contain the response body with the errors.
 
 ```ts
-// Needs the following imports:
-//
-// import {
-//   type GraphQLResponse,
-// } from "@nhost/nhost-js/graphql";
-// import {
-//   type FetchError,
-// } from "@nhost/fetch";
-//
+import { createClient } from "@nhost/nhost-js";
+import { type GraphQLResponse } from "@nhost/nhost-js/graphql";
+import { FetchError } from "@nhost/nhost-js/fetch";
+
 const nhost = createClient({
   subdomain,
   region,
@@ -25,17 +137,22 @@ const nhost = createClient({
 try {
   await nhost.graphql.request({
     query: `
-      query GetRestrictedObject {
-        restrictedObject {
-          restrictedField
+        query GetRestrictedObject {
+          restrictedObject {
+            restrictedField
+          }
         }
-      }
-    `,
+      `,
   });
-} catch (error) {
-  const resp = error as FetchError<GraphQLResponse>;
 
-  console.log("Error:", JSON.stringify(resp, null, 2));
+  expect(true).toBe(false); // This should not be reached
+} catch (error) {
+  if (!(error instanceof FetchError)) {
+    throw error; // Re-throw if it's not a FetchError
+  }
+
+  const resp = error as FetchError<GraphQLResponse>;
+  console.log("Error:", JSON.stringify(resp.body, null, 2));
   // Error: {
   //   "body": {
   //     "errors": [
@@ -51,8 +168,44 @@ try {
   //   "status": 200,
   //   "headers": {}
   // }
-  //
+
   // error handling...
+}
+```
+
+This type extends the standard `Error` type so if you want to just log the error you can
+do so like this:
+
+```ts
+import { createClient } from "@nhost/nhost-js";
+import { type GraphQLResponse } from "@nhost/nhost-js/graphql";
+import { FetchError } from "@nhost/nhost-js/fetch";
+
+const nhost = createClient({
+  subdomain,
+  region,
+});
+
+try {
+  await nhost.graphql.request({
+    query: `
+        query GetRestrictedObject {
+          restrictedObject {
+            restrictedField
+          }
+        }
+      `,
+  });
+
+  expect(true).toBe(false); // This should not be reached
+} catch (error) {
+  if (!(error instanceof Error)) {
+    throw error; // Re-throw if it's not an Error
+  }
+
+  console.log("Error:", error.message);
+  // Error: field 'restrictedObject' not found in type: 'query_root'
+}
 ```
 
 ## Interfaces

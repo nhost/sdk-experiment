@@ -1,5 +1,5 @@
 import { describe, it, expect } from "@jest/globals";
-import { createClient } from "../nhost";
+import { createClient } from "@nhost/nhost-js";
 
 describe("Nhost Client - Decode User Session", () => {
   const nhost = createClient({

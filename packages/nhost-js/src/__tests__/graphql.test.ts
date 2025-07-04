@@ -1,7 +1,7 @@
 import { describe, it, expect } from "@jest/globals";
-import { createClient } from "../index";
-import type { GraphQLResponse } from "../graphql/client";
-import type { FetchError } from "../fetch";
+import { createClient } from "@nhost/nhost-js";
+import type { GraphQLResponse } from "@nhost/nhost-js/graphql";
+import type { FetchError } from "@nhost/nhost-js/fetch";
 import gql from "graphql-tag";
 
 interface GetUsersResponse {
