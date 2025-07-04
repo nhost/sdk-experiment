@@ -7,15 +7,15 @@ This package provides a unified client for interacting with Nhost services:
 - GraphQL
 - Functions
 
-## Example
-
-You can import and use this package with:
+## Import
 
 ```ts
 import { createClient } from "@nhost/nhost-js";
 ```
 
-and use it like:
+## Usage
+
+Create a client instance to interact with Nhost services:
 
 ```ts
 const nhost = createClient({
@@ -33,6 +33,7 @@ await nhost.auth.signUpEmailPassword({
   password,
 });
 
+// upload a couple of files
 const uplFilesResp = await nhost.storage.uploadFiles({
   "file[]": [
     new File(["test1"], "file-1", { type: "text/plain" }),
@@ -79,16 +80,17 @@ console.log(JSON.stringify(uplFilesResp, null, 2));
 //   }
 // }
 
+// make a GraphQL request to list the files
 const graphResp = await nhost.graphql.request({
   query: `
-   query {
-     files {
-       name
-       size
-       mimeType
+     query {
+       files {
+         name
+         size
+         mimeType
+       }
      }
-   }
- `,
+   `,
 });
 
 console.log(JSON.stringify(graphResp, null, 2));
@@ -112,6 +114,11 @@ console.log(JSON.stringify(graphResp, null, 2));
 //   "status": 200,
 //   "headers": {}
 // }
+
+// make a request to a serverless function
+const funcResp = await nhost.functions.fetch("/helloworld");
+console.log(JSON.stringify(funcResp.body, null, 2));
+// "Hello, World!"
 ```
 
 ## Classes

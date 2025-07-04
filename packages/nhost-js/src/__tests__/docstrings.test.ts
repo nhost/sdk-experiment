@@ -1,14 +1,13 @@
 import { test, expect } from "@jest/globals";
-import { createClient } from "../";
+import { createClient } from "@nhost/nhost-js";
+
+const subdomain = "local";
+const region = "local";
 
 test("mainExample", async () => {
-  const subdomain = "local";
-  const region = "local";
-
   const email = `test-${Date.now()}@example.com`;
   const password = "password123";
 
-  //#region mainExample
   const nhost = createClient({
     subdomain,
     region,
@@ -24,6 +23,7 @@ test("mainExample", async () => {
     password,
   });
 
+  // upload a couple of files
   const uplFilesResp = await nhost.storage.uploadFiles({
     "file[]": [
       new File(["test1"], "file-1", { type: "text/plain" }),
@@ -70,6 +70,7 @@ test("mainExample", async () => {
   //   }
   // }
 
+  // make a GraphQL request to list the files
   const graphResp = await nhost.graphql.request({
     query: `
      query {
@@ -104,7 +105,10 @@ test("mainExample", async () => {
   //   "headers": {}
   // }
 
-  //#endregion mainExample
+  // make a request to a serverless function
+  const funcResp = await nhost.functions.fetch("/helloworld");
+  console.log(JSON.stringify(funcResp.body, null, 2));
+  // "Hello, World!"
 
   expect(uplFilesResp.status).toBe(201);
 

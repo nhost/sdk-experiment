@@ -1,12 +1,13 @@
 {
   inputs = {
-    nixops.url = "github:nhost/nixops";
+    nixops.url = "github:nhost/nixops?ref=update-cli";
     nixpkgs.follows = "nixops/nixpkgs";
     flake-utils.follows = "nixops/flake-utils";
     nix-filter.follows = "nixops/nix-filter";
+    nix2container.follows = "nixops/nix2container";
   };
 
-  outputs = { self, nixops, nixpkgs, flake-utils, nix-filter }:
+  outputs = { self, nixops, nixpkgs, flake-utils, nix-filter, nix2container }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [
@@ -37,7 +38,8 @@
         nativeBuildInputs = [
         ];
 
-        nixops-lib = nixops.lib { inherit pkgs; };
+        nix2containerPkgs = nix2container.packages.${system};
+        nixops-lib = nixops.lib { inherit pkgs nix2containerPkgs; };
 
         codegenf = import ./tools/codegen/project.nix {
           inherit self pkgs nix-filter nixops-lib;

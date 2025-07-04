@@ -7,16 +7,17 @@
  * - GraphQL
  * - Functions
  *
- * @example
- * You can import and use this package with:
+ * ## Import
  *
  * ```ts
  * import { createClient } from "@nhost/nhost-js";
  * ```
  *
- * and use it like:
+ * ## Usage
  *
- * {@includeCode ./__tests__/docstrings.test.ts#mainExample}
+ * Create a client instance to interact with Nhost services:
+ *
+ * {@includeCode ./__tests__/docstrings.test.ts:11-111}
  *
  * @packageDocumentation
  */

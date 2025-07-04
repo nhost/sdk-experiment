@@ -9,6 +9,7 @@
 - "!include auth_users.yaml"
 - "!include public_attachments.yaml"
 - "!include public_comments.yaml"
+- "!include public_movies.yaml"
 - "!include public_ninja_turtles.yaml"
 - "!include public_tasks.yaml"
 - "!include storage_buckets.yaml"
