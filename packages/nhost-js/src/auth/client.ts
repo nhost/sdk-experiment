@@ -331,7 +331,13 @@ export type ErrorResponseError =
   | "no-totp-secret"
   | "invalid-totp"
   | "mfa-type-not-found"
-  | "totp-already-active";
+  | "totp-already-active"
+  | "invalid-state"
+  | "oauth-token-echange-failed"
+  | "oauth-profile-fetch-failed"
+  | "oauth-provider-error"
+  | "invalid-otp"
+  | "cannot-send-sms";
 
 /**
  * Standardized error response
@@ -887,6 +893,55 @@ export interface SignInPasswordlessEmailRequest {
 
 /**
  * 
+ @property phoneNumber (`string`) - Phone number of the user
+    *    Example - `"+123456789"`
+ @property otp (`string`) - One-time password received by SMS*/
+export interface SignInPasswordlessSmsOtpRequest {
+  /**
+   * Phone number of the user
+   *    Example - `"+123456789"`
+   */
+  phoneNumber: string;
+  /**
+   * One-time password received by SMS
+   */
+  otp: string;
+}
+
+/**
+ * 
+ @property session? (`Session`) - User authentication session containing tokens and user information
+ @property mfa? (`MFAChallengePayload`) - Challenge payload for multi-factor authentication*/
+export interface SignInPasswordlessSmsOtpResponse {
+  /**
+   * User authentication session containing tokens and user information
+   */
+  session?: Session;
+  /**
+   * Challenge payload for multi-factor authentication
+   */
+  mfa?: MFAChallengePayload;
+}
+
+/**
+ * 
+ @property phoneNumber (`string`) - Phone number of the user
+    *    Example - `"+123456789"`
+ @property options? (`SignUpOptions`) - */
+export interface SignInPasswordlessSmsRequest {
+  /**
+   * Phone number of the user
+   *    Example - `"+123456789"`
+   */
+  phoneNumber: string;
+  /**
+   *
+   */
+  options?: SignUpOptions;
+}
+
+/**
+ * 
  @property email? (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email*/
@@ -920,13 +975,13 @@ export interface SignInWebauthnVerifyRequest {
 
 /**
  * 
- @property refreshToken (`string`) - Refresh token for the current session
+ @property refreshToken? (`string`) - Refresh token for the current session
  @property all? (`boolean`) - Sign out from all connected devices*/
-export interface SignOutSchema {
+export interface SignOutRequest {
   /**
    * Refresh token for the current session
    */
-  refreshToken: string;
+  refreshToken?: string;
   /**
    * Sign out from all connected devices
    */
@@ -1115,7 +1170,8 @@ export type URLEncodedBase64 = string;
  @property phoneNumberVerified (`boolean`) - Whether the user's phone number has been verified
     *    Example - `false`
  @property roles (`string[]`) - List of roles assigned to the user
-    *    Example - `["user","customer"]`*/
+    *    Example - `["user","customer"]`
+ @property activeMfaType? (`string`) - Active MFA type for the user*/
 export interface User {
   /**
    * URL to the user's profile picture
@@ -1187,6 +1243,40 @@ export interface User {
    *    Example - `["user","customer"]`
    */
   roles: string[];
+  /**
+   * Active MFA type for the user
+   */
+  activeMfaType?: string;
+}
+
+/**
+ * 
+ @property credential (`Record<string, unknown>`) - 
+ @property nickname? (`string`) - Optional nickname for the security key*/
+export interface UserAddSecurityKeyVerifyRequest {
+  /**
+   *
+   */
+  credential: Record<string, unknown>;
+  /**
+   * Optional nickname for the security key
+   */
+  nickname?: string;
+}
+
+/**
+ * 
+ @property id (`string`) - ID of the newly added security key
+ @property nickname? (`string`) - Nickname of the security key*/
+export interface UserAddSecurityKeyVerifyResponse {
+  /**
+   * ID of the newly added security key
+   */
+  id: string;
+  /**
+   * Nickname of the security key
+   */
+  nickname?: string;
 }
 
 /**
@@ -1401,6 +1491,16 @@ export interface VerifyAddSecurityKeyResponse {
 }
 
 /**
+ * 
+ @property token? (`string`) - JWT token to verify*/
+export interface VerifyTokenRequest {
+  /**
+   * JWT token to verify
+   */
+  token?: string;
+}
+
+/**
  * Target URL for the redirect
  */
 export type RedirectToQuery = string;
@@ -1414,7 +1514,16 @@ export type SignInProvider =
   | "google"
   | "linkedin"
   | "discord"
-  | "spotify";
+  | "spotify"
+  | "twitch"
+  | "gitlab"
+  | "bitbucket"
+  | "workos"
+  | "azuread"
+  | "strava"
+  | "facebook"
+  | "windowslive"
+  | "twitter";
 
 /**
  * Ticket
@@ -1700,6 +1809,30 @@ export interface Client {
   ): Promise<FetchResponse<OKResponse>>;
 
   /**
+     Summary: Sign in with a one time password sent to user's phone number. If the user doesn't exist, it will be created. The options object is optional and can be used to configure the user's when signing up a new user. It is ignored if the user already exists.
+     
+
+     This method may return different T based on the response code:
+     - 200: OKResponse
+     */
+  signInPasswordlessSms(
+    body: SignInPasswordlessSmsRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>>;
+
+  /**
+     Summary: Verify SMS OTP and return a session if validation is successful
+     
+
+     This method may return different T based on the response code:
+     - 200: SignInPasswordlessSmsOtpResponse
+     */
+  verifySignInPasswordlessSms(
+    body: SignInPasswordlessSmsOtpRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SignInPasswordlessSmsOtpResponse>>;
+
+  /**
      Summary: Sign in with Personal Access Token (PAT)
      
 
@@ -1755,7 +1888,7 @@ export interface Client {
      - 200: OKResponse
      */
   signOut(
-    body: SignOutSchema,
+    body: SignOutRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>>;
 
@@ -1808,6 +1941,27 @@ export interface Client {
     body: RefreshTokenRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<Session>>;
+
+  /**
+     Summary: Verify JWT token
+     If request body is not passed the authorization header will be used to be verified
+
+     This method may return different T based on the response code:
+     - 200: string
+     */
+  verifyToken(
+    body?: VerifyTokenRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<string>>;
+
+  /**
+     Summary: Get user information
+     
+
+     This method may return different T based on the response code:
+     - 200: User
+     */
+  getUser(options?: RequestInit): Promise<FetchResponse<User>>;
 
   /**
      Summary: Deanonymize an anonymous user in adding missing email or email+password, depending on the chosen authentication method. Will send a confirmation email if the server is configured to do so
@@ -2429,6 +2583,74 @@ export const createAPIClient = (
     } as FetchResponse<OKResponse>;
   };
 
+  const signInPasswordlessSms = async (
+    body: SignInPasswordlessSmsRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<OKResponse>> => {
+    const url = baseURL + `/signin/passwordless/sms`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: OKResponse = responseBody ? JSON.parse(responseBody) : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<OKResponse>;
+  };
+
+  const verifySignInPasswordlessSms = async (
+    body: SignInPasswordlessSmsOtpRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<SignInPasswordlessSmsOtpResponse>> => {
+    const url = baseURL + `/signin/passwordless/sms/otp`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: SignInPasswordlessSmsOtpResponse = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<SignInPasswordlessSmsOtpResponse>;
+  };
+
   const signInPAT = async (
     body: SignInPATRequest,
     options?: RequestInit,
@@ -2558,7 +2780,7 @@ export const createAPIClient = (
   };
 
   const signOut = async (
-    body: SignOutSchema,
+    body: SignOutRequest,
     options?: RequestInit,
   ): Promise<FetchResponse<OKResponse>> => {
     const url = baseURL + `/signout`;
@@ -2726,6 +2948,69 @@ export const createAPIClient = (
       status: res.status,
       headers: res.headers,
     } as FetchResponse<Session>;
+  };
+
+  const verifyToken = async (
+    body?: VerifyTokenRequest,
+    options?: RequestInit,
+  ): Promise<FetchResponse<string>> => {
+    const url = baseURL + `/token/verify`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: string = responseBody ? JSON.parse(responseBody) : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<string>;
+  };
+
+  const getUser = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<User>> => {
+    const url = baseURL + `/user`;
+    const res = await fetch(url, {
+      ...options,
+      method: "GET",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: User = responseBody ? JSON.parse(responseBody) : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<User>;
   };
 
   const deanonymizeUser = async (
@@ -3063,6 +3348,8 @@ export const createAPIClient = (
     signInOTPEmail,
     verifySignInOTPEmail,
     signInPasswordlessEmail,
+    signInPasswordlessSms,
+    verifySignInPasswordlessSms,
     signInPAT,
     signInProviderURL,
     signInWebauthn,
@@ -3072,6 +3359,8 @@ export const createAPIClient = (
     signUpWebauthn,
     verifySignUpWebauthn,
     refreshToken,
+    verifyToken,
+    getUser,
     deanonymizeUser,
     changeUserEmail,
     sendVerificationEmail,

@@ -396,6 +396,57 @@ paths:
                 $ref: "#/components/schemas/ErrorResponse"
           description: "An error occurred while processing the request"
 
+  /signin/passwordless/sms:
+    post:
+      operationId: signInPasswordlessSms
+      summary: >-
+        Sign in with a one time password sent to user's phone number. If the user doesn't exist, it will be created.
+        The options object is optional and can be used to configure the user's when signing up a
+        new user. It is ignored if the user already exists.
+      tags:
+        - signin
+        - signup
+        - passwordless
+        - sms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInPasswordlessSmsRequest'
+        required: true
+      responses:
+        '200':
+          description: >-
+            OTP sent to user's phone number successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OKResponse'
+
+  /signin/passwordless/sms/otp:
+    post:
+      operationId: verifySignInPasswordlessSms
+      summary: >-
+        Verify SMS OTP and return a session if validation is successful
+      tags:
+        - signin
+        - signup
+        - passwordless
+        - sms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignInPasswordlessSmsOtpRequest'
+        required: true
+      responses:
+        '200':
+          description: User successfully authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignInPasswordlessSmsOtpResponse'
+
   /signin/pat:
     post:
       summary: >-
@@ -534,6 +585,18 @@ paths:
           in: query
           required: true
           description: State parameter to avoid CSRF attacks
+          schema:
+            type: string
+        - name: oauth_token
+          in: query
+          required: false
+          description: OAuth token for the provider (e.g., X)
+          schema:
+            type: string
+        - name: oauth_verifier
+          in: query
+          required: false
+          description: OAuth verifier for the provider (e.g., X)
           schema:
             type: string
         - name: error
@@ -680,12 +743,13 @@ paths:
         - session
       security:
         - BearerAuth: []
+        - {}
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/SignOutSchema"
+              $ref: "#/components/schemas/SignOutRequest"
       responses:
         "200":
           description: "Successfully signed out"
@@ -813,6 +877,46 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
           description: "An error occurred while processing the request"
+
+  /token/verify:
+    post:
+      summary: Verify JWT token
+      operationId: verifyToken
+      description: If request body is not passed the authorization header will be used to be verified
+      tags:
+        - General
+      security:
+        - BearerAuth: []
+        - {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyTokenRequest'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "OK"
+          description: Valid JWT token
+
+  /user:
+    get:
+      summary: Get user information
+      operationId: getUser
+      tags:
+        - User management
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: User information
 
   /user/deanonymize:
     post:
@@ -1025,7 +1129,7 @@ paths:
         - user-management
         - webauthn
       security:
-        - BearerAuth: []
+        - BearerAuthElevated: []
       requestBody:
         content:
           application/json:
@@ -1060,7 +1164,7 @@ paths:
         - $ref: "#/components/parameters/TicketTypeQuery"
         - $ref: "#/components/parameters/RedirectToQuery"
       responses:
-        302:
+        "302":
           description: Redirect response
           headers:
             Location:
@@ -1269,6 +1373,10 @@ components:
 
     CredentialAssertionResponse:
       type: object
+      x-go-type-import:
+        name: protocol
+        path: github.com/go-webauthn/webauthn/protocol
+      x-go-type: protocol.CredentialAssertionResponse
       additionalProperties: false
       properties:
         id:
@@ -1298,6 +1406,10 @@ components:
     CredentialCreationResponse:
       type: object
       additionalProperties: false
+      x-go-type-import:
+        name: protocol
+        path: github.com/go-webauthn/webauthn/protocol
+      x-go-type: protocol.CredentialCreationResponse
       properties:
         id:
           type: string
@@ -1394,6 +1506,12 @@ components:
             - invalid-totp
             - mfa-type-not-found
             - totp-already-active
+            - invalid-state
+            - oauth-token-echange-failed
+            - oauth-profile-fetch-failed
+            - oauth-provider-error
+            - invalid-otp
+            - cannot-send-sms
       required:
         - status
         - message
@@ -1501,6 +1619,10 @@ components:
 
     PublicKeyCredentialCreationOptions:
       type: object
+      x-go-type-import:
+        name: protocol
+        path: github.com/go-webauthn/webauthn/protocol
+      x-go-type: protocol.PublicKeyCredentialCreationOptions
       additionalProperties: false
       properties:
         rp:
@@ -1579,6 +1701,10 @@ components:
 
     PublicKeyCredentialRequestOptions:
       type: object
+      x-go-type-import:
+        name: protocol
+        path: github.com/go-webauthn/webauthn/protocol
+      x-go-type: protocol.PublicKeyCredentialRequestOptions
       additionalProperties: false
       properties:
         challenge:
@@ -1836,6 +1962,43 @@ components:
       required:
         - email
 
+    SignInPasswordlessSmsOtpRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        phoneNumber:
+          description: Phone number of the user
+          example: '+123456789'
+          type: string
+        otp:
+          type: string
+          description: One-time password received by SMS
+      required:
+        - phoneNumber
+        - otp
+
+    SignInPasswordlessSmsOtpResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        session:
+          $ref: '#/components/schemas/Session'
+        mfa:
+          $ref: '#/components/schemas/MFAChallengePayload'
+
+    SignInPasswordlessSmsRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        phoneNumber:
+          description: Phone number of the user
+          example: '+123456789'
+          type: string
+        options:
+          $ref: '#/components/schemas/SignUpOptions'
+      required:
+        - phoneNumber
+
     SignInWebauthnRequest:
       type: object
       additionalProperties: false
@@ -1861,10 +2024,8 @@ components:
       required:
         - credential
 
-    SignOutSchema:
+    SignOutRequest:
       type: object
-      required:
-        - refreshToken
       properties:
         refreshToken:
           type: string
@@ -2056,6 +2217,10 @@ components:
           description: "List of roles assigned to the user"
           items:
             type: string
+        activeMfaType:
+          type: string
+          description: Active MFA type for the user
+          nullable: true
       required:
         - avatarUrl
         - createdAt
@@ -2068,6 +2233,36 @@ components:
         - metadata
         - phoneNumberVerified
         - roles
+
+    UserAddSecurityKeyVerifyRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        credential:
+          type: object
+          additionalProperties: true
+          x-go-type-import:
+            name: protocol
+            path: github.com/go-webauthn/webauthn/protocol
+          x-go-type: protocol.CredentialCreationResponse
+        nickname:
+          type: string
+          description: Optional nickname for the security key
+      required:
+        - credential
+
+    UserAddSecurityKeyVerifyResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          description: ID of the newly added security key
+        nickname:
+          type: string
+          description: Nickname of the security key
+      required:
+        - id
 
     UserDeanonymizeRequest:
       type: object
@@ -2230,6 +2425,14 @@ components:
       required:
         - id
 
+    VerifyTokenRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        token:
+          type: string
+          description: JWT token to verify
+
   parameters:
     RedirectToQuery:
       in: query
@@ -2256,6 +2459,16 @@ components:
           - linkedin
           - discord
           - spotify
+          - twitch
+          - gitlab
+          - bitbucket
+          - workos
+          - azuread
+          - strava
+          - facebook
+          - windowslive
+          - twitter
+      deprecated: true
 
     TicketQuery:
       in: query
@@ -2290,3 +2503,5 @@ components:
         type: string
         format: uri
       required: true
+
+
