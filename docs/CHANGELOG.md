@@ -2,6 +2,7 @@
 
 ## main
 
+- 20250705 feat chore (nhost-js): update openapi #44
 - 20250704 feat (packages/nhost-js): added functions.post method and improve documentation #43
 - 20250627 feat (packages/nhost-js): graphql.post -> graphql.request #41
 - 20250624 feat (packages/nhost-js): add decoded token to session storage #37
