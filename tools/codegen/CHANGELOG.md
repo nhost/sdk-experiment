@@ -1,3 +1,4 @@
+- 20250705 feat chore (nhost-js): update openapi
 - 20250704 feat (packages/nhost-js): added functions.post method and improve documentation #43
 - 20250610 fix (tools/codegen;packages/nhost-js): encode URL parameters better #30
 - 20250601 chore (ci): enabled #26

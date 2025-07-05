@@ -412,16 +412,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignInPasswordlessSmsRequest'
+              $ref: "#/components/schemas/SignInPasswordlessSmsRequest"
         required: true
       responses:
-        '200':
+        "200":
           description: >-
             OTP sent to user's phone number successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/OKResponse'
+                $ref: "#/components/schemas/OKResponse"
 
   /signin/passwordless/sms/otp:
     post:
@@ -437,15 +437,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SignInPasswordlessSmsOtpRequest'
+              $ref: "#/components/schemas/SignInPasswordlessSmsOtpRequest"
         required: true
       responses:
-        '200':
+        "200":
           description: User successfully authenticated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignInPasswordlessSmsOtpResponse'
+                $ref: "#/components/schemas/SignInPasswordlessSmsOtpResponse"
 
   /signin/pat:
     post:
@@ -892,9 +892,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VerifyTokenRequest'
+              $ref: "#/components/schemas/VerifyTokenRequest"
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
@@ -911,11 +911,11 @@ paths:
       security:
         - BearerAuth: []
       responses:
-        '200':
+        "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
           description: User information
 
   /user/deanonymize:
@@ -1968,7 +1968,7 @@ components:
       properties:
         phoneNumber:
           description: Phone number of the user
-          example: '+123456789'
+          example: "+123456789"
           type: string
         otp:
           type: string
@@ -1982,9 +1982,9 @@ components:
       additionalProperties: false
       properties:
         session:
-          $ref: '#/components/schemas/Session'
+          $ref: "#/components/schemas/Session"
         mfa:
-          $ref: '#/components/schemas/MFAChallengePayload'
+          $ref: "#/components/schemas/MFAChallengePayload"
 
     SignInPasswordlessSmsRequest:
       type: object
@@ -1992,10 +1992,10 @@ components:
       properties:
         phoneNumber:
           description: Phone number of the user
-          example: '+123456789'
+          example: "+123456789"
           type: string
         options:
-          $ref: '#/components/schemas/SignUpOptions'
+          $ref: "#/components/schemas/SignUpOptions"
       required:
         - phoneNumber
 
@@ -2503,5 +2503,3 @@ components:
         type: string
         format: uri
       required: true
-
-

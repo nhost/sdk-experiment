@@ -1,5 +1,6 @@
 # dev
 
+- chore (nhost-js): update openapi
 - feat (packages/nhost-js): added functions.post method and improve documentation #43
 - feat (packages/nhost-js): add decoded token to session storage #37
 - feat (packages/nhost-js): graphql.post -> graphql.request #41
