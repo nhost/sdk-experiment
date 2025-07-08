@@ -462,6 +462,28 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`JWKSet`](#jwkset)&gt;&gt;
 
+##### getUser()
+
+```ts
+getUser(options?: RequestInit): Promise<FetchResponse<User>>;
+```
+
+Summary: Get user information
+
+This method may return different T based on the response code:
+
+- 200: User
+
+###### Parameters
+
+| Parameter  | Type          |
+| ---------- | ------------- |
+| `options?` | `RequestInit` |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`User`](#user-2)&gt;&gt;
+
 ##### getVersion()
 
 ```ts
@@ -757,6 +779,29 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
 
+##### signInPasswordlessSms()
+
+```ts
+signInPasswordlessSms(body: SignInPasswordlessSmsRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
+```
+
+Summary: Sign in with a one time password sent to user's phone number. If the user doesn't exist, it will be created. The options object is optional and can be used to configure the user's when signing up a new user. It is ignored if the user already exists.
+
+This method may return different T based on the response code:
+
+- 200: OKResponse
+
+###### Parameters
+
+| Parameter  | Type                                                            |
+| ---------- | --------------------------------------------------------------- |
+| `body`     | [`SignInPasswordlessSmsRequest`](#signinpasswordlesssmsrequest) |
+| `options?` | `RequestInit`                                                   |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`"OK"`&gt;&gt;
+
 ##### signInPAT()
 
 ```ts
@@ -832,7 +877,7 @@ This method may return different T based on the response code:
 ##### signOut()
 
 ```ts
-signOut(body: SignOutSchema, options?: RequestInit): Promise<FetchResponse<"OK">>;
+signOut(body: SignOutRequest, options?: RequestInit): Promise<FetchResponse<"OK">>;
 ```
 
 Summary: Sign out
@@ -843,10 +888,10 @@ This method may return different T based on the response code:
 
 ###### Parameters
 
-| Parameter  | Type                              |
-| ---------- | --------------------------------- |
-| `body`     | [`SignOutSchema`](#signoutschema) |
-| `options?` | `RequestInit`                     |
+| Parameter  | Type                                |
+| ---------- | ----------------------------------- |
+| `body`     | [`SignOutRequest`](#signoutrequest) |
+| `options?` | `RequestInit`                       |
 
 ###### Returns
 
@@ -1020,6 +1065,29 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInOTPEmailVerifyResponse`](#signinotpemailverifyresponse)&gt;&gt;
 
+##### verifySignInPasswordlessSms()
+
+```ts
+verifySignInPasswordlessSms(body: SignInPasswordlessSmsOtpRequest, options?: RequestInit): Promise<FetchResponse<SignInPasswordlessSmsOtpResponse>>;
+```
+
+Summary: Verify SMS OTP and return a session if validation is successful
+
+This method may return different T based on the response code:
+
+- 200: SignInPasswordlessSmsOtpResponse
+
+###### Parameters
+
+| Parameter  | Type                                                                  |
+| ---------- | --------------------------------------------------------------------- |
+| `body`     | [`SignInPasswordlessSmsOtpRequest`](#signinpasswordlesssmsotprequest) |
+| `options?` | `RequestInit`                                                         |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;[`SignInPasswordlessSmsOtpResponse`](#signinpasswordlesssmsotpresponse)&gt;&gt;
+
 ##### verifySignInWebauthn()
 
 ```ts
@@ -1088,6 +1156,30 @@ As this method is a redirect, it returns a URL string instead of a Promise
 ###### Returns
 
 `string`
+
+##### verifyToken()
+
+```ts
+verifyToken(body?: VerifyTokenRequest, options?: RequestInit): Promise<FetchResponse<string>>;
+```
+
+Summary: Verify JWT token
+If request body is not passed the authorization header will be used to be verified
+
+This method may return different T based on the response code:
+
+- 200: string
+
+###### Parameters
+
+| Parameter  | Type                                        |
+| ---------- | ------------------------------------------- |
+| `body?`    | [`VerifyTokenRequest`](#verifytokenrequest) |
+| `options?` | `RequestInit`                               |
+
+###### Returns
+
+`Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`string`&gt;&gt;
 
 ---
 
@@ -2035,6 +2127,74 @@ optional options: SignUpOptions;
 
 ---
 
+### SignInPasswordlessSmsOtpRequest
+
+#### Properties
+
+##### otp
+
+```ts
+otp: string;
+```
+
+(`string`) - One-time password received by SMS
+
+##### phoneNumber
+
+```ts
+phoneNumber: string;
+```
+
+(`string`) - Phone number of the user
+
+- Example - `"+123456789"`
+
+---
+
+### SignInPasswordlessSmsOtpResponse
+
+#### Properties
+
+##### mfa?
+
+```ts
+optional mfa: MFAChallengePayload;
+```
+
+Challenge payload for multi-factor authentication
+
+##### session?
+
+```ts
+optional session: Session;
+```
+
+User authentication session containing tokens and user information
+
+---
+
+### SignInPasswordlessSmsRequest
+
+#### Properties
+
+##### options?
+
+```ts
+optional options: SignUpOptions;
+```
+
+##### phoneNumber
+
+```ts
+phoneNumber: string;
+```
+
+(`string`) - Phone number of the user
+
+- Example - `"+123456789"`
+
+---
+
 ### SignInPATRequest
 
 #### Properties
@@ -2156,7 +2316,7 @@ Format - email
 
 ---
 
-### SignOutSchema
+### SignOutRequest
 
 #### Properties
 
@@ -2168,13 +2328,13 @@ optional all: boolean;
 
 Sign out from all connected devices
 
-##### refreshToken
+##### refreshToken?
 
 ```ts
-refreshToken: string;
+optional refreshToken: string;
 ```
 
-(`string`) - Refresh token for the current session
+Refresh token for the current session
 
 ---
 
@@ -2360,6 +2520,14 @@ User profile and account information
 
 #### Properties
 
+##### activeMfaType?
+
+```ts
+optional activeMfaType: string;
+```
+
+Active MFA type for the user
+
 ##### avatarUrl
 
 ```ts
@@ -2492,6 +2660,50 @@ roles: string[];
 (`string[]`) - List of roles assigned to the user
 
 - Example - `["user","customer"]`
+
+---
+
+### UserAddSecurityKeyVerifyRequest
+
+#### Properties
+
+##### credential
+
+```ts
+credential: Record<string, unknown>;
+```
+
+(`Record<string, unknown>`) -
+
+##### nickname?
+
+```ts
+optional nickname: string;
+```
+
+Optional nickname for the security key
+
+---
+
+### UserAddSecurityKeyVerifyResponse
+
+#### Properties
+
+##### id
+
+```ts
+id: string;
+```
+
+(`string`) - ID of the newly added security key
+
+##### nickname?
+
+```ts
+optional nickname: string;
+```
+
+Nickname of the security key
 
 ---
 
@@ -2780,6 +2992,20 @@ Type of the ticket. Deprecated, no longer used
 
 - Type of the ticket
 
+---
+
+### VerifyTokenRequest
+
+#### Properties
+
+##### token?
+
+```ts
+optional token: string;
+```
+
+JWT token to verify
+
 ## Type Aliases
 
 ### AttestationFormat
@@ -2873,7 +3099,13 @@ type ErrorResponseError =
   | "no-totp-secret"
   | "invalid-totp"
   | "mfa-type-not-found"
-  | "totp-already-active";
+  | "totp-already-active"
+  | "invalid-state"
+  | "oauth-token-echange-failed"
+  | "oauth-profile-fetch-failed"
+  | "oauth-provider-error"
+  | "invalid-otp"
+  | "cannot-send-sms";
 ```
 
 Error code identifying the specific application error
@@ -2935,7 +3167,16 @@ type SignInProvider =
   | "google"
   | "linkedin"
   | "discord"
-  | "spotify";
+  | "spotify"
+  | "twitch"
+  | "gitlab"
+  | "bitbucket"
+  | "workos"
+  | "azuread"
+  | "strava"
+  | "facebook"
+  | "windowslive"
+  | "twitter";
 ```
 
 ---
