@@ -21,7 +21,7 @@
   {{- if .Description }}
   {{- .Description }}
   {{ end }}
-  {{- if .Schema.Schema.Description }}
+  {{- if and .Schema .Schema.Schema .Schema.Schema.Description }}
     *    {{ .Schema.Schema.Description }}
   {{- end }}
 {{- end -}}

@@ -50,6 +50,9 @@ func TestInterMediateRepresentationRender(t *testing.T) {
 		{
 			name: "methods_ref.yaml",
 		},
+		{
+			name: "content.yaml",
+		},
 	}
 
 	for _, tc := range cases {

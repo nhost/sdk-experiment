@@ -1250,36 +1250,6 @@ export interface User {
 }
 
 /**
- * 
- @property credential (`Record<string, unknown>`) - 
- @property nickname? (`string`) - Optional nickname for the security key*/
-export interface UserAddSecurityKeyVerifyRequest {
-  /**
-   *
-   */
-  credential: Record<string, unknown>;
-  /**
-   * Optional nickname for the security key
-   */
-  nickname?: string;
-}
-
-/**
- * 
- @property id (`string`) - ID of the newly added security key
- @property nickname? (`string`) - Nickname of the security key*/
-export interface UserAddSecurityKeyVerifyResponse {
-  /**
-   * ID of the newly added security key
-   */
-  id: string;
-  /**
-   * Nickname of the security key
-   */
-  nickname?: string;
-}
-
-/**
  * Which sign-in method to use
  */
 export type UserDeanonymizeRequestSignInMethod =
@@ -1561,7 +1531,7 @@ export interface GetVersionResponse200 {
   
     @property locale? (string) - A two-characters locale
   
-    @property metadata? (Record<string, unknown>) - Additional metadata for the user
+    @property metadata? (Record<string, unknown>) - Additional metadata for the user (JSON encoded string)
   
     @property redirectTo? (string) - URI to redirect to
   
@@ -1589,7 +1559,7 @@ export interface SignInProviderParams {
    */
   locale?: string;
   /**
-   * Additional metadata for the user
+   * Additional metadata for the user (JSON encoded string)
   
    */
   metadata?: Record<string, unknown>;
@@ -1641,7 +1611,7 @@ export interface Client {
   pushChainFunction(chainFunction: ChainFunction): void;
   /**
      Summary: Get public keys for JWT verification in JWK Set format
-     
+     Retrieve the JSON Web Key Set (JWKS) containing public keys used to verify JWT signatures. This endpoint is used by clients to validate access tokens.
 
      This method may return different T based on the response code:
      - 200: JWKSet
@@ -1691,7 +1661,7 @@ export interface Client {
 
   /**
      Summary: Link a user account with the provider's account using an id token
-     
+     Link the authenticated user's account with an external OAuth provider account using an ID token. Requires elevated permissions.
 
      This method may return different T based on the response code:
      - 200: OKResponse
@@ -1714,7 +1684,7 @@ export interface Client {
 
   /**
      Summary: Create a Personal Access Token (PAT)
-     
+     Generate a new Personal Access Token for programmatic API access. PATs are long-lived tokens that can be used instead of regular authentication for automated systems. Requires elevated permissions.
 
      This method may return different T based on the response code:
      - 200: CreatePATResponse
@@ -1726,7 +1696,7 @@ export interface Client {
 
   /**
      Summary: Sign in anonymously
-     
+     Create an anonymous user session without providing credentials. Anonymous users can be converted to regular users later via the deanonymize endpoint.
 
      This method may return different T based on the response code:
      - 200: SessionPayload
@@ -1749,8 +1719,8 @@ export interface Client {
   ): Promise<FetchResponse<SignInEmailPasswordResponse>>;
 
   /**
-     Summary: Sign in with in an id token
-     
+     Summary: Sign in with an ID token
+     Authenticate using an ID token from a supported OAuth provider (Apple or Google). Creates a new user account if one doesn't exist.
 
      This method may return different T based on the response code:
      - 200: SessionPayload
@@ -1773,8 +1743,8 @@ export interface Client {
   ): Promise<FetchResponse<SessionPayload>>;
 
   /**
-     Summary: Sign in with a one time password sent to user's email. If the user doesn't exist, it will be created. The options object is optional and can be used to configure the user's when signing up a new user. It is ignored if the user already exists.
-     
+     Summary: Sign in with email OTP
+     Initiate email-based one-time password authentication. Sends an OTP to the specified email address. If the user doesn't exist, a new account will be created with the provided options.
 
      This method may return different T based on the response code:
      - 200: OKResponse
@@ -1785,8 +1755,8 @@ export interface Client {
   ): Promise<FetchResponse<OKResponse>>;
 
   /**
-     Summary: Verify OTP and return a session if validation is successful
-     
+     Summary: Verify email OTP
+     Complete email OTP authentication by verifying the one-time password. Returns a session if validation is successful.
 
      This method may return different T based on the response code:
      - 200: SignInOTPEmailVerifyResponse
@@ -1809,8 +1779,8 @@ export interface Client {
   ): Promise<FetchResponse<OKResponse>>;
 
   /**
-     Summary: Sign in with a one time password sent to user's phone number. If the user doesn't exist, it will be created. The options object is optional and can be used to configure the user's when signing up a new user. It is ignored if the user already exists.
-     
+     Summary: Sign in with SMS OTP
+     Initiate passwordless authentication by sending a one-time password to the user's phone number. If the user doesn't exist, a new account will be created with the provided options.
 
      This method may return different T based on the response code:
      - 200: OKResponse
@@ -1821,8 +1791,8 @@ export interface Client {
   ): Promise<FetchResponse<OKResponse>>;
 
   /**
-     Summary: Verify SMS OTP and return a session if validation is successful
-     
+     Summary: Verify SMS OTP
+     Complete passwordless SMS authentication by verifying the one-time password. Returns a session if validation is successful.
 
      This method may return different T based on the response code:
      - 200: SignInPasswordlessSmsOtpResponse
@@ -1834,7 +1804,7 @@ export interface Client {
 
   /**
      Summary: Sign in with Personal Access Token (PAT)
-     
+     Authenticate using a Personal Access Token. PATs are long-lived tokens that can be used for programmatic access to the API.
 
      This method may return different T based on the response code:
      - 200: SessionPayload
@@ -1845,8 +1815,8 @@ export interface Client {
   ): Promise<FetchResponse<SessionPayload>>;
 
   /**
-     Summary: Sign in with an oauth2 provider
-     
+     Summary: Sign in with an OAuth2 provider
+     Initiate OAuth2 authentication flow with a social provider. Redirects the user to the provider's authorization page.
 
      As this method is a redirect, it returns a URL string instead of a Promise
      */
@@ -1882,7 +1852,7 @@ export interface Client {
 
   /**
      Summary: Sign out
-     
+     End the current user session by invalidating refresh tokens. Optionally sign out from all devices.
 
      This method may return different T based on the response code:
      - 200: OKResponse
@@ -1898,8 +1868,6 @@ export interface Client {
 
      This method may return different T based on the response code:
      - 200: SessionPayload
-     - 403: ErrorResponse
-     - 409: ErrorResponse
      */
   signUpEmailPassword(
     body: SignUpEmailPasswordRequest,
@@ -1944,7 +1912,7 @@ export interface Client {
 
   /**
      Summary: Verify JWT token
-     If request body is not passed the authorization header will be used to be verified
+     Verify the validity of a JWT access token. If no request body is provided, the Authorization header will be used for verification.
 
      This method may return different T based on the response code:
      - 200: string
@@ -1956,7 +1924,7 @@ export interface Client {
 
   /**
      Summary: Get user information
-     
+     Retrieve the authenticated user's profile information including roles, metadata, and account status.
 
      This method may return different T based on the response code:
      - 200: User
@@ -1964,8 +1932,8 @@ export interface Client {
   getUser(options?: RequestInit): Promise<FetchResponse<User>>;
 
   /**
-     Summary: Deanonymize an anonymous user in adding missing email or email+password, depending on the chosen authentication method. Will send a confirmation email if the server is configured to do so
-     
+     Summary: Deanonymize an anonymous user
+     Convert an anonymous user to a regular user by adding email and optionally password credentials. A confirmation email will be sent if the server is configured to do so.
 
      This method may return different T based on the response code:
      - 200: OKResponse
@@ -1977,7 +1945,7 @@ export interface Client {
 
   /**
      Summary: Change user email
-     
+     Request to change the authenticated user's email address. A verification email will be sent to the new address to confirm the change. Requires elevated permissions.
 
      This method may return different T based on the response code:
      - 200: OKResponse
@@ -1989,7 +1957,7 @@ export interface Client {
 
   /**
      Summary: Send verification email
-     
+     Send an email verification link to the specified email address. Used to verify email addresses for new accounts or email changes.
 
      This method may return different T based on the response code:
      - 200: OKResponse
@@ -2012,8 +1980,8 @@ export interface Client {
   ): Promise<FetchResponse<OKResponse>>;
 
   /**
-     Summary: Change user password. The user must be authenticated or provide a ticket
-     
+     Summary: Change user password
+     Change the user's password. The user must be authenticated with elevated permissions or provide a valid password reset ticket.
 
      This method may return different T based on the response code:
      - 200: OKResponse
@@ -2024,8 +1992,8 @@ export interface Client {
   ): Promise<FetchResponse<OKResponse>>;
 
   /**
-     Summary: Request a password reset. An email with a verification link will be sent to the user's address
-     
+     Summary: Request password reset
+     Request a password reset for a user account. An email with a verification link will be sent to the user's email address to complete the password reset process.
 
      This method may return different T based on the response code:
      - 200: OKResponse
@@ -2037,7 +2005,7 @@ export interface Client {
 
   /**
      Summary: Initialize adding of a new webauthn security key
-     
+     Start the process of adding a new WebAuthn security key to the user's account. Returns a challenge that must be completed by the user's authenticator device. Requires elevated permissions.
 
      This method may return different T based on the response code:
      - 200: PublicKeyCredentialCreationOptions
@@ -2048,7 +2016,7 @@ export interface Client {
 
   /**
      Summary: Verify adding of a new webauthn security key
-     
+     Complete the process of adding a new WebAuthn security key by verifying the authenticator response. Requires elevated permissions.
 
      This method may return different T based on the response code:
      - 200: VerifyAddSecurityKeyResponse
@@ -2059,8 +2027,8 @@ export interface Client {
   ): Promise<FetchResponse<VerifyAddSecurityKeyResponse>>;
 
   /**
-     Summary: Verify tickets created by email verification, email passwordless authentication (magic link), or password reset
-     
+     Summary: Verify email and authentication tickets
+     Verify tickets created by email verification, magic link authentication, or password reset processes. Redirects the user to the appropriate destination upon successful verification.
 
      As this method is a redirect, it returns a URL string instead of a Promise
      */

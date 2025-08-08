@@ -286,12 +286,32 @@ func getMethodParameters(
 				p:      p,
 			}
 		} else {
-			t2, tt, err := GetType(param.Schema, method+format.Title(param.Name), p, false)
-			if err != nil {
-				return nil, nil, fmt.Errorf("failed to get type for parameter %s: %w", param.Name, err)
+			switch {
+			case param.Schema != nil:
+				t2, tt, err := GetType(param.Schema, method+format.Title(param.Name), p, false)
+				if err != nil {
+					return nil, nil, fmt.Errorf("failed to get type for parameter %s: %w", param.Name, err)
+				}
+				types = append(types, tt...)
+				t = t2
+			case param.Content != nil:
+				jsonMediaType, ok := param.Content.Get("application/json")
+				if !ok {
+					return nil, nil, fmt.Errorf( //nolint:err113
+						"parameter %s in operation %s has no application/json content defined",
+						param.Name,
+						operation.OperationId,
+					)
+				}
+				t2, tt, err := GetType(jsonMediaType.Schema, method+format.Title(param.Name), p, false)
+				if err != nil {
+					return nil, nil, fmt.Errorf("failed to get type for parameter %s: %w", param.Name, err)
+				}
+				types = append(types, tt...)
+				t = t2
+			default:
+				return nil, nil, fmt.Errorf("parameter %s in operation %s has no schema or content defined", param.Name, operation.OperationId) //nolint:goerr113,lll
 			}
-			types = append(types, tt...)
-			t = t2
 		}
 		params[i] = &Parameter{
 			name:      param.Name,
