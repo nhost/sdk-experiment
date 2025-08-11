@@ -8,10 +8,10 @@ let
   src = nix-filter.lib.filter {
     root = ../..;
     include = with nix-filter.lib;[
-      ".golangci.yaml"
       "go.mod"
       "go.sum"
       (inDirectory "vendor")
+      "${submodule}/.golangci.yaml"
       isDirectory
       (and
         (inDirectory submodule)

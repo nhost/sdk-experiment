@@ -198,6 +198,7 @@ func getTypeObject( //nolint:ireturn
 				p:      p,
 			}, nil, nil
 		}
+
 		return nil, nil, fmt.Errorf(
 			"%w: object schema %s has no properties and no additional properties",
 			ErrUnknownType,
@@ -224,12 +225,14 @@ func getTypeArray(schema *base.SchemaProxy, p Plugin) (Type, []Type, error) { //
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to get type for array item: %w", err)
 		}
+
 		return &TypeArray{
 			schema: schema,
 			p:      p,
 			Item:   t,
 		}, nil, nil
 	}
+
 	return &TypeArray{
 		schema: schema,
 		p:      p,
@@ -258,6 +261,7 @@ func getTypeEnum( //nolint:ireturn
 		if err := enum.Decode(&v); err != nil {
 			return nil, nil, fmt.Errorf("failed to decode enum value %v: %w", v, err)
 		}
+
 		values = append(values, v)
 	}
 
@@ -267,6 +271,7 @@ func getTypeEnum( //nolint:ireturn
 		values: values,
 		p:      p,
 	}
+
 	return t, []Type{t}, nil
 }
 
@@ -298,8 +303,10 @@ func GetType( //nolint:ireturn
 				alias:  s,
 				p:      p,
 			}
+
 			return t, []Type{t}, nil
 		}
+
 		return s, nil, nil
 	}
 }
@@ -324,6 +331,7 @@ func NewObject(
 		prop := propPairs.Value()
 
 		derivedName := name + format.Title(propName)
+
 		typ, tt, err := GetType(prop, derivedName, p, false)
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to get type for property %s: %w", propName, err)

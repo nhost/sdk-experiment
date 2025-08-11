@@ -51,6 +51,7 @@ func (m *Method) PathParameters() []*Parameter {
 			params = append(params, param)
 		}
 	}
+
 	return params
 }
 
@@ -60,6 +61,7 @@ func (m *Method) HasQueryParameters() bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -70,6 +72,7 @@ func (m *Method) QueryParameters() []*Parameter {
 			params = append(params, param)
 		}
 	}
+
 	return params
 }
 
@@ -81,11 +84,13 @@ func addIfNotPresent[S ~[]E, E comparable](s S, v E) S {
 	if !slices.Contains(s, v) {
 		return append(s, v)
 	}
+
 	return s
 }
 
 func (m *Method) ReturnType() string {
 	tt := make([]string, 0, 10) //nolint:mnd
+
 	for c, resp := range m.Responses {
 		code, err := strconv.Atoi(c)
 		if err != nil {
@@ -109,6 +114,7 @@ func (m *Method) ReturnType() string {
 			}
 		}
 	}
+
 	return strings.Join(tt, " | ")
 }
 
@@ -118,6 +124,7 @@ func (m *Method) RequestJSON() Type { //nolint:ireturn
 			return t
 		}
 	}
+
 	return nil
 }
 
@@ -127,6 +134,7 @@ func (m *Method) RequestFormData() Type { //nolint:ireturn
 			return t
 		}
 	}
+
 	return nil
 }
 
@@ -149,6 +157,7 @@ func (m *Method) ResponseJSON() bool {
 			return media == mediaApplicationJSON
 		}
 	}
+
 	return false
 }
 
@@ -167,6 +176,7 @@ func (m *Method) ResponseBinary() bool {
 			return media == mediaApplicationOctetStream
 		}
 	}
+
 	return false
 }
 
@@ -174,6 +184,7 @@ func (m *Method) IsRedirect() bool {
 	for code := range m.Responses {
 		return code == strconv.Itoa(http.StatusFound)
 	}
+
 	return false
 }
 
@@ -190,6 +201,7 @@ func (m *Method) HasResponseBody() bool {
 
 		return len(resp) > 0
 	}
+
 	return false
 }
 
@@ -208,9 +220,11 @@ func (p *Parameter) Required() bool {
 	if p.Parameter.Required != nil {
 		return *p.Parameter.Required
 	}
+
 	if p.Parameter.In == "path" {
 		return true
 	}
+
 	return false
 }
 
@@ -229,6 +243,7 @@ func GetMethod(
 				path,
 			)
 	}
+
 	params, types, err := getMethodParameters(method, operation, p)
 	if err != nil {
 		return nil, nil, fmt.Errorf(
@@ -292,6 +307,7 @@ func getMethodParameters(
 				if err != nil {
 					return nil, nil, fmt.Errorf("failed to get type for parameter %s: %w", param.Name, err)
 				}
+
 				types = append(types, tt...)
 				t = t2
 			case param.Content != nil:
@@ -303,16 +319,19 @@ func getMethodParameters(
 						operation.OperationId,
 					)
 				}
+
 				t2, tt, err := GetType(jsonMediaType.Schema, method+format.Title(param.Name), p, false)
 				if err != nil {
 					return nil, nil, fmt.Errorf("failed to get type for parameter %s: %w", param.Name, err)
 				}
+
 				types = append(types, tt...)
 				t = t2
 			default:
-				return nil, nil, fmt.Errorf("parameter %s in operation %s has no schema or content defined", param.Name, operation.OperationId) //nolint:goerr113,lll
+				return nil, nil, fmt.Errorf("parameter %s in operation %s has no schema or content defined", param.Name, operation.OperationId) //nolint:err113,lll
 			}
 		}
+
 		params[i] = &Parameter{
 			name:      param.Name,
 			Parameter: param,
@@ -349,13 +368,18 @@ func getMethodBodies(
 	}
 
 	var tt []Type
+
 	for pair := operation.RequestBody.Content.First(); pair != nil; pair = pair.Next() {
 		mediaType := pair.Key()
 		proxy := pair.Value()
 
 		name := operation.OperationId + "Body"
-		var t Type
-		var err error
+
+		var (
+			t   Type
+			err error
+		)
+
 		t, tt, err = GetType(proxy.Schema, name, p, false)
 		if err != nil {
 			return nil, nil, fmt.Errorf(
@@ -364,6 +388,7 @@ func getMethodBodies(
 				err,
 			)
 		}
+
 		bodies[mediaType] = t
 	}
 
@@ -408,6 +433,7 @@ func getMethodResponses(
 		}
 
 		name := operation.OperationId + "Response" + code
+
 		t, tt, err := GetType(proxy.Schema, name, p, false)
 		if err != nil {
 			return nil, nil, fmt.Errorf(
@@ -416,7 +442,9 @@ func getMethodResponses(
 				err,
 			)
 		}
+
 		responses[code][mediaType] = t
+
 		types = append(types, tt...)
 	}
 
