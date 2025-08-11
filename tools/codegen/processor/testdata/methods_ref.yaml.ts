@@ -768,7 +768,11 @@ export const createAPIClient = (
     }
     if (body["metadata[]"] !== undefined) {
       body["metadata[]"].forEach((value) =>
-          formData.append("metadata[]", JSON.stringify(value)),
+          formData.append(
+            "metadata[]",
+            new Blob([JSON.stringify(value)], { type: "application/json" }),
+            "",
+          ),
       );
     }
     if (body["file[]"] !== undefined) {
@@ -903,7 +907,11 @@ export const createAPIClient = (
     const url = baseURL + `/files/${id}`;
     const formData = new FormData();
     if (body["metadata"] !== undefined) {
-      formData.append("metadata", JSON.stringify(body["metadata"]));
+      formData.append(
+        "metadata",
+        new Blob([JSON.stringify(body["metadata"])], { type: "application/json" }),
+        "",
+      );
     }
     if (body["file"] !== undefined) {
       formData.append("file", body["file"]);
