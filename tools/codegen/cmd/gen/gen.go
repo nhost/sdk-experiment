@@ -89,7 +89,7 @@ func action(_ context.Context, c *cli.Command) error {
 	if err != nil {
 		return cli.Exit(fmt.Sprintf("failed to open output file: %v", err), 1)
 	}
-	defer f.Close() //nolint:errcheck
+	defer f.Close()
 
 	if err := ir.Render(f); err != nil {
 		return cli.Exit(fmt.Sprintf("failed to write output: %v", err), 1)

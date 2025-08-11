@@ -80,7 +80,7 @@ func (m *Method) QueryParametersTypeName() string {
 	return m.p.TypeObjectName(m.Name() + "Parameters")
 }
 
-func addIfNotPresent[S ~[]E, E comparable](s S, v E) S {
+func addIfNotPresent[S ~[]E, E comparable](s S, v E) S { //nolint:ireturn
 	if !slices.Contains(s, v) {
 		return append(s, v)
 	}
