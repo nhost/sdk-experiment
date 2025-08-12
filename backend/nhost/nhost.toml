@@ -191,7 +191,7 @@ capacity = 1
 [provider]
 
 [storage]
-version = '0.8.0-beta1'
+version = '0.8.0-beta3'
 
 [observability]
 [observability.grafana]

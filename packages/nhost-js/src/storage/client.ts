@@ -621,7 +621,7 @@ export const createAPIClient = (
     body: UploadFilesBody,
     options?: RequestInit,
   ): Promise<FetchResponse<UploadFilesResponse201>> => {
-    const url = baseURL + `/files/`;
+    const url = baseURL + `/files`;
     const formData = new FormData();
     if (body["bucket-id"] !== undefined) {
       formData.append("bucket-id", body["bucket-id"]);
