@@ -39,6 +39,7 @@ func NewInterMediateRepresentation(
 
 	if doc.Model.Components != nil && doc.Model.Components.Schemas != nil {
 		var err error
+
 		types, err = newInterMediateRepresentationComponentsSchemas(
 			doc.Model.Components.Schemas, plugin,
 		)
@@ -62,15 +63,18 @@ func NewInterMediateRepresentation(
 				err,
 			)
 		}
+
 		types = append(types, types2...)
 	}
 
 	var methods []*Method
+
 	if doc.Model.Paths != nil {
 		m, types2, err := newInterMediateRepresentationPaths(doc, plugin)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create intermediate representation paths: %w", err)
 		}
+
 		types = append(types, types2...)
 		methods = m
 	}
@@ -86,6 +90,7 @@ func newInterMediateRepresentationComponentsSchemas(
 	schemas *orderedmap.Map[string, *base.SchemaProxy], plugin Plugin,
 ) ([]Type, error) {
 	types := make([]Type, 0, 10) //nolint:mnd
+
 	for schemaPairs := schemas.First(); schemaPairs != nil; schemaPairs = schemaPairs.Next() {
 		schemaName := schemaPairs.Key()
 		proxy := schemaPairs.Value()
@@ -102,6 +107,7 @@ func newInterMediateRepresentationComponentsSchemas(
 			return nil, fmt.Errorf("%w: schema %s is not an object", ErrUnknownType, schemaName)
 		}
 	}
+
 	return types, nil
 }
 
@@ -109,6 +115,7 @@ func newInterMediateRepresentationComponentsParameters(
 	schemas *orderedmap.Map[string, *v3.Parameter], plugin Plugin,
 ) ([]Type, error) {
 	types := make([]Type, 0, 10) //nolint:mnd
+
 	for paramPairs := schemas.First(); paramPairs != nil; paramPairs = paramPairs.Next() {
 		schemaName := paramPairs.Key()
 		proxy := paramPairs.Value()
@@ -120,6 +127,7 @@ func newInterMediateRepresentationComponentsParameters(
 
 		types = append(types, tt...)
 	}
+
 	return types, nil
 }
 
@@ -128,6 +136,7 @@ func newInterMediateRepresentationPaths(
 ) ([]*Method, []Type, error) {
 	methods := make([]*Method, 0, 10) //nolint:mnd
 	types := make([]Type, 0, 10)      //nolint:mnd
+
 	for pathPairs := doc.Model.Paths.PathItems.First(); pathPairs != nil; pathPairs = pathPairs.Next() {
 		path := pathPairs.Key()
 		item := pathPairs.Value()
@@ -141,6 +150,7 @@ func newInterMediateRepresentationPaths(
 			if err != nil {
 				return nil, nil, fmt.Errorf("failed to create method for path %s: %w", path, err)
 			}
+
 			methods = append(methods, m)
 			types = append(types, tt...)
 		}
@@ -158,6 +168,7 @@ func (ir *InterMediateRepresentation) Render(out io.Writer) error {
 	}
 
 	var filenames []string
+
 	for _, entry := range entries {
 		if !entry.IsDir() {
 			filenames = append(filenames, "templates/"+entry.Name())

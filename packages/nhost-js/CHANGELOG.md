@@ -1,5 +1,6 @@
 # dev
 
+- feat (package/nhost-js): update openapi specs and properly generate formData when uploading/updating files #47
 - chore (nhost-js): update openapi #44
 - feat (packages/nhost-js): added functions.post method and improve documentation #43
 - feat (packages/nhost-js): add decoded token to session storage #37

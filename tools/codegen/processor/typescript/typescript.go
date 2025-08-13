@@ -25,6 +25,7 @@ func quotePropertyIfNeeded(name string) string {
 	if strings.Contains(name, "-") || strings.Contains(name, "[") {
 		return fmt.Sprintf("\"%s\"", name)
 	}
+
 	return name
 }
 
@@ -47,6 +48,7 @@ func (t *Typescript) TypeScalarName(scalar *processor.TypeScalar) string {
 			return "Blob"
 		}
 	}
+
 	return scalar.Schema().Schema().Type[0]
 }
 
@@ -79,6 +81,7 @@ func (t *Typescript) TypeMapName(schema *processor.TypeMap) string {
 	if v, ok := schema.Schema().Schema().Extensions.Get(extCustomType); ok {
 		return v.Value
 	}
+
 	return "Record<string, unknown>"
 }
 

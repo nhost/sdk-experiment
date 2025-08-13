@@ -96,8 +96,10 @@ test("error handling for storage", async () => {
     expect(err.status).toBe(403);
     expect(err.body).toStrictEqual({
       error: {
+        data: null,
         message: "you are not authorized",
       },
+      processedFiles: [],
     });
   }
 });

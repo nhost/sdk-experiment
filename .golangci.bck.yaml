@@ -1,0 +1,79 @@
+linters:
+  enable-all: true
+  disable:
+    - varnamelen
+    - gomoddirectives
+    - nlreturn
+    - wsl
+    - musttag # FIXME
+    - depguard
+    - canonicalheader
+    - tenv # deprecated
+
+linters-settings:
+  ireturn:
+    allow:
+      - anon
+      - error
+      - empty
+      - generic
+      - stdlib
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - funlen
+        - ireturn
+        - goconst
+        - revive
+
+    - linters:
+        - lll
+      source: "^//go:generate "
+
+    - linters:
+        - gochecknoglobals
+      text: "Version is a global variable"
+
+    - path: schema\.resolvers\.go
+      linters:
+        - ireturn
+        - lll
+        - gofumpt
+
+    - path: services/watchtower/pkg
+      linters:
+        - perfsprint
+        - nolintlint
+        - testpackage
+        - paralleltest
+        - wrapcheck
+        - thelper
+        - tagliatelle
+        - stylecheck
+        - ireturn
+        - mnd
+        - goerr113
+        - err113
+        - gochecknoglobals
+        - exhaustruct
+        - nilnil
+        - exhaustive
+        - forcetypeassert
+        - containedctx
+        - unparam
+        - revive
+        - prealloc
+        - nestif
+        - funlen
+        - misspell
+        - lll
+        - godox
+        - errname
+        - cyclop
+        - godot
+        - gci
+        - gosec
+        - gocognit
+        - dupl

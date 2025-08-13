@@ -49,6 +49,7 @@ func action(_ context.Context, c *cli.Command) error {
 	fmt.Println("Generating code...") //nolint:forbidigo
 
 	var p processor.Plugin
+
 	switch c.String(flagPlugin) {
 	case "typescript":
 		p = &typescript.Typescript{}
@@ -65,11 +66,13 @@ func action(_ context.Context, c *cli.Command) error {
 	if err != nil {
 		return cli.Exit(fmt.Sprintf("failed to parse OpenAPI document: %v", err), 1)
 	}
+
 	docModel, errors := document.BuildV3Model()
 	if len(errors) > 0 {
 		for i := range errors {
 			fmt.Printf("error: %e\n", errors[i]) //nolint:forbidigo
 		}
+
 		return cli.Exit("failed to build OpenAPI model", 1)
 	}
 

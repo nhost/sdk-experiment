@@ -6,71 +6,91 @@ import { FetchError, createEnhancedFetch } from "../fetch";
 import type { ChainFunction, FetchResponse } from "../fetch";
 
 /**
- * Contains version information about the storage service.
- @property buildVersion? (`string`) - The version number of the storage service build.
-    *    Example - `"1.2.3"`*/
-export interface VersionInformation {
+ * Date in RFC 2822 format
+ */
+export type RFC2822Date = string;
+
+/**
+ * Error details.
+ @property message (`string`) - Human-readable error message.
+    *    Example - `"File not found"`
+ @property data? (`Record<string, unknown>`) - Additional data related to the error, if any.*/
+export interface ErrorResponseError {
   /**
-   * The version number of the storage service build.
-   *    Example - `"1.2.3"`
+   * Human-readable error message.
+   *    Example - `"File not found"`
    */
-  buildVersion?: string;
+  message: string;
+  /**
+   * Additional data related to the error, if any.
+   */
+  data?: Record<string, unknown>;
 }
 
 /**
- * Basic information about a file in storage.
- @property id? (`string`) - Unique identifier for the file.
-    *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
- @property name? (`string`) - Name of the file including extension.
-    *    Example - `"profile-picture.jpg"`
- @property bucketId? (`string`) - ID of the bucket containing the file.
-    *    Example - `"users-bucket"`
- @property isUploaded? (`boolean`) - Whether the file has been successfully uploaded.
-    *    Example - `true`*/
-export interface FileSummary {
+ * Error information returned by the API.
+ @property error? (`ErrorResponseError`) - Error details.*/
+export interface ErrorResponse {
   /**
-   * Unique identifier for the file.
-   *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+   * Error details.
    */
-  id?: string;
+  error?: ErrorResponseError;
+}
+
+/**
+ * Error details.
+ @property message (`string`) - Human-readable error message.
+    *    Example - `"File not found"`
+ @property data? (`Record<string, unknown>`) - Additional data related to the error, if any.*/
+export interface ErrorResponseWithProcessedFilesError {
   /**
-   * Name of the file including extension.
-   *    Example - `"profile-picture.jpg"`
+   * Human-readable error message.
+   *    Example - `"File not found"`
    */
-  name?: string;
+  message: string;
   /**
-   * ID of the bucket containing the file.
-   *    Example - `"users-bucket"`
+   * Additional data related to the error, if any.
    */
-  bucketId?: string;
+  data?: Record<string, unknown>;
+}
+
+/**
+ * Error information returned by the API.
+ @property processedFiles? (`FileMetadata[]`) - List of files that were successfully processed before the error occurred.
+ @property error? (`ErrorResponseWithProcessedFilesError`) - Error details.*/
+export interface ErrorResponseWithProcessedFiles {
   /**
-   * Whether the file has been successfully uploaded.
-   *    Example - `true`
+   * List of files that were successfully processed before the error occurred.
    */
-  isUploaded?: boolean;
+  processedFiles?: FileMetadata[];
+  /**
+   * Error details.
+   */
+  error?: ErrorResponseWithProcessedFilesError;
 }
 
 /**
  * Comprehensive metadata information about a file in storage.
- @property id? (`string`) - Unique identifier for the file.
+ @property id (`string`) - Unique identifier for the file.
     *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
- @property name? (`string`) - Name of the file including extension.
+ @property name (`string`) - Name of the file including extension.
     *    Example - `"profile-picture.jpg"`
- @property size? (`number`) - Size of the file in bytes.
+ @property size (`number`) - Size of the file in bytes.
     *    Example - `245678`
- @property bucketId? (`string`) - ID of the bucket containing the file.
+    *    Format - int64
+ @property bucketId (`string`) - ID of the bucket containing the file.
     *    Example - `"users-bucket"`
- @property etag? (`string`) - Entity tag for cache validation.
+ @property etag (`string`) - Entity tag for cache validation.
     *    Example - `"\"a1b2c3d4e5f6\""`
- @property createdAt? (`string`) - Timestamp when the file was created.
+ @property createdAt (`string`) - Timestamp when the file was created.
     *    Example - `"2023-01-15T12:34:56Z"`
     *    Format - date-time
- @property updatedAt? (`string`) - Timestamp when the file was last updated.
+ @property updatedAt (`string`) - Timestamp when the file was last updated.
     *    Example - `"2023-01-16T09:45:32Z"`
     *    Format - date-time
- @property isUploaded? (`boolean`) - Whether the file has been successfully uploaded.
+ @property isUploaded (`boolean`) - Whether the file has been successfully uploaded.
     *    Example - `true`
- @property mimeType? (`string`) - MIME type of the file.
+ @property mimeType (`string`) - MIME type of the file.
     *    Example - `"image/jpeg"`
  @property uploadedByUserId? (`string`) - ID of the user who uploaded the file.
     *    Example - `"abc123def456"`
@@ -81,49 +101,50 @@ export interface FileMetadata {
    * Unique identifier for the file.
    *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
    */
-  id?: string;
+  id: string;
   /**
    * Name of the file including extension.
    *    Example - `"profile-picture.jpg"`
    */
-  name?: string;
+  name: string;
   /**
    * Size of the file in bytes.
    *    Example - `245678`
+   *    Format - int64
    */
-  size?: number;
+  size: number;
   /**
    * ID of the bucket containing the file.
    *    Example - `"users-bucket"`
    */
-  bucketId?: string;
+  bucketId: string;
   /**
    * Entity tag for cache validation.
    *    Example - `"\"a1b2c3d4e5f6\""`
    */
-  etag?: string;
+  etag: string;
   /**
    * Timestamp when the file was created.
    *    Example - `"2023-01-15T12:34:56Z"`
    *    Format - date-time
    */
-  createdAt?: string;
+  createdAt: string;
   /**
    * Timestamp when the file was last updated.
    *    Example - `"2023-01-16T09:45:32Z"`
    *    Format - date-time
    */
-  updatedAt?: string;
+  updatedAt: string;
   /**
    * Whether the file has been successfully uploaded.
    *    Example - `true`
    */
-  isUploaded?: boolean;
+  isUploaded: boolean;
   /**
    * MIME type of the file.
    *    Example - `"image/jpeg"`
    */
-  mimeType?: string;
+  mimeType: string;
   /**
    * ID of the user who uploaded the file.
    *    Example - `"abc123def456"`
@@ -132,6 +153,77 @@ export interface FileMetadata {
   /**
    * Custom metadata associated with the file.
    *    Example - `{"alt":"Profile picture","category":"avatar"}`
+   */
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Basic information about a file in storage.
+ @property id (`string`) - Unique identifier for the file.
+    *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+ @property name (`string`) - Name of the file including extension.
+    *    Example - `"profile-picture.jpg"`
+ @property bucketId (`string`) - ID of the bucket containing the file.
+    *    Example - `"users-bucket"`
+ @property isUploaded (`boolean`) - Whether the file has been successfully uploaded.
+    *    Example - `true`*/
+export interface FileSummary {
+  /**
+   * Unique identifier for the file.
+   *    Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+   */
+  id: string;
+  /**
+   * Name of the file including extension.
+   *    Example - `"profile-picture.jpg"`
+   */
+  name: string;
+  /**
+   * ID of the bucket containing the file.
+   *    Example - `"users-bucket"`
+   */
+  bucketId: string;
+  /**
+   * Whether the file has been successfully uploaded.
+   *    Example - `true`
+   */
+  isUploaded: boolean;
+}
+
+/**
+ * Contains a presigned URL for direct file operations.
+ @property url (`string`) - The presigned URL for file operations.
+    *    Example - `"https://storage.example.com/files/abc123?signature=xyz"`
+ @property expiration (`number`) - The time in seconds until the URL expires.
+    *    Example - `3600`*/
+export interface PresignedURLResponse {
+  /**
+   * The presigned URL for file operations.
+   *    Example - `"https://storage.example.com/files/abc123?signature=xyz"`
+   */
+  url: string;
+  /**
+   * The time in seconds until the URL expires.
+   *    Example - `3600`
+   */
+  expiration: number;
+}
+
+/**
+ * Metadata that can be updated for an existing file.
+ @property name? (`string`) - New name to assign to the file.
+    *    Example - `"renamed-file.jpg"`
+ @property metadata? (`Record<string, unknown>`) - Updated custom metadata to associate with the file.
+    *    Example - `{"alt":"Updated image description","category":"profile"}`*/
+export interface UpdateFileMetadata {
+  /**
+   * New name to assign to the file.
+   *    Example - `"renamed-file.jpg"`
+   */
+  name?: string;
+  /**
+   * Updated custom metadata to associate with the file.
+   *    Example - `{"alt":"Updated image description","category":"profile"}`
    */
   metadata?: Record<string, unknown>;
 }
@@ -163,64 +255,27 @@ export interface UploadFileMetadata {
 }
 
 /**
- * Metadata that can be updated for an existing file.
- @property name? (`string`) - New name to assign to the file.
-    *    Example - `"renamed-file.jpg"`
- @property metadata? (`Record<string, unknown>`) - Updated custom metadata to associate with the file.
-    *    Example - `{"alt":"Updated image description","category":"profile"}`*/
-export interface UpdateFileMetadata {
+ * Contains version information about the storage service.
+ @property buildVersion (`string`) - The version number of the storage service build.
+    *    Example - `"1.2.3"`*/
+export interface VersionInformation {
   /**
-   * New name to assign to the file.
-   *    Example - `"renamed-file.jpg"`
+   * The version number of the storage service build.
+   *    Example - `"1.2.3"`
    */
-  name?: string;
-  /**
-   * Updated custom metadata to associate with the file.
-   *    Example - `{"alt":"Updated image description","category":"profile"}`
-   */
-  metadata?: Record<string, unknown>;
+  buildVersion: string;
 }
 
 /**
- * Contains a presigned URL for direct file operations.
- @property url? (`string`) - The presigned URL for file operations.
-    *    Example - `"https://storage.example.com/files/abc123?signature=xyz"`
- @property expiration? (`number`) - The time in seconds until the URL expires.
-    *    Example - `3600`*/
-export interface PresignedURLResponse {
-  /**
-   * The presigned URL for file operations.
-   *    Example - `"https://storage.example.com/files/abc123?signature=xyz"`
-   */
-  url?: string;
-  /**
-   * The time in seconds until the URL expires.
-   *    Example - `3600`
-   */
-  expiration?: number;
-}
-
-/**
- * Error details.
- @property message (`string`) - Human-readable error message.
-    *    Example - `"File not found"`*/
-export interface ErrorResponseError {
-  /**
-   * Human-readable error message.
-   *    Example - `"File not found"`
-   */
-  message: string;
-}
-
-/**
- * Error information returned by the API.
- @property error? (`ErrorResponseError`) - Error details.*/
-export interface ErrorResponse {
-  /**
-   * Error details.
-   */
-  error?: ErrorResponseError;
-}
+ * Output format for image files. Use 'auto' for content negotiation based on Accept header
+ */
+export type OutputImageFormat =
+  | "auto"
+  | "same"
+  | "jpeg"
+  | "webp"
+  | "png"
+  | "avif";
 
 /**
  * 
@@ -246,23 +301,13 @@ export interface UploadFilesBody {
 
 /**
  * 
- @property processedFiles? (`FileMetadata[]`) - List of successfully processed files with their metadata.*/
+ @property processedFiles (`FileMetadata[]`) - List of successfully processed files with their metadata.*/
 export interface UploadFilesResponse201 {
   /**
    * List of successfully processed files with their metadata.
    */
-  processedFiles?: FileMetadata[];
+  processedFiles: FileMetadata[];
 }
-
-/**
- *
- */
-export type HeadF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
-
-/**
- *
- */
-export type GetF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
 
 /**
  * 
@@ -283,12 +328,12 @@ export interface ReplaceFileBody {
 
 /**
  * 
- @property files? (`string[]`) - */
-export interface ListOrphanedFilesResponse200 {
+ @property metadata? (`FileSummary[]`) - */
+export interface DeleteBrokenMetadataResponse200 {
   /**
    *
    */
-  files?: string[];
+  metadata?: FileSummary[];
 }
 
 /**
@@ -314,16 +359,6 @@ export interface ListBrokenMetadataResponse200 {
 /**
  * 
  @property metadata? (`FileSummary[]`) - */
-export interface DeleteBrokenMetadataResponse200 {
-  /**
-   *
-   */
-  metadata?: FileSummary[];
-}
-
-/**
- * 
- @property metadata? (`FileSummary[]`) - */
 export interface ListFilesNotUploadedResponse200 {
   /**
    *
@@ -332,44 +367,15 @@ export interface ListFilesNotUploadedResponse200 {
 }
 
 /**
- * Parameters for the getFileMetadataHeaders method.
-    @property q? (number) - Image quality (1-100). Only applies to JPEG, WebP and PNG files
-  
-    @property h? (number) - Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-  
-    @property w? (number) - Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-  
-    @property b? (number) - Blur the image using this sigma value. Only applies to image files
-  
-    @property f? (HeadF) - Output format for image files. Use 'auto' for content negotiation based on Accept header
-  */
-export interface GetFileMetadataHeadersParams {
+ * 
+ @property files? (`string[]`) - */
+export interface ListOrphanedFilesResponse200 {
   /**
-   * Image quality (1-100). Only applies to JPEG, WebP and PNG files
-  
+   *
    */
-  q?: number;
-  /**
-   * Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
-  
-   */
-  h?: number;
-  /**
-   * Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
-  
-   */
-  w?: number;
-  /**
-   * Blur the image using this sigma value. Only applies to image files
-  
-   */
-  b?: number;
-  /**
-   * Output format for image files. Use 'auto' for content negotiation based on Accept header
-  
-   */
-  f?: HeadF;
+  files?: string[];
 }
+
 /**
  * Parameters for the getFile method.
     @property q? (number) - Image quality (1-100). Only applies to JPEG, WebP and PNG files
@@ -380,8 +386,9 @@ export interface GetFileMetadataHeadersParams {
   
     @property b? (number) - Blur the image using this sigma value. Only applies to image files
   
-    @property f? (GetF) - Output format for image files. Use 'auto' for content negotiation based on Accept header
-  */
+    @property f? (OutputImageFormat) - Output format for image files. Use 'auto' for content negotiation based on Accept header
+  
+    *    Output format for image files. Use 'auto' for content negotiation based on Accept header*/
 export interface GetFileParams {
   /**
    * Image quality (1-100). Only applies to JPEG, WebP and PNG files
@@ -406,34 +413,91 @@ export interface GetFileParams {
   /**
    * Output format for image files. Use 'auto' for content negotiation based on Accept header
   
+    *    Output format for image files. Use 'auto' for content negotiation based on Accept header
    */
-  f?: GetF;
+  f?: OutputImageFormat;
+}
+/**
+ * Parameters for the getFileMetadataHeaders method.
+    @property q? (number) - Image quality (1-100). Only applies to JPEG, WebP and PNG files
+  
+    @property h? (number) - Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+  
+    @property w? (number) - Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+  
+    @property b? (number) - Blur the image using this sigma value. Only applies to image files
+  
+    @property f? (OutputImageFormat) - Output format for image files. Use 'auto' for content negotiation based on Accept header
+  
+    *    Output format for image files. Use 'auto' for content negotiation based on Accept header*/
+export interface GetFileMetadataHeadersParams {
+  /**
+   * Image quality (1-100). Only applies to JPEG, WebP and PNG files
+  
+   */
+  q?: number;
+  /**
+   * Maximum height to resize image to while maintaining aspect ratio. Only applies to image files
+  
+   */
+  h?: number;
+  /**
+   * Maximum width to resize image to while maintaining aspect ratio. Only applies to image files
+  
+   */
+  w?: number;
+  /**
+   * Blur the image using this sigma value. Only applies to image files
+  
+   */
+  b?: number;
+  /**
+   * Output format for image files. Use 'auto' for content negotiation based on Accept header
+  
+    *    Output format for image files. Use 'auto' for content negotiation based on Accept header
+   */
+  f?: OutputImageFormat;
 }
 
 export interface Client {
   baseURL: string;
   pushChainFunction(chainFunction: ChainFunction): void;
   /**
-     Summary: Get service version information
-     Retrieves build and version information about the storage service. Useful for monitoring and debugging.
-
-     This method may return different T based on the response code:
-     - 200: VersionInformation
-     */
-  getVersion(options?: RequestInit): Promise<FetchResponse<VersionInformation>>;
-
-  /**
      Summary: Upload files
      Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
 
      This method may return different T based on the response code:
      - 201: UploadFilesResponse201
-     - 400: ErrorResponse
      */
   uploadFiles(
     body: UploadFilesBody,
     options?: RequestInit,
   ): Promise<FetchResponse<UploadFilesResponse201>>;
+
+  /**
+     Summary: Delete file
+     Permanently delete a file from storage. This removes both the file content and its associated metadata.
+
+     This method may return different T based on the response code:
+     - 204: void
+     */
+  deleteFile(id: string, options?: RequestInit): Promise<FetchResponse<void>>;
+
+  /**
+     Summary: Download file
+     Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
+
+     This method may return different T based on the response code:
+     - 200: void
+     - 206: void
+     - 304: void
+     - 412: void
+     */
+  getFile(
+    id: string,
+    params?: GetFileParams,
+    options?: RequestInit,
+  ): Promise<FetchResponse<Blob>>;
 
   /**
      Summary: Check file information
@@ -442,7 +506,6 @@ export interface Client {
      This method may return different T based on the response code:
      - 200: void
      - 304: void
-     - 400: void
      - 412: void
      */
   getFileMetadataHeaders(
@@ -450,22 +513,6 @@ export interface Client {
     params?: GetFileMetadataHeadersParams,
     options?: RequestInit,
   ): Promise<FetchResponse<void>>;
-
-  /**
-     Summary: Download file
-     Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
-
-     This method may return different T based on the response code:
-     - 200: void
-     - 304: void
-     - 400: void
-     - 412: void
-     */
-  getFile(
-    id: string,
-    params?: GetFileParams,
-    options?: RequestInit,
-  ): Promise<FetchResponse<Blob>>;
 
   /**
      Summary: Replace file
@@ -479,23 +526,12 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
 
      This method may return different T based on the response code:
      - 200: FileMetadata
-     - 400: ErrorResponse
      */
   replaceFile(
     id: string,
     body: ReplaceFileBody,
     options?: RequestInit,
   ): Promise<FetchResponse<FileMetadata>>;
-
-  /**
-     Summary: Delete file
-     Permanently delete a file from storage. This removes both the file content and its associated metadata.
-
-     This method may return different T based on the response code:
-     - 204: void
-     - 400: ErrorResponse
-     */
-  deleteFile(id: string, options?: RequestInit): Promise<FetchResponse<void>>;
 
   /**
      Summary: Retrieve presigned URL to retrieve the file
@@ -505,24 +541,22 @@ determined by bucket configuration
 
      This method may return different T based on the response code:
      - 200: PresignedURLResponse
-     - 400: ErrorResponse
      */
-  getPresignedURL(
+  getFilePresignedURL(
     id: string,
     options?: RequestInit,
   ): Promise<FetchResponse<PresignedURLResponse>>;
 
   /**
-     Summary: Lists orphaned files
-     Orphaned files are files that are present in the storage but have no associated metadata. This is an admin operation that requires the Hasura admin secret.
+     Summary: Delete broken metadata
+     Broken metadata is defined as metadata that has isUploaded = true but there is no file in the storage matching it. This is an admin operation that requires the Hasura admin secret.
 
      This method may return different T based on the response code:
-     - 200: ListOrphanedFilesResponse200
-     - 400: ErrorResponse
+     - 200: DeleteBrokenMetadataResponse200
      */
-  listOrphanedFiles(
+  deleteBrokenMetadata(
     options?: RequestInit,
-  ): Promise<FetchResponse<ListOrphanedFilesResponse200>>;
+  ): Promise<FetchResponse<DeleteBrokenMetadataResponse200>>;
 
   /**
      Summary: Deletes orphaned files
@@ -530,7 +564,6 @@ determined by bucket configuration
 
      This method may return different T based on the response code:
      - 200: DeleteOrphanedFilesResponse200
-     - 400: ErrorResponse
      */
   deleteOrphanedFiles(
     options?: RequestInit,
@@ -542,23 +575,10 @@ determined by bucket configuration
 
      This method may return different T based on the response code:
      - 200: ListBrokenMetadataResponse200
-     - 400: ErrorResponse
      */
   listBrokenMetadata(
     options?: RequestInit,
   ): Promise<FetchResponse<ListBrokenMetadataResponse200>>;
-
-  /**
-     Summary: Delete broken metadata
-     Broken metadata is defined as metadata that has isUploaded = true but there is no file in the storage matching it. This is an admin operation that requires the Hasura admin secret.
-
-     This method may return different T based on the response code:
-     - 200: DeleteBrokenMetadataResponse200
-     - 400: ErrorResponse
-     */
-  deleteBrokenMetadata(
-    options?: RequestInit,
-  ): Promise<FetchResponse<DeleteBrokenMetadataResponse200>>;
 
   /**
      Summary: Lists files that haven't been uploaded
@@ -566,11 +586,30 @@ determined by bucket configuration
 
      This method may return different T based on the response code:
      - 200: ListFilesNotUploadedResponse200
-     - 400: ErrorResponse
      */
   listFilesNotUploaded(
     options?: RequestInit,
   ): Promise<FetchResponse<ListFilesNotUploadedResponse200>>;
+
+  /**
+     Summary: Lists orphaned files
+     Orphaned files are files that are present in the storage but have no associated metadata. This is an admin operation that requires the Hasura admin secret.
+
+     This method may return different T based on the response code:
+     - 200: ListOrphanedFilesResponse200
+     */
+  listOrphanedFiles(
+    options?: RequestInit,
+  ): Promise<FetchResponse<ListOrphanedFilesResponse200>>;
+
+  /**
+     Summary: Get service version information
+     Retrieves build and version information about the storage service. Useful for monitoring and debugging.
+
+     This method may return different T based on the response code:
+     - 200: VersionInformation
+     */
+  getVersion(options?: RequestInit): Promise<FetchResponse<VersionInformation>>;
 }
 
 export const createAPIClient = (
@@ -583,50 +622,22 @@ export const createAPIClient = (
     chainFunctions.push(chainFunction);
     fetch = createEnhancedFetch(chainFunctions);
   };
-  const getVersion = async (
-    options?: RequestInit,
-  ): Promise<FetchResponse<VersionInformation>> => {
-    const url = baseURL + `/version`;
-    const res = await fetch(url, {
-      ...options,
-      method: "GET",
-      headers: {
-        ...options?.headers,
-      },
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: VersionInformation = responseBody
-      ? JSON.parse(responseBody)
-      : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<VersionInformation>;
-  };
-
   const uploadFiles = async (
     body: UploadFilesBody,
     options?: RequestInit,
   ): Promise<FetchResponse<UploadFilesResponse201>> => {
-    const url = baseURL + `/files/`;
+    const url = baseURL + `/files`;
     const formData = new FormData();
     if (body["bucket-id"] !== undefined) {
       formData.append("bucket-id", body["bucket-id"]);
     }
     if (body["metadata[]"] !== undefined) {
       body["metadata[]"].forEach((value) =>
-        formData.append("metadata[]", JSON.stringify(value)),
+        formData.append(
+          "metadata[]",
+          new Blob([JSON.stringify(value)], { type: "application/json" }),
+          "",
+        ),
       );
     }
     if (body["file[]"] !== undefined) {
@@ -659,30 +670,14 @@ export const createAPIClient = (
     } as FetchResponse<UploadFilesResponse201>;
   };
 
-  const getFileMetadataHeaders = async (
+  const deleteFile = async (
     id: string,
-    params?: GetFileMetadataHeadersParams,
     options?: RequestInit,
   ): Promise<FetchResponse<void>> => {
-    const encodedParameters =
-      params &&
-      Object.entries(params)
-        .map(([key, value]) => {
-          const stringValue = Array.isArray(value)
-            ? value.join(",")
-            : typeof value === "object"
-              ? JSON.stringify(value)
-              : (value as string);
-          return `${key}=${encodeURIComponent(stringValue)}`;
-        })
-        .join("&");
-
-    const url = encodedParameters
-      ? baseURL + `/files/${id}?${encodedParameters}`
-      : baseURL + `/files/${id}`;
+    const url = baseURL + `/files/${id}`;
     const res = await fetch(url, {
       ...options,
-      method: "HEAD",
+      method: "DELETE",
       headers: {
         ...options?.headers,
       },
@@ -747,6 +742,50 @@ export const createAPIClient = (
     } as FetchResponse<Blob>;
   };
 
+  const getFileMetadataHeaders = async (
+    id: string,
+    params?: GetFileMetadataHeadersParams,
+    options?: RequestInit,
+  ): Promise<FetchResponse<void>> => {
+    const encodedParameters =
+      params &&
+      Object.entries(params)
+        .map(([key, value]) => {
+          const stringValue = Array.isArray(value)
+            ? value.join(",")
+            : typeof value === "object"
+              ? JSON.stringify(value)
+              : (value as string);
+          return `${key}=${encodeURIComponent(stringValue)}`;
+        })
+        .join("&");
+
+    const url = encodedParameters
+      ? baseURL + `/files/${id}?${encodedParameters}`
+      : baseURL + `/files/${id}`;
+    const res = await fetch(url, {
+      ...options,
+      method: "HEAD",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const payload: void = undefined;
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<void>;
+  };
+
   const replaceFile = async (
     id: string,
     body: ReplaceFileBody,
@@ -755,7 +794,13 @@ export const createAPIClient = (
     const url = baseURL + `/files/${id}`;
     const formData = new FormData();
     if (body["metadata"] !== undefined) {
-      formData.append("metadata", JSON.stringify(body["metadata"]));
+      formData.append(
+        "metadata",
+        new Blob([JSON.stringify(body["metadata"])], {
+          type: "application/json",
+        }),
+        "",
+      );
     }
     if (body["file"] !== undefined) {
       formData.append("file", body["file"]);
@@ -785,35 +830,7 @@ export const createAPIClient = (
     } as FetchResponse<FileMetadata>;
   };
 
-  const deleteFile = async (
-    id: string,
-    options?: RequestInit,
-  ): Promise<FetchResponse<void>> => {
-    const url = baseURL + `/files/${id}`;
-    const res = await fetch(url, {
-      ...options,
-      method: "DELETE",
-      headers: {
-        ...options?.headers,
-      },
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const payload: void = undefined;
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<void>;
-  };
-
-  const getPresignedURL = async (
+  const getFilePresignedURL = async (
     id: string,
     options?: RequestInit,
   ): Promise<FetchResponse<PresignedURLResponse>> => {
@@ -846,10 +863,10 @@ export const createAPIClient = (
     } as FetchResponse<PresignedURLResponse>;
   };
 
-  const listOrphanedFiles = async (
+  const deleteBrokenMetadata = async (
     options?: RequestInit,
-  ): Promise<FetchResponse<ListOrphanedFilesResponse200>> => {
-    const url = baseURL + `/ops/list-orphans`;
+  ): Promise<FetchResponse<DeleteBrokenMetadataResponse200>> => {
+    const url = baseURL + `/ops/delete-broken-metadata`;
     const res = await fetch(url, {
       ...options,
       method: "POST",
@@ -867,7 +884,7 @@ export const createAPIClient = (
     const responseBody = [204, 205, 304].includes(res.status)
       ? null
       : await res.text();
-    const payload: ListOrphanedFilesResponse200 = responseBody
+    const payload: DeleteBrokenMetadataResponse200 = responseBody
       ? JSON.parse(responseBody)
       : {};
 
@@ -875,7 +892,7 @@ export const createAPIClient = (
       body: payload,
       status: res.status,
       headers: res.headers,
-    } as FetchResponse<ListOrphanedFilesResponse200>;
+    } as FetchResponse<DeleteBrokenMetadataResponse200>;
   };
 
   const deleteOrphanedFiles = async (
@@ -942,38 +959,6 @@ export const createAPIClient = (
     } as FetchResponse<ListBrokenMetadataResponse200>;
   };
 
-  const deleteBrokenMetadata = async (
-    options?: RequestInit,
-  ): Promise<FetchResponse<DeleteBrokenMetadataResponse200>> => {
-    const url = baseURL + `/ops/delete-broken-metadata`;
-    const res = await fetch(url, {
-      ...options,
-      method: "POST",
-      headers: {
-        ...options?.headers,
-      },
-    });
-
-    if (res.status >= 300) {
-      const responseBody = [412].includes(res.status) ? null : await res.text();
-      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
-      throw new FetchError(payload, res.status, res.headers);
-    }
-
-    const responseBody = [204, 205, 304].includes(res.status)
-      ? null
-      : await res.text();
-    const payload: DeleteBrokenMetadataResponse200 = responseBody
-      ? JSON.parse(responseBody)
-      : {};
-
-    return {
-      body: payload,
-      status: res.status,
-      headers: res.headers,
-    } as FetchResponse<DeleteBrokenMetadataResponse200>;
-  };
-
   const listFilesNotUploaded = async (
     options?: RequestInit,
   ): Promise<FetchResponse<ListFilesNotUploadedResponse200>> => {
@@ -1006,20 +991,84 @@ export const createAPIClient = (
     } as FetchResponse<ListFilesNotUploadedResponse200>;
   };
 
+  const listOrphanedFiles = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<ListOrphanedFilesResponse200>> => {
+    const url = baseURL + `/ops/list-orphans`;
+    const res = await fetch(url, {
+      ...options,
+      method: "POST",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: ListOrphanedFilesResponse200 = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<ListOrphanedFilesResponse200>;
+  };
+
+  const getVersion = async (
+    options?: RequestInit,
+  ): Promise<FetchResponse<VersionInformation>> => {
+    const url = baseURL + `/version`;
+    const res = await fetch(url, {
+      ...options,
+      method: "GET",
+      headers: {
+        ...options?.headers,
+      },
+    });
+
+    if (res.status >= 300) {
+      const responseBody = [412].includes(res.status) ? null : await res.text();
+      const payload: unknown = responseBody ? JSON.parse(responseBody) : {};
+      throw new FetchError(payload, res.status, res.headers);
+    }
+
+    const responseBody = [204, 205, 304].includes(res.status)
+      ? null
+      : await res.text();
+    const payload: VersionInformation = responseBody
+      ? JSON.parse(responseBody)
+      : {};
+
+    return {
+      body: payload,
+      status: res.status,
+      headers: res.headers,
+    } as FetchResponse<VersionInformation>;
+  };
+
   return {
     baseURL,
     pushChainFunction,
-    getVersion,
     uploadFiles,
-    getFileMetadataHeaders,
-    getFile,
-    replaceFile,
     deleteFile,
-    getPresignedURL,
-    listOrphanedFiles,
+    getFile,
+    getFileMetadataHeaders,
+    replaceFile,
+    getFilePresignedURL,
+    deleteBrokenMetadata,
     deleteOrphanedFiles,
     listBrokenMetadata,
-    deleteBrokenMetadata,
     listFilesNotUploaded,
+    listOrphanedFiles,
+    getVersion,
   };
 };

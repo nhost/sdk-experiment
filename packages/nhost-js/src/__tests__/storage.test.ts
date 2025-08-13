@@ -1,4 +1,4 @@
-import { describe, beforeAll, it, expect } from "@jest/globals";
+import { describe, it, expect, beforeAll } from "@jest/globals";
 import { createClient } from "@nhost/nhost-js";
 import { type ErrorResponse } from "@nhost/nhost-js/storage";
 import { type FetchError } from "@nhost/nhost-js/fetch";
@@ -36,7 +36,7 @@ describe("Test Storage API", () => {
 
     expect(resp.status).toBe(200);
     expect(resp.body).toBeDefined();
-    expect(resp.body.buildVersion).toBe("0.7.2");
+    expect(resp.body.buildVersion).toBe("0.8.0-beta3");
   });
 
   it("should upload a file", async () => {
@@ -114,10 +114,9 @@ describe("Test Storage API", () => {
       expect(err).toBeDefined();
       expect(err.status).toBe(400);
       expect(err.body).toBeDefined();
-      expect(err.body.error?.message).toBe(
-        "file[] not found in Multipart form",
+      expect(err.body.error).toBe(
+        'error in openapi3filter.RequestError: request body has an error: doesn\'t match schema: Error at "/file[]": property "file[]" is missing',
       );
-      expect(err.headers.get("content-length")).toBe("58");
       expect(err.headers.get("content-type")).toBe(
         "application/json; charset=utf-8",
       );
@@ -136,7 +135,7 @@ describe("Test Storage API", () => {
     expect(resp.headers.get("last-modified")).toBeDefined();
     expect(resp.headers.get("surrogate-key")).toBeDefined();
     expect(resp.headers.get("cache-control")).toBe("max-age=3600");
-    expect(resp.headers.get("surrogate-control")).toBe("max-age=604800");
+    expect(resp.headers.get("surrogate-control")).toBe("max-age=3600");
     expect(resp.headers.get("content-length")).toBe("5");
     expect(resp.headers.get("date")).toBeDefined();
 
@@ -162,7 +161,7 @@ describe("Test Storage API", () => {
       expect(err.headers).toBeDefined();
       expect(err.headers.get("etag")).toBe(etag);
       expect(err.headers.get("cache-control")).toBe("max-age=3600");
-      expect(err.headers.get("surrogate-control")).toBe("max-age=604800");
+      expect(err.headers.get("surrogate-control")).toBe("max-age=3600");
       expect(err.headers.get("date")).toBeDefined();
       return;
     }
@@ -185,7 +184,7 @@ describe("Test Storage API", () => {
     expect(resp.headers.get("last-modified")).toBeDefined();
     expect(resp.headers.get("surrogate-key")).toBeDefined();
     expect(resp.headers.get("cache-control")).toBe("max-age=3600");
-    expect(resp.headers.get("surrogate-control")).toBe("max-age=604800");
+    expect(resp.headers.get("surrogate-control")).toBe("max-age=3600");
     expect(resp.headers.get("content-length")).toBe("5");
     expect(resp.headers.get("date")).toBeDefined();
   });
@@ -200,7 +199,7 @@ describe("Test Storage API", () => {
     expect(resp.headers.get("last-modified")).toBeDefined();
     expect(resp.headers.get("surrogate-key")).toBeDefined();
     expect(resp.headers.get("cache-control")).toBe("max-age=3600");
-    expect(resp.headers.get("surrogate-control")).toBe("max-age=604800");
+    expect(resp.headers.get("surrogate-control")).toBe("max-age=3600");
     expect(resp.headers.get("content-length")).toBe("5");
     expect(resp.headers.get("date")).toBeDefined();
     expect(await resp.body.text()).toBe("test1");
@@ -225,7 +224,7 @@ describe("Test Storage API", () => {
       expect(err.headers).toBeDefined();
       expect(err.headers.get("etag")).toBe(etag);
       expect(err.headers.get("cache-control")).toBe("max-age=3600");
-      expect(err.headers.get("surrogate-control")).toBe("max-age=604800");
+      expect(err.headers.get("surrogate-control")).toBe("max-age=3600");
       expect(err.headers.get("date")).toBeDefined();
     }
   });

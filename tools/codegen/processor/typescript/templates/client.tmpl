@@ -134,7 +134,11 @@ export const createAPIClient = (
         {{- if eq .Type.Item.Kind "scalar" }}
           formData.append("{{ .Name }}", value),
         {{- else if eq .Type.Item.Kind "object" }}
-          formData.append("{{ .Name }}", JSON.stringify(value)),
+          formData.append(
+            "{{ .Name }}",
+            new Blob([JSON.stringify(value)], { type: "application/json" }),
+            "",
+          ),
         {{- else }}
           TODO {{ .Type.Kind }} {{ .Type.Schema.Schema.Type }}
         {{- end }}
@@ -142,7 +146,11 @@ export const createAPIClient = (
     }
     {{- else if eq .Type.Kind "object" }}
     if (body["{{ .Name }}"] !== undefined) {
-      formData.append("{{ .Name }}", JSON.stringify(body["{{ .Name }}"]));
+      formData.append(
+        "{{ .Name }}",
+        new Blob([JSON.stringify(body["{{ .Name }}"])], { type: "application/json" }),
+        "",
+      );
     }
     {{- else }}
     TODO {{ .Type.Kind }} {{ .Type.Schema.Schema.Type }}

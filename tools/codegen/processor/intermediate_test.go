@@ -32,6 +32,7 @@ func getModel(filepath string) (*libopenapi.DocumentModel[v3.Document], error) {
 		for i := range errorsList {
 			wrappedError = errors.Join(wrappedError, errorsList[i])
 		}
+
 		return nil, fmt.Errorf("cannot create v3 model from document: %w", wrappedError)
 	}
 
@@ -49,6 +50,9 @@ func TestInterMediateRepresentationRender(t *testing.T) {
 		},
 		{
 			name: "methods_ref.yaml",
+		},
+		{
+			name: "content.yaml",
 		},
 	}
 

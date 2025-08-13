@@ -79,30 +79,30 @@ import { createClient } from "@nhost/nhost-js";
 import { type ErrorResponse } from "@nhost/nhost-js/storage";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 
-const nhost = createClient({
-  subdomain,
-  region,
-});
-
-try {
-  await nhost.storage.uploadFiles({
-    "file[]": [new File(["test1"], "file-1", { type: "text/plain" })],
+  const nhost = createClient({
+    subdomain,
+    region,
   });
-} catch (error) {
-  const err = error as FetchError<ErrorResponse>;
-  console.log("Error:", err);
-  // Error: {
-  //   body: { error: { message: 'you are not authorized' } },
-  //   status: 403,
-  //   headers: {
-  //     'content-length': '46',
-  //     'content-type': 'application/json; charset=utf-8',
-  //     date: 'Mon, 12 May 2025 08:18:52 GMT'
-  //   }
-  // }
 
-  // error handling...
-}
+  try {
+    await nhost.storage.uploadFiles({
+      "file[]": [new File(["test1"], "file-1", { type: "text/plain" })],
+    });
+  } catch (error) {
+    const err = error as FetchError<ErrorResponse>;
+    console.log("Error:", err);
+    // Error: {
+    //   body: { error: { message: 'you are not authorized' } },
+    //   status: 403,
+    //   headers: {
+    //     'content-length': '46',
+    //     'content-type': 'application/json; charset=utf-8',
+    //     date: 'Mon, 12 May 2025 08:18:52 GMT'
+    //   }
+    // }
+
+    // error handling...
+      processedFiles: [],
 ```
 
 This type extends the standard `Error` type so if you want to just log the error you can
@@ -113,24 +113,23 @@ import { createClient } from "@nhost/nhost-js";
 import { type ErrorResponse } from "@nhost/nhost-js/storage";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 
-const nhost = createClient({
-  subdomain,
-  region,
-});
+  const region = "local";
 
-try {
-  await nhost.storage.uploadFiles({
-    "file[]": [new File(["test1"], "file-1", { type: "text/plain" })],
+  const nhost = createClient({
+    subdomain,
+    region,
   });
-} catch (error) {
-  if (!(error instanceof Error)) {
-    throw error; // Re-throw if it's not an Error
-  }
 
-  console.log("Error:", error.message);
-  // Error: you are not authorized
-  // error handling...
-}
+  try {
+    await nhost.storage.uploadFiles({
+
+    expect(true).toBe(false); // This should not be reached
+  } catch (error) {
+    if (!(error instanceof Error)) {
+      throw error; // Re-throw if it's not an Error
+    }
+
+    console.log("Error:", error.message);
 ```
 
 ## Interfaces
@@ -159,7 +158,6 @@ Broken metadata is defined as metadata that has isUploaded = true but there is n
 This method may return different T based on the response code:
 
 - 200: DeleteBrokenMetadataResponse200
-- 400: ErrorResponse
 
 ###### Parameters
 
@@ -183,7 +181,6 @@ Permanently delete a file from storage. This removes both the file content and i
 This method may return different T based on the response code:
 
 - 204: void
-- 400: ErrorResponse
 
 ###### Parameters
 
@@ -208,7 +205,6 @@ Orphaned files are files that are present in the storage but have no associated 
 This method may return different T based on the response code:
 
 - 200: DeleteOrphanedFilesResponse200
-- 400: ErrorResponse
 
 ###### Parameters
 
@@ -235,8 +231,8 @@ Retrieve and download the complete file content. Supports conditional requests, 
 This method may return different T based on the response code:
 
 - 200: void
+- 206: void
 - 304: void
-- 400: void
 - 412: void
 
 ###### Parameters
@@ -267,7 +263,6 @@ This method may return different T based on the response code:
 
 - 200: void
 - 304: void
-- 400: void
 - 412: void
 
 ###### Parameters
@@ -282,10 +277,10 @@ This method may return different T based on the response code:
 
 `Promise`&lt;[`FetchResponse`](fetch#fetchresponse)&lt;`void`&gt;&gt;
 
-##### getPresignedURL()
+##### getFilePresignedURL()
 
 ```ts
-getPresignedURL(id: string, options?: RequestInit): Promise<FetchResponse<PresignedURLResponse>>;
+getFilePresignedURL(id: string, options?: RequestInit): Promise<FetchResponse<PresignedURLResponse>>;
 ```
 
 Summary: Retrieve presigned URL to retrieve the file
@@ -295,7 +290,6 @@ determined by bucket configuration
 This method may return different T based on the response code:
 
 - 200: PresignedURLResponse
-- 400: ErrorResponse
 
 ###### Parameters
 
@@ -343,7 +337,6 @@ Broken metadata is defined as metadata that has isUploaded = true but there is n
 This method may return different T based on the response code:
 
 - 200: ListBrokenMetadataResponse200
-- 400: ErrorResponse
 
 ###### Parameters
 
@@ -367,7 +360,6 @@ That is, metadata that has isUploaded = false. This is an admin operation that r
 This method may return different T based on the response code:
 
 - 200: ListFilesNotUploadedResponse200
-- 400: ErrorResponse
 
 ###### Parameters
 
@@ -391,7 +383,6 @@ Orphaned files are files that are present in the storage but have no associated 
 This method may return different T based on the response code:
 
 - 200: ListOrphanedFilesResponse200
-- 400: ErrorResponse
 
 ###### Parameters
 
@@ -440,7 +431,6 @@ Each step is atomic, but if a step fails, previous steps will not be automatical
 This method may return different T based on the response code:
 
 - 200: FileMetadata
-- 400: ErrorResponse
 
 ###### Parameters
 
@@ -466,7 +456,6 @@ Upload one or more files to a specified bucket. Supports batch uploading with op
 This method may return different T based on the response code:
 
 - 201: UploadFilesResponse201
-- 400: ErrorResponse
 
 ###### Parameters
 
@@ -527,6 +516,64 @@ Error details.
 
 #### Properties
 
+##### data?
+
+```ts
+optional data: Record<string, unknown>;
+```
+
+Additional data related to the error, if any.
+
+##### message
+
+```ts
+message: string;
+```
+
+(`string`) - Human-readable error message.
+
+- Example - `"File not found"`
+
+---
+
+### ErrorResponseWithProcessedFiles
+
+Error information returned by the API.
+
+#### Properties
+
+##### error?
+
+```ts
+optional error: ErrorResponseWithProcessedFilesError;
+```
+
+Error details.
+
+##### processedFiles?
+
+```ts
+optional processedFiles: FileMetadata[];
+```
+
+List of files that were successfully processed before the error occurred.
+
+---
+
+### ErrorResponseWithProcessedFilesError
+
+Error details.
+
+#### Properties
+
+##### data?
+
+```ts
+optional data: Record<string, unknown>;
+```
+
+Additional data related to the error, if any.
+
 ##### message
 
 ```ts
@@ -545,51 +592,56 @@ Comprehensive metadata information about a file in storage.
 
 #### Properties
 
-##### bucketId?
+##### bucketId
 
 ```ts
-optional bucketId: string;
+bucketId: string;
 ```
 
-ID of the bucket containing the file.
-Example - `"users-bucket"`
+(`string`) - ID of the bucket containing the file.
 
-##### createdAt?
+- Example - `"users-bucket"`
+
+##### createdAt
 
 ```ts
-optional createdAt: string;
+createdAt: string;
 ```
 
-Timestamp when the file was created.
-Example - `"2023-01-15T12:34:56Z"`
-Format - date-time
+(`string`) - Timestamp when the file was created.
 
-##### etag?
+- Example - `"2023-01-15T12:34:56Z"`
+- Format - date-time
+
+##### etag
 
 ```ts
-optional etag: string;
+etag: string;
 ```
 
-Entity tag for cache validation.
-Example - `"\"a1b2c3d4e5f6\""`
+(`string`) - Entity tag for cache validation.
 
-##### id?
+- Example - `"\"a1b2c3d4e5f6\""`
+
+##### id
 
 ```ts
-optional id: string;
+id: string;
 ```
 
-Unique identifier for the file.
-Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+(`string`) - Unique identifier for the file.
 
-##### isUploaded?
+- Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+
+##### isUploaded
 
 ```ts
-optional isUploaded: boolean;
+isUploaded: boolean;
 ```
 
-Whether the file has been successfully uploaded.
-Example - `true`
+(`boolean`) - Whether the file has been successfully uploaded.
+
+- Example - `true`
 
 ##### metadata?
 
@@ -600,42 +652,47 @@ optional metadata: Record<string, unknown>;
 Custom metadata associated with the file.
 Example - `{"alt":"Profile picture","category":"avatar"}`
 
-##### mimeType?
+##### mimeType
 
 ```ts
-optional mimeType: string;
+mimeType: string;
 ```
 
-MIME type of the file.
-Example - `"image/jpeg"`
+(`string`) - MIME type of the file.
 
-##### name?
+- Example - `"image/jpeg"`
+
+##### name
 
 ```ts
-optional name: string;
+name: string;
 ```
 
-Name of the file including extension.
-Example - `"profile-picture.jpg"`
+(`string`) - Name of the file including extension.
 
-##### size?
+- Example - `"profile-picture.jpg"`
+
+##### size
 
 ```ts
-optional size: number;
+size: number;
 ```
 
-Size of the file in bytes.
-Example - `245678`
+(`number`) - Size of the file in bytes.
 
-##### updatedAt?
+- Example - `245678`
+- Format - int64
+
+##### updatedAt
 
 ```ts
-optional updatedAt: string;
+updatedAt: string;
 ```
 
-Timestamp when the file was last updated.
-Example - `"2023-01-16T09:45:32Z"`
-Format - date-time
+(`string`) - Timestamp when the file was last updated.
+
+- Example - `"2023-01-16T09:45:32Z"`
+- Format - date-time
 
 ##### uploadedByUserId?
 
@@ -654,41 +711,45 @@ Basic information about a file in storage.
 
 #### Properties
 
-##### bucketId?
+##### bucketId
 
 ```ts
-optional bucketId: string;
+bucketId: string;
 ```
 
-ID of the bucket containing the file.
-Example - `"users-bucket"`
+(`string`) - ID of the bucket containing the file.
 
-##### id?
+- Example - `"users-bucket"`
+
+##### id
 
 ```ts
-optional id: string;
+id: string;
 ```
 
-Unique identifier for the file.
-Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+(`string`) - Unique identifier for the file.
 
-##### isUploaded?
+- Example - `"d5e76ceb-77a2-4153-b7da-1f7c115b2ff2"`
+
+##### isUploaded
 
 ```ts
-optional isUploaded: boolean;
+isUploaded: boolean;
 ```
 
-Whether the file has been successfully uploaded.
-Example - `true`
+(`boolean`) - Whether the file has been successfully uploaded.
 
-##### name?
+- Example - `true`
+
+##### name
 
 ```ts
-optional name: string;
+name: string;
 ```
 
-Name of the file including extension.
-Example - `"profile-picture.jpg"`
+(`string`) - Name of the file including extension.
+
+- Example - `"profile-picture.jpg"`
 
 ---
 
@@ -709,10 +770,12 @@ Blur the image using this sigma value. Only applies to image files
 ##### f?
 
 ```ts
-optional f: HeadF;
+optional f: OutputImageFormat;
 ```
 
 Output format for image files. Use 'auto' for content negotiation based on Accept header
+
+- Output format for image files. Use 'auto' for content negotiation based on Accept header
 
 ##### h?
 
@@ -757,10 +820,12 @@ Blur the image using this sigma value. Only applies to image files
 ##### f?
 
 ```ts
-optional f: GetF;
+optional f: OutputImageFormat;
 ```
 
 Output format for image files. Use 'auto' for content negotiation based on Accept header
+
+- Output format for image files. Use 'auto' for content negotiation based on Accept header
 
 ##### h?
 
@@ -830,23 +895,25 @@ Contains a presigned URL for direct file operations.
 
 #### Properties
 
-##### expiration?
+##### expiration
 
 ```ts
-optional expiration: number;
+expiration: number;
 ```
 
-The time in seconds until the URL expires.
-Example - `3600`
+(`number`) - The time in seconds until the URL expires.
 
-##### url?
+- Example - `3600`
+
+##### url
 
 ```ts
-optional url: string;
+url: string;
 ```
 
-The presigned URL for file operations.
-Example - `"https://storage.example.com/files/abc123?signature=xyz"`
+(`string`) - The presigned URL for file operations.
+
+- Example - `"https://storage.example.com/files/abc123?signature=xyz"`
 
 ---
 
@@ -969,13 +1036,13 @@ Optional custom metadata for each uploaded file. Must match the order of the fil
 
 #### Properties
 
-##### processedFiles?
+##### processedFiles
 
 ```ts
-optional processedFiles: FileMetadata[];
+processedFiles: FileMetadata[];
 ```
 
-List of successfully processed files with their metadata.
+(`FileMetadata[]`) - List of successfully processed files with their metadata.
 
 ---
 
@@ -985,30 +1052,35 @@ Contains version information about the storage service.
 
 #### Properties
 
-##### buildVersion?
+##### buildVersion
 
 ```ts
-optional buildVersion: string;
+buildVersion: string;
 ```
 
-The version number of the storage service build.
-Example - `"1.2.3"`
+(`string`) - The version number of the storage service build.
+
+- Example - `"1.2.3"`
 
 ## Type Aliases
 
-### GetF
+### OutputImageFormat
 
 ```ts
-type GetF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
+type OutputImageFormat = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
 ```
+
+Output format for image files. Use 'auto' for content negotiation based on Accept header
 
 ---
 
-### HeadF
+### RFC2822Date
 
 ```ts
-type HeadF = "auto" | "same" | "jpeg" | "webp" | "png" | "avif";
+type RFC2822Date = string;
 ```
+
+Date in RFC 2822 format
 
 ## Functions
 
