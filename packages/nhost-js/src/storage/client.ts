@@ -6,6 +6,11 @@ import { FetchError, createEnhancedFetch } from "../fetch";
 import type { ChainFunction, FetchResponse } from "../fetch";
 
 /**
+ * Date in RFC 2822 format
+ */
+export type RFC2822Date = string;
+
+/**
  * Error details.
  @property message (`string`) - Human-readable error message.
     *    Example - `"File not found"`
