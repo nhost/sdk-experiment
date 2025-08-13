@@ -12,39 +12,26 @@
         </div>
 
         <div v-else-if="status === 'success'">
-          <p class="mb-4 text-green-500 font-bold">
-            ✓ Successfully verified!
-          </p>
+          <p class="mb-4 text-green-500 font-bold">✓ Successfully verified!</p>
           <p>You'll be redirected to your profile page shortly...</p>
         </div>
 
         <div v-else-if="status === 'error'">
-          <p class="mb-4 text-red-500 font-semibold">
-            Verification failed
-          </p>
+          <p class="mb-4 text-red-500 font-semibold">Verification failed</p>
           <p class="mb-4">{{ error }}</p>
 
-          <div 
-            v-if="Object.keys(urlParams).length > 0" 
+          <div
+            v-if="Object.keys(urlParams).length > 0"
             class="mb-4 p-4 bg-gray-100 rounded-md text-left overflow-auto max-h-48"
           >
             <p class="font-semibold mb-2">URL Parameters:</p>
-            <div 
-              v-for="[key, value] in Object.entries(urlParams)" 
-              :key="key" 
-              class="mb-1"
-            >
+            <div v-for="[key, value] in Object.entries(urlParams)" :key="key" class="mb-1">
               <span class="font-mono text-blue-600">{{ key }}:</span>
               <span class="font-mono"> {{ value }}</span>
             </div>
           </div>
 
-          <button
-            @click="router.push('/signin')"
-            class="btn btn-primary"
-          >
-            Back to Sign In
-          </button>
+          <button @click="router.push('/signin')" class="btn btn-primary">Back to Sign In</button>
         </div>
       </div>
     </div>
@@ -191,7 +178,9 @@ async function processToken(refreshToken: string, params: URLSearchParams): Prom
 }
 
 .font-mono {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
 }
 
 .text-blue-600 {

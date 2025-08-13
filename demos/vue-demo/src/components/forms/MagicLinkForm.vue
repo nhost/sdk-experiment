@@ -1,28 +1,17 @@
 <template>
   <div v-if="success" class="text-center">
     <p class="mb-4">Magic link sent! Check your email to sign in.</p>
-    <button @click="success = false" class="btn btn-secondary">
-      Try again
-    </button>
+    <button @click="success = false" class="btn btn-secondary">Try again</button>
   </div>
   <form v-else @submit.prevent="handleSubmit" class="space-y-5">
     <div>
       <label for="magic-email">Email</label>
-      <input
-        id="magic-email"
-        type="email"
-        v-model="email"
-        required
-      />
+      <input id="magic-email" type="email" v-model="email" required />
     </div>
 
     <div v-if="error" class="alert alert-error">{{ error }}</div>
 
-    <button
-      type="submit"
-      class="btn btn-primary w-full"
-      :disabled="isLoading"
-    >
+    <button type="submit" class="btn btn-primary w-full" :disabled="isLoading">
       {{ isLoading ? 'Sending...' : buttonLabel }}
     </button>
   </form>
@@ -39,7 +28,7 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  buttonLabel: 'Send Magic Link'
+  buttonLabel: 'Send Magic Link',
 })
 
 const { nhost } = useAuth()

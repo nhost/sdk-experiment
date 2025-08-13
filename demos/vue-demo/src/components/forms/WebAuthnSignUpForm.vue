@@ -2,43 +2,23 @@
   <form @submit.prevent="startWebAuthnRegistration" class="space-y-5">
     <div>
       <label for="webauthnDisplayName">Display Name</label>
-      <input
-        id="webauthnDisplayName"
-        type="text"
-        v-model="displayName"
-      />
+      <input id="webauthnDisplayName" type="text" v-model="displayName" />
     </div>
 
     <div>
       <label for="webauthnEmail">Email</label>
-      <input
-        id="webauthnEmail"
-        type="email"
-        v-model="email"
-        required
-      />
+      <input id="webauthnEmail" type="email" v-model="email" required />
     </div>
 
     <div>
       <label for="keyNickname">Key Nickname (Optional)</label>
-      <input
-        id="keyNickname"
-        type="text"
-        v-model="keyNickname"
-        placeholder="My Security Key"
-      />
-      <p class="text-xs mt-1 text-gray-400">
-        A friendly name for your security key
-      </p>
+      <input id="keyNickname" type="text" v-model="keyNickname" placeholder="My Security Key" />
+      <p class="text-xs mt-1 text-gray-400">A friendly name for your security key</p>
     </div>
 
     <div v-if="error" class="alert alert-error">{{ error }}</div>
 
-    <button
-      type="submit"
-      class="btn btn-primary w-full"
-      :disabled="isLoading || !email"
-    >
+    <button type="submit" class="btn btn-primary w-full" :disabled="isLoading || !email">
       {{
         isLoading
           ? challengeData
@@ -50,12 +30,12 @@
 
     <div class="text-xs mt-2 text-gray-400">
       <p>
-        You'll be prompted to use your device's security key (like
-        TouchID, FaceID, Windows Hello, or a USB security key)
+        You'll be prompted to use your device's security key (like TouchID, FaceID, Windows Hello,
+        or a USB security key)
       </p>
       <p class="mt-1">
-        When prompted, please complete the biometric verification or insert
-        and activate your security key to create your account.
+        When prompted, please complete the biometric verification or insert and activate your
+        security key to create your account.
       </p>
     </div>
   </form>
@@ -64,13 +44,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuth } from '../../lib/nhost/auth'
-import {
-  type ErrorResponse,
-  type SignUpWebauthnResponse,
-  type AuthenticatorAttestationResponse,
-} from '@nhost/nhost-js/auth'
+import { type ErrorResponse, type PublicKeyCredentialCreationOptions } from '@nhost/nhost-js/auth'
 import { type FetchError } from '@nhost/nhost-js/fetch'
 import { isWebAuthnSupported } from '../../lib/utils'
+import { startRegistration } from '@simplewebauthn/browser'
 
 /**
  * WebAuthn Registration (Sign Up) Flow
@@ -90,7 +67,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  redirectTo: undefined
+  redirectTo: undefined,
 })
 
 const emit = defineEmits<{
@@ -102,7 +79,7 @@ const { nhost } = useAuth()
 const isLoading = ref<boolean>(false)
 const error = ref<string | null>(null)
 const keyNickname = ref<string>('')
-const challengeData = ref<SignUpWebauthnResponse | null>(null)
+const challengeData = ref<PublicKeyCredentialCreationOptions | null>(null)
 
 // Local reactive refs for v-model
 const email = ref(props.email)
@@ -119,13 +96,19 @@ watch(displayName, (newValue) => {
 })
 
 // Watch for prop changes
-watch(() => props.email, (newValue) => {
-  email.value = newValue
-})
+watch(
+  () => props.email,
+  (newValue) => {
+    email.value = newValue
+  },
+)
 
-watch(() => props.displayName, (newValue) => {
-  displayName.value = newValue
-})
+watch(
+  () => props.displayName,
+  (newValue) => {
+    displayName.value = newValue
+  },
+)
 
 /**
  * Handles the WebAuthn registration flow (sign up with security key/biometrics)
@@ -163,7 +146,7 @@ const startWebAuthnRegistration = async (): Promise<void> => {
     // - user account information
     // - challenge to prevent replay attacks
     // - supported algorithms
-    const response = await nhost.auth.signUpWebAuthn({
+    const response = await nhost.auth.signUpWebauthn({
       email: email.value,
       options: {
         displayName: displayName.value,
@@ -179,13 +162,9 @@ const startWebAuthnRegistration = async (): Promise<void> => {
       // and creates a new public/private key pair
       // - The private key is stored securely on the device
       // - The public key will be sent to the server
-      const credential = (await navigator.credentials.create({
-        publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
-          response.body as PublicKeyCredentialCreationOptionsJSON,
-        ),
-      })) as unknown as AuthenticatorAttestationResponse
-      // the line above is a bit hacky but necessary because of the way the Credential
-      // API works with TypeScript types
+      const credential = await startRegistration({
+        optionsJSON: response.body,
+      })
 
       if (!credential) {
         error.value = 'No credential was created.'
@@ -196,7 +175,7 @@ const startWebAuthnRegistration = async (): Promise<void> => {
       // Step 3: Send the credential attestation to the server for verification
       // The server verifies the attestation signature and certificate chain,
       // then stores the public key for future authentication attempts
-      const verifyResponse = await nhost.auth.verifySignUpWebAuthn({
+      const verifyResponse = await nhost.auth.verifySignUpWebauthn({
         credential,
         options: {
           displayName: displayName.value || undefined,
@@ -212,8 +191,7 @@ const startWebAuthnRegistration = async (): Promise<void> => {
         // - The public key is stored in the database
         // - The private key remains securely on the user's device
         // - A session has been established
-        window.location.href =
-          props.redirectTo || window.location.origin + '/profile'
+        window.location.href = props.redirectTo || window.location.origin + '/profile'
       }
     } catch (credError) {
       error.value = `WebAuthn registration failed: ${(credError as Error).message || 'Unknown error'}`

@@ -15,8 +15,6 @@ const nhost = createClient({
   subdomain: import.meta.env['VITE_NHOST_SUBDOMAIN'] || 'local',
 })
 
-
-
 // Subscription cleanup function
 let unsubscribe: (() => void) | null = null
 let isInitialized = false
@@ -24,7 +22,7 @@ let isInitialized = false
 // Initialize auth state
 const initializeAuth = () => {
   if (isInitialized) return
-  
+
   authState.isLoading = true
 
   // Set initial values
@@ -38,7 +36,7 @@ const initializeAuth = () => {
     authState.user = currentSession?.user || null
     authState.session = currentSession
   })
-  
+
   isInitialized = true
 }
 
@@ -58,10 +56,18 @@ export function useAuth() {
   }
 
   return {
-    get user() { return authState.user },
-    get session() { return authState.session },
-    get isAuthenticated() { return !!authState.session },
-    get isLoading() { return authState.isLoading },
+    get user() {
+      return authState.user
+    },
+    get session() {
+      return authState.session
+    },
+    get isAuthenticated() {
+      return !!authState.session
+    },
+    get isLoading() {
+      return authState.isLoading
+    },
     nhost,
   }
 }

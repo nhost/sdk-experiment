@@ -8,14 +8,13 @@
 
     <div v-if="!isWebAuthnAvailable" class="alert alert-error mb-4">
       <p>
-        <strong>WebAuthn not supported!</strong> Your browser or device
-        doesn't support WebAuthn authentication. Please use a modern
-        browser (Chrome, Firefox, Safari, Edge) that supports WebAuthn.
+        <strong>WebAuthn not supported!</strong> Your browser or device doesn't support WebAuthn
+        authentication. Please use a modern browser (Chrome, Firefox, Safari, Edge) that supports
+        WebAuthn.
       </p>
       <p class="mt-2 text-sm">
-        Note: Even if your browser supports WebAuthn, you may need a
-        compatible authenticator like a fingerprint reader, facial
-        recognition, or a security key (e.g., YubiKey).
+        Note: Even if your browser supports WebAuthn, you may need a compatible authenticator like a
+        fingerprint reader, facial recognition, or a security key (e.g., YubiKey).
       </p>
     </div>
 
@@ -25,14 +24,12 @@
 
     <div v-else-if="showAddForm" class="space-y-5">
       <p>
-        Enter a name for your security key and follow the prompts from your
-        browser to register it.
+        Enter a name for your security key and follow the prompts from your browser to register it.
       </p>
       <p class="text-sm text-gray-400 mt-2">
-        Note: You'll need a security key (like YubiKey) or a device
-        with biometric authentication (like Touch ID, Face ID, or Windows
-        Hello). If registration fails, make sure your device has the
-        required capabilities.
+        Note: You'll need a security key (like YubiKey) or a device with biometric authentication
+        (like Touch ID, Face ID, or Windows Hello). If registration fails, make sure your device has
+        the required capabilities.
       </p>
       <p class="text-sm text-gray-400">
         This works the same way as when you registered during sign up.
@@ -40,12 +37,7 @@
 
       <form @submit.prevent="registerNewSecurityKey" class="space-y-4">
         <div>
-          <label
-            for="keyName"
-            class="block mb-2 text-sm font-medium"
-          >
-            Security Key Name
-          </label>
+          <label for="keyName" class="block mb-2 text-sm font-medium"> Security Key Name </label>
           <input
             type="text"
             id="keyName"
@@ -56,11 +48,7 @@
           />
         </div>
         <div class="flex space-x-3">
-          <button
-            type="submit"
-            class="btn btn-primary"
-            :disabled="isRegistering"
-          >
+          <button type="submit" class="btn btn-primary" :disabled="isRegistering">
             <span v-if="isRegistering" class="flex items-center">
               <svg
                 class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -100,9 +88,8 @@
 
     <div v-else class="space-y-5">
       <p>
-        Security Keys (WebAuthn) provide a secure passwordless
-        authentication option using hardware security keys, fingerprints, or
-        facial recognition.
+        Security Keys (WebAuthn) provide a secure passwordless authentication option using hardware
+        security keys, fingerprints, or facial recognition.
       </p>
 
       <!-- List of existing security keys -->
@@ -152,7 +139,9 @@
                 stroke-linejoin="round"
               >
                 <path d="M3 6h18" />
-                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                <path
+                  d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"
+                />
                 <path d="M10 11v6M14 11v6" />
               </svg>
             </button>
@@ -160,11 +149,7 @@
         </ul>
       </div>
 
-      <button
-        @click="toggleAddForm"
-        :disabled="!isWebAuthnAvailable"
-        class="btn btn-primary"
-      >
+      <button @click="toggleAddForm" :disabled="!isWebAuthnAvailable" class="btn btn-primary">
         Register New Security Key
       </button>
     </div>
@@ -175,11 +160,9 @@
 import { ref, onMounted } from 'vue'
 import { useAuth } from '../../lib/nhost/auth'
 import type { FetchError, FetchResponse } from '@nhost/nhost-js/fetch'
-import type {
-  ErrorResponse,
-  AuthenticatorAttestationResponse,
-} from '@nhost/nhost-js/auth'
+import type { ErrorResponse } from '@nhost/nhost-js/auth'
 import { isWebAuthnSupported } from '../../lib/utils'
+import { startRegistration } from '@simplewebauthn/browser'
 
 /**
  * Represents a WebAuthn security key stored for a user
@@ -230,9 +213,8 @@ const fetchSecurityKeys = async (): Promise<void> => {
 
   try {
     // Query the database for all security keys registered to this user
-    const response: FetchResponse<SecurityKeysResponse> =
-      await nhost.graphql.post({
-        query: `
+    const response: FetchResponse<SecurityKeysResponse> = await nhost.graphql.request({
+      query: `
         query GetUserSecurityKeys($userId: uuid!) {
           user(id: $userId) {
             securityKeys {
@@ -243,10 +225,10 @@ const fetchSecurityKeys = async (): Promise<void> => {
           }
         }
       `,
-        variables: {
-          userId: user.id,
-        },
-      })
+      variables: {
+        userId: user.id,
+      },
+    })
 
     const userData = response.body?.data
     const keys = userData?.user?.securityKeys || []
@@ -271,7 +253,7 @@ const deleteSecurityKey = async (keyId: string): Promise<void> => {
     // Send request to server to delete the security key
     // This removes the stored public key from the server database
     // so it can no longer be used for authentication
-    const response = await nhost.graphql.post({
+    const response = await nhost.graphql.request({
       query: `
         mutation DeleteSecurityKey($keyId: uuid!) {
           deleteAuthUserSecurityKey(id: $keyId) {
@@ -335,13 +317,9 @@ const registerNewSecurityKey = async (e: Event) => {
     // Step 2: Browser prompts user for security key or biometric verification
     // The browser creates a new credential pair (public/private) and stores
     // the private key securely on the device
-    const credential = (await navigator.credentials.create({
-      publicKey: PublicKeyCredential.parseCreationOptionsFromJSON(
-        initResponse.body as PublicKeyCredentialCreationOptionsJSON,
-      ),
-    })) as unknown as AuthenticatorAttestationResponse
-    // the line above is a bit hacky but necessary because of the way the Credential
-    // API works with TypeScript types
+    const credential = await startRegistration({
+      optionsJSON: initResponse.body,
+    })
 
     if (!credential) {
       errorMessage.value = 'No credential was selected. Please try again.'

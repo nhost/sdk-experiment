@@ -5,10 +5,7 @@
       <router-view />
     </main>
     <footer>
-      <p
-        class="text-sm text-center"
-        style="color: var(--text-muted)"
-      >
+      <p class="text-sm text-center" style="color: var(--text-muted)">
         © {{ new Date().getFullYear() }} Nhost Demo
       </p>
     </footer>

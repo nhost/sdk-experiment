@@ -7,19 +7,11 @@
     <div v-if="success" class="alert alert-success mb-4">{{ success }}</div>
 
     <div v-if="isSettingUpMfa" class="space-y-5">
-      <p>
-        Scan this QR code with your authenticator app (e.g., Google
-        Authenticator, Authy):
-      </p>
+      <p>Scan this QR code with your authenticator app (e.g., Google Authenticator, Authy):</p>
 
       <div v-if="qrCodeUrl" class="flex justify-center my-4">
         <div class="p-2 bg-white rounded-md">
-          <img
-            :src="qrCodeUrl"
-            alt="TOTP QR Code"
-            width="200"
-            height="200"
-          />
+          <img :src="qrCodeUrl" alt="TOTP QR Code" width="200" height="200" />
         </div>
       </div>
 
@@ -49,11 +41,7 @@
           {{ isLoading ? 'Verifying...' : 'Verify and Enable' }}
         </button>
 
-        <button
-          @click="handleCancelMfaSetup"
-          :disabled="isLoading"
-          class="btn btn-secondary"
-        >
+        <button @click="handleCancelMfaSetup" :disabled="isLoading" class="btn btn-secondary">
           Cancel
         </button>
       </div>
@@ -61,14 +49,12 @@
 
     <div v-else-if="isDisablingMfa" class="space-y-5">
       <p>
-        To disable Multi-Factor Authentication, please enter the current
-        verification code from your authenticator app.
+        To disable Multi-Factor Authentication, please enter the current verification code from your
+        authenticator app.
       </p>
 
       <div>
-        <label for="disable-verification-code">
-          Current Verification Code
-        </label>
+        <label for="disable-verification-code"> Current Verification Code </label>
         <input
           id="disable-verification-code"
           type="text"
@@ -88,11 +74,7 @@
           {{ isLoading ? 'Disabling...' : 'Confirm Disable' }}
         </button>
 
-        <button
-          @click="handleCancelMfaDisable"
-          :disabled="isLoading"
-          class="btn btn-secondary"
-        >
+        <button @click="handleCancelMfaDisable" :disabled="isLoading" class="btn btn-secondary">
           Cancel
         </button>
       </div>
@@ -100,17 +82,13 @@
 
     <div v-else class="space-y-5">
       <p>
-        Multi-Factor Authentication adds an extra layer of security to your
-        account by requiring a verification code from your authenticator app
-        when signing in.
+        Multi-Factor Authentication adds an extra layer of security to your account by requiring a
+        verification code from your authenticator app when signing in.
       </p>
 
       <div class="flex items-center">
         <span class="mr-3">Status:</span>
-        <span
-          class="font-semibold"
-          :class="isMfaEnabled ? 'text-green-500' : 'text-yellow-500'"
-        >
+        <span class="font-semibold" :class="isMfaEnabled ? 'text-green-500' : 'text-yellow-500'">
           {{ isMfaEnabled ? 'Enabled' : 'Disabled' }}
         </span>
       </div>
@@ -123,12 +101,7 @@
       >
         {{ isLoading ? 'Processing...' : 'Disable MFA' }}
       </button>
-      <button
-        v-else
-        @click="handleEnableMfa"
-        :disabled="isLoading"
-        class="btn btn-primary"
-      >
+      <button v-else @click="handleEnableMfa" :disabled="isLoading" class="btn btn-primary">
         {{ isLoading ? 'Loading...' : 'Enable MFA' }}
       </button>
     </div>
@@ -165,11 +138,14 @@ const isDisablingMfa = ref<boolean>(false)
 const disableVerificationCode = ref<string>('')
 
 // Update internal state when prop changes
-watch(() => props.initialMfaEnabled, (newValue) => {
-  if (newValue !== isMfaEnabled.value) {
-    isMfaEnabled.value = newValue
-  }
-})
+watch(
+  () => props.initialMfaEnabled,
+  (newValue) => {
+    if (newValue !== isMfaEnabled.value) {
+      isMfaEnabled.value = newValue
+    }
+  },
+)
 
 // Begin MFA setup process
 const handleEnableMfa = async (): Promise<void> => {
@@ -204,7 +180,7 @@ const handleVerifyTotp = async (): Promise<void> => {
 
   try {
     // Verify and activate MFA
-    await nhost.auth.changeUserMfaVerify({
+    await nhost.auth.verifyChangeUserMfa({
       activeMfaType: 'totp',
       code: verificationCode.value,
     })
@@ -240,7 +216,7 @@ const handleDisableMfa = async (): Promise<void> => {
 
   try {
     // Disable MFA by setting activeMfaType to empty string
-    await nhost.auth.changeUserMfaVerify({
+    await nhost.auth.verifyChangeUserMfa({
       activeMfaType: '',
       code: disableVerificationCode.value,
     })

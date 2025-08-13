@@ -7,6 +7,7 @@ This is a Vue.js demonstration of the Nhost SDK, showcasing authentication, user
 This demo includes the following migrated pages and functionality from the React demo:
 
 ### Authentication Pages
+
 - **Sign In Page** (`/signin`) - Multi-tab authentication with:
   - Email + Password authentication
   - Magic link authentication
@@ -17,6 +18,7 @@ This demo includes the following migrated pages and functionality from the React
 - **Profile Page** (`/profile`) - Protected user profile management
 
 ### Profile Management Components
+
 - **User Information Display** - Shows user details, roles, and session info
 - **Multi-Factor Authentication (MFA) Settings** - Enable/disable TOTP-based MFA
 - **Password Management** - Change user password
@@ -33,11 +35,13 @@ This demo includes the following migrated pages and functionality from the React
 ## Getting Started
 
 1. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 2. Start the development server:
+
    ```bash
    pnpm dev
    ```
@@ -93,6 +97,7 @@ src/
 ## Styling
 
 The demo uses the same CSS styling as the React version to maintain visual consistency, featuring:
+
 - Dark theme with gradient accents
 - Glass-morphism card design
 - Responsive layout
@@ -101,6 +106,7 @@ The demo uses the same CSS styling as the React version to maintain visual consi
 ## Environment Variables
 
 Configure the following in `.env`:
+
 - `VITE_NHOST_REGION` - Nhost region (default: "local")
 - `VITE_NHOST_SUBDOMAIN` - Nhost subdomain (default: "local")
 

@@ -262,6 +262,9 @@ importers:
       '@nhost/nhost-js':
         specifier: workspace:*
         version: link:../../packages/nhost-js
+      '@simplewebauthn/browser':
+        specifier: ^13.1.0
+        version: 13.1.0
       vue:
         specifier: ^3.5.13
         version: 3.5.16(typescript@5.8.3)
@@ -6998,6 +7001,7 @@ packages:
   puppeteer@22.15.0:
     resolution: {integrity: sha512-XjCY1SiSEi1T7iSYuxS82ft85kwDJUS7wj1Z0eGVXKdtr5g4xnVcbjwxhq5xBnpK/E7x1VZZoJDxpjAOasHT4Q==}
     engines: {node: '>=18'}
+    deprecated: < 24.9.0 is no longer supported
     hasBin: true
 
   pure-rand@6.1.0:

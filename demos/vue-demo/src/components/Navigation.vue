@@ -1,49 +1,31 @@
 <template>
   <nav class="navbar">
     <div class="navbar-container">
-      <router-link to="/" class="navbar-brand">
-        Nhost Vue Demo
-      </router-link>
+      <router-link to="/" class="navbar-brand"> Nhost Vue Demo </router-link>
 
       <div class="navbar-links">
-        <router-link 
-          to="/" 
-          class="nav-link"
-          :class="{ active: $route.path === '/' }"
-        >
+        <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }">
           Home
         </router-link>
-        
+
         <template v-if="isAuthenticated">
-          <router-link 
-            to="/profile" 
+          <router-link
+            to="/profile"
             class="nav-link"
             :class="{ active: $route.path === '/profile' }"
           >
             Profile
           </router-link>
-          <button 
-            @click="handleSignOut" 
-            class="nav-link"
-            :disabled="isLoading"
-          >
+          <button @click="handleSignOut" class="nav-link" :disabled="isLoading">
             {{ isLoading ? 'Signing Out...' : 'Sign Out' }}
           </button>
         </template>
-        
+
         <template v-else>
-          <router-link 
-            to="/signin" 
-            class="nav-link"
-            :class="{ active: $route.path === '/signin' }"
-          >
+          <router-link to="/signin" class="nav-link" :class="{ active: $route.path === '/signin' }">
             Sign In
           </router-link>
-          <router-link 
-            to="/signup" 
-            class="nav-link"
-            :class="{ active: $route.path === '/signup' }"
-          >
+          <router-link to="/signup" class="nav-link" :class="{ active: $route.path === '/signup' }">
             Sign Up
           </router-link>
         </template>
@@ -63,7 +45,7 @@ const isLoading = ref(false)
 
 const handleSignOut = async () => {
   isLoading.value = true
-  
+
   try {
     if (session) {
       await nhost.auth.signOut({

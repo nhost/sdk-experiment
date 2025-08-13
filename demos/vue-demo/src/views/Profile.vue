@@ -6,32 +6,29 @@
       <div class="space-y-5">
         <div class="profile-item">
           <strong>Display Name:</strong>
-          <span class="ml-2">{{ user?.displayName || "Not set" }}</span>
+          <span class="ml-2">{{ user?.displayName || 'Not set' }}</span>
         </div>
 
         <div class="profile-item">
           <strong>Email:</strong>
-          <span class="ml-2">{{ user?.email || "Not available" }}</span>
+          <span class="ml-2">{{ user?.email || 'Not available' }}</span>
         </div>
 
         <div class="profile-item">
           <strong>User ID:</strong>
-          <span
-            class="ml-2"
-            style="font-family: var(--font-geist-mono); font-size: 0.875rem;"
-          >
-            {{ user?.id || "Not available" }}
+          <span class="ml-2" style="font-family: var(--font-geist-mono); font-size: 0.875rem">
+            {{ user?.id || 'Not available' }}
           </span>
         </div>
 
         <div class="profile-item">
           <strong>Roles:</strong>
-          <span class="ml-2">{{ user?.roles?.join(", ") || "None" }}</span>
+          <span class="ml-2">{{ user?.roles?.join(', ') || 'None' }}</span>
         </div>
 
         <div class="profile-item">
           <strong>Email Verified:</strong>
-          <span class="ml-2">{{ user?.emailVerified ? "Yes" : "No" }}</span>
+          <span class="ml-2">{{ user?.emailVerified ? 'Yes' : 'No' }}</span>
         </div>
       </div>
     </div>
@@ -50,10 +47,7 @@
       }}</pre>
     </div>
 
-    <MFASettings
-      :key="`mfa-settings-${isMfaEnabled}`"
-      :initialMfaEnabled="isMfaEnabled"
-    />
+    <MFASettings :key="`mfa-settings-${isMfaEnabled}`" :initialMfaEnabled="isMfaEnabled" />
 
     <SecurityKeys />
 
@@ -88,19 +82,18 @@ onMounted(async () => {
 
     try {
       // Correctly structure GraphQL query with parameters
-      const response: FetchResponse<MfaStatusResponse> =
-        await nhost.graphql.post({
-          query: `
+      const response: FetchResponse<MfaStatusResponse> = await nhost.graphql.request({
+        query: `
           query GetUserMfaStatus($userId: uuid!) {
             user(id: $userId) {
               activeMfaType
             }
           }
         `,
-          variables: {
-            userId: user.id,
-          },
-        })
+        variables: {
+          userId: user.id,
+        },
+      })
 
       const userData = response.body?.data
       const activeMfaType = userData?.user?.activeMfaType

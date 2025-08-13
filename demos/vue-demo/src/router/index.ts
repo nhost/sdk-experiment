@@ -6,7 +6,7 @@ import Profile from '../views/Profile.vue'
 import Verify from '../views/Verify.vue'
 
 // Simple Home component
-const Home = { 
+const Home = {
   template: `
     <div class="flex flex-col items-center justify-center">
       <h1 class="text-3xl mb-6 gradient-text">Nhost SDK Demo</h1>
@@ -19,10 +19,8 @@ const Home = {
         </div>
       </div>
     </div>
-  `
+  `,
 }
-
-
 
 const router = createRouter({
   history: createWebHistory(),
@@ -30,41 +28,41 @@ const router = createRouter({
     {
       path: '/',
       name: 'Home',
-      component: Home
+      component: Home,
     },
     {
       path: '/signin',
       name: 'SignIn',
-      component: SignIn
+      component: SignIn,
     },
     {
       path: '/signup',
       name: 'SignUp',
-      component: SignUp
+      component: SignUp,
     },
     {
       path: '/verify',
       name: 'Verify',
-      component: Verify
+      component: Verify,
     },
     {
       path: '/profile',
       name: 'Profile',
       component: Profile,
-      meta: { requiresAuth: true }
+      meta: { requiresAuth: true },
     },
     {
       path: '/:pathMatch(.*)*',
-      redirect: '/'
-    }
-  ]
+      redirect: '/',
+    },
+  ],
 })
 
 // Navigation guard for protected routes
 router.beforeEach((to) => {
   if (to.meta['requiresAuth']) {
     const { isAuthenticated } = useAuth()
-    
+
     if (!isAuthenticated) {
       return '/signin'
     }
