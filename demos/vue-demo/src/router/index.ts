@@ -63,7 +63,7 @@ router.beforeEach((to) => {
   if (to.meta['requiresAuth']) {
     const { isAuthenticated } = useAuth()
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated.value) {
       return '/signin'
     }
   }

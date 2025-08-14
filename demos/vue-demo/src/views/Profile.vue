@@ -35,16 +35,7 @@
 
     <div class="glass-card p-8 mb-6">
       <h3 class="text-xl mb-4">Session Information</h3>
-      <pre>{{
-        JSON.stringify(
-          {
-            refreshTokenId: session?.refreshTokenId,
-            accessTokenExpiresIn: session?.accessTokenExpiresIn,
-          },
-          null,
-          2,
-        )
-      }}</pre>
+      <pre>{{ JSON.stringify(session, null, 2) }}</pre>
     </div>
 
     <MFASettings :key="`mfa-settings-${isMfaEnabled}`" :initialMfaEnabled="isMfaEnabled" />
@@ -78,7 +69,7 @@ const isMfaEnabled = ref<boolean>(false)
 // Fetch MFA status when user is authenticated
 onMounted(async () => {
   const fetchMfaStatus = async (): Promise<void> => {
-    if (!user?.id) return
+    if (!user.value?.id) return
 
     try {
       // Correctly structure GraphQL query with parameters
@@ -91,7 +82,7 @@ onMounted(async () => {
           }
         `,
         variables: {
-          userId: user.id,
+          userId: user.value.id,
         },
       })
 
@@ -107,7 +98,7 @@ onMounted(async () => {
     }
   }
 
-  if (isAuthenticated && user?.id) {
+  if (isAuthenticated.value && user.value?.id) {
     await fetchMfaStatus()
   }
 })

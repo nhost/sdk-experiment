@@ -96,7 +96,7 @@ const error = ref<string | null>(null)
 
 // If already authenticated, redirect to profile
 onMounted(() => {
-  if (isAuthenticated) {
+  if (isAuthenticated.value) {
     router.push('/profile')
   }
 })

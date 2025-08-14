@@ -97,7 +97,7 @@ const isVerifying = computed(() => route.query['fromVerify'] !== undefined)
 
 // Navigate to profile if already authenticated
 onMounted(() => {
-  if (isAuthenticated && !isVerifying.value) {
+  if (isAuthenticated.value && !isVerifying.value) {
     router.push('/profile')
   }
 })

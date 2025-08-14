@@ -206,7 +206,7 @@ const isWebAuthnAvailable = ref<boolean>(true)
  * private keys stored securely on the user's devices/authenticators
  */
 const fetchSecurityKeys = async (): Promise<void> => {
-  if (!user?.id) return
+  if (!user.value?.id) return
 
   isLoading.value = true
   errorMessage.value = null
@@ -215,23 +215,18 @@ const fetchSecurityKeys = async (): Promise<void> => {
     // Query the database for all security keys registered to this user
     const response: FetchResponse<SecurityKeysResponse> = await nhost.graphql.request({
       query: `
-        query GetUserSecurityKeys($userId: uuid!) {
-          user(id: $userId) {
-            securityKeys {
-              id
-              credentialId
-              nickname
-            }
+        query GetUserSecurityKeys {
+          authUserSecurityKeys {
+            id
+            credentialId
+            nickname
           }
         }
       `,
-      variables: {
-        userId: user.id,
-      },
     })
 
     const userData = response.body?.data
-    const keys = userData?.user?.securityKeys || []
+    const keys = userData?.authUserSecurityKeys || []
     securityKeys.value = keys
   } catch (err) {
     const error = err as FetchError<ErrorResponse>
@@ -362,7 +357,7 @@ onMounted(() => {
   isWebAuthnAvailable.value = isWebAuthnSupported()
 
   // Load the user's security keys when authenticated
-  if (isAuthenticated && user?.id) {
+  if (isAuthenticated.value && user.value?.id) {
     fetchSecurityKeys()
   }
 })
