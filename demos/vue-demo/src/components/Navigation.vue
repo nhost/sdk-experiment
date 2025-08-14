@@ -47,9 +47,9 @@ const handleSignOut = async () => {
   isLoading.value = true
 
   try {
-    if (session) {
+    if (session.value) {
       await nhost.auth.signOut({
-        refreshToken: session.refreshToken,
+        refreshToken: session.value.refreshToken,
       })
     }
     router.push('/')
