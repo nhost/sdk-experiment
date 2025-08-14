@@ -149,7 +149,9 @@ const _needsRefresh = (storage: SessionStorage, marginSeconds = 60) => {
   }
 
   if (!session.decodedToken || !session.decodedToken.exp) {
-    return { session: null, needsRefresh: false, sessionExpired: false };
+    // if the session does not have a valid decoded token, treat it as expired
+    // as we can't determine its validity
+    return { session: session, needsRefresh: true, sessionExpired: true };
   }
 
   const currentTime = Date.now();
