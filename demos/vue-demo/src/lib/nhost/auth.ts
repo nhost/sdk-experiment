@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { reactive, computed } from 'vue'
 import { createClient } from '@nhost/nhost-js'
 import { type Session } from '@nhost/nhost-js/auth'
 
@@ -56,18 +56,10 @@ export function useAuth() {
   }
 
   return {
-    get user() {
-      return authState.user
-    },
-    get session() {
-      return authState.session
-    },
-    get isAuthenticated() {
-      return !!authState.session
-    },
-    get isLoading() {
-      return authState.isLoading
-    },
+    user: computed(() => authState.user),
+    session: computed(() => authState.session),
+    isLoading: computed(() => authState.isLoading),
+    isAuthenticated: computed(() => !!authState.session),
     nhost,
   }
 }
