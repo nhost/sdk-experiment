@@ -25,7 +25,7 @@
             <div v-if="error" class="alert alert-error">{{ error }}</div>
 
             <button type="submit" class="btn btn-primary w-full" :disabled="isLoading">
-              {{ isLoading ? 'Signing In...' : 'Sign In' }}
+              {{ isLoading ? "Signing In..." : "Sign In" }}
             </button>
           </form>
         </template>
@@ -74,75 +74,75 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import TabForm from '../components/forms/TabForm.vue'
-import MagicLinkForm from '../components/forms/MagicLinkForm.vue'
-import WebAuthnSignInForm from '../components/forms/WebAuthnSignInForm.vue'
-import { useAuth } from '../lib/nhost/auth'
-import { type ErrorResponse } from '@nhost/nhost-js/auth'
-import { type FetchError } from '@nhost/nhost-js/fetch'
+import { ref, onMounted, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import TabForm from "../components/forms/TabForm.vue";
+import MagicLinkForm from "../components/forms/MagicLinkForm.vue";
+import WebAuthnSignInForm from "../components/forms/WebAuthnSignInForm.vue";
+import { useAuth } from "../lib/nhost/auth";
+import { type ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
 
-const { nhost, isAuthenticated } = useAuth()
-const router = useRouter()
-const route = useRoute()
+const { nhost, isAuthenticated } = useAuth();
+const router = useRouter();
+const route = useRoute();
 
-const email = ref('')
-const password = ref('')
-const isLoading = ref(false)
-const error = ref<string | null>((route.query['error'] as string) || null)
+const email = ref("");
+const password = ref("");
+const isLoading = ref(false);
+const error = ref<string | null>((route.query["error"] as string) || null);
 
-const magicLinkSent = computed(() => route.query['magic'] === 'success')
-const isVerifying = computed(() => route.query['fromVerify'] !== undefined)
+const magicLinkSent = computed(() => route.query["magic"] === "success");
+const isVerifying = computed(() => route.query["fromVerify"] !== undefined);
 
 // Navigate to profile if already authenticated
 onMounted(() => {
   if (isAuthenticated.value && !isVerifying.value) {
-    router.push('/profile')
+    router.push("/profile");
   }
-})
+});
 
 const handleSubmit = async () => {
-  isLoading.value = true
-  error.value = null
+  isLoading.value = true;
+  error.value = null;
 
   try {
     // Use the signIn function from auth context
     const response = await nhost.auth.signInEmailPassword({
       email: email.value,
       password: password.value,
-    })
+    });
 
     // Check if MFA is required
     if (response.body?.mfa) {
-      router.push(`/signin/mfa?ticket=${response.body.mfa.ticket}`)
-      return
+      router.push(`/signin/mfa?ticket=${response.body.mfa.ticket}`);
+      return;
     }
 
     // If we have a session, sign in was successful
     if (response.body?.session) {
-      router.push('/profile')
+      router.push("/profile");
     } else {
-      error.value = 'Failed to sign in'
+      error.value = "Failed to sign in";
     }
   } catch (err) {
-    const errorObj = err as FetchError<ErrorResponse>
-    error.value = `An error occurred during sign in: ${errorObj.message}`
+    const errorObj = err as FetchError<ErrorResponse>;
+    error.value = `An error occurred during sign in: ${errorObj.message}`;
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
-const handleSocialSignIn = (provider: 'github') => {
+const handleSocialSignIn = (provider: "github") => {
   // Get the current origin (to build the redirect URL)
-  const origin = window.location.origin
-  const redirectUrl = `${origin}/verify`
+  const origin = window.location.origin;
+  const redirectUrl = `${origin}/verify`;
 
   // Sign in with the specified provider
   const url = nhost.auth.signInProviderURL(provider, {
     redirectTo: redirectUrl,
-  })
+  });
 
-  window.location.href = url
-}
+  window.location.href = url;
+};
 </script>

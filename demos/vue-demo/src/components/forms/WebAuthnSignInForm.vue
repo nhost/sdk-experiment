@@ -3,7 +3,7 @@
     <div v-if="error" class="alert alert-error">{{ error }}</div>
 
     <button type="submit" class="btn btn-primary w-full" :disabled="isLoading">
-      {{ isLoading ? 'Authenticating...' : 'Sign In with Security Key' }}
+      {{ isLoading ? "Authenticating..." : "Sign In with Security Key" }}
     </button>
 
     <div class="text-xs mt-2 text-gray-400">
@@ -17,13 +17,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuth } from '../../lib/nhost/auth'
-import { type ErrorResponse } from '@nhost/nhost-js/auth'
-import { type FetchError } from '@nhost/nhost-js/fetch'
-import { isWebAuthnSupported } from '../../lib/utils'
-import { startAuthentication } from '@simplewebauthn/browser'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuth } from "../../lib/nhost/auth";
+import { type ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
+import { isWebAuthnSupported } from "../../lib/utils";
+import { startAuthentication } from "@simplewebauthn/browser";
 
 /**
  * WebAuthnSignInForm provides a passwordless authentication flow using WebAuthn (FIDO2) protocol.
@@ -31,10 +31,10 @@ import { startAuthentication } from '@simplewebauthn/browser'
  * instead of traditional passwords.
  */
 
-const { nhost } = useAuth()
-const router = useRouter()
-const isLoading = ref<boolean>(false)
-const error = ref<string | null>(null)
+const { nhost } = useAuth();
+const router = useRouter();
+const isLoading = ref<boolean>(false);
+const error = ref<string | null>(null);
 
 /**
  * Handles the WebAuthn authentication flow:
@@ -43,21 +43,21 @@ const error = ref<string | null>(null)
  * 3. Verify the signature on the server and establish a session
  */
 const startWebAuthnSignIn = async (): Promise<void> => {
-  isLoading.value = true
-  error.value = null
+  isLoading.value = true;
+  error.value = null;
 
   try {
     // First check if WebAuthn is supported by this browser
     if (!isWebAuthnSupported()) {
-      error.value = 'WebAuthn is not supported by your browser.'
-      isLoading.value = false
-      return
+      error.value = "WebAuthn is not supported by your browser.";
+      isLoading.value = false;
+      return;
     }
 
     // Step 1: Request a challenge from the server for credential discovery
     // The server creates a random challenge and sends allowed credential information
     // This prevents replay attacks by ensuring each authentication attempt is unique
-    const response = await nhost.auth.signInWebauthn()
+    const response = await nhost.auth.signInWebauthn();
 
     try {
       // Step 2: Browser prompts user for their security key or biometric verification
@@ -66,12 +66,12 @@ const startWebAuthnSignIn = async (): Promise<void> => {
       // The authenticator then signs the challenge with the private key
       const credential = await startAuthentication({
         optionsJSON: response.body,
-      })
+      });
 
       if (!credential) {
-        error.value = 'No credential was selected.'
-        isLoading.value = false
-        return
+        error.value = "No credential was selected.";
+        isLoading.value = false;
+        return;
       }
 
       // Step 3: Send the signed challenge to the server for verification
@@ -79,23 +79,23 @@ const startWebAuthnSignIn = async (): Promise<void> => {
       // If valid, the server creates an authenticated session
       const verifyResponse = await nhost.auth.verifySignInWebauthn({
         credential,
-      })
+      });
 
       // Step 4: Handle authentication result
       if (verifyResponse.body && verifyResponse.body.session) {
         // Authentication successful, redirect to profile page
-        router.push('/profile')
+        router.push("/profile");
       } else {
-        error.value = 'Authentication failed'
+        error.value = "Authentication failed";
       }
     } catch (credError) {
-      error.value = `WebAuthn authentication failed: ${(credError as Error).message || 'Unknown error'}`
+      error.value = `WebAuthn authentication failed: ${(credError as Error).message || "Unknown error"}`;
     }
   } catch (err) {
-    const errorObj = err as FetchError<ErrorResponse>
-    error.value = `An error occurred during WebAuthn sign in: ${errorObj.message}`
+    const errorObj = err as FetchError<ErrorResponse>;
+    error.value = `An error occurred during WebAuthn sign in: ${errorObj.message}`;
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 </script>

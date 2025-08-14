@@ -13,7 +13,7 @@
             Profile
           </router-link>
           <button @click="handleSignOut" class="nav-link" :disabled="isLoading">
-            {{ isLoading ? 'Signing Out...' : 'Sign Out' }}
+            {{ isLoading ? "Signing Out..." : "Sign Out" }}
           </button>
         </template>
 
@@ -31,30 +31,30 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuth } from '../lib/nhost/auth'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuth } from "../lib/nhost/auth";
 
-const { nhost, isAuthenticated, session } = useAuth()
-const router = useRouter()
-const isLoading = ref(false)
+const { nhost, isAuthenticated, session } = useAuth();
+const router = useRouter();
+const isLoading = ref(false);
 
 const handleSignOut = async () => {
-  isLoading.value = true
+  isLoading.value = true;
 
   try {
     if (session.value) {
       await nhost.auth.signOut({
         refreshToken: session.value.refreshToken,
-      })
+      });
     }
-    router.push('/')
+    router.push("/");
   } catch (error) {
-    console.error('Error signing out:', error)
+    console.error("Error signing out:", error);
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 </script>
 
 <style scoped>

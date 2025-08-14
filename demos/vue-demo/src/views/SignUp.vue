@@ -27,7 +27,7 @@
             <div v-if="error" class="alert alert-error">{{ error }}</div>
 
             <button type="submit" class="btn btn-primary w-full" :disabled="isLoading">
-              {{ isLoading ? 'Signing Up...' : 'Sign Up' }}
+              {{ isLoading ? "Signing Up..." : "Sign Up" }}
             </button>
           </form>
         </template>
@@ -76,34 +76,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import TabForm from '../components/forms/TabForm.vue'
-import MagicLinkForm from '../components/forms/MagicLinkForm.vue'
-import WebAuthnSignUpForm from '../components/forms/WebAuthnSignUpForm.vue'
-import { useAuth } from '../lib/nhost/auth'
-import { type ErrorResponse } from '@nhost/nhost-js/auth'
-import { type FetchError } from '@nhost/nhost-js/fetch'
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import TabForm from "../components/forms/TabForm.vue";
+import MagicLinkForm from "../components/forms/MagicLinkForm.vue";
+import WebAuthnSignUpForm from "../components/forms/WebAuthnSignUpForm.vue";
+import { useAuth } from "../lib/nhost/auth";
+import { type ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
 
-const { nhost, isAuthenticated } = useAuth()
-const router = useRouter()
+const { nhost, isAuthenticated } = useAuth();
+const router = useRouter();
 
-const email = ref<string>('')
-const password = ref<string>('')
-const displayName = ref<string>('')
-const isLoading = ref<boolean>(false)
-const error = ref<string | null>(null)
+const email = ref<string>("");
+const password = ref<string>("");
+const displayName = ref<string>("");
+const isLoading = ref<boolean>(false);
+const error = ref<string | null>(null);
 
 // If already authenticated, redirect to profile
 onMounted(() => {
   if (isAuthenticated.value) {
-    router.push('/profile')
+    router.push("/profile");
   }
-})
+});
 
 const handleSubmit = async (): Promise<void> => {
-  isLoading.value = true
-  error.value = null
+  isLoading.value = true;
+  error.value = null;
 
   try {
     const response = await nhost.auth.signUpEmailPassword({
@@ -112,33 +112,33 @@ const handleSubmit = async (): Promise<void> => {
       options: {
         displayName: displayName.value,
       },
-    })
+    });
 
     if (response.body) {
       // Successfully signed up and automatically signed in
-      router.push('/profile')
+      router.push("/profile");
     } else {
       // Verification email sent
-      router.push('/verify')
+      router.push("/verify");
     }
   } catch (err) {
-    const errorObj = err as FetchError<ErrorResponse>
-    error.value = `An error occurred during sign up: ${errorObj.message}`
+    const errorObj = err as FetchError<ErrorResponse>;
+    error.value = `An error occurred during sign up: ${errorObj.message}`;
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
-const handleSocialSignIn = (provider: 'github') => {
+const handleSocialSignIn = (provider: "github") => {
   // Get the current origin (to build the redirect URL)
-  const origin = window.location.origin
-  const redirectUrl = `${origin}/verify`
+  const origin = window.location.origin;
+  const redirectUrl = `${origin}/verify`;
 
   // Sign in with the specified provider
   const url = nhost.auth.signInProviderURL(provider, {
     redirectTo: redirectUrl,
-  })
+  });
 
-  window.location.href = url
-}
+  window.location.href = url;
+};
 </script>

@@ -39,85 +39,85 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAuth } from '../lib/nhost/auth'
-import type { ErrorResponse } from '@nhost/nhost-js/auth'
-import { type FetchError } from '@nhost/nhost-js/fetch'
+import { ref, onMounted, onUnmounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useAuth } from "../lib/nhost/auth";
+import type { ErrorResponse } from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
 
-const route = useRoute()
-const router = useRouter()
-const { nhost } = useAuth()
+const route = useRoute();
+const router = useRouter();
+const { nhost } = useAuth();
 
-const status = ref<'verifying' | 'success' | 'error'>('verifying')
-const error = ref<string>('')
-const urlParams = ref<Record<string, string>>({})
+const status = ref<"verifying" | "success" | "error">("verifying");
+const error = ref<string>("");
+const urlParams = ref<Record<string, string>>({});
 
 // Flag to handle component unmounting during async operations
-let isMounted = true
+let isMounted = true;
 
 onMounted(async () => {
   // Extract the refresh token from the URL
-  const params = new URLSearchParams(route.fullPath.split('?')[1] || '')
-  const refreshToken = params.get('refreshToken')
+  const params = new URLSearchParams(route.fullPath.split("?")[1] || "");
+  const refreshToken = params.get("refreshToken");
 
   if (!refreshToken) {
     // Collect all URL parameters to display
-    const allParams: Record<string, string> = {}
+    const allParams: Record<string, string> = {};
     params.forEach((value, key) => {
-      allParams[key] = value
-    })
-    urlParams.value = allParams
+      allParams[key] = value;
+    });
+    urlParams.value = allParams;
 
-    status.value = 'error'
-    error.value = 'No refresh token found in URL'
-    return
+    status.value = "error";
+    error.value = "No refresh token found in URL";
+    return;
   }
 
-  await processToken(refreshToken, params)
-})
+  await processToken(refreshToken, params);
+});
 
 onUnmounted(() => {
-  isMounted = false
-})
+  isMounted = false;
+});
 
 async function processToken(refreshToken: string, params: URLSearchParams): Promise<void> {
   try {
     // First display the verifying message for at least a moment
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
-    if (!isMounted) return
+    if (!isMounted) return;
 
     if (!refreshToken) {
       // Collect all URL parameters to display
-      const allParams: Record<string, string> = {}
+      const allParams: Record<string, string> = {};
       params.forEach((value, key) => {
-        allParams[key] = value
-      })
-      urlParams.value = allParams
+        allParams[key] = value;
+      });
+      urlParams.value = allParams;
 
-      status.value = 'error'
-      error.value = 'No refresh token found in URL'
-      return
+      status.value = "error";
+      error.value = "No refresh token found in URL";
+      return;
     }
 
     // Process the token
-    await nhost.auth.refreshToken({ refreshToken })
+    await nhost.auth.refreshToken({ refreshToken });
 
-    if (!isMounted) return
+    if (!isMounted) return;
 
-    status.value = 'success'
+    status.value = "success";
 
     // Wait to show success message briefly, then redirect
     setTimeout(() => {
-      if (isMounted) router.push('/profile')
-    }, 1500)
+      if (isMounted) router.push("/profile");
+    }, 1500);
   } catch (err) {
-    const errorObj = err as FetchError<ErrorResponse>
-    if (!isMounted) return
+    const errorObj = err as FetchError<ErrorResponse>;
+    if (!isMounted) return;
 
-    status.value = 'error'
-    error.value = `An error occurred during verification: ${errorObj.message}`
+    status.value = "error";
+    error.value = `An error occurred during verification: ${errorObj.message}`;
   }
 }
 </script>
@@ -179,7 +179,7 @@ async function processToken(refreshToken: string, params: URLSearchParams): Prom
 
 .font-mono {
   font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
 }
 

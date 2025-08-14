@@ -1,11 +1,11 @@
 // Format file size in a readable way
 export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return '0 Bytes'
+  if (bytes === 0) return "0 Bytes";
 
-  const sizes: string[] = ['Bytes', 'KB', 'MB', 'GB', 'TB']
-  const i: number = Math.floor(Math.log(bytes) / Math.log(1024))
+  const sizes: string[] = ["Bytes", "KB", "MB", "GB", "TB"];
+  const i: number = Math.floor(Math.log(bytes) / Math.log(1024));
 
-  return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`
+  return `${parseFloat((bytes / Math.pow(1024, i)).toFixed(2))} ${sizes[i]}`;
 }
 
 /**
@@ -26,5 +26,5 @@ export function formatFileSize(bytes: number): string {
  * @returns {boolean} Whether WebAuthn is supported in the current environment
  */
 export const isWebAuthnSupported = (): boolean => {
-  return typeof window !== 'undefined' && !!window.PublicKeyCredential && !!navigator.credentials
-}
+  return typeof window !== "undefined" && !!window.PublicKeyCredential && !!navigator.credentials;
+};

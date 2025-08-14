@@ -1,9 +1,9 @@
-import eslint from '@eslint/js'
-import tseslint from 'typescript-eslint'
-import globals from 'globals'
-import pluginVue from 'eslint-plugin-vue'
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
-import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
+import globals from "globals";
+import pluginVue from "eslint-plugin-vue";
+import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
+import skipFormatting from "@vue/eslint-config-prettier/skip-formatting";
 
 export default defineConfigWithVueTs(
   eslint.configs.recommended,
@@ -12,14 +12,14 @@ export default defineConfigWithVueTs(
   {
     // Vue demo specific ignores
     ignores: [
-      'dist',
-      'dist-ssr',
-      'build',
-      'node_modules',
-      '.vite',
-      'coverage',
-      'vite.config.ts',
-      'eslint.config.mjs',
+      "dist",
+      "dist-ssr",
+      "build",
+      "node_modules",
+      ".vite",
+      "coverage",
+      "vite.config.ts",
+      "eslint.config.mjs",
     ],
   },
   {
@@ -31,7 +31,7 @@ export default defineConfigWithVueTs(
     },
   },
   {
-    files: ['**/*.{ts,mts,tsx}'],
+    files: ["**/*.{ts,mts,tsx}"],
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -40,16 +40,16 @@ export default defineConfigWithVueTs(
     },
   },
   {
-    files: ['**/*.vue'],
+    files: ["**/*.vue"],
     languageOptions: {
       globals: {
         ...globals.browser,
       },
       parserOptions: {
         parser: tseslint.parser,
-        extraFileExtensions: ['.vue'],
-        ecmaVersion: 'latest',
-        sourceType: 'module',
+        extraFileExtensions: [".vue"],
+        ecmaVersion: "latest",
+        sourceType: "module",
       },
     },
     plugins: {
@@ -57,13 +57,13 @@ export default defineConfigWithVueTs(
     },
     rules: {
       // Vue recommended rules
-      ...pluginVue.configs['flat/essential'].rules,
-      ...pluginVue.configs['flat/strongly-recommended'].rules,
-      ...pluginVue.configs['flat/recommended'].rules,
+      ...pluginVue.configs["flat/essential"].rules,
+      ...pluginVue.configs["flat/strongly-recommended"].rules,
+      ...pluginVue.configs["flat/recommended"].rules,
 
       // TypeScript rules adapted for Vue
-      '@typescript-eslint/no-misused-promises': [
-        'error',
+      "@typescript-eslint/no-misused-promises": [
+        "error",
         {
           checksVoidReturn: {
             attributes: false,
@@ -72,14 +72,14 @@ export default defineConfigWithVueTs(
       ],
 
       // Disable floating promises rule for better Vue composition API experience
-      '@typescript-eslint/no-floating-promises': 'off',
+      "@typescript-eslint/no-floating-promises": "off",
 
       // Vue-specific TypeScript adjustments
-      '@typescript-eslint/no-unused-vars': [
-        'error',
+      "@typescript-eslint/no-unused-vars": [
+        "error",
         {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
         },
       ],
     },
@@ -88,4 +88,4 @@ export default defineConfigWithVueTs(
   vueTsConfigs.recommended,
   // // Skip formatting rules (handled by Prettier)
   skipFormatting,
-)
+);

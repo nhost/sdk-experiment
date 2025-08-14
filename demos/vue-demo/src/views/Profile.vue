@@ -6,29 +6,29 @@
       <div class="space-y-5">
         <div class="profile-item">
           <strong>Display Name:</strong>
-          <span class="ml-2">{{ user?.displayName || 'Not set' }}</span>
+          <span class="ml-2">{{ user?.displayName || "Not set" }}</span>
         </div>
 
         <div class="profile-item">
           <strong>Email:</strong>
-          <span class="ml-2">{{ user?.email || 'Not available' }}</span>
+          <span class="ml-2">{{ user?.email || "Not available" }}</span>
         </div>
 
         <div class="profile-item">
           <strong>User ID:</strong>
           <span class="ml-2" style="font-family: var(--font-geist-mono); font-size: 0.875rem">
-            {{ user?.id || 'Not available' }}
+            {{ user?.id || "Not available" }}
           </span>
         </div>
 
         <div class="profile-item">
           <strong>Roles:</strong>
-          <span class="ml-2">{{ user?.roles?.join(', ') || 'None' }}</span>
+          <span class="ml-2">{{ user?.roles?.join(", ") || "None" }}</span>
         </div>
 
         <div class="profile-item">
           <strong>Email Verified:</strong>
-          <span class="ml-2">{{ user?.emailVerified ? 'Yes' : 'No' }}</span>
+          <span class="ml-2">{{ user?.emailVerified ? "Yes" : "No" }}</span>
         </div>
       </div>
     </div>
@@ -47,29 +47,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useAuth } from '../lib/nhost/auth'
-import MFASettings from '../components/profile/MFASettings.vue'
-import ChangePassword from '../components/profile/ChangePassword.vue'
-import SecurityKeys from '../components/profile/SecurityKeys.vue'
-import type { ErrorResponse } from '@nhost/nhost-js/auth'
-import type { FetchError, FetchResponse } from '@nhost/nhost-js/fetch'
+import { ref, onMounted } from "vue";
+import { useAuth } from "../lib/nhost/auth";
+import MFASettings from "../components/profile/MFASettings.vue";
+import ChangePassword from "../components/profile/ChangePassword.vue";
+import SecurityKeys from "../components/profile/SecurityKeys.vue";
+import type { ErrorResponse } from "@nhost/nhost-js/auth";
+import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
 
 interface MfaStatusResponse {
   data?: {
     user?: {
-      activeMfaType: string | null
-    }
-  }
+      activeMfaType: string | null;
+    };
+  };
 }
 
-const { nhost, user, session, isAuthenticated } = useAuth()
-const isMfaEnabled = ref<boolean>(false)
+const { nhost, user, session, isAuthenticated } = useAuth();
+const isMfaEnabled = ref<boolean>(false);
 
 // Fetch MFA status when user is authenticated
 onMounted(async () => {
   const fetchMfaStatus = async (): Promise<void> => {
-    if (!user.value?.id) return
+    if (!user.value?.id) return;
 
     try {
       // Correctly structure GraphQL query with parameters
@@ -84,22 +84,22 @@ onMounted(async () => {
         variables: {
           userId: user.value.id,
         },
-      })
+      });
 
-      const userData = response.body?.data
-      const activeMfaType = userData?.user?.activeMfaType
-      const newMfaEnabled = activeMfaType === 'totp'
+      const userData = response.body?.data;
+      const activeMfaType = userData?.user?.activeMfaType;
+      const newMfaEnabled = activeMfaType === "totp";
 
       // Update the state
-      isMfaEnabled.value = newMfaEnabled
+      isMfaEnabled.value = newMfaEnabled;
     } catch (err) {
-      const error = err as FetchError<ErrorResponse>
-      console.error(`Failed to query MFA status: ${error.message}`)
+      const error = err as FetchError<ErrorResponse>;
+      console.error(`Failed to query MFA status: ${error.message}`);
     }
-  }
+  };
 
   if (isAuthenticated.value && user.value?.id) {
-    await fetchMfaStatus()
+    await fetchMfaStatus();
   }
-})
+});
 </script>

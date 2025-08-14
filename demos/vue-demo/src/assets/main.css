@@ -17,7 +17,7 @@
   --text-muted: #9ca3af;
   --border-color: rgba(31, 41, 55, 0.7);
   --font-geist-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace;
 }
 

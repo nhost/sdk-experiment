@@ -1,55 +1,55 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { useAuth } from '../lib/nhost/auth'
-import SignIn from '../views/SignIn.vue'
-import SignUp from '../views/SignUp.vue'
-import Profile from '../views/Profile.vue'
-import Verify from '../views/Verify.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import { useAuth } from "../lib/nhost/auth";
+import SignIn from "../views/SignIn.vue";
+import SignUp from "../views/SignUp.vue";
+import Profile from "../views/Profile.vue";
+import Verify from "../views/Verify.vue";
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/',
-      redirect: '/signin',
+      path: "/",
+      redirect: "/signin",
     },
     {
-      path: '/signin',
-      name: 'SignIn',
+      path: "/signin",
+      name: "SignIn",
       component: SignIn,
     },
     {
-      path: '/signup',
-      name: 'SignUp',
+      path: "/signup",
+      name: "SignUp",
       component: SignUp,
     },
     {
-      path: '/verify',
-      name: 'Verify',
+      path: "/verify",
+      name: "Verify",
       component: Verify,
     },
     {
-      path: '/profile',
-      name: 'Profile',
+      path: "/profile",
+      name: "Profile",
       component: Profile,
       meta: { requiresAuth: true },
     },
     {
-      path: '/:pathMatch(.*)*',
-      redirect: '/',
+      path: "/:pathMatch(.*)*",
+      redirect: "/",
     },
   ],
-})
+});
 
 // Navigation guard for protected routes
 router.beforeEach((to) => {
-  if (to.meta['requiresAuth']) {
-    const { isAuthenticated } = useAuth()
+  if (to.meta["requiresAuth"]) {
+    const { isAuthenticated } = useAuth();
 
     if (!isAuthenticated.value) {
-      return '/signin'
+      return "/signin";
     }
   }
-  return true
-})
+  return true;
+});
 
-export default router
+export default router;

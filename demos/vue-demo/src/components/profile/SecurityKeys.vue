@@ -105,7 +105,7 @@
           >
             <div>
               <span class="font-medium">
-                {{ key.nickname || 'Unnamed key' }}
+                {{ key.nickname || "Unnamed key" }}
               </span>
               <span class="text-sm text-gray-500 ml-2">
                 ID: {{ key.credentialId.slice(0, 8) }}...
@@ -157,12 +157,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useAuth } from '../../lib/nhost/auth'
-import type { FetchError, FetchResponse } from '@nhost/nhost-js/fetch'
-import type { ErrorResponse } from '@nhost/nhost-js/auth'
-import { isWebAuthnSupported } from '../../lib/utils'
-import { startRegistration } from '@simplewebauthn/browser'
+import { ref, onMounted } from "vue";
+import { useAuth } from "../../lib/nhost/auth";
+import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
+import type { ErrorResponse } from "@nhost/nhost-js/auth";
+import { isWebAuthnSupported } from "../../lib/utils";
+import { startRegistration } from "@simplewebauthn/browser";
 
 /**
  * Represents a WebAuthn security key stored for a user
@@ -171,9 +171,9 @@ import { startRegistration } from '@simplewebauthn/browser'
  * - nickname: User-provided friendly name for the key
  */
 interface SecurityKey {
-  id: string
-  credentialId: string
-  nickname: string | null
+  id: string;
+  credentialId: string;
+  nickname: string | null;
 }
 
 /**
@@ -182,23 +182,23 @@ interface SecurityKey {
 interface SecurityKeysResponse {
   data?: {
     user?: {
-      securityKeys: SecurityKey[]
-    }
-  }
+      securityKeys: SecurityKey[];
+    };
+  };
 }
 
-const { nhost, user, isAuthenticated } = useAuth()
+const { nhost, user, isAuthenticated } = useAuth();
 
-const securityKeys = ref<SecurityKey[]>([])
-const isLoading = ref(true)
-const isRegistering = ref(false)
-const isDeleting = ref(false)
-const deletingKeyId = ref<string | null>(null)
-const keyName = ref('')
-const success = ref<string | null>(null)
-const errorMessage = ref<string | null>(null)
-const showAddForm = ref(false)
-const isWebAuthnAvailable = ref<boolean>(true)
+const securityKeys = ref<SecurityKey[]>([]);
+const isLoading = ref(true);
+const isRegistering = ref(false);
+const isDeleting = ref(false);
+const deletingKeyId = ref<string | null>(null);
+const keyName = ref("");
+const success = ref<string | null>(null);
+const errorMessage = ref<string | null>(null);
+const showAddForm = ref(false);
+const isWebAuthnAvailable = ref<boolean>(true);
 
 /**
  * Fetches all registered WebAuthn security keys for the current user
@@ -206,10 +206,10 @@ const isWebAuthnAvailable = ref<boolean>(true)
  * private keys stored securely on the user's devices/authenticators
  */
 const fetchSecurityKeys = async (): Promise<void> => {
-  if (!user.value?.id) return
+  if (!user.value?.id) return;
 
-  isLoading.value = true
-  errorMessage.value = null
+  isLoading.value = true;
+  errorMessage.value = null;
 
   try {
     // Query the database for all security keys registered to this user
@@ -223,26 +223,26 @@ const fetchSecurityKeys = async (): Promise<void> => {
           }
         }
       `,
-    })
+    });
 
-    const userData = response.body?.data
-    const keys = userData?.authUserSecurityKeys || []
-    securityKeys.value = keys
+    const userData = response.body?.data;
+    const keys = userData?.authUserSecurityKeys || [];
+    securityKeys.value = keys;
   } catch (err) {
-    const error = err as FetchError<ErrorResponse>
-    errorMessage.value = `Failed to load security keys: ${error.message}`
+    const error = err as FetchError<ErrorResponse>;
+    errorMessage.value = `Failed to load security keys: ${error.message}`;
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 
 const deleteSecurityKey = async (keyId: string): Promise<void> => {
-  if (isDeleting.value) return
+  if (isDeleting.value) return;
 
-  isDeleting.value = true
-  deletingKeyId.value = keyId
-  success.value = null
-  errorMessage.value = null
+  isDeleting.value = true;
+  deletingKeyId.value = keyId;
+  success.value = null;
+  errorMessage.value = null;
 
   try {
     // Send request to server to delete the security key
@@ -259,66 +259,66 @@ const deleteSecurityKey = async (keyId: string): Promise<void> => {
       variables: {
         keyId,
       },
-    })
+    });
 
     if (response.body?.errors) {
-      throw new Error(response.body.errors[0]?.message || 'Unknown error')
+      throw new Error(response.body.errors[0]?.message || "Unknown error");
     }
 
     // Update the UI by removing the key from local state
-    securityKeys.value = securityKeys.value.filter((key) => key.id !== keyId)
+    securityKeys.value = securityKeys.value.filter((key) => key.id !== keyId);
     success.value =
-      'Security key deleted successfully! Remember to also remove it from your authenticator app, password manager, or device credential manager to avoid future authentication issues.'
+      "Security key deleted successfully! Remember to also remove it from your authenticator app, password manager, or device credential manager to avoid future authentication issues.";
 
     // Hide success message after 5 seconds (increased to give users time to read the reminder)
     setTimeout(() => {
-      success.value = null
-    }, 5000)
+      success.value = null;
+    }, 5000);
   } catch (err) {
-    const error = err as Error
-    errorMessage.value = `Failed to delete security key: ${error.message}`
+    const error = err as Error;
+    errorMessage.value = `Failed to delete security key: ${error.message}`;
   } finally {
-    isDeleting.value = false
-    deletingKeyId.value = null
+    isDeleting.value = false;
+    deletingKeyId.value = null;
   }
-}
+};
 
 const registerNewSecurityKey = async (e: Event) => {
-  e.preventDefault()
+  e.preventDefault();
 
   // Check if browser supports WebAuthn
   if (!isWebAuthnAvailable.value) {
     errorMessage.value =
-      'WebAuthn is not supported by your browser. Please use a modern browser that supports WebAuthn.'
-    return
+      "WebAuthn is not supported by your browser. Please use a modern browser that supports WebAuthn.";
+    return;
   }
 
   // Validate key name exists
   if (!keyName.value.trim()) {
-    errorMessage.value = 'Please provide a name for your security key'
-    return
+    errorMessage.value = "Please provide a name for your security key";
+    return;
   }
 
-  isRegistering.value = true
-  errorMessage.value = null
-  success.value = null
+  isRegistering.value = true;
+  errorMessage.value = null;
+  success.value = null;
 
   try {
     // Step 1: Request challenge from server
     // The server generates a random challenge to ensure the registration
     // is happening in real-time and creates a new credential ID
-    const initResponse = await nhost.auth.addSecurityKey()
+    const initResponse = await nhost.auth.addSecurityKey();
 
     // Step 2: Browser prompts user for security key or biometric verification
     // The browser creates a new credential pair (public/private) and stores
     // the private key securely on the device
     const credential = await startRegistration({
       optionsJSON: initResponse.body,
-    })
+    });
 
     if (!credential) {
-      errorMessage.value = 'No credential was selected. Please try again.'
-      return
+      errorMessage.value = "No credential was selected. Please try again.";
+      return;
     }
 
     // Step 3: Send credential public key back to server for verification
@@ -327,38 +327,38 @@ const registerNewSecurityKey = async (e: Event) => {
     await nhost.auth.verifyAddSecurityKey({
       credential,
       nickname: keyName.value.trim(),
-    })
+    });
 
     // Step 4: Registration successful - update UI
-    success.value = 'Security key registered successfully!'
-    keyName.value = ''
-    showAddForm.value = false
+    success.value = "Security key registered successfully!";
+    keyName.value = "";
+    showAddForm.value = false;
 
     // Refresh the security keys list
-    fetchSecurityKeys()
+    fetchSecurityKeys();
   } catch (err) {
-    const error = err as Error
-    errorMessage.value = `Failed to register security key: ${error.message}`
+    const error = err as Error;
+    errorMessage.value = `Failed to register security key: ${error.message}`;
   } finally {
-    isRegistering.value = false
+    isRegistering.value = false;
   }
-}
+};
 
 const toggleAddForm = () => {
-  showAddForm.value = !showAddForm.value
-  errorMessage.value = null
-  success.value = null
-  keyName.value = ''
-}
+  showAddForm.value = !showAddForm.value;
+  errorMessage.value = null;
+  success.value = null;
+  keyName.value = "";
+};
 
 onMounted(() => {
   // Check if the current browser supports WebAuthn
   // This tests for the presence of the WebAuthn API (PublicKeyCredential and credentials)
-  isWebAuthnAvailable.value = isWebAuthnSupported()
+  isWebAuthnAvailable.value = isWebAuthnSupported();
 
   // Load the user's security keys when authenticated
   if (isAuthenticated.value && user.value?.id) {
-    fetchSecurityKeys()
+    fetchSecurityKeys();
   }
-})
+});
 </script>

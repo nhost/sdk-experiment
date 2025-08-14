@@ -22,9 +22,9 @@
       {{
         isLoading
           ? challengeData
-            ? 'Complete Registration on Your Device...'
-            : 'Initializing...'
-          : 'Register with Security Key'
+            ? "Complete Registration on Your Device..."
+            : "Initializing..."
+          : "Register with Security Key"
       }}
     </button>
 
@@ -42,12 +42,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useAuth } from '../../lib/nhost/auth'
-import { type ErrorResponse, type PublicKeyCredentialCreationOptions } from '@nhost/nhost-js/auth'
-import { type FetchError } from '@nhost/nhost-js/fetch'
-import { isWebAuthnSupported } from '../../lib/utils'
-import { startRegistration } from '@simplewebauthn/browser'
+import { ref } from "vue";
+import { useAuth } from "../../lib/nhost/auth";
+import { type ErrorResponse, type PublicKeyCredentialCreationOptions } from "@nhost/nhost-js/auth";
+import { type FetchError } from "@nhost/nhost-js/fetch";
+import { isWebAuthnSupported } from "../../lib/utils";
+import { startRegistration } from "@simplewebauthn/browser";
 
 /**
  * WebAuthn Registration (Sign Up) Flow
@@ -61,54 +61,54 @@ import { startRegistration } from '@simplewebauthn/browser'
  * Props for the WebAuthn signup form
  */
 interface Props {
-  email: string
-  displayName: string
-  redirectTo?: string
+  email: string;
+  displayName: string;
+  redirectTo?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   redirectTo: undefined,
-})
+});
 
 const emit = defineEmits<{
-  'update:email': [value: string]
-  'update:displayName': [value: string]
-}>()
+  "update:email": [value: string];
+  "update:displayName": [value: string];
+}>();
 
-const { nhost } = useAuth()
-const isLoading = ref<boolean>(false)
-const error = ref<string | null>(null)
-const keyNickname = ref<string>('')
-const challengeData = ref<PublicKeyCredentialCreationOptions | null>(null)
+const { nhost } = useAuth();
+const isLoading = ref<boolean>(false);
+const error = ref<string | null>(null);
+const keyNickname = ref<string>("");
+const challengeData = ref<PublicKeyCredentialCreationOptions | null>(null);
 
 // Local reactive refs for v-model
-const email = ref(props.email)
-const displayName = ref(props.displayName)
+const email = ref(props.email);
+const displayName = ref(props.displayName);
 
 // Watch for changes and emit updates
-import { watch } from 'vue'
+import { watch } from "vue";
 watch(email, (newValue) => {
-  emit('update:email', newValue)
-})
+  emit("update:email", newValue);
+});
 
 watch(displayName, (newValue) => {
-  emit('update:displayName', newValue)
-})
+  emit("update:displayName", newValue);
+});
 
 // Watch for prop changes
 watch(
   () => props.email,
   (newValue) => {
-    email.value = newValue
+    email.value = newValue;
   },
-)
+);
 
 watch(
   () => props.displayName,
   (newValue) => {
-    displayName.value = newValue
+    displayName.value = newValue;
   },
-)
+);
 
 /**
  * Handles the WebAuthn registration flow (sign up with security key/biometrics)
@@ -121,21 +121,21 @@ watch(
  * 5. Server stores the public key for future authentication attempts
  */
 const startWebAuthnRegistration = async (): Promise<void> => {
-  isLoading.value = true
-  error.value = null
+  isLoading.value = true;
+  error.value = null;
 
   // Validate required fields
   if (!email.value) {
-    error.value = 'Email is required'
-    isLoading.value = false
-    return
+    error.value = "Email is required";
+    isLoading.value = false;
+    return;
   }
 
   // Check browser compatibility before proceeding
   if (!isWebAuthnSupported()) {
-    error.value = 'WebAuthn is not supported by your browser.'
-    isLoading.value = false
-    return
+    error.value = "WebAuthn is not supported by your browser.";
+    isLoading.value = false;
+    return;
   }
 
   try {
@@ -151,10 +151,10 @@ const startWebAuthnRegistration = async (): Promise<void> => {
       options: {
         displayName: displayName.value,
       },
-    })
+    });
 
     // Store the challenge data for UI feedback
-    challengeData.value = response.body
+    challengeData.value = response.body;
 
     try {
       // Step 2: Browser prompts user to create a new credential
@@ -164,12 +164,12 @@ const startWebAuthnRegistration = async (): Promise<void> => {
       // - The public key will be sent to the server
       const credential = await startRegistration({
         optionsJSON: response.body,
-      })
+      });
 
       if (!credential) {
-        error.value = 'No credential was created.'
-        isLoading.value = false
-        return
+        error.value = "No credential was created.";
+        isLoading.value = false;
+        return;
       }
 
       // Step 3: Send the credential attestation to the server for verification
@@ -181,7 +181,7 @@ const startWebAuthnRegistration = async (): Promise<void> => {
           displayName: displayName.value || undefined,
         },
         nickname: keyNickname.value || `Security Key for ${displayName.value || email.value}`,
-      })
+      });
 
       // Step 4: Handle registration success
       if (verifyResponse.body && verifyResponse.body.session) {
@@ -191,16 +191,16 @@ const startWebAuthnRegistration = async (): Promise<void> => {
         // - The public key is stored in the database
         // - The private key remains securely on the user's device
         // - A session has been established
-        window.location.href = props.redirectTo || window.location.origin + '/profile'
+        window.location.href = props.redirectTo || window.location.origin + "/profile";
       }
     } catch (credError) {
-      error.value = `WebAuthn registration failed: ${(credError as Error).message || 'Unknown error'}`
+      error.value = `WebAuthn registration failed: ${(credError as Error).message || "Unknown error"}`;
     }
   } catch (err) {
-    const errorObj = err as FetchError<ErrorResponse>
-    error.value = `An error occurred during WebAuthn sign up: ${errorObj.message}`
+    const errorObj = err as FetchError<ErrorResponse>;
+    error.value = `An error occurred during WebAuthn sign up: ${errorObj.message}`;
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
-}
+};
 </script>
