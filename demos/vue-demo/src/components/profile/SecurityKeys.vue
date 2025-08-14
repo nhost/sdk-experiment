@@ -196,9 +196,7 @@ interface SecurityKey {
  */
 interface SecurityKeysResponse {
   data?: {
-    user?: {
-      securityKeys: SecurityKey[];
-    };
+    authUserSecurityKeys: SecurityKey[];
   };
 }
 

@@ -11,8 +11,8 @@ const authState = reactive({
 
 // Create the nhost client
 const nhost = createClient({
-  region: import.meta.env["VITE_NHOST_REGION"] || "local",
-  subdomain: import.meta.env["VITE_NHOST_SUBDOMAIN"] || "local",
+  region: (import.meta.env["VITE_NHOST_REGION"] as string) || "local",
+  subdomain: (import.meta.env["VITE_NHOST_SUBDOMAIN"] as string) || "local",
 });
 
 // Subscription cleanup function

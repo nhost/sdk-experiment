@@ -6,7 +6,6 @@ import {
   defineConfigWithVueTs,
   vueTsConfigs,
 } from "@vue/eslint-config-typescript";
-import skipFormatting from "@vue/eslint-config-prettier/skip-formatting";
 
 export default defineConfigWithVueTs(
   eslint.configs.recommended,
@@ -16,7 +15,6 @@ export default defineConfigWithVueTs(
     // Vue demo specific ignores
     ignores: [
       "dist",
-      "dist-ssr",
       "build",
       "node_modules",
       ".vite",
@@ -64,7 +62,7 @@ export default defineConfigWithVueTs(
       ...pluginVue.configs["flat/strongly-recommended"].rules,
       ...pluginVue.configs["flat/recommended"].rules,
 
-      // TypeScript rules adapted for Vue
+      // Allow async event handlers for Vue (matching React config)
       "@typescript-eslint/no-misused-promises": [
         "error",
         {
@@ -74,21 +72,10 @@ export default defineConfigWithVueTs(
         },
       ],
 
-      // Disable floating promises rule for better Vue composition API experience
+      // Disable floating promises rule for Vue composition API (matching React config)
       "@typescript-eslint/no-floating-promises": "off",
-
-      // Vue-specific TypeScript adjustments
-      "@typescript-eslint/no-unused-vars": [
-        "error",
-        {
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
-        },
-      ],
     },
   },
-  // // Include Vue TypeScript configurations
+  // Include Vue TypeScript configurations
   vueTsConfigs.recommended,
-  // // Skip formatting rules (handled by Prettier)
-  skipFormatting,
 );
