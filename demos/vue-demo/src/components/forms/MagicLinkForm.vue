@@ -1,7 +1,9 @@
 <template>
   <div v-if="success" class="text-center">
     <p class="mb-4">Magic link sent! Check your email to sign in.</p>
-    <button @click="success = false" class="btn btn-secondary">Try again</button>
+    <button @click="success = false" class="btn btn-secondary">
+      Try again
+    </button>
   </div>
   <form v-else @submit.prevent="handleSubmit" class="space-y-5">
     <div>

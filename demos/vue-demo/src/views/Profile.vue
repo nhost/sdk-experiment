@@ -16,7 +16,10 @@
 
         <div class="profile-item">
           <strong>User ID:</strong>
-          <span class="ml-2" style="font-family: var(--font-geist-mono); font-size: 0.875rem">
+          <span
+            class="ml-2"
+            style="font-family: var(--font-geist-mono); font-size: 0.875rem"
+          >
             {{ user?.id || "Not available" }}
           </span>
         </div>
@@ -38,7 +41,10 @@
       <pre>{{ JSON.stringify(session, null, 2) }}</pre>
     </div>
 
-    <MFASettings :key="`mfa-settings-${isMfaEnabled}`" :initialMfaEnabled="isMfaEnabled" />
+    <MFASettings
+      :key="`mfa-settings-${isMfaEnabled}`"
+      :initialMfaEnabled="isMfaEnabled"
+    />
 
     <SecurityKeys />
 
@@ -73,18 +79,19 @@ onMounted(async () => {
 
     try {
       // Correctly structure GraphQL query with parameters
-      const response: FetchResponse<MfaStatusResponse> = await nhost.graphql.request({
-        query: `
+      const response: FetchResponse<MfaStatusResponse> =
+        await nhost.graphql.request({
+          query: `
           query GetUserMfaStatus($userId: uuid!) {
             user(id: $userId) {
               activeMfaType
             }
           }
         `,
-        variables: {
-          userId: user.value.id,
-        },
-      });
+          variables: {
+            userId: user.value.id,
+          },
+        });
 
       const userData = response.body?.data;
       const activeMfaType = userData?.user?.activeMfaType;

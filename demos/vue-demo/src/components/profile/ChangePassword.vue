@@ -2,13 +2,17 @@
   <div class="glass-card p-8 mb-6">
     <h3 class="text-xl mb-4">Change Password</h3>
 
-    <div v-if="success" class="alert alert-success mb-4">Password changed successfully!</div>
+    <div v-if="success" class="alert alert-success mb-4">
+      Password changed successfully!
+    </div>
 
     <div v-if="error" class="alert alert-error mb-4">{{ error }}</div>
 
     <form @submit.prevent="handleSubmit">
       <div class="mb-4">
-        <label for="new-password" class="block text-sm font-medium mb-1"> New Password </label>
+        <label for="new-password" class="block text-sm font-medium mb-1">
+          New Password
+        </label>
         <input
           id="new-password"
           type="password"
@@ -34,7 +38,11 @@
         />
       </div>
 
-      <button type="submit" :disabled="isLoading" class="btn btn-primary w-full">
+      <button
+        type="submit"
+        :disabled="isLoading"
+        class="btn btn-primary w-full"
+      >
         {{ isLoading ? "Updating..." : "Change Password" }}
       </button>
     </form>

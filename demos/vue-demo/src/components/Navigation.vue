@@ -18,10 +18,18 @@
         </template>
 
         <template v-else>
-          <router-link to="/signin" class="nav-link" :class="{ active: $route.path === '/signin' }">
+          <router-link
+            to="/signin"
+            class="nav-link"
+            :class="{ active: $route.path === '/signin' }"
+          >
             Sign In
           </router-link>
-          <router-link to="/signup" class="nav-link" :class="{ active: $route.path === '/signup' }">
+          <router-link
+            to="/signup"
+            class="nav-link"
+            :class="{ active: $route.path === '/signup' }"
+          >
             Sign Up
           </router-link>
         </template>

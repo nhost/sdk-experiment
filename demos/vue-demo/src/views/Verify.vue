@@ -8,7 +8,9 @@
       <div class="text-center py-4">
         <div v-if="status === 'verifying'">
           <p class="mb-4">Verifying your email...</p>
-          <div class="w-8 h-8 border-t-2 border-blue-500 rounded-full animate-spin mx-auto" />
+          <div
+            class="w-8 h-8 border-t-2 border-blue-500 rounded-full animate-spin mx-auto"
+          />
         </div>
 
         <div v-else-if="status === 'success'">
@@ -25,13 +27,19 @@
             class="mb-4 p-4 bg-gray-100 rounded-md text-left overflow-auto max-h-48"
           >
             <p class="font-semibold mb-2">URL Parameters:</p>
-            <div v-for="[key, value] in Object.entries(urlParams)" :key="key" class="mb-1">
+            <div
+              v-for="[key, value] in Object.entries(urlParams)"
+              :key="key"
+              class="mb-1"
+            >
               <span class="font-mono text-blue-600">{{ key }}:</span>
               <span class="font-mono"> {{ value }}</span>
             </div>
           </div>
 
-          <button @click="router.push('/signin')" class="btn btn-primary">Back to Sign In</button>
+          <button @click="router.push('/signin')" class="btn btn-primary">
+            Back to Sign In
+          </button>
         </div>
       </div>
     </div>
@@ -81,7 +89,10 @@ onUnmounted(() => {
   isMounted = false;
 });
 
-async function processToken(refreshToken: string, params: URLSearchParams): Promise<void> {
+async function processToken(
+  refreshToken: string,
+  params: URLSearchParams,
+): Promise<void> {
   try {
     // First display the verifying message for at least a moment
     await new Promise((resolve) => setTimeout(resolve, 500));
@@ -179,8 +190,8 @@ async function processToken(refreshToken: string, params: URLSearchParams): Prom
 
 .font-mono {
   font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-    monospace;
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
 }
 
 .text-blue-600 {

@@ -2,19 +2,22 @@
   <div class="glass-card p-8 mb-6">
     <h3 class="text-xl mb-4">Security Keys</h3>
 
-    <div v-if="errorMessage" class="alert alert-error mb-4">{{ errorMessage }}</div>
+    <div v-if="errorMessage" class="alert alert-error mb-4">
+      {{ errorMessage }}
+    </div>
 
     <div v-if="success" class="alert alert-success mb-4">{{ success }}</div>
 
     <div v-if="!isWebAuthnAvailable" class="alert alert-error mb-4">
       <p>
-        <strong>WebAuthn not supported!</strong> Your browser or device doesn't support WebAuthn
-        authentication. Please use a modern browser (Chrome, Firefox, Safari, Edge) that supports
-        WebAuthn.
+        <strong>WebAuthn not supported!</strong> Your browser or device doesn't
+        support WebAuthn authentication. Please use a modern browser (Chrome,
+        Firefox, Safari, Edge) that supports WebAuthn.
       </p>
       <p class="mt-2 text-sm">
-        Note: Even if your browser supports WebAuthn, you may need a compatible authenticator like a
-        fingerprint reader, facial recognition, or a security key (e.g., YubiKey).
+        Note: Even if your browser supports WebAuthn, you may need a compatible
+        authenticator like a fingerprint reader, facial recognition, or a
+        security key (e.g., YubiKey).
       </p>
     </div>
 
@@ -24,12 +27,13 @@
 
     <div v-else-if="showAddForm" class="space-y-5">
       <p>
-        Enter a name for your security key and follow the prompts from your browser to register it.
+        Enter a name for your security key and follow the prompts from your
+        browser to register it.
       </p>
       <p class="text-sm text-gray-400 mt-2">
-        Note: You'll need a security key (like YubiKey) or a device with biometric authentication
-        (like Touch ID, Face ID, or Windows Hello). If registration fails, make sure your device has
-        the required capabilities.
+        Note: You'll need a security key (like YubiKey) or a device with
+        biometric authentication (like Touch ID, Face ID, or Windows Hello). If
+        registration fails, make sure your device has the required capabilities.
       </p>
       <p class="text-sm text-gray-400">
         This works the same way as when you registered during sign up.
@@ -37,7 +41,9 @@
 
       <form @submit.prevent="registerNewSecurityKey" class="space-y-4">
         <div>
-          <label for="keyName" class="block mb-2 text-sm font-medium"> Security Key Name </label>
+          <label for="keyName" class="block mb-2 text-sm font-medium">
+            Security Key Name
+          </label>
           <input
             type="text"
             id="keyName"
@@ -48,7 +54,11 @@
           />
         </div>
         <div class="flex space-x-3">
-          <button type="submit" class="btn btn-primary" :disabled="isRegistering">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            :disabled="isRegistering"
+          >
             <span v-if="isRegistering" class="flex items-center">
               <svg
                 class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -88,8 +98,9 @@
 
     <div v-else class="space-y-5">
       <p>
-        Security Keys (WebAuthn) provide a secure passwordless authentication option using hardware
-        security keys, fingerprints, or facial recognition.
+        Security Keys (WebAuthn) provide a secure passwordless authentication
+        option using hardware security keys, fingerprints, or facial
+        recognition.
       </p>
 
       <!-- List of existing security keys -->
@@ -149,7 +160,11 @@
         </ul>
       </div>
 
-      <button @click="toggleAddForm" :disabled="!isWebAuthnAvailable" class="btn btn-primary">
+      <button
+        @click="toggleAddForm"
+        :disabled="!isWebAuthnAvailable"
+        class="btn btn-primary"
+      >
         Register New Security Key
       </button>
     </div>
@@ -213,8 +228,9 @@ const fetchSecurityKeys = async (): Promise<void> => {
 
   try {
     // Query the database for all security keys registered to this user
-    const response: FetchResponse<SecurityKeysResponse> = await nhost.graphql.request({
-      query: `
+    const response: FetchResponse<SecurityKeysResponse> =
+      await nhost.graphql.request({
+        query: `
         query GetUserSecurityKeys {
           authUserSecurityKeys {
             id
@@ -223,7 +239,7 @@ const fetchSecurityKeys = async (): Promise<void> => {
           }
         }
       `,
-    });
+      });
 
     const userData = response.body?.data;
     const keys = userData?.authUserSecurityKeys || [];

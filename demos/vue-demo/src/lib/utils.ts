@@ -26,5 +26,9 @@ export function formatFileSize(bytes: number): string {
  * @returns {boolean} Whether WebAuthn is supported in the current environment
  */
 export const isWebAuthnSupported = (): boolean => {
-  return typeof window !== "undefined" && !!window.PublicKeyCredential && !!navigator.credentials;
+  return (
+    typeof window !== "undefined" &&
+    !!window.PublicKeyCredential &&
+    !!navigator.credentials
+  );
 };

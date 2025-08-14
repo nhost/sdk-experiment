@@ -12,13 +12,24 @@
 
     <div>
       <label for="keyNickname">Key Nickname (Optional)</label>
-      <input id="keyNickname" type="text" v-model="keyNickname" placeholder="My Security Key" />
-      <p class="text-xs mt-1 text-gray-400">A friendly name for your security key</p>
+      <input
+        id="keyNickname"
+        type="text"
+        v-model="keyNickname"
+        placeholder="My Security Key"
+      />
+      <p class="text-xs mt-1 text-gray-400">
+        A friendly name for your security key
+      </p>
     </div>
 
     <div v-if="error" class="alert alert-error">{{ error }}</div>
 
-    <button type="submit" class="btn btn-primary w-full" :disabled="isLoading || !email">
+    <button
+      type="submit"
+      class="btn btn-primary w-full"
+      :disabled="isLoading || !email"
+    >
       {{
         isLoading
           ? challengeData
@@ -30,12 +41,12 @@
 
     <div class="text-xs mt-2 text-gray-400">
       <p>
-        You'll be prompted to use your device's security key (like TouchID, FaceID, Windows Hello,
-        or a USB security key)
+        You'll be prompted to use your device's security key (like TouchID,
+        FaceID, Windows Hello, or a USB security key)
       </p>
       <p class="mt-1">
-        When prompted, please complete the biometric verification or insert and activate your
-        security key to create your account.
+        When prompted, please complete the biometric verification or insert and
+        activate your security key to create your account.
       </p>
     </div>
   </form>
@@ -44,7 +55,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useAuth } from "../../lib/nhost/auth";
-import { type ErrorResponse, type PublicKeyCredentialCreationOptions } from "@nhost/nhost-js/auth";
+import {
+  type ErrorResponse,
+  type PublicKeyCredentialCreationOptions,
+} from "@nhost/nhost-js/auth";
 import { type FetchError } from "@nhost/nhost-js/fetch";
 import { isWebAuthnSupported } from "../../lib/utils";
 import { startRegistration } from "@simplewebauthn/browser";
@@ -180,7 +194,9 @@ const startWebAuthnRegistration = async (): Promise<void> => {
         options: {
           displayName: displayName.value || undefined,
         },
-        nickname: keyNickname.value || `Security Key for ${displayName.value || email.value}`,
+        nickname:
+          keyNickname.value ||
+          `Security Key for ${displayName.value || email.value}`,
       });
 
       // Step 4: Handle registration success
@@ -191,7 +207,8 @@ const startWebAuthnRegistration = async (): Promise<void> => {
         // - The public key is stored in the database
         // - The private key remains securely on the user's device
         // - A session has been established
-        window.location.href = props.redirectTo || window.location.origin + "/profile";
+        window.location.href =
+          props.redirectTo || window.location.origin + "/profile";
       }
     } catch (credError) {
       error.value = `WebAuthn registration failed: ${(credError as Error).message || "Unknown error"}`;

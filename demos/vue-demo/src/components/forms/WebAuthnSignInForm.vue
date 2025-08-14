@@ -8,10 +8,13 @@
 
     <div class="text-xs mt-2 text-gray-400">
       <p>
-        You'll be prompted to use your device's security key (like TouchID, FaceID, Windows Hello,
-        or a USB security key)
+        You'll be prompted to use your device's security key (like TouchID,
+        FaceID, Windows Hello, or a USB security key)
       </p>
-      <p>Your browser will show available security keys that you've previously registered.</p>
+      <p>
+        Your browser will show available security keys that you've previously
+        registered.
+      </p>
     </div>
   </form>
 </template>

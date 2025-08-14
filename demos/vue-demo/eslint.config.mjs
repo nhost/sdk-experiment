@@ -2,7 +2,10 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import globals from "globals";
 import pluginVue from "eslint-plugin-vue";
-import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
+import {
+  defineConfigWithVueTs,
+  vueTsConfigs,
+} from "@vue/eslint-config-typescript";
 import skipFormatting from "@vue/eslint-config-prettier/skip-formatting";
 
 export default defineConfigWithVueTs(

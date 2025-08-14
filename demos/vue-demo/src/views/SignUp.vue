@@ -20,13 +20,24 @@
 
             <div>
               <label for="password">Password</label>
-              <input id="password" type="password" v-model="password" required />
-              <p class="text-xs mt-1 text-gray-400">Password must be at least 8 characters long</p>
+              <input
+                id="password"
+                type="password"
+                v-model="password"
+                required
+              />
+              <p class="text-xs mt-1 text-gray-400">
+                Password must be at least 8 characters long
+              </p>
             </div>
 
             <div v-if="error" class="alert alert-error">{{ error }}</div>
 
-            <button type="submit" class="btn btn-primary w-full" :disabled="isLoading">
+            <button
+              type="submit"
+              class="btn btn-primary w-full"
+              :disabled="isLoading"
+            >
               {{ isLoading ? "Signing Up..." : "Sign Up" }}
             </button>
           </form>
@@ -64,13 +75,18 @@
         </template>
 
         <template #webauthn>
-          <WebAuthnSignUpForm v-model:email="email" v-model:displayName="displayName" />
+          <WebAuthnSignUpForm
+            v-model:email="email"
+            v-model:displayName="displayName"
+          />
         </template>
       </TabForm>
     </div>
 
     <div class="mt-4">
-      <p>Already have an account? <router-link to="/signin">Sign In</router-link></p>
+      <p>
+        Already have an account? <router-link to="/signin">Sign In</router-link>
+      </p>
     </div>
   </div>
 </template>

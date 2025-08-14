@@ -7,7 +7,9 @@
 
       <div v-if="magicLinkSent" class="text-center">
         <p class="mb-4">Magic link sent! Check your email to sign in.</p>
-        <router-link to="/signin" class="btn btn-secondary"> Back to sign in </router-link>
+        <router-link to="/signin" class="btn btn-secondary">
+          Back to sign in
+        </router-link>
       </div>
       <TabForm v-else>
         <template #password>
@@ -19,12 +21,21 @@
 
             <div>
               <label for="password">Password</label>
-              <input id="password" type="password" v-model="password" required />
+              <input
+                id="password"
+                type="password"
+                v-model="password"
+                required
+              />
             </div>
 
             <div v-if="error" class="alert alert-error">{{ error }}</div>
 
-            <button type="submit" class="btn btn-primary w-full" :disabled="isLoading">
+            <button
+              type="submit"
+              class="btn btn-primary w-full"
+              :disabled="isLoading"
+            >
               {{ isLoading ? "Signing In..." : "Sign In" }}
             </button>
           </form>
@@ -68,7 +79,9 @@
     </div>
 
     <div class="mt-4">
-      <p>Don't have an account? <router-link to="/signup">Sign Up</router-link></p>
+      <p>
+        Don't have an account? <router-link to="/signup">Sign Up</router-link>
+      </p>
     </div>
   </div>
 </template>
