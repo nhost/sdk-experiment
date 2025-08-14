@@ -12,6 +12,13 @@
           >
             Profile
           </router-link>
+          <router-link
+            to="/upload"
+            class="nav-link"
+            :class="{ active: $route.path === '/upload' }"
+          >
+            Upload
+          </router-link>
           <button @click="handleSignOut" class="nav-link" :disabled="isLoading">
             {{ isLoading ? "Signing Out..." : "Sign Out" }}
           </button>

@@ -3,6 +3,7 @@ import { useAuth } from "../lib/nhost/auth";
 import SignIn from "../views/SignIn.vue";
 import SignUp from "../views/SignUp.vue";
 import Profile from "../views/Profile.vue";
+import Upload from "../views/Upload.vue";
 import Verify from "../views/Verify.vue";
 
 const router = createRouter({
@@ -31,6 +32,12 @@ const router = createRouter({
       path: "/profile",
       name: "Profile",
       component: Profile,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/upload",
+      name: "Upload",
+      component: Upload,
       meta: { requiresAuth: true },
     },
     {
