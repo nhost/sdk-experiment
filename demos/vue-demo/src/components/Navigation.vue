@@ -4,10 +4,6 @@
       <router-link to="/" class="navbar-brand"> Nhost Vue Demo </router-link>
 
       <div class="navbar-links">
-        <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }">
-          Home
-        </router-link>
-
         <template v-if="isAuthenticated">
           <router-link
             to="/profile"

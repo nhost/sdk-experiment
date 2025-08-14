@@ -15,7 +15,7 @@ This demo includes the following migrated pages and functionality from the React
   - WebAuthn/Security Key authentication
 - **Sign Up Page** (`/signup`) - User registration with the same authentication methods
 - **Verify Page** (`/verify`) - Email verification and magic link processing
-- **Profile Page** (`/profile`) - Protected user profile management
+- **Profile Page** (`/profile`) - Protected user profile management with route guards
 
 ### Profile Management Components
 
@@ -29,7 +29,9 @@ This demo includes the following migrated pages and functionality from the React
 - **Vue 3** with Composition API
 - **Vue Router 4** for navigation
 - **TypeScript** for type safety
-- **Vite** for build tooling
+- **Vite** for build tooling and development server
+- **ESLint** and **Prettier** for code quality and formatting
+- **@simplewebauthn/browser** for WebAuthn/FIDO2 authentication
 - **Nhost SDK** for backend integration
 
 ## Getting Started
@@ -76,15 +78,6 @@ src/
     └── index.ts                # Vue Router configuration
 ```
 
-## Key Differences from React Version
-
-- Uses Vue 3 Composition API instead of React hooks
-- Vue Router instead of React Router
-- Vue's reactivity system with `ref` and `reactive`
-- Template-based rendering instead of JSX
-- Event handling with `@click` instead of `onClick`
-- Two-way data binding with `v-model`
-
 ## Authentication Flow
 
 1. **Sign In/Up**: Users can authenticate using multiple methods
@@ -115,4 +108,9 @@ Configure the following in `.env`:
 - `pnpm dev` - Start development server
 - `pnpm build` - Build for production
 - `pnpm preview` - Preview production build
-- `pnpm test` - Run tests and linting
+- `pnpm test` - Run tests, linting, formatting, and audit checks
+- `pnpm test:typecheck` - Run TypeScript type checking
+- `pnpm test:lint` - Run ESLint
+- `pnpm test:format` - Check code formatting with Prettier
+- `pnpm test:audit` - Run security audit
+- `pnpm format` - Format code with Prettier
