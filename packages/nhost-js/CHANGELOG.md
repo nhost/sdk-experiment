@@ -1,4 +1,8 @@
-# dev
+# 5.0.0-beta.9
+
+- fix (packages/nhost-js): if session doesn't have decodedToken treat as expired #49
+
+# 5.0.0-beta.8
 
 - feat (package/nhost-js): update openapi specs and properly generate formData when uploading/updating files #47
 - chore (nhost-js): update openapi #44
