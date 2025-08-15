@@ -1,3 +1,5 @@
+updated
+
 # 5.0.0-beta.9
 
 - fix (packages/nhost-js): if session doesn't have decodedToken treat as expired #49
