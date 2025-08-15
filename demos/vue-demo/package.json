@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vue-tsc && vite build",
     "test": "pnpm test:audit && pnpm test:typecheck && pnpm test:lint && pnpm test:format && echo \"No tests specified\" && exit 0",
-    "test:typecheck": "tsc --noEmit",
+    "test:typecheck": "vue-tsc --noEmit",
     "test:lint": "eslint .",
     "test:format": "prettier --check .",
     "test:audit": "pnpm audit",
