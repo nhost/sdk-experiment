@@ -1,4 +1,4 @@
-updated
+- chore (ci): improve changelog check #52
 
 # 5.0.0-beta.9
 

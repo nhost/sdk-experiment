@@ -49,13 +49,16 @@ jobs:
           # Create the expected CHANGELOG entry format with PR title and number
           EXPECTED_ENTRY="$PR_TITLE #$PR_NUMBER"
 
-          # Check if PR title with PR number appears as the first line in CHANGELOG.md
+          # Check if CHANGELOG.md has changed
+          echo "CHANGELOG.md has changed, checking if first line contains expected entry"
+
+          # Check if PR title with PR number appears in the first line of CHANGELOG.md
           FIRST_LINE=$(head -n 1 "${{ inputs.PROJECT_PATH }}/CHANGELOG.md")
 
-          if [ "$FIRST_LINE" = "$EXPECTED_ENTRY" ]; then
-            echo "PR title with PR number found as first line in ${{ inputs.PROJECT_PATH}}/CHANGELOG.md"
+          if echo "$FIRST_LINE" | grep -q "$EXPECTED_ENTRY"; then
+            echo "PR title with PR number found in first line of ${{ inputs.PROJECT_PATH}}/CHANGELOG.md"
           else
-            echo "::error::Expected entry '$EXPECTED_ENTRY' not found as the first line in ${{ inputs.PROJECT_PATH }}/CHANGELOG.md"
-            echo "::error::Please add your PR title with PR number as the first line in CHANGELOG.md (Example: 'feat (myservice): something something #$PR_NUMBER')"
+            echo "::error::Expected entry '$EXPECTED_ENTRY' not found in the first line of ${{ inputs.PROJECT_PATH }}/CHANGELOG.md"
+            echo "::error::Please ensure your PR title with PR number is included in the first line of CHANGELOG.md (Example: 'feat (myservice): something something #$PR_NUMBER')"
             exit 1
           fi
