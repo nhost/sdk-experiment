@@ -1,5 +1,7 @@
 <script lang="ts">
   import { nhost } from '$lib/nhost/auth';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import type { ErrorResponse } from '@nhost/nhost-js/auth';
   import type { FetchError } from '@nhost/nhost-js/fetch';
 
@@ -27,7 +29,9 @@
         },
       });
 
-      success = true;
+      // Navigate to current page with magic=success parameter for persistent feedback
+      const currentPath = $page.url.pathname;
+      goto(`${currentPath}?magic=success`);
     } catch (err) {
       const fetchError = err as FetchError<ErrorResponse>;
       error = `An error occurred while sending the magic link: ${fetchError.message}`;

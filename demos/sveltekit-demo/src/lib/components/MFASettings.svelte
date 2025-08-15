@@ -166,7 +166,7 @@
       {/if}
 
       <p>Or manually enter this secret key:</p>
-      <div class="p-2 rounded text-center text-black" style="background-color: #f3f4f6;">
+      <div class="p-2 bg-gray-100 rounded text-center text-black">
         {totpSecret}
       </div>
 

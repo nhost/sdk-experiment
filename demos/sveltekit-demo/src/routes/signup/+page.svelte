@@ -1,5 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import { auth, nhost } from '$lib/nhost/auth';
   import type { ErrorResponse } from '@nhost/nhost-js/auth';
   import type { FetchError } from '@nhost/nhost-js/fetch';
@@ -12,6 +13,9 @@
   let displayName = '';
   let isLoading = false;
   let error: string | null = null;
+
+  let params = $derived(new URLSearchParams($page.url.search));
+  let magicLinkSent = $derived(params.get('magic') === 'success');
 
   // If already authenticated, redirect to profile
   $effect(() => {
@@ -78,7 +82,17 @@
   <div class="glass-card w-full p-8 mb-6">
     <h2 class="text-2xl mb-6">Sign Up</h2>
 
-    <TabForm>
+    {#if magicLinkSent}
+      <div class="text-center">
+        <p class="mb-4">
+          Magic link sent! Check your email to sign up.
+        </p>
+        <a href="/signup" class="btn btn-secondary">
+          Back to sign up
+        </a>
+      </div>
+    {:else}
+      <TabForm>
       {#snippet passwordTabContent()}
         <form onsubmit={handleSubmit} class="space-y-5">
           <div>
@@ -163,6 +177,7 @@
         />
       {/snippet}
     </TabForm>
+    {/if}
   </div>
 
   <div class="mt-4">
