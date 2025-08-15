@@ -60,7 +60,7 @@
 
         // Wait to show success message briefly, then redirect
         setTimeout(() => {
-          if (isMounted) goto("/profile");
+          if (isMounted) void goto("/profile");
         }, 1500);
       } catch (err) {
         const fetchError = err as FetchError<ErrorResponse>;
@@ -71,7 +71,7 @@
       }
     }
 
-    processToken();
+    void processToken();
 
     // Cleanup function
     return () => {
@@ -123,7 +123,7 @@
               style="background-color: rgba(31, 41, 55, 0.5);"
             >
               <p class="font-semibold mb-2">URL Parameters:</p>
-              {#each Object.entries(urlParams) as [key, value]}
+              {#each Object.entries(urlParams) as [key, value] (key)}
                 <div class="mb-1">
                   <span class="font-mono" style="color: var(--primary);"
                     >{key}:</span

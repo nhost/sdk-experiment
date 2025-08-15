@@ -29,13 +29,13 @@
   $effect(() => {
     // If user is already authenticated, redirect to profile
     if ($auth.isAuthenticated) {
-      goto("/profile", { replaceState: true });
+      void goto("/profile", { replaceState: true });
       return;
     }
 
     // If no ticket is provided, redirect to sign in
     if (!ticket && !isLoading) {
-      goto("/signin", { replaceState: true });
+      void goto("/signin", { replaceState: true });
       return;
     }
   });
@@ -51,7 +51,7 @@
       if (result.error) {
         error = result.error;
       } else if (result.success) {
-        goto("/profile", { replaceState: true });
+        void goto("/profile", { replaceState: true });
       }
     } catch (err) {
       const fetchError = err as FetchError<ErrorResponse>;

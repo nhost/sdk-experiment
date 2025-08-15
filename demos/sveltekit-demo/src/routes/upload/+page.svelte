@@ -29,7 +29,7 @@
   // Redirect if not authenticated
   $effect(() => {
     if (!$auth.isLoading && !$auth.isAuthenticated) {
-      goto("/signin");
+      void goto("/signin");
     }
   });
 
@@ -70,7 +70,7 @@
   // Fetch existing files when component mounts
   onMount(() => {
     if ($auth.isAuthenticated) {
-      fetchFiles();
+      void fetchFiles();
     }
   });
 

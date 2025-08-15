@@ -20,7 +20,7 @@
   // If already authenticated, redirect to profile
   $effect(() => {
     if ($auth.isAuthenticated) {
-      goto("/profile");
+      void goto("/profile");
     }
   });
 
@@ -40,10 +40,10 @@
 
       if (response.body) {
         // Successfully signed up and automatically signed in
-        goto("/profile");
+        void goto("/profile");
       } else {
         // Verification email sent
-        goto("/verify");
+        void goto("/verify");
       }
     } catch (err) {
       const fetchError = err as FetchError<ErrorResponse>;

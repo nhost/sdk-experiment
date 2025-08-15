@@ -6,9 +6,9 @@
   $effect(() => {
     if (!$auth.isLoading) {
       if ($auth.isAuthenticated) {
-        goto("/profile");
+        void goto("/profile");
       } else {
-        goto("/signin");
+        void goto("/signin");
       }
     }
   });

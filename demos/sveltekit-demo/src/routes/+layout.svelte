@@ -5,7 +5,7 @@
   import { initializeAuth, auth, nhost } from "$lib/nhost/auth";
   import "../app.css";
 
-  let { children } = $props();
+  let { children }: { children?: import("svelte").Snippet } = $props();
 
   // Initialize auth when component mounts
   onMount(() => {
@@ -22,7 +22,7 @@
       await nhost.auth.signOut({
         refreshToken: $auth.session.refreshToken,
       });
-      goto("/");
+      void goto("/");
     }
   }
 </script>
@@ -78,7 +78,9 @@
   </nav>
 
   <main class="max-w-2xl mx-auto p-6 w-full">
-    {@render children?.()}
+    {#if children}
+      {@render children()}
+    {/if}
   </main>
 
   <footer>

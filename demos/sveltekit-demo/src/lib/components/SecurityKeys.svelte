@@ -174,7 +174,7 @@
       showAddForm = false;
 
       // Refresh the security keys list
-      fetchSecurityKeys();
+      void fetchSecurityKeys();
     } catch (err) {
       const error = err as Error;
       errorMessage = `Failed to register security key: ${error.message}`;
@@ -197,7 +197,7 @@
 
     // Load the user's security keys when authenticated
     if ($auth.isAuthenticated && $auth.user?.id) {
-      fetchSecurityKeys();
+      void fetchSecurityKeys();
     }
   });
 </script>

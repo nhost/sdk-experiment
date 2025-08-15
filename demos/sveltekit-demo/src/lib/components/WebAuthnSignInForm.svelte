@@ -58,7 +58,7 @@
         // Step 4: Handle authentication result
         if (verifyResponse.body && verifyResponse.body.session) {
           // Authentication successful, redirect to profile page
-          goto("/profile");
+          void goto("/profile");
         } else {
           error = "Authentication failed";
         }

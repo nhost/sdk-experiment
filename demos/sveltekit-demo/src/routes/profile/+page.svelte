@@ -21,7 +21,7 @@
   // Redirect if not authenticated
   $effect(() => {
     if (!$auth.isLoading && !$auth.isAuthenticated) {
-      goto("/signin");
+      void goto("/signin");
     }
   });
 

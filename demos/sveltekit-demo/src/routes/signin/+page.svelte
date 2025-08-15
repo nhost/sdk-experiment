@@ -29,7 +29,7 @@
   // Navigate to profile when authenticated
   $effect(() => {
     if ($auth.isAuthenticated && !isVerifying) {
-      goto("/profile");
+      void goto("/profile");
     }
   });
 
@@ -46,13 +46,13 @@
 
       // Check if MFA is required
       if (response.body?.mfa) {
-        goto(`/signin/mfa?ticket=${response.body.mfa.ticket}`);
+        void goto(`/signin/mfa?ticket=${response.body.mfa.ticket}`);
         return;
       }
 
       // If we have a session, sign in was successful
       if (response.body?.session) {
-        goto("/profile");
+        void goto("/profile");
       } else {
         error = "Failed to sign in";
       }
