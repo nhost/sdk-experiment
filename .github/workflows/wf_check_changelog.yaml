@@ -43,20 +43,22 @@ jobs:
             exit 1
           fi
 
-          # Get the diff for CHANGELOG.md
-          git diff origin/${{ github.base_ref || 'main' }} -- ${{ inputs.PROJECT_PATH }}/CHANGELOG.md > changelog_diff.txt
-
           # Extract PR number
           PR_NUMBER="${{ github.event.pull_request.number }}"
 
           # Create the expected CHANGELOG entry format with PR title and number
           EXPECTED_ENTRY="$PR_TITLE #$PR_NUMBER"
 
-          # Check if PR title with PR number appears in the diff
-          if grep -q "$EXPECTED_ENTRY" changelog_diff.txt; then
-            echo "PR title with PR number found in ${{ inputs.PROJECT_PATH}}/CHANGELOG.md diff"
+          # Check if CHANGELOG.md has changed
+          echo "CHANGELOG.md has changed, checking if first line contains expected entry"
+
+          # Check if PR title with PR number appears in the first line of CHANGELOG.md
+          FIRST_LINE=$(head -n 1 "${{ inputs.PROJECT_PATH }}/CHANGELOG.md")
+
+          if echo "$FIRST_LINE" | grep -q "$EXPECTED_ENTRY"; then
+            echo "PR title with PR number found in first line of ${{ inputs.PROJECT_PATH}}/CHANGELOG.md"
           else
-            echo "::error::Expected entry '$EXPECTED_ENTRY' not found in ${{ inputs.PROJECT_PATH }}/CHANGELOG.md diff"
-            echo "::error::Please add your PR title with PR number to CHANGELOG.md (Example: 'feat (myservice): something something #$PR_NUMBER')"
+            echo "::error::Expected entry '$EXPECTED_ENTRY' not found in the first line of ${{ inputs.PROJECT_PATH }}/CHANGELOG.md"
+            echo "::error::Please ensure your PR title with PR number is included in the first line of CHANGELOG.md (Example: 'feat (myservice): something something #$PR_NUMBER')"
             exit 1
           fi
