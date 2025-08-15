@@ -1,19 +1,19 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
-  import { nhost } from '$lib/nhost/auth';
-  import type { ErrorResponse } from '@nhost/nhost-js/auth';
-  import type { FetchError } from '@nhost/nhost-js/fetch';
+  import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import { nhost } from "$lib/nhost/auth";
+  import type { ErrorResponse } from "@nhost/nhost-js/auth";
+  import type { FetchError } from "@nhost/nhost-js/fetch";
 
-  let status: 'verifying' | 'success' | 'error' = 'verifying';
-  let error = '';
+  let status: "verifying" | "success" | "error" = "verifying";
+  let error = "";
   let urlParams: Record<string, string> = {};
 
   onMount(() => {
     // Extract the refresh token from the URL
     const params = new URLSearchParams($page.url.search);
-    const refreshToken = params.get('refreshToken');
+    const refreshToken = params.get("refreshToken");
 
     if (!refreshToken) {
       // Collect all URL parameters to display
@@ -23,8 +23,8 @@
       });
       urlParams = allParams;
 
-      status = 'error';
-      error = 'No refresh token found in URL';
+      status = "error";
+      error = "No refresh token found in URL";
       return;
     }
 
@@ -46,8 +46,8 @@
           });
           urlParams = allParams;
 
-          status = 'error';
-          error = 'No refresh token found in URL';
+          status = "error";
+          error = "No refresh token found in URL";
           return;
         }
 
@@ -56,17 +56,17 @@
 
         if (!isMounted) return;
 
-        status = 'success';
+        status = "success";
 
         // Wait to show success message briefly, then redirect
         setTimeout(() => {
-          if (isMounted) goto('/profile');
+          if (isMounted) goto("/profile");
         }, 1500);
       } catch (err) {
         const fetchError = err as FetchError<ErrorResponse>;
         if (!isMounted) return;
 
-        status = 'error';
+        status = "error";
         error = `An error occurred during verification: ${fetchError.message}`;
       }
     }
@@ -91,15 +91,17 @@
     <h2 class="text-2xl mb-6">Email Verification</h2>
 
     <div class="text-center py-4">
-      {#if status === 'verifying'}
+      {#if status === "verifying"}
         <div>
           <p class="mb-4">Verifying your email...</p>
-          <div class="w-8 h-8 border-t-2 rounded-full animate-spin mx-auto" 
-               style="border-color: var(--primary);" />
+          <div
+            class="w-8 h-8 border-t-2 rounded-full animate-spin mx-auto"
+            style="border-color: var(--primary);"
+          />
         </div>
       {/if}
 
-      {#if status === 'success'}
+      {#if status === "success"}
         <div>
           <p class="mb-4 font-bold" style="color: var(--success);">
             ✓ Successfully verified!
@@ -108,7 +110,7 @@
         </div>
       {/if}
 
-      {#if status === 'error'}
+      {#if status === "error"}
         <div>
           <p class="mb-4 font-semibold" style="color: var(--error);">
             Verification failed
@@ -116,22 +118,23 @@
           <p class="mb-4">{error}</p>
 
           {#if Object.keys(urlParams).length > 0}
-            <div class="mb-4 p-4 rounded-md text-left overflow-auto max-h-48" 
-                 style="background-color: rgba(31, 41, 55, 0.5);">
+            <div
+              class="mb-4 p-4 rounded-md text-left overflow-auto max-h-48"
+              style="background-color: rgba(31, 41, 55, 0.5);"
+            >
               <p class="font-semibold mb-2">URL Parameters:</p>
               {#each Object.entries(urlParams) as [key, value]}
                 <div class="mb-1">
-                  <span class="font-mono" style="color: var(--primary);">{key}:</span>
+                  <span class="font-mono" style="color: var(--primary);"
+                    >{key}:</span
+                  >
                   <span class="font-mono ml-2">{value}</span>
                 </div>
               {/each}
             </div>
           {/if}
 
-          <button
-            onclick={() => goto('/signin')}
-            class="btn btn-primary"
-          >
+          <button onclick={() => goto("/signin")} class="btn btn-primary">
             Back to Sign In
           </button>
         </div>

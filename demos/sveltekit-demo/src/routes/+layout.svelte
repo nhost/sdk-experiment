@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { page } from '$app/stores';
-  import { goto } from '$app/navigation';
-  import { initializeAuth, auth, nhost } from '$lib/nhost/auth';
-  import '../app.css';
+  import { onMount } from "svelte";
+  import { page } from "$app/stores";
+  import { goto } from "$app/navigation";
+  import { initializeAuth, auth, nhost } from "$lib/nhost/auth";
+  import "../app.css";
 
   let { children } = $props();
 
@@ -14,7 +14,7 @@
 
   // Helper function to determine if a link is active
   function isActive(path: string): string {
-    return $page.url.pathname === path ? 'active' : '';
+    return $page.url.pathname === path ? "active" : "";
   }
 
   async function handleSignOut() {
@@ -22,7 +22,7 @@
       await nhost.auth.signOut({
         refreshToken: $auth.session.refreshToken,
       });
-      goto('/');
+      goto("/");
     }
   }
 </script>
@@ -53,11 +53,7 @@
 
       {#if $auth.isAuthenticated}
         <div>
-          <button
-            onclick={handleSignOut}
-            class="icon-button"
-            title="Sign Out"
-          >
+          <button onclick={handleSignOut} class="icon-button" title="Sign Out">
             <svg
               viewBox="0 0 24 24"
               fill="none"

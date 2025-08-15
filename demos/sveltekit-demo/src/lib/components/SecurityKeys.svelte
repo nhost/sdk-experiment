@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { auth, nhost } from '$lib/nhost/auth';
-  import { isWebAuthnSupported } from '$lib/utils';
-  import type { FetchError, FetchResponse } from '@nhost/nhost-js/fetch';
-  import type { ErrorResponse } from '@nhost/nhost-js/auth';
-  import { startRegistration } from '@simplewebauthn/browser';
+  import { onMount } from "svelte";
+  import { auth, nhost } from "$lib/nhost/auth";
+  import { isWebAuthnSupported } from "$lib/utils";
+  import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
+  import type { ErrorResponse } from "@nhost/nhost-js/auth";
+  import { startRegistration } from "@simplewebauthn/browser";
 
   /**
    * Represents a WebAuthn security key stored for a user
@@ -32,7 +32,7 @@
   let isRegistering = $state(false);
   let isDeleting = $state(false);
   let deletingKeyId = $state<string | null>(null);
-  let keyName = $state('');
+  let keyName = $state("");
   let success = $state<string | null>(null);
   let errorMessage = $state<string | null>(null);
   let showAddForm = $state(false);
@@ -101,12 +101,13 @@
       });
 
       if (response.body?.errors) {
-        throw new Error(response.body.errors[0]?.message || 'Unknown error');
+        throw new Error(response.body.errors[0]?.message || "Unknown error");
       }
 
       // Update the UI by removing the key from local state
       securityKeys = securityKeys.filter((key) => key.id !== keyId);
-      success = 'Security key deleted successfully! Remember to also remove it from your authenticator app, password manager, or device credential manager to avoid future authentication issues.';
+      success =
+        "Security key deleted successfully! Remember to also remove it from your authenticator app, password manager, or device credential manager to avoid future authentication issues.";
 
       // Hide success message after 5 seconds (increased to give users time to read the reminder)
       setTimeout(() => {
@@ -126,13 +127,14 @@
 
     // Check if browser supports WebAuthn
     if (!isWebAuthnAvailable) {
-      errorMessage = 'WebAuthn is not supported by your browser. Please use a modern browser that supports WebAuthn.';
+      errorMessage =
+        "WebAuthn is not supported by your browser. Please use a modern browser that supports WebAuthn.";
       return;
     }
 
     // Validate key name exists
     if (!keyName.trim()) {
-      errorMessage = 'Please provide a name for your security key';
+      errorMessage = "Please provide a name for your security key";
       return;
     }
 
@@ -154,7 +156,7 @@
       });
 
       if (!credential) {
-        errorMessage = 'No credential was selected. Please try again.';
+        errorMessage = "No credential was selected. Please try again.";
         return;
       }
 
@@ -167,8 +169,8 @@
       });
 
       // Step 4: Registration successful - update UI
-      success = 'Security key registered successfully!';
-      keyName = '';
+      success = "Security key registered successfully!";
+      keyName = "";
       showAddForm = false;
 
       // Refresh the security keys list
@@ -185,7 +187,7 @@
     showAddForm = !showAddForm;
     errorMessage = null;
     success = null;
-    keyName = '';
+    keyName = "";
   }
 
   onMount(() => {
@@ -214,14 +216,14 @@
   {#if !isWebAuthnAvailable}
     <div class="alert alert-error mb-4">
       <p>
-        <strong>WebAuthn not supported!</strong> Your browser or device
-        doesn't support WebAuthn authentication. Please use a modern
-        browser (Chrome, Firefox, Safari, Edge) that supports WebAuthn.
+        <strong>WebAuthn not supported!</strong> Your browser or device doesn't support
+        WebAuthn authentication. Please use a modern browser (Chrome, Firefox, Safari,
+        Edge) that supports WebAuthn.
       </p>
       <p class="mt-2 text-sm">
-        Note: Even if your browser supports WebAuthn, you may need a
-        compatible authenticator like a fingerprint reader, facial
-        recognition, or a security key (e.g., YubiKey).
+        Note: Even if your browser supports WebAuthn, you may need a compatible
+        authenticator like a fingerprint reader, facial recognition, or a
+        security key (e.g., YubiKey).
       </p>
     </div>
   {/if}
@@ -235,10 +237,9 @@
         browser to register it.
       </p>
       <p class="text-sm mt-2" style="color: var(--text-muted)">
-        Note: You'll need a security key (like YubiKey) or a device
-        with biometric authentication (like Touch ID, Face ID, or Windows
-        Hello). If registration fails, make sure your device has the
-        required capabilities.
+        Note: You'll need a security key (like YubiKey) or a device with
+        biometric authentication (like Touch ID, Face ID, or Windows Hello). If
+        registration fails, make sure your device has the required capabilities.
       </p>
       <p class="text-sm" style="color: var(--text-muted)">
         This works the same way as when you registered during sign up.
@@ -304,9 +305,9 @@
   {:else}
     <div class="space-y-5">
       <p>
-        Security Keys (WebAuthn) provide a secure passwordless
-        authentication option using hardware security keys, fingerprints, or
-        facial recognition.
+        Security Keys (WebAuthn) provide a secure passwordless authentication
+        option using hardware security keys, fingerprints, or facial
+        recognition.
       </p>
 
       <!-- List of existing security keys -->
@@ -322,7 +323,7 @@
               >
                 <div>
                   <span class="font-medium">
-                    {key.nickname || 'Unnamed key'}
+                    {key.nickname || "Unnamed key"}
                   </span>
                   <span class="text-sm ml-2" style="color: var(--text-muted);">
                     ID: {key.credentialId.slice(0, 8)}...
@@ -356,7 +357,9 @@
                       stroke-linejoin="round"
                     >
                       <path d="M3 6h18" />
-                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                      <path
+                        d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"
+                      />
                       <path d="M10 11v6M14 11v6" />
                     </svg>
                   {/if}

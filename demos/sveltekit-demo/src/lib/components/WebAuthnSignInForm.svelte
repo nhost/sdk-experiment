@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
-  import { nhost } from '$lib/nhost/auth';
-  import { isWebAuthnSupported } from '$lib/utils';
-  import type { ErrorResponse } from '@nhost/nhost-js/auth';
-  import type { FetchError } from '@nhost/nhost-js/fetch';
-  import { startAuthentication } from '@simplewebauthn/browser';
+  import { goto } from "$app/navigation";
+  import { nhost } from "$lib/nhost/auth";
+  import { isWebAuthnSupported } from "$lib/utils";
+  import type { ErrorResponse } from "@nhost/nhost-js/auth";
+  import type { FetchError } from "@nhost/nhost-js/fetch";
+  import { startAuthentication } from "@simplewebauthn/browser";
 
   let isLoading = false;
   let error: string | null = null;
@@ -23,7 +23,7 @@
     try {
       // First check if WebAuthn is supported by this browser
       if (!isWebAuthnSupported()) {
-        error = 'WebAuthn is not supported by your browser.';
+        error = "WebAuthn is not supported by your browser.";
         isLoading = false;
         return;
       }
@@ -43,7 +43,7 @@
         });
 
         if (!credential) {
-          error = 'No credential was selected.';
+          error = "No credential was selected.";
           isLoading = false;
           return;
         }
@@ -58,12 +58,12 @@
         // Step 4: Handle authentication result
         if (verifyResponse.body && verifyResponse.body.session) {
           // Authentication successful, redirect to profile page
-          goto('/profile');
+          goto("/profile");
         } else {
-          error = 'Authentication failed';
+          error = "Authentication failed";
         }
       } catch (credError) {
-        error = `WebAuthn authentication failed: ${(credError as Error).message || 'Unknown error'}`;
+        error = `WebAuthn authentication failed: ${(credError as Error).message || "Unknown error"}`;
       }
     } catch (err) {
       const fetchError = err as FetchError<ErrorResponse>;
@@ -79,22 +79,18 @@
     <div class="alert alert-error">{error}</div>
   {/if}
 
-  <button
-    type="submit"
-    class="btn btn-primary w-full"
-    disabled={isLoading}
-  >
-    {isLoading ? 'Authenticating...' : 'Sign In with Security Key'}
+  <button type="submit" class="btn btn-primary w-full" disabled={isLoading}>
+    {isLoading ? "Authenticating..." : "Sign In with Security Key"}
   </button>
 
   <div class="text-xs mt-2" style="color: var(--text-muted)">
     <p>
-      You'll be prompted to use your device's security key (like
-      TouchID, FaceID, Windows Hello, or a USB security key)
+      You'll be prompted to use your device's security key (like TouchID,
+      FaceID, Windows Hello, or a USB security key)
     </p>
     <p>
-      Your browser will show available security keys that you've
-      previously registered.
+      Your browser will show available security keys that you've previously
+      registered.
     </p>
   </div>
 </form>

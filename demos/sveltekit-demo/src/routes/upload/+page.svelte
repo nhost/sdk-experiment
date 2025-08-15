@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { goto } from '$app/navigation';
-  import { auth, nhost } from '$lib/nhost/auth';
-  import { formatFileSize } from '$lib/utils';
-  import type { FileMetadata, ErrorResponse } from '@nhost/nhost-js/storage';
-  import type { FetchError } from '@nhost/nhost-js/fetch';
+  import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
+  import { auth, nhost } from "$lib/nhost/auth";
+  import { formatFileSize } from "$lib/utils";
+  import type { FileMetadata, ErrorResponse } from "@nhost/nhost-js/storage";
+  import type { FetchError } from "@nhost/nhost-js/fetch";
 
   interface DeleteStatus {
     message: string;
@@ -29,7 +29,7 @@
   // Redirect if not authenticated
   $effect(() => {
     if (!$auth.isLoading && !$auth.isAuthenticated) {
-      goto('/signin');
+      goto("/signin");
     }
   });
 
@@ -54,14 +54,14 @@
 
       if (response.body.errors) {
         throw new Error(
-          response.body.errors[0]?.message || 'Failed to fetch files',
+          response.body.errors[0]?.message || "Failed to fetch files",
         );
       }
 
       files = response.body.data?.files || [];
     } catch (err) {
-      console.error('Error fetching files:', err);
-      error = 'Failed to load files. Please try refreshing the page.';
+      console.error("Error fetching files:", err);
+      error = "Failed to load files. Please try refreshing the page.";
     } finally {
       isFetching = false;
     }
@@ -88,7 +88,7 @@
 
   async function handleUpload() {
     if (!selectedFile) {
-      error = 'Please select a file to upload';
+      error = "Please select a file to upload";
       return;
     }
 
@@ -98,21 +98,21 @@
     try {
       // Upload file using Nhost storage
       const response = await nhost.storage.uploadFiles({
-        'bucket-id': 'default',
-        'file[]': [selectedFile],
+        "bucket-id": "default",
+        "file[]": [selectedFile],
       });
 
       // Get the processed file data
       const uploadedFile = response.body.processedFiles?.[0];
       if (uploadedFile == undefined) {
-        throw new Error('Failed to upload file');
+        throw new Error("Failed to upload file");
       }
       uploadResult = uploadedFile;
 
       // Reset form
       selectedFile = null;
       if (fileInputRef) {
-        fileInputRef.value = '';
+        fileInputRef.value = "";
       }
 
       files = [uploadedFile, ...files];
@@ -149,17 +149,17 @@
 
       // Handle different file types appropriately
       if (
-        mimeType.startsWith('image/') ||
-        mimeType === 'application/pdf' ||
-        mimeType.startsWith('text/') ||
-        mimeType.startsWith('video/') ||
-        mimeType.startsWith('audio/')
+        mimeType.startsWith("image/") ||
+        mimeType === "application/pdf" ||
+        mimeType.startsWith("text/") ||
+        mimeType.startsWith("video/") ||
+        mimeType.startsWith("audio/")
       ) {
         // For media types that browsers can display natively, just open in a new tab
-        window.open(url, '_blank');
+        window.open(url, "_blank");
       } else {
         // For other file types, trigger download
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
         link.download = fileName;
         document.body.appendChild(link);
@@ -167,7 +167,7 @@
         document.body.removeChild(link);
 
         // Optional: Open a small window to inform the user about the download
-        const newWindow = window.open('', '_blank', 'width=400,height=200');
+        const newWindow = window.open("", "_blank", "width=400,height=200");
         if (newWindow) {
           newWindow.document.write(`
             <html>
@@ -189,7 +189,7 @@
     } catch (err) {
       const fetchError = err as FetchError<ErrorResponse>;
       error = `Failed to view file: ${fetchError.message}`;
-      console.error('Error viewing file:', err);
+      console.error("Error viewing file:", err);
     } finally {
       viewingFile = null;
     }
@@ -205,7 +205,7 @@
 
     // Get the file name for the status message
     const fileToDelete = files.find((file) => file.id === fileId);
-    const fileName = fileToDelete?.name || 'File';
+    const fileName = fileToDelete?.name || "File";
 
     try {
       // Delete the file using the Nhost storage SDK
@@ -234,7 +234,7 @@
         message: `Failed to delete ${fileName}: ${fetchError.message}`,
         isError: true,
       };
-      console.error('Error deleting file:', err);
+      console.error("Error deleting file:", err);
     } finally {
       deleting = null;
     }
@@ -269,7 +269,7 @@
           onclick={handleFileUploadClick}
           role="button"
           tabindex="0"
-          onkeydown={(e) => e.key === 'Enter' && handleFileUploadClick()}
+          onkeydown={(e) => e.key === "Enter" && handleFileUploadClick()}
         >
           <svg
             class="text-sm mb-2"
@@ -310,7 +310,7 @@
         disabled={!selectedFile || uploading}
         class="btn btn-primary w-full"
       >
-        {uploading ? 'Uploading...' : 'Upload File'}
+        {uploading ? "Uploading..." : "Upload File"}
       </button>
     </div>
 
@@ -320,7 +320,9 @@
 
       {#if deleteStatus}
         <div
-          class="alert {deleteStatus.isError ? 'alert-error' : 'alert-success'} mb-4"
+          class="alert {deleteStatus.isError
+            ? 'alert-error'
+            : 'alert-success'} mb-4"
         >
           {deleteStatus.message}
         </div>
@@ -352,9 +354,9 @@
                       <button
                         onclick={() =>
                           handleViewFile(
-                            file.id || 'unknown',
-                            file.name || 'unknown',
-                            file.mimeType || 'unknown',
+                            file.id || "unknown",
+                            file.name || "unknown",
+                            file.mimeType || "unknown",
                           )}
                         disabled={viewingFile === file.id}
                         class="action-icon action-icon-view"
@@ -381,13 +383,15 @@
                             stroke-linecap="round"
                             stroke-linejoin="round"
                           >
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <path
+                              d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+                            />
                             <circle cx="12" cy="12" r="3" />
                           </svg>
                         {/if}
                       </button>
                       <button
-                        onclick={() => handleDeleteFile(file.id || 'unknown')}
+                        onclick={() => handleDeleteFile(file.id || "unknown")}
                         disabled={deleting === file.id}
                         class="action-icon action-icon-delete"
                         title="Delete File"
@@ -414,7 +418,9 @@
                             stroke-linejoin="round"
                           >
                             <path d="M3 6h18" />
-                            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                            <path
+                              d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"
+                            />
                             <path d="M10 11v6M14 11v6" />
                           </svg>
                         {/if}

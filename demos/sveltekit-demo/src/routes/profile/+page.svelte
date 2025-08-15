@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
-  import { auth, nhost } from '$lib/nhost/auth';
-  import { onMount } from 'svelte';
-  import type { ErrorResponse } from '@nhost/nhost-js/auth';
-  import type { FetchError, FetchResponse } from '@nhost/nhost-js/fetch';
-  import MFASettings from '$lib/components/MFASettings.svelte';
-  import ChangePassword from '$lib/components/ChangePassword.svelte';
-  import SecurityKeys from '$lib/components/SecurityKeys.svelte';
+  import { goto } from "$app/navigation";
+  import { auth, nhost } from "$lib/nhost/auth";
+  import { onMount } from "svelte";
+  import type { ErrorResponse } from "@nhost/nhost-js/auth";
+  import type { FetchError, FetchResponse } from "@nhost/nhost-js/fetch";
+  import MFASettings from "$lib/components/MFASettings.svelte";
+  import ChangePassword from "$lib/components/ChangePassword.svelte";
+  import SecurityKeys from "$lib/components/SecurityKeys.svelte";
 
   interface MfaStatusResponse {
     data?: {
@@ -21,7 +21,7 @@
   // Redirect if not authenticated
   $effect(() => {
     if (!$auth.isLoading && !$auth.isAuthenticated) {
-      goto('/signin');
+      goto("/signin");
     }
   });
 
@@ -47,7 +47,7 @@
 
       const userData = response.body?.data;
       const activeMfaType = userData?.user?.activeMfaType;
-      isMfaEnabled = activeMfaType === 'totp';
+      isMfaEnabled = activeMfaType === "totp";
     } catch (err) {
       const error = err as FetchError<ErrorResponse>;
       console.error(`Failed to query MFA status: ${error.message}`);
@@ -65,12 +65,12 @@
       <div class="space-y-5">
         <div class="profile-item">
           <strong>Display Name:</strong>
-          <span class="ml-2">{$auth.user?.displayName || 'Not set'}</span>
+          <span class="ml-2">{$auth.user?.displayName || "Not set"}</span>
         </div>
 
         <div class="profile-item">
           <strong>Email:</strong>
-          <span class="ml-2">{$auth.user?.email || 'Not available'}</span>
+          <span class="ml-2">{$auth.user?.email || "Not available"}</span>
         </div>
 
         <div class="profile-item">
@@ -79,23 +79,23 @@
             class="ml-2"
             style="font-family: var(--font-geist-mono); font-size: 0.875rem;"
           >
-            {$auth.user?.id || 'Not available'}
+            {$auth.user?.id || "Not available"}
           </span>
         </div>
 
         <div class="profile-item">
           <strong>Roles:</strong>
-          <span class="ml-2">{$auth.user?.roles?.join(', ') || 'None'}</span>
+          <span class="ml-2">{$auth.user?.roles?.join(", ") || "None"}</span>
         </div>
 
         <div class="profile-item">
           <strong>Email Verified:</strong>
-          <span class="ml-2">{$auth.user?.emailVerified ? 'Yes' : 'No'}</span>
+          <span class="ml-2">{$auth.user?.emailVerified ? "Yes" : "No"}</span>
         </div>
 
         <div class="profile-item">
           <strong>MFA Enabled:</strong>
-          <span class="ml-2">{isMfaEnabled ? 'Yes' : 'No'}</span>
+          <span class="ml-2">{isMfaEnabled ? "Yes" : "No"}</span>
         </div>
       </div>
     </div>

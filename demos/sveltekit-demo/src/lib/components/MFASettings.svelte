@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { nhost } from '$lib/nhost/auth';
-  import type { ErrorResponse } from '@nhost/nhost-js/auth';
-  import type { FetchError } from '@nhost/nhost-js/fetch';
+  import { onMount } from "svelte";
+  import { nhost } from "$lib/nhost/auth";
+  import type { ErrorResponse } from "@nhost/nhost-js/auth";
+  import type { FetchError } from "@nhost/nhost-js/fetch";
 
   interface Props {
     initialMfaEnabled: boolean;
@@ -17,13 +17,13 @@
 
   // MFA setup states
   let isSettingUpMfa = $state(false);
-  let totpSecret = $state('');
-  let qrCodeUrl = $state('');
-  let verificationCode = $state('');
+  let totpSecret = $state("");
+  let qrCodeUrl = $state("");
+  let verificationCode = $state("");
 
   // Disabling MFA states
   let isDisablingMfa = $state(false);
-  let disableVerificationCode = $state('');
+  let disableVerificationCode = $state("");
 
   // Update internal state when prop changes
   $effect(() => {
@@ -55,7 +55,7 @@
   // Verify TOTP and enable MFA
   async function handleVerifyTotp() {
     if (!verificationCode) {
-      error = 'Please enter the verification code';
+      error = "Please enter the verification code";
       return;
     }
 
@@ -66,13 +66,13 @@
     try {
       // Verify and activate MFA
       await nhost.auth.verifyChangeUserMfa({
-        activeMfaType: 'totp',
+        activeMfaType: "totp",
         code: verificationCode,
       });
 
       isMfaEnabled = true;
       isSettingUpMfa = false;
-      success = 'MFA has been successfully enabled.';
+      success = "MFA has been successfully enabled.";
     } catch (err) {
       const fetchError = err as FetchError<ErrorResponse>;
       error = `An error occurred while verifying the code: ${fetchError.message}`;
@@ -91,7 +91,7 @@
   // Disable MFA
   async function handleDisableMfa() {
     if (!disableVerificationCode) {
-      error = 'Please enter your verification code to confirm';
+      error = "Please enter your verification code to confirm";
       return;
     }
 
@@ -102,14 +102,14 @@
     try {
       // Disable MFA by setting activeMfaType to empty string
       await nhost.auth.verifyChangeUserMfa({
-        activeMfaType: '',
+        activeMfaType: "",
         code: disableVerificationCode,
       });
 
       isMfaEnabled = false;
       isDisablingMfa = false;
-      disableVerificationCode = '';
-      success = 'MFA has been successfully disabled.';
+      disableVerificationCode = "";
+      success = "MFA has been successfully disabled.";
     } catch (err) {
       const fetchError = err as FetchError<ErrorResponse>;
       error = `An error occurred while disabling MFA: ${fetchError.message}`;
@@ -121,15 +121,15 @@
   // Cancel MFA setup
   function handleCancelMfaSetup() {
     isSettingUpMfa = false;
-    totpSecret = '';
-    qrCodeUrl = '';
-    verificationCode = '';
+    totpSecret = "";
+    qrCodeUrl = "";
+    verificationCode = "";
   }
 
   // Cancel MFA disable
   function handleCancelMfaDisable() {
     isDisablingMfa = false;
-    disableVerificationCode = '';
+    disableVerificationCode = "";
     error = null;
   }
 </script>
@@ -155,12 +155,7 @@
       {#if qrCodeUrl}
         <div class="flex justify-center my-4">
           <div class="p-2 bg-white rounded-md">
-            <img
-              src={qrCodeUrl}
-              alt="TOTP QR Code"
-              width="200"
-              height="200"
-            />
+            <img src={qrCodeUrl} alt="TOTP QR Code" width="200" height="200" />
           </div>
         </div>
       {/if}
@@ -188,7 +183,7 @@
           disabled={isLoading || !verificationCode}
           class="btn btn-primary"
         >
-          {isLoading ? 'Verifying...' : 'Verify and Enable'}
+          {isLoading ? "Verifying..." : "Verify and Enable"}
         </button>
 
         <button
@@ -227,7 +222,7 @@
           disabled={isLoading || !disableVerificationCode}
           class="btn btn-primary"
         >
-          {isLoading ? 'Disabling...' : 'Confirm Disable'}
+          {isLoading ? "Disabling..." : "Confirm Disable"}
         </button>
 
         <button
@@ -253,7 +248,7 @@
           class="font-semibold"
           style="color: {isMfaEnabled ? 'var(--success)' : 'var(--secondary)'}"
         >
-          {isMfaEnabled ? 'Enabled' : 'Disabled'}
+          {isMfaEnabled ? "Enabled" : "Disabled"}
         </span>
       </div>
 
@@ -263,7 +258,7 @@
           disabled={isLoading}
           class="btn btn-secondary"
         >
-          {isLoading ? 'Processing...' : 'Disable MFA'}
+          {isLoading ? "Processing..." : "Disable MFA"}
         </button>
       {:else}
         <button
@@ -271,7 +266,7 @@
           disabled={isLoading}
           class="btn btn-primary"
         >
-          {isLoading ? 'Loading...' : 'Enable MFA'}
+          {isLoading ? "Loading..." : "Enable MFA"}
         </button>
       {/if}
     </div>

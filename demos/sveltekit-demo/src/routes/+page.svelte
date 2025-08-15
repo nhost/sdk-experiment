@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
-  import { auth } from '$lib/nhost/auth';
+  import { goto } from "$app/navigation";
+  import { auth } from "$lib/nhost/auth";
 
   // Redirect based on authentication status
   $effect(() => {
     if (!$auth.isLoading) {
       if ($auth.isAuthenticated) {
-        goto('/profile');
+        goto("/profile");
       } else {
-        goto('/signin');
+        goto("/signin");
       }
     }
   });

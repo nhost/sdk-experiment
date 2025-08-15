@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { nhost } from '$lib/nhost/auth';
-  import { isWebAuthnSupported } from '$lib/utils';
-  import type { 
-    ErrorResponse, 
-    PublicKeyCredentialCreationOptions 
-  } from '@nhost/nhost-js/auth';
-  import type { FetchError } from '@nhost/nhost-js/fetch';
-  import { startRegistration } from '@simplewebauthn/browser';
+  import { nhost } from "$lib/nhost/auth";
+  import { isWebAuthnSupported } from "$lib/utils";
+  import type {
+    ErrorResponse,
+    PublicKeyCredentialCreationOptions,
+  } from "@nhost/nhost-js/auth";
+  import type { FetchError } from "@nhost/nhost-js/fetch";
+  import { startRegistration } from "@simplewebauthn/browser";
 
   interface Props {
     email: string;
@@ -16,17 +16,12 @@
     redirectTo?: string;
   }
 
-  let { 
-    email, 
-    setEmail, 
-    displayName, 
-    setDisplayName, 
-    redirectTo 
-  }: Props = $props();
+  let { email, setEmail, displayName, setDisplayName, redirectTo }: Props =
+    $props();
 
   let isLoading = false;
   let error: string | null = null;
-  let keyNickname = '';
+  let keyNickname = "";
   let challengeData: PublicKeyCredentialCreationOptions | null = null;
 
   /**
@@ -46,14 +41,14 @@
 
     // Validate required fields
     if (!email) {
-      error = 'Email is required';
+      error = "Email is required";
       isLoading = false;
       return;
     }
 
     // Check browser compatibility before proceeding
     if (!isWebAuthnSupported()) {
-      error = 'WebAuthn is not supported by your browser.';
+      error = "WebAuthn is not supported by your browser.";
       isLoading = false;
       return;
     }
@@ -87,7 +82,7 @@
         });
 
         if (!credential) {
-          error = 'No credential was created.';
+          error = "No credential was created.";
           isLoading = false;
           return;
         }
@@ -112,10 +107,10 @@
           // - The private key remains securely on the user's device
           // - A session has been established
           window.location.href =
-            redirectTo || window.location.origin + '/profile';
+            redirectTo || window.location.origin + "/profile";
         }
       } catch (credError) {
-        error = `WebAuthn registration failed: ${(credError as Error).message || 'Unknown error'}`;
+        error = `WebAuthn registration failed: ${(credError as Error).message || "Unknown error"}`;
       }
     } catch (err) {
       const fetchError = err as FetchError<ErrorResponse>;
@@ -172,19 +167,19 @@
   >
     {isLoading
       ? challengeData
-        ? 'Complete Registration on Your Device...'
-        : 'Initializing...'
-      : 'Register with Security Key'}
+        ? "Complete Registration on Your Device..."
+        : "Initializing..."
+      : "Register with Security Key"}
   </button>
 
   <div class="text-xs mt-2" style="color: var(--text-muted)">
     <p>
-      You'll be prompted to use your device's security key (like
-      TouchID, FaceID, Windows Hello, or a USB security key)
+      You'll be prompted to use your device's security key (like TouchID,
+      FaceID, Windows Hello, or a USB security key)
     </p>
     <p class="mt-1">
-      When prompted, please complete the biometric verification or insert
-      and activate your security key to create your account.
+      When prompted, please complete the biometric verification or insert and
+      activate your security key to create your account.
     </p>
   </div>
 </form>

@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
-  import { page } from '$app/stores';
-  import { auth, nhost } from '$lib/nhost/auth';
-  import { onMount } from 'svelte';
-  import type { ErrorResponse } from '@nhost/nhost-js/auth';
-  import type { FetchError } from '@nhost/nhost-js/fetch';
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import { auth, nhost } from "$lib/nhost/auth";
+  import { onMount } from "svelte";
+  import type { ErrorResponse } from "@nhost/nhost-js/auth";
+  import type { FetchError } from "@nhost/nhost-js/fetch";
 
   interface VerificationResponse {
     success?: boolean;
     error?: string;
   }
 
-  let otp = $state('');
+  let otp = $state("");
   let isLoading = $state(false);
   let error = $state<string | null>(null);
   let ticket = $state<string | null>(null);
@@ -19,8 +19,8 @@
   // Extract ticket and initial error from URL search params
   $effect(() => {
     const urlParams = new URLSearchParams($page.url.search);
-    ticket = urlParams.get('ticket');
-    const initialError = urlParams.get('error');
+    ticket = urlParams.get("ticket");
+    const initialError = urlParams.get("error");
     if (initialError) {
       error = initialError;
     }
@@ -30,13 +30,13 @@
   $effect(() => {
     // If user is already authenticated, redirect to profile
     if ($auth.isAuthenticated) {
-      goto('/profile', { replaceState: true });
+      goto("/profile", { replaceState: true });
       return;
     }
 
     // If no ticket is provided, redirect to sign in
     if (!ticket && !isLoading) {
-      goto('/signin', { replaceState: true });
+      goto("/signin", { replaceState: true });
       return;
     }
   });
@@ -52,7 +52,7 @@
       if (result.error) {
         error = result.error;
       } else if (result.success) {
-        goto('/profile', { replaceState: true });
+        goto("/profile", { replaceState: true });
       }
     } catch (err) {
       const fetchError = err as FetchError<ErrorResponse>;
@@ -79,7 +79,7 @@
         return { success: true };
       }
 
-      return { error: 'Failed to verify MFA code. Please try again.' };
+      return { error: "Failed to verify MFA code. Please try again." };
     } catch (err) {
       const fetchError = err as FetchError<ErrorResponse>;
       return { error: `Failed to verify code: ${fetchError.message}` };
@@ -95,8 +95,8 @@
 
     <div>
       <p class="mb-4">
-        A verification code is required to complete sign in. Please enter
-        the code from your authenticator app.
+        A verification code is required to complete sign in. Please enter the
+        code from your authenticator app.
       </p>
 
       <form onsubmit={handleSubmit} class="space-y-5">
@@ -118,17 +118,11 @@
         {/if}
 
         <div class="flex space-x-3">
-          <button
-            type="submit"
-            class="btn btn-primary"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Verifying...' : 'Verify'}
+          <button type="submit" class="btn btn-primary" disabled={isLoading}>
+            {isLoading ? "Verifying..." : "Verify"}
           </button>
 
-          <a href="/signin" class="btn btn-secondary">
-            Back
-          </a>
+          <a href="/signin" class="btn btn-secondary"> Back </a>
         </div>
       </form>
     </div>
