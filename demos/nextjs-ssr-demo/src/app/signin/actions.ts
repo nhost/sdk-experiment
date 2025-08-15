@@ -202,8 +202,6 @@ export async function verifySignInWebauthn(
     // Get the server Nhost client
     const nhost = await createNhostClient();
 
-    console.log("Verifying WebAuthn credential:", credential);
-
     const response = await nhost.auth.verifySignInWebauthn({
       credential,
     });

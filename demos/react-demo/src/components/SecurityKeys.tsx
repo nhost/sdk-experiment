@@ -22,14 +22,12 @@ interface SecurityKey {
  */
 interface SecurityKeysResponse {
   data?: {
-    user?: {
-      securityKeys: SecurityKey[];
-    };
+    authUserSecurityKeys: SecurityKey[];
   };
 }
 
 export default function SecurityKeys() {
-  const { nhost, user, isAuthenticated } = useAuth();
+  const { nhost, isAuthenticated } = useAuth();
   const [securityKeys, setSecurityKeys] = useState<SecurityKey[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -47,8 +45,6 @@ export default function SecurityKeys() {
    * private keys stored securely on the user's devices/authenticators
    */
   const fetchSecurityKeys = useCallback(async (): Promise<void> => {
-    if (!user?.id) return;
-
     setIsLoading(true);
     setErrorMessage(null);
 
@@ -57,23 +53,18 @@ export default function SecurityKeys() {
       const response: FetchResponse<SecurityKeysResponse> =
         await nhost.graphql.request({
           query: `
-          query GetUserSecurityKeys($userId: uuid!) {
-            user(id: $userId) {
-              securityKeys {
-                id
-                credentialId
-                nickname
-              }
+          query GetUserSecurityKeys {
+            authUserSecurityKeys {
+              id
+              credentialId
+              nickname
             }
           }
         `,
-          variables: {
-            userId: user.id,
-          },
         });
 
       const userData = response.body?.data;
-      const keys = userData?.user?.securityKeys || [];
+      const keys = userData?.authUserSecurityKeys || [];
       setSecurityKeys(keys);
     } catch (err) {
       const error = err as FetchError<ErrorResponse>;
@@ -81,7 +72,7 @@ export default function SecurityKeys() {
     } finally {
       setIsLoading(false);
     }
-  }, [user, nhost.graphql]);
+  }, [nhost.graphql]);
 
   const deleteSecurityKey = async (keyId: string): Promise<void> => {
     if (isDeleting) return;
@@ -137,10 +128,10 @@ export default function SecurityKeys() {
     setIsWebAuthnAvailable(isWebAuthnSupported());
 
     // Load the user's security keys when authenticated
-    if (isAuthenticated && user?.id) {
+    if (isAuthenticated) {
       fetchSecurityKeys();
     }
-  }, [user, isAuthenticated, fetchSecurityKeys]);
+  }, [isAuthenticated, fetchSecurityKeys]);
 
   if (isLoading) {
     return (

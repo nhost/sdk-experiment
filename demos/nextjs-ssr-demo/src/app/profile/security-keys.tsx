@@ -15,10 +15,7 @@ interface SecurityKey {
  * GraphQL response format for security keys query
  */
 interface SecurityKeysData {
-  user?: {
-    id: string;
-    securityKeys: SecurityKey[];
-  };
+  authUserSecurityKeys: SecurityKey[];
 }
 
 export default async function SecurityKeys() {
@@ -30,37 +27,29 @@ export default async function SecurityKeys() {
 
   // Default values for when not authenticated or when data can't be fetched
   let securityKeys: SecurityKey[] = [];
-  let userId = "";
   let isLoading = false;
   let error: string | null = null;
 
-  if (session && session.user) {
-    userId = session.user.id;
+  if (session) {
     isLoading = true;
 
     try {
       // Server-side fetch of security keys
       const response = await nhost.graphql.request<SecurityKeysData>({
         query: `
-          query GetUserSecurityKeys($userId: uuid!) {
-            user(id: $userId) {
+          query GetUserSecurityKeys {
+            authUserSecurityKeys {
               id
-              securityKeys {
-                id
-                credentialId
-                nickname
-              }
+              credentialId
+              nickname
             }
           }
         `,
-        variables: {
-          userId: userId,
-        },
       });
 
       // Extract security keys from the response
-      if (response.body.data?.user?.securityKeys) {
-        securityKeys = response.body.data.user.securityKeys;
+      if (response.body.data?.authUserSecurityKeys) {
+        securityKeys = response.body.data.authUserSecurityKeys;
       }
       isLoading = false;
     } catch (err: unknown) {
