@@ -7,6 +7,7 @@ import {
   useState,
   useMemo,
   useRef,
+  useCallback,
   type ReactNode,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -82,20 +83,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
    *
    * @param currentRefreshTokenId - The current refresh token ID to compare against stored value
    */
-  const reloadSession = (currentRefreshTokenId: string | null) => {
-    if (currentRefreshTokenId !== lastRefreshTokenIdRef.current) {
-      lastRefreshTokenIdRef.current = currentRefreshTokenId;
+  const reloadSession = useCallback(
+    (currentRefreshTokenId: string | null) => {
+      if (currentRefreshTokenId !== lastRefreshTokenIdRef.current) {
+        lastRefreshTokenIdRef.current = currentRefreshTokenId;
 
-      // Update local authentication state to match current session
-      const currentSession = nhost.getUserSession();
-      setUser(currentSession?.user || null);
-      setSession(currentSession);
-      setIsAuthenticated(!!currentSession);
+        // Update local authentication state to match current session
+        const currentSession = nhost.getUserSession();
+        setUser(currentSession?.user || null);
+        setSession(currentSession);
+        setIsAuthenticated(!!currentSession);
 
-      // Trigger Next.js page refresh to sync server-side state with client changes
-      router.refresh();
-    }
-  };
+        // Trigger Next.js page refresh to sync server-side state with client changes
+        router.refresh();
+      }
+    },
+    [nhost, router, setUser, setSession, setIsAuthenticated],
+  );
 
   // Initialize authentication state and set up cross-tab session synchronization
   useEffect(() => {
@@ -116,7 +120,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     });
 
     return unsubscribe;
-  }, [nhost]);
+  }, [nhost, reloadSession]);
 
   // Handle session changes from server-side middleware and page focus events
   useEffect(() => {
@@ -143,7 +147,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       document.removeEventListener("visibilitychange", checkSessionOnFocus);
       window.removeEventListener("focus", checkSessionOnFocus);
     };
-  }, [nhost, router]);
+  }, [nhost, router, reloadSession]);
 
   const value: AuthContextType = {
     user,

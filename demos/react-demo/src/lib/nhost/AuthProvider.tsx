@@ -5,6 +5,7 @@ import {
   useState,
   useMemo,
   useRef,
+  useCallback,
   type ReactNode,
 } from "react";
 import { createClient, type NhostClient } from "@nhost/nhost-js";
@@ -68,17 +69,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
    *
    * @param currentRefreshTokenId - The current refresh token ID to compare against stored value
    */
-  const reloadSession = (currentRefreshTokenId: string | null) => {
-    if (currentRefreshTokenId !== lastRefreshTokenIdRef.current) {
-      lastRefreshTokenIdRef.current = currentRefreshTokenId;
+  const reloadSession = useCallback(
+    (currentRefreshTokenId: string | null) => {
+      if (currentRefreshTokenId !== lastRefreshTokenIdRef.current) {
+        lastRefreshTokenIdRef.current = currentRefreshTokenId;
 
-      // Update local authentication state to match current session
-      const currentSession = nhost.getUserSession();
-      setUser(currentSession?.user || null);
-      setSession(currentSession);
-      setIsAuthenticated(!!currentSession);
-    }
-  };
+        // Update local authentication state to match current session
+        const currentSession = nhost.getUserSession();
+        setUser(currentSession?.user || null);
+        setSession(currentSession);
+        setIsAuthenticated(!!currentSession);
+      }
+    },
+    [nhost, setUser, setSession, setIsAuthenticated],
+  );
 
   // Initialize authentication state and set up cross-tab session synchronization
   useEffect(() => {
@@ -99,7 +103,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     });
 
     return unsubscribe;
-  }, [nhost]);
+  }, [nhost, reloadSession]);
 
   // Handle session changes from page focus events (for additional session consistency)
   useEffect(() => {
@@ -127,7 +131,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       document.removeEventListener("visibilitychange", checkSessionOnFocus);
       window.removeEventListener("focus", checkSessionOnFocus);
     };
-  }, [nhost]);
+  }, [nhost, reloadSession]);
 
   const value: AuthContextType = {
     user,
