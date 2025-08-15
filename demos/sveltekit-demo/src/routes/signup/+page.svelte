@@ -8,11 +8,11 @@
   import MagicLinkForm from "$lib/components/MagicLinkForm.svelte";
   import WebAuthnSignUpForm from "$lib/components/WebAuthnSignUpForm.svelte";
 
-  let email = "";
-  let password = "";
-  let displayName = "";
-  let isLoading = false;
-  let error: string | null = null;
+  let email = $state("");
+  let password = $state("");
+  let displayName = $state("");
+  let isLoading = $state(false);
+  let error = $state<string | null>(null);
 
   let params = $derived(new URLSearchParams($page.url.search));
   let magicLinkSent = $derived(params.get("magic") === "success");

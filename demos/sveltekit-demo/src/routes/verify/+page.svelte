@@ -97,7 +97,7 @@
           <div
             class="w-8 h-8 border-t-2 rounded-full animate-spin mx-auto"
             style="border-color: var(--primary);"
-          />
+          ></div>
         </div>
       {/if}
 

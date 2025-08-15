@@ -53,7 +53,12 @@
 
       {#if $auth.isAuthenticated}
         <div>
-          <button onclick={handleSignOut} class="icon-button" title="Sign Out">
+          <button
+            onclick={handleSignOut}
+            class="icon-button"
+            title="Sign Out"
+            aria-label="Sign Out"
+          >
             <svg
               viewBox="0 0 24 24"
               fill="none"

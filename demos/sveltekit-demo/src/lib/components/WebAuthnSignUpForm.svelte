@@ -19,10 +19,10 @@
   let { email, setEmail, displayName, setDisplayName, redirectTo }: Props =
     $props();
 
-  let isLoading = false;
-  let error: string | null = null;
-  let keyNickname = "";
-  let challengeData: PublicKeyCredentialCreationOptions | null = null;
+  let isLoading = $state(false);
+  let error = $state<string | null>(null);
+  let keyNickname = $state("");
+  let challengeData = $state<PublicKeyCredentialCreationOptions | null>(null);
 
   /**
    * Handles the WebAuthn registration flow (sign up with security key/biometrics)

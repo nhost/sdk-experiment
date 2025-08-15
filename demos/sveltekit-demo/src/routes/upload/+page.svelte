@@ -15,7 +15,7 @@
     files: FileMetadata[];
   }
 
-  let fileInputRef: HTMLInputElement;
+  let fileInputRef = $state<HTMLInputElement>();
   let selectedFile: File | null = $state(null);
   let uploading = $state(false);
   let uploadResult: FileMetadata | null = $state(null);

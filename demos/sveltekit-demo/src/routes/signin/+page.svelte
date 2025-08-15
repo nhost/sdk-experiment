@@ -9,10 +9,10 @@
   import MagicLinkForm from "$lib/components/MagicLinkForm.svelte";
   import WebAuthnSignInForm from "$lib/components/WebAuthnSignInForm.svelte";
 
-  let email = "";
-  let password = "";
-  let isLoading = false;
-  let error: string | null = null;
+  let email = $state("");
+  let password = $state("");
+  let isLoading = $state(false);
+  let error = $state<string | null>(null);
 
   let params = $derived(new URLSearchParams($page.url.search));
   let magicLinkSent = $derived(params.get("magic") === "success");

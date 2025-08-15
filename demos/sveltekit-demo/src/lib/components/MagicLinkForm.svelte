@@ -11,10 +11,10 @@
 
   let { buttonLabel = "Send Magic Link" }: Props = $props();
 
-  let email = "";
-  let isLoading = false;
-  let success = false;
-  let error: string | null = null;
+  let email = $state("");
+  let isLoading = $state(false);
+  let success = $state(false);
+  let error = $state<string | null>(null);
 
   async function handleSubmit(e: Event) {
     e.preventDefault();

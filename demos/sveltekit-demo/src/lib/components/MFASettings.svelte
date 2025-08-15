@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { nhost } from "$lib/nhost/auth";
   import type { ErrorResponse } from "@nhost/nhost-js/auth";
   import type { FetchError } from "@nhost/nhost-js/fetch";
