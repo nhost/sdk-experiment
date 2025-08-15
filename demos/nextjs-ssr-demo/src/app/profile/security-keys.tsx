@@ -27,12 +27,10 @@ export default async function SecurityKeys() {
 
   // Default values for when not authenticated or when data can't be fetched
   let securityKeys: SecurityKey[] = [];
-  let userId = "";
   let isLoading = false;
   let error: string | null = null;
 
-  if (session && session.user) {
-    userId = session.user.id;
+  if (session) {
     isLoading = true;
 
     try {

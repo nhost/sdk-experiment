@@ -27,7 +27,7 @@ interface SecurityKeysResponse {
 }
 
 export default function SecurityKeys() {
-  const { nhost, user, isAuthenticated } = useAuth();
+  const { nhost, isAuthenticated } = useAuth();
   const [securityKeys, setSecurityKeys] = useState<SecurityKey[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -45,8 +45,6 @@ export default function SecurityKeys() {
    * private keys stored securely on the user's devices/authenticators
    */
   const fetchSecurityKeys = useCallback(async (): Promise<void> => {
-    if (!user?.id) return;
-
     setIsLoading(true);
     setErrorMessage(null);
 
@@ -74,7 +72,7 @@ export default function SecurityKeys() {
     } finally {
       setIsLoading(false);
     }
-  }, [user, nhost.graphql]);
+  }, [nhost.graphql]);
 
   const deleteSecurityKey = async (keyId: string): Promise<void> => {
     if (isDeleting) return;
@@ -130,10 +128,10 @@ export default function SecurityKeys() {
     setIsWebAuthnAvailable(isWebAuthnSupported());
 
     // Load the user's security keys when authenticated
-    if (isAuthenticated && user?.id) {
+    if (isAuthenticated) {
       fetchSecurityKeys();
     }
-  }, [user, isAuthenticated, fetchSecurityKeys]);
+  }, [isAuthenticated, fetchSecurityKeys]);
 
   if (isLoading) {
     return (

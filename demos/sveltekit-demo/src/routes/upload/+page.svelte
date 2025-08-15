@@ -19,7 +19,7 @@
   let selectedFile: File | null = $state(null);
   let uploading = $state(false);
   let uploadResult: FileMetadata | null = $state(null);
-  let isFetching = $state(true);
+  let isFetching = $state(false);
   let error: string | null = $state(null);
   let files = $state<FileMetadata[]>([]);
   let viewingFile: string | null = $state(null);
@@ -30,6 +30,18 @@
   $effect(() => {
     if (!$auth.isLoading && !$auth.isAuthenticated) {
       void goto("/signin");
+    }
+  });
+
+  // Load files when authentication is resolved
+  $effect(() => {
+    if (
+      !$auth.isLoading &&
+      $auth.isAuthenticated &&
+      files.length === 0 &&
+      !isFetching
+    ) {
+      void fetchFiles();
     }
   });
 
