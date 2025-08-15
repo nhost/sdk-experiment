@@ -259,6 +259,13 @@ importers:
         version: 4.5.1(vite@7.1.2(@types/node@22.15.29)(jiti@2.4.2)(lightningcss@1.27.0)(terser@5.40.0)(yaml@2.8.0))
 
   demos/sveltekit-demo:
+    dependencies:
+      '@nhost/nhost-js':
+        specifier: workspace:*
+        version: link:../../packages/nhost-js
+      '@simplewebauthn/browser':
+        specifier: ^13.1.0
+        version: 13.1.0
     devDependencies:
       '@eslint/compat':
         specifier: ^1.2.5
