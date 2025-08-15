@@ -43,11 +43,19 @@ jobs:
             exit 1
           fi
 
-          # Check if CHANGELOG.md was modified
-          if git diff --name-only origin/${{ github.base_ref || 'main' }} | grep -q "${{ inputs.PROJECT_PATH }}/CHANGELOG.md"; then
-            echo "CHANGELOG.md was updated in this PR"
+          # Extract PR number
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+
+          # Create the expected CHANGELOG entry format with PR title and number
+          EXPECTED_ENTRY="$PR_TITLE #$PR_NUMBER"
+
+          # Check if PR title with PR number appears as the first line in CHANGELOG.md
+          FIRST_LINE=$(head -n 1 "${{ inputs.PROJECT_PATH }}/CHANGELOG.md")
+
+          if [ "$FIRST_LINE" = "$EXPECTED_ENTRY" ]; then
+            echo "PR title with PR number found as first line in ${{ inputs.PROJECT_PATH}}/CHANGELOG.md"
           else
-            echo "::error::CHANGELOG.md was not updated in this PR"
-            echo "::error::Please update ${{ inputs.PROJECT_PATH }}/CHANGELOG.md with your changes"
+            echo "::error::Expected entry '$EXPECTED_ENTRY' not found as the first line in ${{ inputs.PROJECT_PATH }}/CHANGELOG.md"
+            echo "::error::Please add your PR title with PR number as the first line in CHANGELOG.md (Example: 'feat (myservice): something something #$PR_NUMBER')"
             exit 1
           fi
