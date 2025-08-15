@@ -20,6 +20,7 @@ export default defineConfigWithVueTs(
       ".vite",
       "coverage",
       "vite.config.ts",
+      "vite.config.d.ts",
       "eslint.config.mjs",
     ],
   },
