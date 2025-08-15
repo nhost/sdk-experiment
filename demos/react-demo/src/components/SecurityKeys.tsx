@@ -22,9 +22,7 @@ interface SecurityKey {
  */
 interface SecurityKeysResponse {
   data?: {
-    user?: {
-      securityKeys: SecurityKey[];
-    };
+    authUserSecurityKeys: SecurityKey[];
   };
 }
 
@@ -57,23 +55,18 @@ export default function SecurityKeys() {
       const response: FetchResponse<SecurityKeysResponse> =
         await nhost.graphql.request({
           query: `
-          query GetUserSecurityKeys($userId: uuid!) {
-            user(id: $userId) {
-              securityKeys {
-                id
-                credentialId
-                nickname
-              }
+          query GetUserSecurityKeys {
+            authUserSecurityKeys {
+              id
+              credentialId
+              nickname
             }
           }
         `,
-          variables: {
-            userId: user.id,
-          },
         });
 
       const userData = response.body?.data;
-      const keys = userData?.user?.securityKeys || [];
+      const keys = userData?.authUserSecurityKeys || [];
       setSecurityKeys(keys);
     } catch (err) {
       const error = err as FetchError<ErrorResponse>;
