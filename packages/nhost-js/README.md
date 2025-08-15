@@ -1,5 +1,7 @@
 # Nhost JavaScript SDK
 
+DELETE THIS LINE
+
 The Nhost JavaScript SDK provides a client-side interface to interact with Nhost services, including authentication, storage, and GraphQL operations.
 
 ## Installation
