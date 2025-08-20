@@ -7,6 +7,7 @@ import (
 
 	"github.com/nhost/sdk-experiment/tools/codegen/processor"
 	"github.com/nhost/sdk-experiment/tools/codegen/processor/typescript"
+	"github.com/nhost/sdk-experiment/tools/codegen/processor/purescript"
 	"github.com/pb33f/libopenapi"
 	"github.com/urfave/cli/v3"
 )
@@ -37,7 +38,7 @@ func Command() *cli.Command {
 			},
 			&cli.StringFlag{ //nolint:exhaustruct
 				Name:     flagPlugin,
-				Usage:    "Plugin to use. Supported: typescript",
+				Usage:    "Plugin to use. Supported: typescript, purescript",
 				Required: true,
 				Sources:  cli.EnvVars("PLUGIN"),
 			},
@@ -53,6 +54,8 @@ func action(_ context.Context, c *cli.Command) error {
 	switch c.String(flagPlugin) {
 	case "typescript":
 		p = &typescript.Typescript{}
+	case "purescript":
+		p = &purescript.Purescript{}
 	default:
 		return cli.Exit("unsupported plugin: %s"+c.String(flagPlugin), 1)
 	}
