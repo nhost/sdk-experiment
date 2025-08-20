@@ -1,0 +1,97 @@
+{{- define "client" -}}
+-- | Create an enhanced API client with chain functions support
+createAPIClient :: String -> Array ChainFunction -> Aff Client
+createAPIClient baseURL initialChainFunctions = do
+  chainFunctionsRef <- liftEffect $ newSTRef initialChainFunctions
+
+  let
+    pushChainFunction :: ChainFunction -> Effect Unit
+    pushChainFunction fn = void $ modifySTRef chainFunctionsRef (_ <> [fn])
+
+{{- range .Methods }}
+{{- $method := . }}
+    {{ recordFieldName .Name }} :: {{ template "methodSignature" . }}
+    {{ recordFieldName .Name }} {{ range .PathParameters }}{{ lowerFirst .Name }} {{ end }}{{ range $code, $type := .Bodies }}body {{ end }}{{ if .HasQueryParameters }}params {{ end }}= do
+      chainFunctions <- liftEffect $ readSTRef chainFunctionsRef
+      let enhancedFetch = createEnhancedFetch chainFunctions
+
+{{- if .HasQueryParameters }}
+      let
+        encodedParams = case params of
+          Nothing -> ""
+          Just p -> "?" <> encodeParams p
+
+        encodeParams :: {{ typeName .Name }}Params -> String
+        encodeParams p =
+          let pairs = Array.catMaybes
+                [ {{ range $i, $param := .QueryParameters }}{{ if ne $i 0 }}
+                , {{ end }}map (\v -> "{{ .Name }}=" <> encodeURIComponent ({{ if eq .Type.Name "String" }}v{{ else if eq .Type.Name "Int" }}show v{{ else if eq .Type.Name "Number" }}show v{{ else if eq .Type.Name "Boolean" }}show v{{ else }}stringify v{{ end }})) p.{{ recordFieldName .Name }}{{ end }}
+                ]
+          in intercalate "&" pairs
+
+      let url = baseURL <> "{{ .Path }}" <> encodedParams
+{{- else }}
+      let url = baseURL <> "{{ .Path }}"
+{{- end }}
+
+{{- if .RequestJSON }}
+      response <- enhancedFetch url
+        { method: "{{ .Method }}"
+        , headers: [ Tuple "Content-Type" "application/json" ]
+        , body: Just $ stringify $ encodeJson body
+        }
+{{- else if .RequestFormData }}
+      formData <- liftEffect $ newFormData
+{{- range .RequestFormData.Properties }}
+{{- if eq .Type.Kind "scalar" }}
+      liftEffect $ appendFormData "{{ .Name }}" ({{ if eq .Type.Name "String" }}body.{{ recordFieldName .Name }}{{ else }}show body.{{ recordFieldName .Name }}{{ end }}) formData
+{{- else if eq .Type.Kind "array" }}
+      liftEffect $ for_ body.{{ recordFieldName .Name }} \value ->
+        appendFormData "{{ .Name }}" ({{ if eq .Type.Item.Name "String" }}value{{ else }}stringify $ encodeJson value{{ end }}) formData
+{{- else }}
+      liftEffect $ appendFormData "{{ .Name }}" (stringify $ encodeJson body.{{ recordFieldName .Name }}) formData
+{{- end }}
+{{- end }}
+
+      response <- enhancedFetch url
+        { method: "{{ .Method }}"
+        , body: Just $ FormDataBody formData
+        }
+{{- else if not .RequestHasBody }}
+      response <- enhancedFetch url
+        { method: "{{ .Method }}" }
+{{- end }}
+
+      case response.status of
+        status | status >= 300 -> do
+{{- if .HasErrorResponse }}
+          errorBody <- response.text
+          case jsonParser errorBody >>= decodeJson of
+            Right err -> throwError $ FetchError err status response.headers
+            Left _ -> throwError $ FetchError unit status response.headers
+{{- else }}
+          throwError $ FetchError unit status response.headers
+{{- end }}
+        _ -> do
+{{- if .ResponseJSON }}
+          responseText <- response.text
+          case jsonParser responseText >>= decodeJson of
+            Right payload -> pure { body: payload, status: response.status, headers: response.headers }
+            Left err -> throwError $ JsonDecodeError err
+{{- else if .ResponseBinary }}
+          payload <- response.blob
+          pure { body: payload, status: response.status, headers: response.headers }
+{{- else if not .HasResponseBody }}
+          pure { body: unit, status: response.status, headers: response.headers }
+{{- end }}
+
+{{- end }}
+
+  pure
+    { baseURL
+    , pushChainFunction
+{{- range .Methods }}
+    , {{ recordFieldName .Name }}
+{{- end }}
+    }
+{{- end }}

@@ -1,0 +1,93 @@
+-- | This file is auto-generated. Do not edit manually.
+module GeneratedAPI where
+
+import Prelude
+
+import Data.Generic.Rep (class Generic)
+import Data.Show.Generic (genericShow)
+import Data.Argonaut.Core (Json)
+import Data.Argonaut.Decode (class DecodeJson, decodeJson, (.:), (.:?))
+import Data.Argonaut.Encode (class EncodeJson, encodeJson, (:=), (~>))
+import Data.Maybe (Maybe)
+import Data.Either (Either)
+import Data.String (intercalate)
+import Data.Array (catMaybes)
+import Data.Tuple (Tuple(..))
+import Effect (Effect)
+import Effect.Aff (Aff, throwError)
+import Effect.Class (liftEffect)
+import Effect.Ref (Ref, newSTRef, readSTRef, modifySTRef)
+import Foreign.Object (Object)
+import Web.File.Blob (Blob)
+import Data.Argonaut.Parser (jsonParser)
+import Data.Argonaut.Stringify (stringify)
+
+{{- range .Types }}
+{{- if eq .Kind "object" }}
+{{ template "renderObject" . }}
+{{- else if eq .Kind "enum" }}
+-- | {{ .Schema.Schema.Description }}
+data {{ .Name }}
+{{- range $i, $value := .Values }}
+  {{- if eq $i 0 }}
+  = {{ if eq $value "" }}None{{ else }}{{ $value }}{{ end }}
+  {{- else }}
+  | {{ if eq $value "" }}None{{ else }}{{ $value }}{{ end }}
+  {{- end }}
+{{- end }}
+
+derive instance generic{{ .Name }} :: Generic {{ .Name }} _
+derive instance eq{{ .Name }} :: Eq {{ .Name }}
+derive instance ord{{ .Name }} :: Ord {{ .Name }}
+
+instance show{{ .Name }} :: Show {{ .Name }} where
+  show = genericShow
+
+instance encodeJson{{ .Name }} :: EncodeJson {{ .Name }} where
+  encodeJson = case _ of
+{{- range $value := .Values }}
+    {{- if eq $value "" }}
+    None -> encodeJson ""
+    {{- else }}
+    {{ $value }} -> encodeJson "{{ $value }}"
+    {{- end }}
+{{- end }}
+
+instance decodeJson{{ .Name }} :: DecodeJson {{ .Name }} where
+  decodeJson json = do
+    str <- decodeJson json
+    case str of
+{{- range $value := .Values }}
+      {{- if eq $value "" }}
+      "" -> pure None
+      {{- else }}
+      "{{ $value }}" -> pure {{ $value }}
+      {{- end }}
+{{- end }}
+      _ -> Left $ "Invalid {{ .Name }}: " <> str
+
+{{- else if eq .Kind "alias" }}
+{{- if hasValidDescription .Alias.Schema.Schema.Description }}
+-- | {{ .Alias.Schema.Schema.Description }}
+{{- end }}
+type {{ .Name }} = {{ .Alias.Name }}
+
+{{- end }}
+{{- end }}
+
+{{- range .Methods }}
+{{- if .HasQueryParameters }}
+-- | Parameters for the {{ .Name }} method.
+type {{ typeName .Name }}Params =
+  { {{- range $i, $param := .QueryParameters }}{{ if ne $i 0 }}
+  , {{ end }}{{ recordFieldName .Name }} :: {{ if not .Required }}Maybe {{ if needsParentheses .Type.Name }}({{ .Type.Name }}){{ else }}{{ .Type.Name }}{{ end }}{{ else }}{{ .Type.Name }}{{ end }} {{- if hasValidDescription .Parameter.Description }} -- {{ .Parameter.Description }}{{ end }}
+  {{- end }}
+  }
+
+{{- end }}
+{{- end }}
+
+-- | API Client type
+{{- range .Methods }}
+-- {{ .Name }} :: {{ template "methodSignature" . }}
+{{- end }}
