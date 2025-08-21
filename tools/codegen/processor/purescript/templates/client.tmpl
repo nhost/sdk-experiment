@@ -1,0 +1,59 @@
+{{- define "client_interface" }}
+-- | API Client type
+type APIClient fetchResponse =
+  { {{- range $i, $method := .Methods }}
+    {{- if ne $i 0 }},{{ end }}
+    {{ template "apiMethodComment" $method }}
+    {{ lowerFirst $method.Name }} :: {{ template "apiMethodSignature" $method }}
+  {{- end }}
+  }
+{{- end }}
+
+{{- define "apiMethodComment" -}}
+-- | {{ .Name }}
+{{- if .Operation.Summary }}
+-- |
+-- | Summary: {{ .Operation.Summary }}
+{{- end }}
+{{- if .Operation.Description }}
+-- |
+{{- range $line := splitLines .Operation.Description }}
+-- | {{ $line }}
+{{- end }}
+{{- end }}
+{{- if .IsRedirect }}
+-- |
+-- | This method is a redirect, it returns a URL `String` instead of an `Aff`.
+{{- else }}
+-- |
+-- | Possible responses:
+{{- range $code, $codeMap := .Responses }}
+  {{- if $codeMap }}
+    {{- range $media, $type := $codeMap }}
+-- |   - {{ $code }}: {{ if $type }}{{ $type.Name }}{{ else }}Unit{{ end }}
+    {{- end }}
+  {{- else }}
+-- |   - {{ $code }}: Unit
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "apiMethodSignature" -}}
+{{- range .PathParameters }}{{ .Type.Name }} -> {{ end -}}
+{{- range $code, $type := .Bodies }}
+  {{- if not $.BodyRequired }}
+    Maybe {{ if containsSpaceInside $type.Name }}({{ $type.Name }}){{ else }}{{ $type.Name }}{{ end }}
+  {{- else }}
+    {{ $type.Name }}
+  {{- end }} ->
+{{- end -}}
+{{- if .HasQueryParameters }}
+  Maybe {{ ToCamelCase .Name }}Params ->
+{{- end -}}
+{{- if .IsRedirect }}
+  String
+{{- else }}
+  Aff (fetchResponse ({{ if eq .ReturnType "void" }}Unit{{ else }}{{ .ReturnType }}{{ end }}))
+{{- end -}}
+{{- end }}
