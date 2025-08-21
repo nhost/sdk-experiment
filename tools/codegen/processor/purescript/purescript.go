@@ -31,7 +31,6 @@ func (p *Purescript) GetFuncMap() map[string]any {
 		"containsSpaceInside":    containsSpaceInside,
 		"hasValidDescription":    hasValidDescription,
 		"hasPrefix":              strings.HasPrefix,
-		// "getCodecForScalarType":  getCodecForScalarType,
 		"enumValueToConstructor": enumValueToConstructor,
 		"enumValueToJsonString":  enumValueToJsonString,
 		"splitLines":             splitLines,

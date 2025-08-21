@@ -92,24 +92,3 @@ func enumValueToJsonString(value interface{}) string {
 	}
 	return fmt.Sprintf("\"%v\"", value)
 }
-
-// Map Go/OpenAPI types to PureScript codec functions
-func getCodecForScalarType(scalarType string, format string) string {
-	switch scalarType {
-	case "integer":
-		return "CJ.int"
-	case "number":
-		return "CJ.number"
-	case "string":
-		if format == "binary" {
-			return "CJ.string" // Blob as base64 string in JSON
-		}
-		return "CJ.string"
-	case "boolean":
-		return "CJ.boolean"
-	case "null":
-		return "CJ.null"
-	default:
-		return "CJ.string" // fallback
-	}
-}
