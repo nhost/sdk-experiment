@@ -2,7 +2,8 @@
 -- | API Client type
 type APIClient fetchResponse =
   { {{- range $i, $method := .Methods }}
-    {{- if ne $i 0 }},{{ end }}
+    {{- if ne $i 0 }}
+  , {{- end }}
     {{ template "apiMethodComment" $method }}
     {{ lowerFirst $method.Name }} :: {{ template "apiMethodSignature" $method }}
   {{- end }}
@@ -40,20 +41,22 @@ type APIClient fetchResponse =
 {{- end }}
 
 {{- define "apiMethodSignature" -}}
-{{- range .PathParameters }}{{ .Type.Name }} -> {{ end -}}
-{{- range $code, $type := .Bodies }}
-  {{- if not $.BodyRequired }}
-    Maybe {{ if containsSpaceInside $type.Name }}({{ $type.Name }}){{ else }}{{ $type.Name }}{{ end }}
-  {{- else }}
-    {{ $type.Name }}
-  {{- end }} ->
+{{- range .PathParameters -}}
+{{ .Type.Name }} ->
 {{- end -}}
-{{- if .HasQueryParameters }}
-  Maybe {{ ToCamelCase .Name }}Params ->
+{{- range $code, $type := .Bodies -}}
+{{- if not $.BodyRequired -}}
+Maybe {{ if containsSpaceInside $type.Name }}({{ $type.Name }}){{ else }}{{ $type.Name }}{{ end }} ->
+{{- else -}}
+{{ $type.Name }} ->
 {{- end -}}
-{{- if .IsRedirect }}
-  String
-{{- else }}
-  Aff (fetchResponse ({{ if eq .ReturnType "void" }}Unit{{ else }}{{ .ReturnType }}{{ end }}))
 {{- end -}}
-{{- end }}
+{{- if .HasQueryParameters -}}
+Maybe {{ ToCamelCase .Name }}Params ->
+{{- end -}}
+{{- if .IsRedirect -}}
+String
+{{- else -}}
+Aff (fetchResponse ({{ if eq .ReturnType "void" }}Unit{{ else }}{{ .ReturnType }}{{ end }}))
+{{- end -}}
+{{- end -}}

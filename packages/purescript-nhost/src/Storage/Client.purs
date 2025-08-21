@@ -403,9 +403,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 201: UploadFilesResponse201
-    uploadFiles ::
-      UploadFilesBody
-      -> Aff (fetchResponse (UploadFilesResponse201))
+    uploadFiles :: UploadFilesBody -> Aff (fetchResponse (UploadFilesResponse201))
   ,
     -- | DeleteFile
     -- |
@@ -415,9 +413,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 204: Unit
-    deleteFile ::
-      String
-      -> Aff (fetchResponse (Unit))
+    deleteFile :: String -> Aff (fetchResponse (Unit))
   ,
     -- | GetFile
     -- |
@@ -430,10 +426,7 @@ type APIClient fetchResponse =
     -- |   - 206: Unit
     -- |   - 304: Unit
     -- |   - 412: Unit
-    getFile ::
-      String
-      -> Maybe GetFileParams
-      -> Aff (fetchResponse (Blob))
+    getFile :: String -> Maybe GetFileParams -> Aff (fetchResponse (Blob))
   ,
     -- | GetFileMetadataHeaders
     -- |
@@ -445,10 +438,7 @@ type APIClient fetchResponse =
     -- |   - 200: Unit
     -- |   - 304: Unit
     -- |   - 412: Unit
-    getFileMetadataHeaders ::
-      String
-      -> Maybe GetFileMetadataHeadersParams
-      -> Aff (fetchResponse (Unit))
+    getFileMetadataHeaders :: String -> Maybe GetFileMetadataHeadersParams -> Aff (fetchResponse (Unit))
   ,
     -- | ReplaceFile
     -- |
@@ -464,10 +454,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: FileMetadata
-    replaceFile ::
-      String
-      -> ReplaceFileBody
-      -> Aff (fetchResponse (FileMetadata))
+    replaceFile :: String -> ReplaceFileBody -> Aff (fetchResponse (FileMetadata))
   ,
     -- | GetFilePresignedURL
     -- |
@@ -479,9 +466,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: PresignedURLResponse
-    getFilePresignedURL ::
-      String
-      -> Aff (fetchResponse (PresignedURLResponse))
+    getFilePresignedURL :: String -> Aff (fetchResponse (PresignedURLResponse))
   ,
     -- | DeleteBrokenMetadata
     -- |
@@ -491,8 +476,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: DeleteBrokenMetadataResponse200
-    deleteBrokenMetadata ::
-      Aff (fetchResponse (DeleteBrokenMetadataResponse200))
+    deleteBrokenMetadata :: Aff (fetchResponse (DeleteBrokenMetadataResponse200))
   ,
     -- | DeleteOrphanedFiles
     -- |
@@ -502,8 +486,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: DeleteOrphanedFilesResponse200
-    deleteOrphanedFiles ::
-      Aff (fetchResponse (DeleteOrphanedFilesResponse200))
+    deleteOrphanedFiles :: Aff (fetchResponse (DeleteOrphanedFilesResponse200))
   ,
     -- | ListBrokenMetadata
     -- |
@@ -513,8 +496,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: ListBrokenMetadataResponse200
-    listBrokenMetadata ::
-      Aff (fetchResponse (ListBrokenMetadataResponse200))
+    listBrokenMetadata :: Aff (fetchResponse (ListBrokenMetadataResponse200))
   ,
     -- | ListFilesNotUploaded
     -- |
@@ -524,8 +506,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: ListFilesNotUploadedResponse200
-    listFilesNotUploaded ::
-      Aff (fetchResponse (ListFilesNotUploadedResponse200))
+    listFilesNotUploaded :: Aff (fetchResponse (ListFilesNotUploadedResponse200))
   ,
     -- | ListOrphanedFiles
     -- |
@@ -535,8 +516,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: ListOrphanedFilesResponse200
-    listOrphanedFiles ::
-      Aff (fetchResponse (ListOrphanedFilesResponse200))
+    listOrphanedFiles :: Aff (fetchResponse (ListOrphanedFilesResponse200))
   ,
     -- | GetVersion
     -- |
@@ -546,6 +526,5 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: VersionInformation
-    getVersion ::
-      Aff (fetchResponse (VersionInformation))
+    getVersion :: Aff (fetchResponse (VersionInformation))
   }

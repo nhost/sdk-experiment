@@ -1652,8 +1652,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: JWKSet
-    getJWKs ::
-      Aff (fetchResponse (JWKSet))
+    getJWKs :: Aff (fetchResponse (JWKSet))
   ,
     -- | ElevateWebauthn
     -- |
@@ -1663,8 +1662,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: PublicKeyCredentialRequestOptions
-    elevateWebauthn ::
-      Aff (fetchResponse (PublicKeyCredentialRequestOptions))
+    elevateWebauthn :: Aff (fetchResponse (PublicKeyCredentialRequestOptions))
   ,
     -- | VerifyElevateWebauthn
     -- |
@@ -1674,9 +1672,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: SessionPayload
-    verifyElevateWebauthn ::
-      SignInWebauthnVerifyRequest
-      -> Aff (fetchResponse (SessionPayload))
+    verifyElevateWebauthn :: SignInWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
   ,
     -- | HealthCheckGet
     -- |
@@ -1686,8 +1682,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    healthCheckGet ::
-      Aff (fetchResponse (OKResponse))
+    healthCheckGet :: Aff (fetchResponse (OKResponse))
   ,
     -- | HealthCheckHead
     -- |
@@ -1697,8 +1692,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: Unit
-    healthCheckHead ::
-      Aff (fetchResponse (Unit))
+    healthCheckHead :: Aff (fetchResponse (Unit))
   ,
     -- | LinkIdToken
     -- |
@@ -1708,9 +1702,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    linkIdToken ::
-      LinkIdTokenRequest
-      -> Aff (fetchResponse (OKResponse))
+    linkIdToken :: LinkIdTokenRequest -> Aff (fetchResponse (OKResponse))
   ,
     -- | ChangeUserMfa
     -- |
@@ -1720,8 +1712,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: TotpGenerateResponse
-    changeUserMfa ::
-      Aff (fetchResponse (TotpGenerateResponse))
+    changeUserMfa :: Aff (fetchResponse (TotpGenerateResponse))
   ,
     -- | CreatePAT
     -- |
@@ -1731,9 +1722,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: CreatePATResponse
-    createPAT ::
-      CreatePATRequest
-      -> Aff (fetchResponse (CreatePATResponse))
+    createPAT :: CreatePATRequest -> Aff (fetchResponse (CreatePATResponse))
   ,
     -- | SignInAnonymous
     -- |
@@ -1743,9 +1732,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: SessionPayload
-    signInAnonymous ::
-      Maybe SignInAnonymousRequest
-      -> Aff (fetchResponse (SessionPayload))
+    signInAnonymous :: Maybe SignInAnonymousRequest -> Aff (fetchResponse (SessionPayload))
   ,
     -- | SignInEmailPassword
     -- |
@@ -1755,9 +1742,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: SignInEmailPasswordResponse
-    signInEmailPassword ::
-      SignInEmailPasswordRequest
-      -> Aff (fetchResponse (SignInEmailPasswordResponse))
+    signInEmailPassword :: SignInEmailPasswordRequest -> Aff (fetchResponse (SignInEmailPasswordResponse))
   ,
     -- | SignInIdToken
     -- |
@@ -1767,9 +1752,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: SessionPayload
-    signInIdToken ::
-      SignInIdTokenRequest
-      -> Aff (fetchResponse (SessionPayload))
+    signInIdToken :: SignInIdTokenRequest -> Aff (fetchResponse (SessionPayload))
   ,
     -- | VerifySignInMfaTotp
     -- |
@@ -1779,9 +1762,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: SessionPayload
-    verifySignInMfaTotp ::
-      SignInMfaTotpRequest
-      -> Aff (fetchResponse (SessionPayload))
+    verifySignInMfaTotp :: SignInMfaTotpRequest -> Aff (fetchResponse (SessionPayload))
   ,
     -- | SignInOTPEmail
     -- |
@@ -1791,9 +1772,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    signInOTPEmail ::
-      SignInOTPEmailRequest
-      -> Aff (fetchResponse (OKResponse))
+    signInOTPEmail :: SignInOTPEmailRequest -> Aff (fetchResponse (OKResponse))
   ,
     -- | VerifySignInOTPEmail
     -- |
@@ -1803,9 +1782,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: SignInOTPEmailVerifyResponse
-    verifySignInOTPEmail ::
-      SignInOTPEmailVerifyRequest
-      -> Aff (fetchResponse (SignInOTPEmailVerifyResponse))
+    verifySignInOTPEmail :: SignInOTPEmailVerifyRequest -> Aff (fetchResponse (SignInOTPEmailVerifyResponse))
   ,
     -- | SignInPasswordlessEmail
     -- |
@@ -1815,9 +1792,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    signInPasswordlessEmail ::
-      SignInPasswordlessEmailRequest
-      -> Aff (fetchResponse (OKResponse))
+    signInPasswordlessEmail :: SignInPasswordlessEmailRequest -> Aff (fetchResponse (OKResponse))
   ,
     -- | SignInPasswordlessSms
     -- |
@@ -1827,9 +1802,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    signInPasswordlessSms ::
-      SignInPasswordlessSmsRequest
-      -> Aff (fetchResponse (OKResponse))
+    signInPasswordlessSms :: SignInPasswordlessSmsRequest -> Aff (fetchResponse (OKResponse))
   ,
     -- | VerifySignInPasswordlessSms
     -- |
@@ -1839,9 +1812,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: SignInPasswordlessSmsOtpResponse
-    verifySignInPasswordlessSms ::
-      SignInPasswordlessSmsOtpRequest
-      -> Aff (fetchResponse (SignInPasswordlessSmsOtpResponse))
+    verifySignInPasswordlessSms :: SignInPasswordlessSmsOtpRequest -> Aff (fetchResponse (SignInPasswordlessSmsOtpResponse))
   ,
     -- | SignInPAT
     -- |
@@ -1851,9 +1822,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: SessionPayload
-    signInPAT ::
-      SignInPATRequest
-      -> Aff (fetchResponse (SessionPayload))
+    signInPAT :: SignInPATRequest -> Aff (fetchResponse (SessionPayload))
   ,
     -- | SignInProvider
     -- |
@@ -1862,10 +1831,7 @@ type APIClient fetchResponse =
     -- | Initiate OAuth2 authentication flow with a social provider. Redirects the user to the provider's authorization page.
     -- |
     -- | This method is a redirect, it returns a URL `String` instead of an `Aff`.
-    signInProvider ::
-      SignInProvider
-      -> Maybe SignInProviderParams
-      -> String
+    signInProvider :: SignInProvider -> Maybe SignInProviderParams -> String
   ,
     -- | SignInWebauthn
     -- |
@@ -1875,9 +1841,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: PublicKeyCredentialRequestOptions
-    signInWebauthn ::
-      Maybe SignInWebauthnRequest
-      -> Aff (fetchResponse (PublicKeyCredentialRequestOptions))
+    signInWebauthn :: Maybe SignInWebauthnRequest -> Aff (fetchResponse (PublicKeyCredentialRequestOptions))
   ,
     -- | VerifySignInWebauthn
     -- |
@@ -1887,9 +1851,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: SessionPayload
-    verifySignInWebauthn ::
-      SignInWebauthnVerifyRequest
-      -> Aff (fetchResponse (SessionPayload))
+    verifySignInWebauthn :: SignInWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
   ,
     -- | SignOut
     -- |
@@ -1899,9 +1861,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    signOut ::
-      SignOutRequest
-      -> Aff (fetchResponse (OKResponse))
+    signOut :: SignOutRequest -> Aff (fetchResponse (OKResponse))
   ,
     -- | SignUpEmailPassword
     -- |
@@ -1911,9 +1871,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: SessionPayload
-    signUpEmailPassword ::
-      SignUpEmailPasswordRequest
-      -> Aff (fetchResponse (SessionPayload))
+    signUpEmailPassword :: SignUpEmailPasswordRequest -> Aff (fetchResponse (SessionPayload))
   ,
     -- | SignUpWebauthn
     -- |
@@ -1923,9 +1881,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: PublicKeyCredentialCreationOptions
-    signUpWebauthn ::
-      SignUpWebauthnRequest
-      -> Aff (fetchResponse (PublicKeyCredentialCreationOptions))
+    signUpWebauthn :: SignUpWebauthnRequest -> Aff (fetchResponse (PublicKeyCredentialCreationOptions))
   ,
     -- | VerifySignUpWebauthn
     -- |
@@ -1935,9 +1891,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: SessionPayload
-    verifySignUpWebauthn ::
-      SignUpWebauthnVerifyRequest
-      -> Aff (fetchResponse (SessionPayload))
+    verifySignUpWebauthn :: SignUpWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
   ,
     -- | RefreshToken
     -- |
@@ -1947,9 +1901,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: Session
-    refreshToken ::
-      RefreshTokenRequest
-      -> Aff (fetchResponse (Session))
+    refreshToken :: RefreshTokenRequest -> Aff (fetchResponse (Session))
   ,
     -- | VerifyToken
     -- |
@@ -1959,9 +1911,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: String
-    verifyToken ::
-      Maybe VerifyTokenRequest
-      -> Aff (fetchResponse (String))
+    verifyToken :: Maybe VerifyTokenRequest -> Aff (fetchResponse (String))
   ,
     -- | GetUser
     -- |
@@ -1971,8 +1921,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: User
-    getUser ::
-      Aff (fetchResponse (User))
+    getUser :: Aff (fetchResponse (User))
   ,
     -- | DeanonymizeUser
     -- |
@@ -1982,9 +1931,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    deanonymizeUser ::
-      UserDeanonymizeRequest
-      -> Aff (fetchResponse (OKResponse))
+    deanonymizeUser :: UserDeanonymizeRequest -> Aff (fetchResponse (OKResponse))
   ,
     -- | ChangeUserEmail
     -- |
@@ -1994,9 +1941,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    changeUserEmail ::
-      UserEmailChangeRequest
-      -> Aff (fetchResponse (OKResponse))
+    changeUserEmail :: UserEmailChangeRequest -> Aff (fetchResponse (OKResponse))
   ,
     -- | SendVerificationEmail
     -- |
@@ -2006,9 +1951,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    sendVerificationEmail ::
-      UserEmailSendVerificationEmailRequest
-      -> Aff (fetchResponse (OKResponse))
+    sendVerificationEmail :: UserEmailSendVerificationEmailRequest -> Aff (fetchResponse (OKResponse))
   ,
     -- | VerifyChangeUserMfa
     -- |
@@ -2018,9 +1961,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    verifyChangeUserMfa ::
-      UserMfaRequest
-      -> Aff (fetchResponse (OKResponse))
+    verifyChangeUserMfa :: UserMfaRequest -> Aff (fetchResponse (OKResponse))
   ,
     -- | ChangeUserPassword
     -- |
@@ -2030,9 +1971,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    changeUserPassword ::
-      UserPasswordRequest
-      -> Aff (fetchResponse (OKResponse))
+    changeUserPassword :: UserPasswordRequest -> Aff (fetchResponse (OKResponse))
   ,
     -- | SendPasswordResetEmail
     -- |
@@ -2042,9 +1981,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: OKResponse
-    sendPasswordResetEmail ::
-      UserPasswordResetRequest
-      -> Aff (fetchResponse (OKResponse))
+    sendPasswordResetEmail :: UserPasswordResetRequest -> Aff (fetchResponse (OKResponse))
   ,
     -- | AddSecurityKey
     -- |
@@ -2054,8 +1991,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: PublicKeyCredentialCreationOptions
-    addSecurityKey ::
-      Aff (fetchResponse (PublicKeyCredentialCreationOptions))
+    addSecurityKey :: Aff (fetchResponse (PublicKeyCredentialCreationOptions))
   ,
     -- | VerifyAddSecurityKey
     -- |
@@ -2065,9 +2001,7 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: VerifyAddSecurityKeyResponse
-    verifyAddSecurityKey ::
-      VerifyAddSecurityKeyRequest
-      -> Aff (fetchResponse (VerifyAddSecurityKeyResponse))
+    verifyAddSecurityKey :: VerifyAddSecurityKeyRequest -> Aff (fetchResponse (VerifyAddSecurityKeyResponse))
   ,
     -- | VerifyTicket
     -- |
@@ -2076,9 +2010,7 @@ type APIClient fetchResponse =
     -- | Verify tickets created by email verification, magic link authentication, or password reset processes. Redirects the user to the appropriate destination upon successful verification.
     -- |
     -- | This method is a redirect, it returns a URL `String` instead of an `Aff`.
-    verifyTicket ::
-      Maybe VerifyTicketParams
-      -> String
+    verifyTicket :: Maybe VerifyTicketParams -> String
   ,
     -- | GetVersion
     -- |
@@ -2088,6 +2020,5 @@ type APIClient fetchResponse =
     -- |
     -- | Possible responses:
     -- |   - 200: GetVersionResponse200
-    getVersion ::
-      Aff (fetchResponse (GetVersionResponse200))
+    getVersion :: Aff (fetchResponse (GetVersionResponse200))
   }
