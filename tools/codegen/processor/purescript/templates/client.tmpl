@@ -1,15 +1,13 @@
 {{- define "client_interface" }}
 -- | API Client type
 type APIClient fetchResponse =
-  { {{- range $i, $method := .Methods }}
-    {{- if ne $i 0 }}
-  , {{- end }}
+  { {{- range $i, $method := .Methods }}{{- if eq $i 0 }}
     {{ template "apiMethodComment" $method }}
-    {{ lowerFirst $method.Name }} :: {{ template "apiMethodSignature" $method }}
-  {{- end }}
+    {{ lowerFirst $method.Name }} :: {{ template "apiMethodSignature" $method }}{{- else }}
+  , {{ template "apiMethodComment" $method }}
+    {{ lowerFirst $method.Name }} :: {{ template "apiMethodSignature" $method }}{{- end }}{{- end }}
   }
 {{- end }}
-
 {{- define "apiMethodComment" -}}
 -- | {{ .Name }}
 {{- if .Operation.Summary }}
@@ -39,21 +37,16 @@ type APIClient fetchResponse =
 {{- end }}
 {{- end }}
 {{- end }}
-
 {{- define "apiMethodSignature" -}}
 {{- range .PathParameters -}}
-{{ .Type.Name }} ->
-{{- end -}}
+{{ .Type.Name }} -> {{ end -}}
 {{- range $code, $type := .Bodies -}}
 {{- if not $.BodyRequired -}}
-Maybe {{ if containsSpaceInside $type.Name }}({{ $type.Name }}){{ else }}{{ $type.Name }}{{ end }} ->
-{{- else -}}
-{{ $type.Name }} ->
-{{- end -}}
+Maybe {{ if containsSpaceInside $type.Name }}({{ $type.Name }}){{ else }}{{ $type.Name }}{{ end }} -> {{ else -}}
+{{ $type.Name }} -> {{ end -}}
 {{- end -}}
 {{- if .HasQueryParameters -}}
-Maybe {{ ToCamelCase .Name }}Params ->
-{{- end -}}
+Maybe {{ ToCamelCase .Name }}Params -> {{ end -}}
 {{- if .IsRedirect -}}
 String
 {{- else -}}
