@@ -1,13 +1,44 @@
-{{- define "client_interface" }}
+{{- define "apiMethodType" -}}
+-- | {{ .Name }}
+{{- if .Operation.Summary }}
+-- |
+-- | Summary: {{ .Operation.Summary }}
+{{- end }}
+{{- if .Operation.Description }}
+-- |
+{{- range $line := splitLines .Operation.Description }}
+-- | {{ $line }}
+{{- end }}
+{{- end }}
+-- |
+-- | Possible responses:
+{{- range $code, $codeMap := .Responses }}
+  {{- if $codeMap }}
+    {{- range $media, $type := $codeMap }}
+-- |   - {{ $code }}: {{ if $type }}{{ $type.Name }}{{ else }}Unit{{ end }}
+    {{- end }}
+  {{- else }}
+-- |   - {{ $code }}: Unit
+  {{- end }}
+{{- end }}
+{{- if .IsRedirect }}
+type {{ .Name }}Fn = {{ template "apiMethodSignature" . }}
+{{- else }}
+type {{ .Name }}Fn fetchResponse = {{ template "apiMethodSignature" . }}
+{{- end }}
+{{- end }}
+
+{{- define "client_interface" -}}
 -- | API Client type
 type APIClient fetchResponse =
-  { {{- range $i, $method := .Methods }}{{- if eq $i 0 }}
-    {{ template "apiMethodComment" $method }}
-    {{ lowerFirst $method.Name }} :: {{ template "apiMethodSignature" $method }}{{- else }}
-  , {{ template "apiMethodComment" $method }}
-    {{ lowerFirst $method.Name }} :: {{ template "apiMethodSignature" $method }}{{- end }}{{- end }}
+  { {{- range $i, $method := .Methods }}
+    {{- if ne $i 0 }}
+  , {{- end }}
+    {{ lowerFirst $method.Name }} :: {{- if .IsRedirect }}{{ .Name }}Fn{{- else }}{{ .Name }}Fn fetchResponse{{- end }}
+  {{- end }}
   }
 {{- end }}
+
 {{- define "apiMethodComment" -}}
 -- | {{ .Name }}
 {{- if .Operation.Summary }}
@@ -37,6 +68,7 @@ type APIClient fetchResponse =
 {{- end }}
 {{- end }}
 {{- end }}
+
 {{- define "apiMethodSignature" -}}
 {{- range .PathParameters -}}
 {{ .Type.Name }} -> {{ end -}}

@@ -1641,347 +1641,387 @@ verifyTicketParamsCodec =
     , "redirectTo": redirectToQueryCodec
     }
 
+-- | GetJWKs
+-- |
+-- | Summary: Get public keys for JWT verification in JWK Set format
+-- |
+-- | Retrieve the JSON Web Key Set (JWKS) containing public keys used to verify JWT signatures. This endpoint is used by clients to validate access tokens.
+-- |
+-- | Possible responses:
+-- |   - 200: JWKSet
+type GetJWKsFn fetchResponse = Aff (fetchResponse (JWKSet))
+-- | ElevateWebauthn
+-- |
+-- | Summary: Elevate access for an already signed in user using FIDO2 Webauthn
+-- |
+-- | Generate a Webauthn challenge for elevating user permissions
+-- |
+-- | Possible responses:
+-- |   - 200: PublicKeyCredentialRequestOptions
+type ElevateWebauthnFn fetchResponse = Aff (fetchResponse (PublicKeyCredentialRequestOptions))
+-- | VerifyElevateWebauthn
+-- |
+-- | Summary: Verify FIDO2 Webauthn authentication using public-key cryptography for elevation
+-- |
+-- | Complete Webauthn elevation by verifying the authentication response
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type VerifyElevateWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
+-- | HealthCheckGet
+-- |
+-- | Summary: Health check (GET)
+-- |
+-- | Verify if the authentication service is operational using GET method
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type HealthCheckGetFn fetchResponse = Aff (fetchResponse (OKResponse))
+-- | HealthCheckHead
+-- |
+-- | Summary: Health check (HEAD)
+-- |
+-- | Verify if the authentication service is operational using HEAD method
+-- |
+-- | Possible responses:
+-- |   - 200: Unit
+type HealthCheckHeadFn fetchResponse = Aff (fetchResponse (Unit))
+-- | LinkIdToken
+-- |
+-- | Summary: Link a user account with the provider's account using an id token
+-- |
+-- | Link the authenticated user's account with an external OAuth provider account using an ID token. Requires elevated permissions.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type LinkIdTokenFn fetchResponse = LinkIdTokenRequest -> Aff (fetchResponse (OKResponse))
+-- | ChangeUserMfa
+-- |
+-- | Summary: Generate TOTP secret
+-- |
+-- | Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication
+-- |
+-- | Possible responses:
+-- |   - 200: TotpGenerateResponse
+type ChangeUserMfaFn fetchResponse = Aff (fetchResponse (TotpGenerateResponse))
+-- | CreatePAT
+-- |
+-- | Summary: Create a Personal Access Token (PAT)
+-- |
+-- | Generate a new Personal Access Token for programmatic API access. PATs are long-lived tokens that can be used instead of regular authentication for automated systems. Requires elevated permissions.
+-- |
+-- | Possible responses:
+-- |   - 200: CreatePATResponse
+type CreatePATFn fetchResponse = CreatePATRequest -> Aff (fetchResponse (CreatePATResponse))
+-- | SignInAnonymous
+-- |
+-- | Summary: Sign in anonymously
+-- |
+-- | Create an anonymous user session without providing credentials. Anonymous users can be converted to regular users later via the deanonymize endpoint.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type SignInAnonymousFn fetchResponse = Maybe SignInAnonymousRequest -> Aff (fetchResponse (SessionPayload))
+-- | SignInEmailPassword
+-- |
+-- | Summary: Sign in with email and password
+-- |
+-- | Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
+-- |
+-- | Possible responses:
+-- |   - 200: SignInEmailPasswordResponse
+type SignInEmailPasswordFn fetchResponse = SignInEmailPasswordRequest -> Aff (fetchResponse (SignInEmailPasswordResponse))
+-- | SignInIdToken
+-- |
+-- | Summary: Sign in with an ID token
+-- |
+-- | Authenticate using an ID token from a supported OAuth provider (Apple or Google). Creates a new user account if one doesn't exist.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type SignInIdTokenFn fetchResponse = SignInIdTokenRequest -> Aff (fetchResponse (SessionPayload))
+-- | VerifySignInMfaTotp
+-- |
+-- | Summary: Verify TOTP for MFA
+-- |
+-- | Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type VerifySignInMfaTotpFn fetchResponse = SignInMfaTotpRequest -> Aff (fetchResponse (SessionPayload))
+-- | SignInOTPEmail
+-- |
+-- | Summary: Sign in with email OTP
+-- |
+-- | Initiate email-based one-time password authentication. Sends an OTP to the specified email address. If the user doesn't exist, a new account will be created with the provided options.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SignInOTPEmailFn fetchResponse = SignInOTPEmailRequest -> Aff (fetchResponse (OKResponse))
+-- | VerifySignInOTPEmail
+-- |
+-- | Summary: Verify email OTP
+-- |
+-- | Complete email OTP authentication by verifying the one-time password. Returns a session if validation is successful.
+-- |
+-- | Possible responses:
+-- |   - 200: SignInOTPEmailVerifyResponse
+type VerifySignInOTPEmailFn fetchResponse = SignInOTPEmailVerifyRequest -> Aff (fetchResponse (SignInOTPEmailVerifyResponse))
+-- | SignInPasswordlessEmail
+-- |
+-- | Summary: Sign in with magic link email
+-- |
+-- | Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SignInPasswordlessEmailFn fetchResponse = SignInPasswordlessEmailRequest -> Aff (fetchResponse (OKResponse))
+-- | SignInPasswordlessSms
+-- |
+-- | Summary: Sign in with SMS OTP
+-- |
+-- | Initiate passwordless authentication by sending a one-time password to the user's phone number. If the user doesn't exist, a new account will be created with the provided options.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsRequest -> Aff (fetchResponse (OKResponse))
+-- | VerifySignInPasswordlessSms
+-- |
+-- | Summary: Verify SMS OTP
+-- |
+-- | Complete passwordless SMS authentication by verifying the one-time password. Returns a session if validation is successful.
+-- |
+-- | Possible responses:
+-- |   - 200: SignInPasswordlessSmsOtpResponse
+type VerifySignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsOtpRequest -> Aff (fetchResponse (SignInPasswordlessSmsOtpResponse))
+-- | SignInPAT
+-- |
+-- | Summary: Sign in with Personal Access Token (PAT)
+-- |
+-- | Authenticate using a Personal Access Token. PATs are long-lived tokens that can be used for programmatic access to the API.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type SignInPATFn fetchResponse = SignInPATRequest -> Aff (fetchResponse (SessionPayload))
+-- | SignInProvider
+-- |
+-- | Summary: Sign in with an OAuth2 provider
+-- |
+-- | Initiate OAuth2 authentication flow with a social provider. Redirects the user to the provider's authorization page.
+-- |
+-- | Possible responses:
+-- |   - 302: Unit
+type SignInProviderFn = SignInProvider -> Maybe SignInProviderParams -> String
+-- | SignInWebauthn
+-- |
+-- | Summary: Sign in with Webauthn
+-- |
+-- | Initiate a Webauthn sign-in process by sending a challenge to the user's device. The user must have previously registered a Webauthn credential.
+-- |
+-- | Possible responses:
+-- |   - 200: PublicKeyCredentialRequestOptions
+type SignInWebauthnFn fetchResponse = Maybe SignInWebauthnRequest -> Aff (fetchResponse (PublicKeyCredentialRequestOptions))
+-- | VerifySignInWebauthn
+-- |
+-- | Summary: Verify Webauthn sign-in
+-- |
+-- | Complete the Webauthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type VerifySignInWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
+-- | SignOut
+-- |
+-- | Summary: Sign out
+-- |
+-- | End the current user session by invalidating refresh tokens. Optionally sign out from all devices.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SignOutFn fetchResponse = SignOutRequest -> Aff (fetchResponse (OKResponse))
+-- | SignUpEmailPassword
+-- |
+-- | Summary: Sign up with email and password
+-- |
+-- | Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type SignUpEmailPasswordFn fetchResponse = SignUpEmailPasswordRequest -> Aff (fetchResponse (SessionPayload))
+-- | SignUpWebauthn
+-- |
+-- | Summary: Sign up with Webauthn
+-- |
+-- | Initiate a Webauthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
+-- |
+-- | Possible responses:
+-- |   - 200: PublicKeyCredentialCreationOptions
+type SignUpWebauthnFn fetchResponse = SignUpWebauthnRequest -> Aff (fetchResponse (PublicKeyCredentialCreationOptions))
+-- | VerifySignUpWebauthn
+-- |
+-- | Summary: Verify Webauthn sign-up
+-- |
+-- | Complete the Webauthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type VerifySignUpWebauthnFn fetchResponse = SignUpWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
+-- | RefreshToken
+-- |
+-- | Summary: Refresh access token
+-- |
+-- | Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued.
+-- |
+-- | Possible responses:
+-- |   - 200: Session
+type RefreshTokenFn fetchResponse = RefreshTokenRequest -> Aff (fetchResponse (Session))
+-- | VerifyToken
+-- |
+-- | Summary: Verify JWT token
+-- |
+-- | Verify the validity of a JWT access token. If no request body is provided, the Authorization header will be used for verification.
+-- |
+-- | Possible responses:
+-- |   - 200: String
+type VerifyTokenFn fetchResponse = Maybe VerifyTokenRequest -> Aff (fetchResponse (String))
+-- | GetUser
+-- |
+-- | Summary: Get user information
+-- |
+-- | Retrieve the authenticated user's profile information including roles, metadata, and account status.
+-- |
+-- | Possible responses:
+-- |   - 200: User
+type GetUserFn fetchResponse = Aff (fetchResponse (User))
+-- | DeanonymizeUser
+-- |
+-- | Summary: Deanonymize an anonymous user
+-- |
+-- | Convert an anonymous user to a regular user by adding email and optionally password credentials. A confirmation email will be sent if the server is configured to do so.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type DeanonymizeUserFn fetchResponse = UserDeanonymizeRequest -> Aff (fetchResponse (OKResponse))
+-- | ChangeUserEmail
+-- |
+-- | Summary: Change user email
+-- |
+-- | Request to change the authenticated user's email address. A verification email will be sent to the new address to confirm the change. Requires elevated permissions.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type ChangeUserEmailFn fetchResponse = UserEmailChangeRequest -> Aff (fetchResponse (OKResponse))
+-- | SendVerificationEmail
+-- |
+-- | Summary: Send verification email
+-- |
+-- | Send an email verification link to the specified email address. Used to verify email addresses for new accounts or email changes.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SendVerificationEmailFn fetchResponse = UserEmailSendVerificationEmailRequest -> Aff (fetchResponse (OKResponse))
+-- | VerifyChangeUserMfa
+-- |
+-- | Summary: Manage multi-factor authentication
+-- |
+-- | Activate or deactivate multi-factor authentication for the authenticated user
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type VerifyChangeUserMfaFn fetchResponse = UserMfaRequest -> Aff (fetchResponse (OKResponse))
+-- | ChangeUserPassword
+-- |
+-- | Summary: Change user password
+-- |
+-- | Change the user's password. The user must be authenticated with elevated permissions or provide a valid password reset ticket.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type ChangeUserPasswordFn fetchResponse = UserPasswordRequest -> Aff (fetchResponse (OKResponse))
+-- | SendPasswordResetEmail
+-- |
+-- | Summary: Request password reset
+-- |
+-- | Request a password reset for a user account. An email with a verification link will be sent to the user's email address to complete the password reset process.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SendPasswordResetEmailFn fetchResponse = UserPasswordResetRequest -> Aff (fetchResponse (OKResponse))
+-- | AddSecurityKey
+-- |
+-- | Summary: Initialize adding of a new webauthn security key
+-- |
+-- | Start the process of adding a new WebAuthn security key to the user's account. Returns a challenge that must be completed by the user's authenticator device. Requires elevated permissions.
+-- |
+-- | Possible responses:
+-- |   - 200: PublicKeyCredentialCreationOptions
+type AddSecurityKeyFn fetchResponse = Aff (fetchResponse (PublicKeyCredentialCreationOptions))
+-- | VerifyAddSecurityKey
+-- |
+-- | Summary: Verify adding of a new webauthn security key
+-- |
+-- | Complete the process of adding a new WebAuthn security key by verifying the authenticator response. Requires elevated permissions.
+-- |
+-- | Possible responses:
+-- |   - 200: VerifyAddSecurityKeyResponse
+type VerifyAddSecurityKeyFn fetchResponse = VerifyAddSecurityKeyRequest -> Aff (fetchResponse (VerifyAddSecurityKeyResponse))
+-- | VerifyTicket
+-- |
+-- | Summary: Verify email and authentication tickets
+-- |
+-- | Verify tickets created by email verification, magic link authentication, or password reset processes. Redirects the user to the appropriate destination upon successful verification.
+-- |
+-- | Possible responses:
+-- |   - 302: Unit
+type VerifyTicketFn = Maybe VerifyTicketParams -> String
+-- | GetVersion
+-- |
+-- | Summary: Get service version
+-- |
+-- | Retrieve version information about the authentication service
+-- |
+-- | Possible responses:
+-- |   - 200: GetVersionResponse200
+type GetVersionFn fetchResponse = Aff (fetchResponse (GetVersionResponse200))
+
 -- | API Client type
 type APIClient fetchResponse =
-  {
-    -- | GetJWKs
-    -- |
-    -- | Summary: Get public keys for JWT verification in JWK Set format
-    -- |
-    -- | Retrieve the JSON Web Key Set (JWKS) containing public keys used to verify JWT signatures. This endpoint is used by clients to validate access tokens.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: JWKSet
-    getJWKs :: Aff (fetchResponse (JWKSet))
-  , -- | ElevateWebauthn
-    -- |
-    -- | Summary: Elevate access for an already signed in user using FIDO2 Webauthn
-    -- |
-    -- | Generate a Webauthn challenge for elevating user permissions
-    -- |
-    -- | Possible responses:
-    -- |   - 200: PublicKeyCredentialRequestOptions
-    elevateWebauthn :: Aff (fetchResponse (PublicKeyCredentialRequestOptions))
-  , -- | VerifyElevateWebauthn
-    -- |
-    -- | Summary: Verify FIDO2 Webauthn authentication using public-key cryptography for elevation
-    -- |
-    -- | Complete Webauthn elevation by verifying the authentication response
-    -- |
-    -- | Possible responses:
-    -- |   - 200: SessionPayload
-    verifyElevateWebauthn :: SignInWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
-  , -- | HealthCheckGet
-    -- |
-    -- | Summary: Health check (GET)
-    -- |
-    -- | Verify if the authentication service is operational using GET method
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    healthCheckGet :: Aff (fetchResponse (OKResponse))
-  , -- | HealthCheckHead
-    -- |
-    -- | Summary: Health check (HEAD)
-    -- |
-    -- | Verify if the authentication service is operational using HEAD method
-    -- |
-    -- | Possible responses:
-    -- |   - 200: Unit
-    healthCheckHead :: Aff (fetchResponse (Unit))
-  , -- | LinkIdToken
-    -- |
-    -- | Summary: Link a user account with the provider's account using an id token
-    -- |
-    -- | Link the authenticated user's account with an external OAuth provider account using an ID token. Requires elevated permissions.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    linkIdToken :: LinkIdTokenRequest -> Aff (fetchResponse (OKResponse))
-  , -- | ChangeUserMfa
-    -- |
-    -- | Summary: Generate TOTP secret
-    -- |
-    -- | Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication
-    -- |
-    -- | Possible responses:
-    -- |   - 200: TotpGenerateResponse
-    changeUserMfa :: Aff (fetchResponse (TotpGenerateResponse))
-  , -- | CreatePAT
-    -- |
-    -- | Summary: Create a Personal Access Token (PAT)
-    -- |
-    -- | Generate a new Personal Access Token for programmatic API access. PATs are long-lived tokens that can be used instead of regular authentication for automated systems. Requires elevated permissions.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: CreatePATResponse
-    createPAT :: CreatePATRequest -> Aff (fetchResponse (CreatePATResponse))
-  , -- | SignInAnonymous
-    -- |
-    -- | Summary: Sign in anonymously
-    -- |
-    -- | Create an anonymous user session without providing credentials. Anonymous users can be converted to regular users later via the deanonymize endpoint.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: SessionPayload
-    signInAnonymous :: Maybe SignInAnonymousRequest -> Aff (fetchResponse (SessionPayload))
-  , -- | SignInEmailPassword
-    -- |
-    -- | Summary: Sign in with email and password
-    -- |
-    -- | Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: SignInEmailPasswordResponse
-    signInEmailPassword :: SignInEmailPasswordRequest -> Aff (fetchResponse (SignInEmailPasswordResponse))
-  , -- | SignInIdToken
-    -- |
-    -- | Summary: Sign in with an ID token
-    -- |
-    -- | Authenticate using an ID token from a supported OAuth provider (Apple or Google). Creates a new user account if one doesn't exist.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: SessionPayload
-    signInIdToken :: SignInIdTokenRequest -> Aff (fetchResponse (SessionPayload))
-  , -- | VerifySignInMfaTotp
-    -- |
-    -- | Summary: Verify TOTP for MFA
-    -- |
-    -- | Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: SessionPayload
-    verifySignInMfaTotp :: SignInMfaTotpRequest -> Aff (fetchResponse (SessionPayload))
-  , -- | SignInOTPEmail
-    -- |
-    -- | Summary: Sign in with email OTP
-    -- |
-    -- | Initiate email-based one-time password authentication. Sends an OTP to the specified email address. If the user doesn't exist, a new account will be created with the provided options.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    signInOTPEmail :: SignInOTPEmailRequest -> Aff (fetchResponse (OKResponse))
-  , -- | VerifySignInOTPEmail
-    -- |
-    -- | Summary: Verify email OTP
-    -- |
-    -- | Complete email OTP authentication by verifying the one-time password. Returns a session if validation is successful.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: SignInOTPEmailVerifyResponse
-    verifySignInOTPEmail :: SignInOTPEmailVerifyRequest -> Aff (fetchResponse (SignInOTPEmailVerifyResponse))
-  , -- | SignInPasswordlessEmail
-    -- |
-    -- | Summary: Sign in with magic link email
-    -- |
-    -- | Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    signInPasswordlessEmail :: SignInPasswordlessEmailRequest -> Aff (fetchResponse (OKResponse))
-  , -- | SignInPasswordlessSms
-    -- |
-    -- | Summary: Sign in with SMS OTP
-    -- |
-    -- | Initiate passwordless authentication by sending a one-time password to the user's phone number. If the user doesn't exist, a new account will be created with the provided options.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    signInPasswordlessSms :: SignInPasswordlessSmsRequest -> Aff (fetchResponse (OKResponse))
-  , -- | VerifySignInPasswordlessSms
-    -- |
-    -- | Summary: Verify SMS OTP
-    -- |
-    -- | Complete passwordless SMS authentication by verifying the one-time password. Returns a session if validation is successful.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: SignInPasswordlessSmsOtpResponse
-    verifySignInPasswordlessSms :: SignInPasswordlessSmsOtpRequest -> Aff (fetchResponse (SignInPasswordlessSmsOtpResponse))
-  , -- | SignInPAT
-    -- |
-    -- | Summary: Sign in with Personal Access Token (PAT)
-    -- |
-    -- | Authenticate using a Personal Access Token. PATs are long-lived tokens that can be used for programmatic access to the API.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: SessionPayload
-    signInPAT :: SignInPATRequest -> Aff (fetchResponse (SessionPayload))
-  , -- | SignInProvider
-    -- |
-    -- | Summary: Sign in with an OAuth2 provider
-    -- |
-    -- | Initiate OAuth2 authentication flow with a social provider. Redirects the user to the provider's authorization page.
-    -- |
-    -- | This method is a redirect, it returns a URL `String` instead of an `Aff`.
-    signInProvider :: SignInProvider -> Maybe SignInProviderParams -> String
-  , -- | SignInWebauthn
-    -- |
-    -- | Summary: Sign in with Webauthn
-    -- |
-    -- | Initiate a Webauthn sign-in process by sending a challenge to the user's device. The user must have previously registered a Webauthn credential.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: PublicKeyCredentialRequestOptions
-    signInWebauthn :: Maybe SignInWebauthnRequest -> Aff (fetchResponse (PublicKeyCredentialRequestOptions))
-  , -- | VerifySignInWebauthn
-    -- |
-    -- | Summary: Verify Webauthn sign-in
-    -- |
-    -- | Complete the Webauthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: SessionPayload
-    verifySignInWebauthn :: SignInWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
-  , -- | SignOut
-    -- |
-    -- | Summary: Sign out
-    -- |
-    -- | End the current user session by invalidating refresh tokens. Optionally sign out from all devices.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    signOut :: SignOutRequest -> Aff (fetchResponse (OKResponse))
-  , -- | SignUpEmailPassword
-    -- |
-    -- | Summary: Sign up with email and password
-    -- |
-    -- | Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: SessionPayload
-    signUpEmailPassword :: SignUpEmailPasswordRequest -> Aff (fetchResponse (SessionPayload))
-  , -- | SignUpWebauthn
-    -- |
-    -- | Summary: Sign up with Webauthn
-    -- |
-    -- | Initiate a Webauthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: PublicKeyCredentialCreationOptions
-    signUpWebauthn :: SignUpWebauthnRequest -> Aff (fetchResponse (PublicKeyCredentialCreationOptions))
-  , -- | VerifySignUpWebauthn
-    -- |
-    -- | Summary: Verify Webauthn sign-up
-    -- |
-    -- | Complete the Webauthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: SessionPayload
-    verifySignUpWebauthn :: SignUpWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
-  , -- | RefreshToken
-    -- |
-    -- | Summary: Refresh access token
-    -- |
-    -- | Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: Session
-    refreshToken :: RefreshTokenRequest -> Aff (fetchResponse (Session))
-  , -- | VerifyToken
-    -- |
-    -- | Summary: Verify JWT token
-    -- |
-    -- | Verify the validity of a JWT access token. If no request body is provided, the Authorization header will be used for verification.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: String
-    verifyToken :: Maybe VerifyTokenRequest -> Aff (fetchResponse (String))
-  , -- | GetUser
-    -- |
-    -- | Summary: Get user information
-    -- |
-    -- | Retrieve the authenticated user's profile information including roles, metadata, and account status.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: User
-    getUser :: Aff (fetchResponse (User))
-  , -- | DeanonymizeUser
-    -- |
-    -- | Summary: Deanonymize an anonymous user
-    -- |
-    -- | Convert an anonymous user to a regular user by adding email and optionally password credentials. A confirmation email will be sent if the server is configured to do so.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    deanonymizeUser :: UserDeanonymizeRequest -> Aff (fetchResponse (OKResponse))
-  , -- | ChangeUserEmail
-    -- |
-    -- | Summary: Change user email
-    -- |
-    -- | Request to change the authenticated user's email address. A verification email will be sent to the new address to confirm the change. Requires elevated permissions.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    changeUserEmail :: UserEmailChangeRequest -> Aff (fetchResponse (OKResponse))
-  , -- | SendVerificationEmail
-    -- |
-    -- | Summary: Send verification email
-    -- |
-    -- | Send an email verification link to the specified email address. Used to verify email addresses for new accounts or email changes.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    sendVerificationEmail :: UserEmailSendVerificationEmailRequest -> Aff (fetchResponse (OKResponse))
-  , -- | VerifyChangeUserMfa
-    -- |
-    -- | Summary: Manage multi-factor authentication
-    -- |
-    -- | Activate or deactivate multi-factor authentication for the authenticated user
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    verifyChangeUserMfa :: UserMfaRequest -> Aff (fetchResponse (OKResponse))
-  , -- | ChangeUserPassword
-    -- |
-    -- | Summary: Change user password
-    -- |
-    -- | Change the user's password. The user must be authenticated with elevated permissions or provide a valid password reset ticket.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    changeUserPassword :: UserPasswordRequest -> Aff (fetchResponse (OKResponse))
-  , -- | SendPasswordResetEmail
-    -- |
-    -- | Summary: Request password reset
-    -- |
-    -- | Request a password reset for a user account. An email with a verification link will be sent to the user's email address to complete the password reset process.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: OKResponse
-    sendPasswordResetEmail :: UserPasswordResetRequest -> Aff (fetchResponse (OKResponse))
-  , -- | AddSecurityKey
-    -- |
-    -- | Summary: Initialize adding of a new webauthn security key
-    -- |
-    -- | Start the process of adding a new WebAuthn security key to the user's account. Returns a challenge that must be completed by the user's authenticator device. Requires elevated permissions.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: PublicKeyCredentialCreationOptions
-    addSecurityKey :: Aff (fetchResponse (PublicKeyCredentialCreationOptions))
-  , -- | VerifyAddSecurityKey
-    -- |
-    -- | Summary: Verify adding of a new webauthn security key
-    -- |
-    -- | Complete the process of adding a new WebAuthn security key by verifying the authenticator response. Requires elevated permissions.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: VerifyAddSecurityKeyResponse
-    verifyAddSecurityKey :: VerifyAddSecurityKeyRequest -> Aff (fetchResponse (VerifyAddSecurityKeyResponse))
-  , -- | VerifyTicket
-    -- |
-    -- | Summary: Verify email and authentication tickets
-    -- |
-    -- | Verify tickets created by email verification, magic link authentication, or password reset processes. Redirects the user to the appropriate destination upon successful verification.
-    -- |
-    -- | This method is a redirect, it returns a URL `String` instead of an `Aff`.
-    verifyTicket :: Maybe VerifyTicketParams -> String
-  , -- | GetVersion
-    -- |
-    -- | Summary: Get service version
-    -- |
-    -- | Retrieve version information about the authentication service
-    -- |
-    -- | Possible responses:
-    -- |   - 200: GetVersionResponse200
-    getVersion :: Aff (fetchResponse (GetVersionResponse200))
+  { getJWKs :: GetJWKsFn fetchResponse
+  , elevateWebauthn :: ElevateWebauthnFn fetchResponse
+  , verifyElevateWebauthn :: VerifyElevateWebauthnFn fetchResponse
+  , healthCheckGet :: HealthCheckGetFn fetchResponse
+  , healthCheckHead :: HealthCheckHeadFn fetchResponse
+  , linkIdToken :: LinkIdTokenFn fetchResponse
+  , changeUserMfa :: ChangeUserMfaFn fetchResponse
+  , createPAT :: CreatePATFn fetchResponse
+  , signInAnonymous :: SignInAnonymousFn fetchResponse
+  , signInEmailPassword :: SignInEmailPasswordFn fetchResponse
+  , signInIdToken :: SignInIdTokenFn fetchResponse
+  , verifySignInMfaTotp :: VerifySignInMfaTotpFn fetchResponse
+  , signInOTPEmail :: SignInOTPEmailFn fetchResponse
+  , verifySignInOTPEmail :: VerifySignInOTPEmailFn fetchResponse
+  , signInPasswordlessEmail :: SignInPasswordlessEmailFn fetchResponse
+  , signInPasswordlessSms :: SignInPasswordlessSmsFn fetchResponse
+  , verifySignInPasswordlessSms :: VerifySignInPasswordlessSmsFn fetchResponse
+  , signInPAT :: SignInPATFn fetchResponse
+  , signInProvider :: SignInProviderFn
+  , signInWebauthn :: SignInWebauthnFn fetchResponse
+  , verifySignInWebauthn :: VerifySignInWebauthnFn fetchResponse
+  , signOut :: SignOutFn fetchResponse
+  , signUpEmailPassword :: SignUpEmailPasswordFn fetchResponse
+  , signUpWebauthn :: SignUpWebauthnFn fetchResponse
+  , verifySignUpWebauthn :: VerifySignUpWebauthnFn fetchResponse
+  , refreshToken :: RefreshTokenFn fetchResponse
+  , verifyToken :: VerifyTokenFn fetchResponse
+  , getUser :: GetUserFn fetchResponse
+  , deanonymizeUser :: DeanonymizeUserFn fetchResponse
+  , changeUserEmail :: ChangeUserEmailFn fetchResponse
+  , sendVerificationEmail :: SendVerificationEmailFn fetchResponse
+  , verifyChangeUserMfa :: VerifyChangeUserMfaFn fetchResponse
+  , changeUserPassword :: ChangeUserPasswordFn fetchResponse
+  , sendPasswordResetEmail :: SendPasswordResetEmailFn fetchResponse
+  , addSecurityKey :: AddSecurityKeyFn fetchResponse
+  , verifyAddSecurityKey :: VerifyAddSecurityKeyFn fetchResponse
+  , verifyTicket :: VerifyTicketFn
+  , getVersion :: GetVersionFn fetchResponse
   }

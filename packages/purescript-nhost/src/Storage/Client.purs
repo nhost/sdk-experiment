@@ -392,128 +392,140 @@ getFileMetadataHeadersParamsCodec =
     , "f": CJ.maybe outputImageFormatCodec
     }
 
+-- | UploadFiles
+-- |
+-- | Summary: Upload files
+-- |
+-- | Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
+-- |
+-- | Possible responses:
+-- |   - 201: UploadFilesResponse201
+type UploadFilesFn fetchResponse = UploadFilesBody -> Aff (fetchResponse (UploadFilesResponse201))
+-- | DeleteFile
+-- |
+-- | Summary: Delete file
+-- |
+-- | Permanently delete a file from storage. This removes both the file content and its associated metadata.
+-- |
+-- | Possible responses:
+-- |   - 204: Unit
+type DeleteFileFn fetchResponse = String -> Aff (fetchResponse (Unit))
+-- | GetFile
+-- |
+-- | Summary: Download file
+-- |
+-- | Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
+-- |
+-- | Possible responses:
+-- |   - 200: Unit
+-- |   - 206: Unit
+-- |   - 304: Unit
+-- |   - 412: Unit
+type GetFileFn fetchResponse = String -> Maybe GetFileParams -> Aff (fetchResponse (Blob))
+-- | GetFileMetadataHeaders
+-- |
+-- | Summary: Check file information
+-- |
+-- | Retrieve file metadata headers without downloading the file content. Supports conditional requests and provides caching information.
+-- |
+-- | Possible responses:
+-- |   - 200: Unit
+-- |   - 304: Unit
+-- |   - 412: Unit
+type GetFileMetadataHeadersFn fetchResponse = String -> Maybe GetFileMetadataHeadersParams -> Aff (fetchResponse (Unit))
+-- | ReplaceFile
+-- |
+-- | Summary: Replace file
+-- |
+-- | Replace an existing file with new content while preserving the file ID. The operation follows these steps:
+-- | 1. The isUploaded flag is set to false to mark the file as being updated
+-- | 2. The file content is replaced in the storage backend
+-- | 3. File metadata is updated (size, mime-type, isUploaded, etc.)
+-- |
+-- | Each step is atomic, but if a step fails, previous steps will not be automatically rolled back.
+-- |
+-- |
+-- | Possible responses:
+-- |   - 200: FileMetadata
+type ReplaceFileFn fetchResponse = String -> ReplaceFileBody -> Aff (fetchResponse (FileMetadata))
+-- | GetFilePresignedURL
+-- |
+-- | Summary: Retrieve presigned URL to retrieve the file
+-- |
+-- | Retrieve presigned URL to retrieve the file. Expiration of the URL is
+-- | determined by bucket configuration
+-- |
+-- |
+-- | Possible responses:
+-- |   - 200: PresignedURLResponse
+type GetFilePresignedURLFn fetchResponse = String -> Aff (fetchResponse (PresignedURLResponse))
+-- | DeleteBrokenMetadata
+-- |
+-- | Summary: Delete broken metadata
+-- |
+-- | Broken metadata is defined as metadata that has isUploaded = true but there is no file in the storage matching it. This is an admin operation that requires the Hasura admin secret.
+-- |
+-- | Possible responses:
+-- |   - 200: DeleteBrokenMetadataResponse200
+type DeleteBrokenMetadataFn fetchResponse = Aff (fetchResponse (DeleteBrokenMetadataResponse200))
+-- | DeleteOrphanedFiles
+-- |
+-- | Summary: Deletes orphaned files
+-- |
+-- | Orphaned files are files that are present in the storage but have no associated metadata. This is an admin operation that requires the Hasura admin secret.
+-- |
+-- | Possible responses:
+-- |   - 200: DeleteOrphanedFilesResponse200
+type DeleteOrphanedFilesFn fetchResponse = Aff (fetchResponse (DeleteOrphanedFilesResponse200))
+-- | ListBrokenMetadata
+-- |
+-- | Summary: Lists broken metadata
+-- |
+-- | Broken metadata is defined as metadata that has isUploaded = true but there is no file in the storage matching it. This is an admin operation that requires the Hasura admin secret.
+-- |
+-- | Possible responses:
+-- |   - 200: ListBrokenMetadataResponse200
+type ListBrokenMetadataFn fetchResponse = Aff (fetchResponse (ListBrokenMetadataResponse200))
+-- | ListFilesNotUploaded
+-- |
+-- | Summary: Lists files that haven't been uploaded
+-- |
+-- | That is, metadata that has isUploaded = false. This is an admin operation that requires the Hasura admin secret.
+-- |
+-- | Possible responses:
+-- |   - 200: ListFilesNotUploadedResponse200
+type ListFilesNotUploadedFn fetchResponse = Aff (fetchResponse (ListFilesNotUploadedResponse200))
+-- | ListOrphanedFiles
+-- |
+-- | Summary: Lists orphaned files
+-- |
+-- | Orphaned files are files that are present in the storage but have no associated metadata. This is an admin operation that requires the Hasura admin secret.
+-- |
+-- | Possible responses:
+-- |   - 200: ListOrphanedFilesResponse200
+type ListOrphanedFilesFn fetchResponse = Aff (fetchResponse (ListOrphanedFilesResponse200))
+-- | GetVersion
+-- |
+-- | Summary: Get service version information
+-- |
+-- | Retrieves build and version information about the storage service. Useful for monitoring and debugging.
+-- |
+-- | Possible responses:
+-- |   - 200: VersionInformation
+type GetVersionFn fetchResponse = Aff (fetchResponse (VersionInformation))
+
 -- | API Client type
 type APIClient fetchResponse =
-  {
-    -- | UploadFiles
-    -- |
-    -- | Summary: Upload files
-    -- |
-    -- | Upload one or more files to a specified bucket. Supports batch uploading with optional custom metadata for each file. If uploading multiple files, either provide metadata for all files or none.
-    -- |
-    -- | Possible responses:
-    -- |   - 201: UploadFilesResponse201
-    uploadFiles :: UploadFilesBody -> Aff (fetchResponse (UploadFilesResponse201))
-  , -- | DeleteFile
-    -- |
-    -- | Summary: Delete file
-    -- |
-    -- | Permanently delete a file from storage. This removes both the file content and its associated metadata.
-    -- |
-    -- | Possible responses:
-    -- |   - 204: Unit
-    deleteFile :: String -> Aff (fetchResponse (Unit))
-  , -- | GetFile
-    -- |
-    -- | Summary: Download file
-    -- |
-    -- | Retrieve and download the complete file content. Supports conditional requests, image transformations, and range requests for partial downloads.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: Unit
-    -- |   - 206: Unit
-    -- |   - 304: Unit
-    -- |   - 412: Unit
-    getFile :: String -> Maybe GetFileParams -> Aff (fetchResponse (Blob))
-  , -- | GetFileMetadataHeaders
-    -- |
-    -- | Summary: Check file information
-    -- |
-    -- | Retrieve file metadata headers without downloading the file content. Supports conditional requests and provides caching information.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: Unit
-    -- |   - 304: Unit
-    -- |   - 412: Unit
-    getFileMetadataHeaders :: String -> Maybe GetFileMetadataHeadersParams -> Aff (fetchResponse (Unit))
-  , -- | ReplaceFile
-    -- |
-    -- | Summary: Replace file
-    -- |
-    -- | Replace an existing file with new content while preserving the file ID. The operation follows these steps:
-    -- | 1. The isUploaded flag is set to false to mark the file as being updated
-    -- | 2. The file content is replaced in the storage backend
-    -- | 3. File metadata is updated (size, mime-type, isUploaded, etc.)
-    -- |
-    -- | Each step is atomic, but if a step fails, previous steps will not be automatically rolled back.
-    -- |
-    -- |
-    -- | Possible responses:
-    -- |   - 200: FileMetadata
-    replaceFile :: String -> ReplaceFileBody -> Aff (fetchResponse (FileMetadata))
-  , -- | GetFilePresignedURL
-    -- |
-    -- | Summary: Retrieve presigned URL to retrieve the file
-    -- |
-    -- | Retrieve presigned URL to retrieve the file. Expiration of the URL is
-    -- | determined by bucket configuration
-    -- |
-    -- |
-    -- | Possible responses:
-    -- |   - 200: PresignedURLResponse
-    getFilePresignedURL :: String -> Aff (fetchResponse (PresignedURLResponse))
-  , -- | DeleteBrokenMetadata
-    -- |
-    -- | Summary: Delete broken metadata
-    -- |
-    -- | Broken metadata is defined as metadata that has isUploaded = true but there is no file in the storage matching it. This is an admin operation that requires the Hasura admin secret.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: DeleteBrokenMetadataResponse200
-    deleteBrokenMetadata :: Aff (fetchResponse (DeleteBrokenMetadataResponse200))
-  , -- | DeleteOrphanedFiles
-    -- |
-    -- | Summary: Deletes orphaned files
-    -- |
-    -- | Orphaned files are files that are present in the storage but have no associated metadata. This is an admin operation that requires the Hasura admin secret.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: DeleteOrphanedFilesResponse200
-    deleteOrphanedFiles :: Aff (fetchResponse (DeleteOrphanedFilesResponse200))
-  , -- | ListBrokenMetadata
-    -- |
-    -- | Summary: Lists broken metadata
-    -- |
-    -- | Broken metadata is defined as metadata that has isUploaded = true but there is no file in the storage matching it. This is an admin operation that requires the Hasura admin secret.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: ListBrokenMetadataResponse200
-    listBrokenMetadata :: Aff (fetchResponse (ListBrokenMetadataResponse200))
-  , -- | ListFilesNotUploaded
-    -- |
-    -- | Summary: Lists files that haven't been uploaded
-    -- |
-    -- | That is, metadata that has isUploaded = false. This is an admin operation that requires the Hasura admin secret.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: ListFilesNotUploadedResponse200
-    listFilesNotUploaded :: Aff (fetchResponse (ListFilesNotUploadedResponse200))
-  , -- | ListOrphanedFiles
-    -- |
-    -- | Summary: Lists orphaned files
-    -- |
-    -- | Orphaned files are files that are present in the storage but have no associated metadata. This is an admin operation that requires the Hasura admin secret.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: ListOrphanedFilesResponse200
-    listOrphanedFiles :: Aff (fetchResponse (ListOrphanedFilesResponse200))
-  , -- | GetVersion
-    -- |
-    -- | Summary: Get service version information
-    -- |
-    -- | Retrieves build and version information about the storage service. Useful for monitoring and debugging.
-    -- |
-    -- | Possible responses:
-    -- |   - 200: VersionInformation
-    getVersion :: Aff (fetchResponse (VersionInformation))
+  { uploadFiles :: UploadFilesFn fetchResponse
+  , deleteFile :: DeleteFileFn fetchResponse
+  , getFile :: GetFileFn fetchResponse
+  , getFileMetadataHeaders :: GetFileMetadataHeadersFn fetchResponse
+  , replaceFile :: ReplaceFileFn fetchResponse
+  , getFilePresignedURL :: GetFilePresignedURLFn fetchResponse
+  , deleteBrokenMetadata :: DeleteBrokenMetadataFn fetchResponse
+  , deleteOrphanedFiles :: DeleteOrphanedFilesFn fetchResponse
+  , listBrokenMetadata :: ListBrokenMetadataFn fetchResponse
+  , listFilesNotUploaded :: ListFilesNotUploadedFn fetchResponse
+  , listOrphanedFiles :: ListOrphanedFilesFn fetchResponse
+  , getVersion :: GetVersionFn fetchResponse
   }
