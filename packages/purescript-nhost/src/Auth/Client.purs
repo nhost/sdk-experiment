@@ -6,18 +6,10 @@ import Prelude
 import Data.Generic.Rep (class Generic)
 import Data.Show.Generic (genericShow)
 import Data.Maybe (Maybe(..))
-import Data.Either (Either(..))
-import Data.Tuple (Tuple(..))
-import Effect (Effect)
-import Effect.Aff (Aff, throwError)
-import Effect.Class (liftEffect)
-import Foreign.Object (Object)
-import Web.File.Blob (Blob)
+import Effect.Aff (Aff)
 import JSON as J
-import JSON.Object as JO
 import Data.Codec.JSON.Common as CJ
 import Data.Codec.JSON.Record as CJR
-import Data.Codec.JSON.Strict as CJS
 import Data.Newtype (class Newtype, unwrap, wrap)
 import Data.Profunctor (dimap)
 

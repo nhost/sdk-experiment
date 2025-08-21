@@ -32,6 +32,9 @@ go run "$SCRIPT_DIR/main.go" gen \
     --output-file "$ROOT/packages/purescript-nhost/src/Storage/Client.purs" \
     --plugin purescript
 
+sed -i'' -e '/import Web.File.Blob/d' \
+        "$ROOT/packages/purescript-nhost/src/Auth/Client.purs"
+
 # format PureScript output
 (
   cd "$ROOT/packages/purescript-nhost"
