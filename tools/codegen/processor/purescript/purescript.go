@@ -30,7 +30,7 @@ func (p *Purescript) GetFuncMap() map[string]any {
 		"lowerFirst":             lowerFirst,
 		"containsSpaceInside":    containsSpaceInside,
 		"hasValidDescription":    hasValidDescription,
-		"hasPrefix":              strings.HasPrefix,
+		"HasPrefix":              strings.HasPrefix,
 		"enumValueToConstructor": enumValueToConstructor,
 		"enumValueToJsonString":  enumValueToJsonString,
 		"splitLines":             splitLines,

@@ -132,7 +132,7 @@ CJ.boolean
 CJ.string  -- Blob as base64 string
 {{- else if eq .Name "Array Blob" -}}
 (CJ.array CJ.string)  -- Blob as base64 string
-{{- else if hasPrefix .Name "Array " -}}
+{{- else if HasPrefix .Name "Array " -}}
 (CJ.array {{ template "codecForType" .Item }})
 {{- else if eq .Name "Unit" -}}
 CJ.null
