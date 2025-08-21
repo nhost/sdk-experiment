@@ -29,7 +29,7 @@ import Data.Profunctor (dimap)
 -- | Parameters for the {{ .Name }} method.
 type {{ ToCamelCase .Name }}Params =
   { {{- range $i, $param := .QueryParameters }}{{ if ne $i 0 }}
-  , {{ end }}{{ quote .Name }} :: {{ if not .Required }}Maybe {{ if containsSpaceInside .Type.Name }}({{ .Type.Name }}){{ else }}{{ .Type.Name }}{{ end }}{{ else }}{{ .Type.Name }}{{ end }} {{- if hasValidDescription .Parameter.Description }} -- {{ .Parameter.Description }}{{ end }}
+  , {{ end }}"{{ .Name }}" :: {{ if not .Required }}Maybe {{ if containsSpaceInside .Type.Name }}({{ .Type.Name }}){{ else }}{{ .Type.Name }}{{ end }}{{ else }}{{ .Type.Name }}{{ end }} {{- if hasValidDescription .Parameter.Description }} -- {{ .Parameter.Description }}{{ end }}
   {{- end }}
   }
 
@@ -37,7 +37,7 @@ type {{ ToCamelCase .Name }}Params =
 {{ lowerFirst .Name }}ParamsCodec =
   CJR.objectStrict
     { {{- range $i, $param := .QueryParameters }}{{ if ne $i 0 }}
-    , {{ end }}{{ quote .Name }}: {{ if not .Required }}CJ.maybe {{ end }}{{ template "codecForType" .Type }}
+    , {{ end }}"{{ .Name }}": {{ if not .Required }}CJ.maybe {{ end }}{{ template "codecForType" .Type }}
     {{- end }}
     }
 

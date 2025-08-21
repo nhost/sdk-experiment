@@ -41,7 +41,7 @@
 {{- end }}
 type {{ .Name }} =
   { {{- range $i, $prop := .Properties }}{{ if ne $i 0 }}
-  , {{ end }}{{ quote .Name }} :: {{ if not .Required }}Maybe {{ if containsSpaceInside .Type.Name }}({{ .Type.Name }}){{ else }}{{ .Type.Name }}{{ end }}{{ else }}{{ .Type.Name }}{{ end }}{{ if hasValidDescription .Type.Schema.Schema.Description }} -- {{ .Type.Schema.Schema.Description }}{{ end }}
+  , {{ end }}"{{ .Name }}" :: {{ if not .Required }}Maybe {{ if containsSpaceInside .Type.Name }}({{ .Type.Name }}){{ else }}{{ .Type.Name }}{{ end }}{{ else }}{{ .Type.Name }}{{ end }}{{ if hasValidDescription .Type.Schema.Schema.Description }} -- {{ .Type.Schema.Schema.Description }}{{ end }}
   {{- end }}
   }
 
@@ -50,7 +50,7 @@ type {{ .Name }} =
 {{ lowerFirst .Name }}Codec =
   CJR.objectStrict
     { {{- range $i, $prop := .Properties }}{{ if ne $i 0 }}
-    , {{ end }}{{ quote .Name }}: {{ if not .Required }}CJR.optional {{ else }}{{ end }}{{ template "codecForType" .Type }}
+    , {{ end }}"{{ .Name }}": {{ if not .Required }}CJR.optional {{ else }}{{ end }}{{ template "codecForType" .Type }}
     {{- end }}
     }
 {{- else }}
@@ -66,9 +66,9 @@ type {{ .Name }} =
 data {{ $type.Name }}
 {{- range $i, $value := $type.Values }}
   {{- if eq $i 0 }}
-  = {{ if eq $value "" }}{{ $type.Name }}_Empty{{ else }}{{ $type.Name }}_{{ enumValueToConstructor $value }}{{ end }}
+  = {{ if eq $value "" }}{{ $type.Name }}_Empty{{ else }}{{ $type.Name }}_{{ ToCamelCase $value }}{{ end }}
   {{- else }}
-  | {{ if eq $value "" }}{{ $type.Name }}_Empty{{ else }}{{ $type.Name }}_{{ enumValueToConstructor $value }}{{ end }}
+  | {{ if eq $value "" }}{{ $type.Name }}_Empty{{ else }}{{ $type.Name }}_{{ ToCamelCase $value }}{{ end }}
   {{- end }}
 {{- end }}
 
@@ -87,7 +87,7 @@ instance show{{ .Name }} :: Show {{ .Name }} where
       {{- if eq $value "" }}
       "" -> Just {{ $type.Name }}_Empty
       {{- else }}
-      {{ enumValueToJsonString $value }} -> Just {{ $type.Name }}_{{ enumValueToConstructor $value }}
+      "{{ $value }}" -> Just {{ $type.Name }}_{{ ToCamelCase $value }}
       {{- end }}
 {{- end }}
       _ -> Nothing
@@ -97,7 +97,7 @@ instance show{{ .Name }} :: Show {{ .Name }} where
       {{- if eq $value "" }}
       {{ $type.Name }}_Empty -> ""
       {{- else }}
-      {{ $type.Name }}_{{ enumValueToConstructor $value }} -> {{ enumValueToJsonString $value }}
+      {{ $type.Name }}_{{ ToCamelCase $value }} -> "{{ $value }}"
       {{- end }}
 {{- end }}
 {{- end }}

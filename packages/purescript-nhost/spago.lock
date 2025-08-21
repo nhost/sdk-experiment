@@ -6,6 +6,7 @@
         "core": {
           "dependencies": [
             "aff",
+            "affjax",
             "codec-json",
             "console",
             "effect",
@@ -15,6 +16,9 @@
           ],
           "build_plan": [
             "aff",
+            "affjax",
+            "argonaut-core",
+            "arraybuffer-types",
             "arrays",
             "bifunctors",
             "codec",
@@ -33,12 +37,16 @@
             "foldable-traversable",
             "foreign",
             "foreign-object",
+            "form-urlencoded",
             "functions",
             "functors",
             "gen",
+            "http-methods",
             "identity",
             "integers",
             "invariant",
+            "js-date",
+            "js-uri",
             "json",
             "lazy",
             "lists",
@@ -46,6 +54,7 @@
             "media-types",
             "newtype",
             "nonempty",
+            "now",
             "nullable",
             "numbers",
             "ordered-collections",
@@ -69,7 +78,10 @@
             "variant",
             "web-dom",
             "web-events",
-            "web-file"
+            "web-file",
+            "web-html",
+            "web-storage",
+            "web-xhr"
           ]
         },
         "test": {
@@ -652,6 +664,49 @@
         "unsafe-coerce"
       ]
     },
+    "affjax": {
+      "type": "registry",
+      "version": "13.0.0",
+      "integrity": "sha256-blYfaoW4FYIrIdvmT4sB7nN7BathFaEfZuiVLPmHJOo=",
+      "dependencies": [
+        "aff",
+        "argonaut-core",
+        "arraybuffer-types",
+        "foreign",
+        "form-urlencoded",
+        "http-methods",
+        "integers",
+        "media-types",
+        "nullable",
+        "refs",
+        "unsafe-coerce",
+        "web-xhr"
+      ]
+    },
+    "argonaut-core": {
+      "type": "registry",
+      "version": "7.0.0",
+      "integrity": "sha256-RC82GfAjItydxrO24cdX373KHVZiLqybu19b5X8u7B4=",
+      "dependencies": [
+        "arrays",
+        "control",
+        "either",
+        "foreign-object",
+        "functions",
+        "gen",
+        "maybe",
+        "nonempty",
+        "prelude",
+        "strings",
+        "tailrec"
+      ]
+    },
+    "arraybuffer-types": {
+      "type": "registry",
+      "version": "3.0.2",
+      "integrity": "sha256-mQKokysYVkooS4uXbO+yovmV/s8b138Ws3zQvOwIHRA=",
+      "dependencies": []
+    },
     "arrays": {
       "type": "registry",
       "version": "7.3.0",
@@ -891,6 +946,20 @@
         "unfoldable"
       ]
     },
+    "form-urlencoded": {
+      "type": "registry",
+      "version": "7.0.0",
+      "integrity": "sha256-WUzk8DTjrbPVHKZ5w7XpPBO6ci6xFhvYguHp6RvX+18=",
+      "dependencies": [
+        "foldable-traversable",
+        "js-uri",
+        "maybe",
+        "newtype",
+        "prelude",
+        "strings",
+        "tuples"
+      ]
+    },
     "functions": {
       "type": "registry",
       "version": "6.0.0",
@@ -936,6 +1005,16 @@
         "unfoldable"
       ]
     },
+    "http-methods": {
+      "type": "registry",
+      "version": "6.0.0",
+      "integrity": "sha256-Orr7rbDGcp7qoqmUMXPRMjBx+C4jqOQcFe9+gE3nMgU=",
+      "dependencies": [
+        "either",
+        "prelude",
+        "strings"
+      ]
+    },
     "identity": {
       "type": "registry",
       "version": "6.0.0",
@@ -964,6 +1043,28 @@
       "dependencies": [
         "control",
         "prelude"
+      ]
+    },
+    "js-date": {
+      "type": "registry",
+      "version": "8.0.0",
+      "integrity": "sha256-6TVF4DWg5JL+jRAsoMssYw8rgOVALMUHT1CuNZt8NRo=",
+      "dependencies": [
+        "datetime",
+        "effect",
+        "exceptions",
+        "foreign",
+        "integers",
+        "now"
+      ]
+    },
+    "js-uri": {
+      "type": "registry",
+      "version": "3.1.0",
+      "integrity": "sha256-3p0ynHveCJmC2CXze+eMBdW/2l5e953Q8XMAKz+jxUo=",
+      "dependencies": [
+        "functions",
+        "maybe"
       ]
     },
     "json": {
@@ -1053,6 +1154,15 @@
         "prelude",
         "tuples",
         "unfoldable"
+      ]
+    },
+    "now": {
+      "type": "registry",
+      "version": "6.0.0",
+      "integrity": "sha256-xZ7x37ZMREfs6GCDw/h+FaKHV/3sPWmtqBZRGTxybQY=",
+      "dependencies": [
+        "datetime",
+        "effect"
       ]
     },
     "nullable": {
@@ -1329,6 +1439,39 @@
         "foreign",
         "media-types",
         "web-dom"
+      ]
+    },
+    "web-html": {
+      "type": "registry",
+      "version": "4.1.0",
+      "integrity": "sha256-ByqS/h1/yG+hjCOnOQp7L1QpIWzQENNKB1kaHtpEhlE=",
+      "dependencies": [
+        "js-date",
+        "web-dom",
+        "web-file",
+        "web-storage"
+      ]
+    },
+    "web-storage": {
+      "type": "registry",
+      "version": "5.0.0",
+      "integrity": "sha256-q+6lxcnfWxus0/nDeFVtF1V+tLehZvvXQ0cduYPLksY=",
+      "dependencies": [
+        "nullable",
+        "web-events"
+      ]
+    },
+    "web-xhr": {
+      "type": "registry",
+      "version": "5.0.1",
+      "integrity": "sha256-3dbIPVG66S+hPrgEVnpD78hrGjE7qlBbsReWOz89Ios=",
+      "dependencies": [
+        "arraybuffer-types",
+        "datetime",
+        "http-methods",
+        "web-dom",
+        "web-file",
+        "web-html"
       ]
     }
   }

@@ -25,14 +25,11 @@ func (p *Purescript) GetFuncMap() map[string]any {
 	return map[string]any{
 		"dashesAndOtherSeparatorsToKebabAndAddUnderscoreIfPurescriptKeyword": dashesAndOtherSeparatorsToKebabAndAddUnderscoreIfPurescriptKeyword,
     "anyPropertyIsBlob": anyPropertyIsBlob,
-		"quote":                  quote,
 		"ToCamelCase":            format.ToCamelCase,
 		"lowerFirst":             lowerFirst,
 		"containsSpaceInside":    containsSpaceInside,
 		"hasValidDescription":    hasValidDescription,
 		"HasPrefix":              strings.HasPrefix,
-		"enumValueToConstructor": enumValueToConstructor,
-		"enumValueToJsonString":  enumValueToJsonString,
 		"splitLines":             splitLines,
 	}
 }
@@ -78,7 +75,7 @@ func (p *Purescript) TypeEnumValues(values []any) []string {
 
 	for i, v := range values {
 		if s, ok := v.(string); ok {
-			enumValues[i] = format.ToCamelCase(s)
+			enumValues[i] = s
 		} else {
 			enumValues[i] = fmt.Sprintf("Value%v", v)
 		}

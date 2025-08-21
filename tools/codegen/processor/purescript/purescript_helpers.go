@@ -1,7 +1,7 @@
 package purescript
 
 import (
-	"fmt"
+	// "fmt"
 	"strings"
 	"unicode"
 
@@ -63,10 +63,6 @@ func splitLines(s string) []string {
 	return strings.Split(s, "\n")
 }
 
-func quote(s string) string {
-	return `"` + s + `"`
-}
-
 func anyPropertyIsBlob(props []*processor.Property) bool {
 	for _, p := range props {
 		if p.Type.Name() == "Blob" || p.Type.Name() == "Array Blob" {
@@ -74,21 +70,4 @@ func anyPropertyIsBlob(props []*processor.Property) bool {
 		}
 	}
 	return false
-}
-
-// Convert enum value (from API) to PureScript constructor name
-func enumValueToConstructor(value interface{}) string {
-	if s, ok := value.(string); ok {
-		// Convert kebab-case, snake_case, or camelCase to PascalCase
-		return format.ToCamelCase(s)
-	}
-	return fmt.Sprintf("Value%v", value)
-}
-
-// Convert enum value to JSON string representation
-func enumValueToJsonString(value interface{}) string {
-	if s, ok := value.(string); ok {
-		return fmt.Sprintf("\"%s\"", s)
-	}
-	return fmt.Sprintf("\"%v\"", value)
 }

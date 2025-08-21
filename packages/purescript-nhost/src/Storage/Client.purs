@@ -237,21 +237,21 @@ outputImageFormatCodec :: CJ.Codec OutputImageFormat
 outputImageFormatCodec = CJ.prismaticCodec "OutputImageFormat" dec enc CJ.string
   where
   dec = case _ of
-    "Auto" -> Just OutputImageFormat_Auto
-    "Same" -> Just OutputImageFormat_Same
-    "Jpeg" -> Just OutputImageFormat_Jpeg
-    "Webp" -> Just OutputImageFormat_Webp
-    "Png" -> Just OutputImageFormat_Png
-    "Avif" -> Just OutputImageFormat_Avif
+    "auto" -> Just OutputImageFormat_Auto
+    "same" -> Just OutputImageFormat_Same
+    "jpeg" -> Just OutputImageFormat_Jpeg
+    "webp" -> Just OutputImageFormat_Webp
+    "png" -> Just OutputImageFormat_Png
+    "avif" -> Just OutputImageFormat_Avif
     _ -> Nothing
 
   enc = case _ of
-    OutputImageFormat_Auto -> "Auto"
-    OutputImageFormat_Same -> "Same"
-    OutputImageFormat_Jpeg -> "Jpeg"
-    OutputImageFormat_Webp -> "Webp"
-    OutputImageFormat_Png -> "Png"
-    OutputImageFormat_Avif -> "Avif"
+    OutputImageFormat_Auto -> "auto"
+    OutputImageFormat_Same -> "same"
+    OutputImageFormat_Jpeg -> "jpeg"
+    OutputImageFormat_Webp -> "webp"
+    OutputImageFormat_Png -> "png"
+    OutputImageFormat_Avif -> "avif"
 
 -- |
 -- | * `BucketId` (Optional): `Maybe String` - Target bucket identifier where files will be stored.

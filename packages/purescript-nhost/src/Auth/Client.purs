@@ -34,23 +34,23 @@ attestationFormatCodec :: CJ.Codec AttestationFormat
 attestationFormatCodec = CJ.prismaticCodec "AttestationFormat" dec enc CJ.string
   where
   dec = case _ of
-    "Packed" -> Just AttestationFormat_Packed
-    "Tpm" -> Just AttestationFormat_Tpm
-    "AndroidKey" -> Just AttestationFormat_AndroidKey
-    "AndroidSafetynet" -> Just AttestationFormat_AndroidSafetynet
-    "FidoU2f" -> Just AttestationFormat_FidoU2f
-    "Apple" -> Just AttestationFormat_Apple
-    "None" -> Just AttestationFormat_None
+    "packed" -> Just AttestationFormat_Packed
+    "tpm" -> Just AttestationFormat_Tpm
+    "android-key" -> Just AttestationFormat_AndroidKey
+    "android-safetynet" -> Just AttestationFormat_AndroidSafetynet
+    "fido-u2f" -> Just AttestationFormat_FidoU2f
+    "apple" -> Just AttestationFormat_Apple
+    "none" -> Just AttestationFormat_None
     _ -> Nothing
 
   enc = case _ of
-    AttestationFormat_Packed -> "Packed"
-    AttestationFormat_Tpm -> "Tpm"
-    AttestationFormat_AndroidKey -> "AndroidKey"
-    AttestationFormat_AndroidSafetynet -> "AndroidSafetynet"
-    AttestationFormat_FidoU2f -> "FidoU2f"
-    AttestationFormat_Apple -> "Apple"
-    AttestationFormat_None -> "None"
+    AttestationFormat_Packed -> "packed"
+    AttestationFormat_Tpm -> "tpm"
+    AttestationFormat_AndroidKey -> "android-key"
+    AttestationFormat_AndroidSafetynet -> "android-safetynet"
+    AttestationFormat_FidoU2f -> "fido-u2f"
+    AttestationFormat_Apple -> "apple"
+    AttestationFormat_None -> "none"
 
 -- | Map of extension outputs from the client
 -- |
@@ -108,13 +108,13 @@ authenticatorAttachmentCodec :: CJ.Codec AuthenticatorAttachment
 authenticatorAttachmentCodec = CJ.prismaticCodec "AuthenticatorAttachment" dec enc CJ.string
   where
   dec = case _ of
-    "Platform" -> Just AuthenticatorAttachment_Platform
-    "CrossPlatform" -> Just AuthenticatorAttachment_CrossPlatform
+    "platform" -> Just AuthenticatorAttachment_Platform
+    "cross-platform" -> Just AuthenticatorAttachment_CrossPlatform
     _ -> Nothing
 
   enc = case _ of
-    AuthenticatorAttachment_Platform -> "Platform"
-    AuthenticatorAttachment_CrossPlatform -> "CrossPlatform"
+    AuthenticatorAttachment_Platform -> "platform"
+    AuthenticatorAttachment_CrossPlatform -> "cross-platform"
 
 -- |
 -- | * `ClientDataJSON`: `String` - Base64url-encoded binary data
@@ -184,21 +184,21 @@ authenticatorTransportCodec :: CJ.Codec AuthenticatorTransport
 authenticatorTransportCodec = CJ.prismaticCodec "AuthenticatorTransport" dec enc CJ.string
   where
   dec = case _ of
-    "Usb" -> Just AuthenticatorTransport_Usb
-    "Nfc" -> Just AuthenticatorTransport_Nfc
-    "Ble" -> Just AuthenticatorTransport_Ble
-    "SmartCard" -> Just AuthenticatorTransport_SmartCard
-    "Hybrid" -> Just AuthenticatorTransport_Hybrid
-    "Internal" -> Just AuthenticatorTransport_Internal
+    "usb" -> Just AuthenticatorTransport_Usb
+    "nfc" -> Just AuthenticatorTransport_Nfc
+    "ble" -> Just AuthenticatorTransport_Ble
+    "smart-card" -> Just AuthenticatorTransport_SmartCard
+    "hybrid" -> Just AuthenticatorTransport_Hybrid
+    "internal" -> Just AuthenticatorTransport_Internal
     _ -> Nothing
 
   enc = case _ of
-    AuthenticatorTransport_Usb -> "Usb"
-    AuthenticatorTransport_Nfc -> "Nfc"
-    AuthenticatorTransport_Ble -> "Ble"
-    AuthenticatorTransport_SmartCard -> "SmartCard"
-    AuthenticatorTransport_Hybrid -> "Hybrid"
-    AuthenticatorTransport_Internal -> "Internal"
+    AuthenticatorTransport_Usb -> "usb"
+    AuthenticatorTransport_Nfc -> "nfc"
+    AuthenticatorTransport_Ble -> "ble"
+    AuthenticatorTransport_SmartCard -> "smart-card"
+    AuthenticatorTransport_Hybrid -> "hybrid"
+    AuthenticatorTransport_Internal -> "internal"
 
 -- | The attestation conveyance preference
 data ConveyancePreference
@@ -218,17 +218,17 @@ conveyancePreferenceCodec :: CJ.Codec ConveyancePreference
 conveyancePreferenceCodec = CJ.prismaticCodec "ConveyancePreference" dec enc CJ.string
   where
   dec = case _ of
-    "None" -> Just ConveyancePreference_None
-    "Indirect" -> Just ConveyancePreference_Indirect
-    "Direct" -> Just ConveyancePreference_Direct
-    "Enterprise" -> Just ConveyancePreference_Enterprise
+    "none" -> Just ConveyancePreference_None
+    "indirect" -> Just ConveyancePreference_Indirect
+    "direct" -> Just ConveyancePreference_Direct
+    "enterprise" -> Just ConveyancePreference_Enterprise
     _ -> Nothing
 
   enc = case _ of
-    ConveyancePreference_None -> "None"
-    ConveyancePreference_Indirect -> "Indirect"
-    ConveyancePreference_Direct -> "Direct"
-    ConveyancePreference_Enterprise -> "Enterprise"
+    ConveyancePreference_None -> "none"
+    ConveyancePreference_Indirect -> "indirect"
+    ConveyancePreference_Direct -> "direct"
+    ConveyancePreference_Enterprise -> "enterprise"
 
 -- |
 -- | * `ExpiresAt`: `String` - Expiration date of the PAT
@@ -356,11 +356,11 @@ credentialTypeCodec :: CJ.Codec CredentialType
 credentialTypeCodec = CJ.prismaticCodec "CredentialType" dec enc CJ.string
   where
   dec = case _ of
-    "PublicKey" -> Just CredentialType_PublicKey
+    "public-key" -> Just CredentialType_PublicKey
     _ -> Nothing
 
   enc = case _ of
-    CredentialType_PublicKey -> "PublicKey"
+    CredentialType_PublicKey -> "public-key"
 
 -- | Error code identifying the specific application error
 data ErrorResponseError
@@ -407,71 +407,71 @@ errorResponseErrorCodec :: CJ.Codec ErrorResponseError
 errorResponseErrorCodec = CJ.prismaticCodec "ErrorResponseError" dec enc CJ.string
   where
   dec = case _ of
-    "DefaultRoleMustBeInAllowedRoles" -> Just ErrorResponseError_DefaultRoleMustBeInAllowedRoles
-    "DisabledEndpoint" -> Just ErrorResponseError_DisabledEndpoint
-    "DisabledUser" -> Just ErrorResponseError_DisabledUser
-    "EmailAlreadyInUse" -> Just ErrorResponseError_EmailAlreadyInUse
-    "EmailAlreadyVerified" -> Just ErrorResponseError_EmailAlreadyVerified
-    "ForbiddenAnonymous" -> Just ErrorResponseError_ForbiddenAnonymous
-    "InternalServerError" -> Just ErrorResponseError_InternalServerError
-    "InvalidEmailPassword" -> Just ErrorResponseError_InvalidEmailPassword
-    "InvalidRequest" -> Just ErrorResponseError_InvalidRequest
-    "LocaleNotAllowed" -> Just ErrorResponseError_LocaleNotAllowed
-    "PasswordTooShort" -> Just ErrorResponseError_PasswordTooShort
-    "PasswordInHibpDatabase" -> Just ErrorResponseError_PasswordInHibpDatabase
-    "RedirectToNotAllowed" -> Just ErrorResponseError_RedirectToNotAllowed
-    "RoleNotAllowed" -> Just ErrorResponseError_RoleNotAllowed
-    "SignupDisabled" -> Just ErrorResponseError_SignupDisabled
-    "UnverifiedUser" -> Just ErrorResponseError_UnverifiedUser
-    "UserNotAnonymous" -> Just ErrorResponseError_UserNotAnonymous
-    "InvalidPat" -> Just ErrorResponseError_InvalidPat
-    "InvalidRefreshToken" -> Just ErrorResponseError_InvalidRefreshToken
-    "InvalidTicket" -> Just ErrorResponseError_InvalidTicket
-    "DisabledMfaTotp" -> Just ErrorResponseError_DisabledMfaTotp
-    "NoTotpSecret" -> Just ErrorResponseError_NoTotpSecret
-    "InvalidTotp" -> Just ErrorResponseError_InvalidTotp
-    "MfaTypeNotFound" -> Just ErrorResponseError_MfaTypeNotFound
-    "TotpAlreadyActive" -> Just ErrorResponseError_TotpAlreadyActive
-    "InvalidState" -> Just ErrorResponseError_InvalidState
-    "OauthTokenEchangeFailed" -> Just ErrorResponseError_OauthTokenEchangeFailed
-    "OauthProfileFetchFailed" -> Just ErrorResponseError_OauthProfileFetchFailed
-    "OauthProviderError" -> Just ErrorResponseError_OauthProviderError
-    "InvalidOtp" -> Just ErrorResponseError_InvalidOtp
-    "CannotSendSms" -> Just ErrorResponseError_CannotSendSms
+    "default-role-must-be-in-allowed-roles" -> Just ErrorResponseError_DefaultRoleMustBeInAllowedRoles
+    "disabled-endpoint" -> Just ErrorResponseError_DisabledEndpoint
+    "disabled-user" -> Just ErrorResponseError_DisabledUser
+    "email-already-in-use" -> Just ErrorResponseError_EmailAlreadyInUse
+    "email-already-verified" -> Just ErrorResponseError_EmailAlreadyVerified
+    "forbidden-anonymous" -> Just ErrorResponseError_ForbiddenAnonymous
+    "internal-server-error" -> Just ErrorResponseError_InternalServerError
+    "invalid-email-password" -> Just ErrorResponseError_InvalidEmailPassword
+    "invalid-request" -> Just ErrorResponseError_InvalidRequest
+    "locale-not-allowed" -> Just ErrorResponseError_LocaleNotAllowed
+    "password-too-short" -> Just ErrorResponseError_PasswordTooShort
+    "password-in-hibp-database" -> Just ErrorResponseError_PasswordInHibpDatabase
+    "redirectTo-not-allowed" -> Just ErrorResponseError_RedirectToNotAllowed
+    "role-not-allowed" -> Just ErrorResponseError_RoleNotAllowed
+    "signup-disabled" -> Just ErrorResponseError_SignupDisabled
+    "unverified-user" -> Just ErrorResponseError_UnverifiedUser
+    "user-not-anonymous" -> Just ErrorResponseError_UserNotAnonymous
+    "invalid-pat" -> Just ErrorResponseError_InvalidPat
+    "invalid-refresh-token" -> Just ErrorResponseError_InvalidRefreshToken
+    "invalid-ticket" -> Just ErrorResponseError_InvalidTicket
+    "disabled-mfa-totp" -> Just ErrorResponseError_DisabledMfaTotp
+    "no-totp-secret" -> Just ErrorResponseError_NoTotpSecret
+    "invalid-totp" -> Just ErrorResponseError_InvalidTotp
+    "mfa-type-not-found" -> Just ErrorResponseError_MfaTypeNotFound
+    "totp-already-active" -> Just ErrorResponseError_TotpAlreadyActive
+    "invalid-state" -> Just ErrorResponseError_InvalidState
+    "oauth-token-echange-failed" -> Just ErrorResponseError_OauthTokenEchangeFailed
+    "oauth-profile-fetch-failed" -> Just ErrorResponseError_OauthProfileFetchFailed
+    "oauth-provider-error" -> Just ErrorResponseError_OauthProviderError
+    "invalid-otp" -> Just ErrorResponseError_InvalidOtp
+    "cannot-send-sms" -> Just ErrorResponseError_CannotSendSms
     _ -> Nothing
 
   enc = case _ of
-    ErrorResponseError_DefaultRoleMustBeInAllowedRoles -> "DefaultRoleMustBeInAllowedRoles"
-    ErrorResponseError_DisabledEndpoint -> "DisabledEndpoint"
-    ErrorResponseError_DisabledUser -> "DisabledUser"
-    ErrorResponseError_EmailAlreadyInUse -> "EmailAlreadyInUse"
-    ErrorResponseError_EmailAlreadyVerified -> "EmailAlreadyVerified"
-    ErrorResponseError_ForbiddenAnonymous -> "ForbiddenAnonymous"
-    ErrorResponseError_InternalServerError -> "InternalServerError"
-    ErrorResponseError_InvalidEmailPassword -> "InvalidEmailPassword"
-    ErrorResponseError_InvalidRequest -> "InvalidRequest"
-    ErrorResponseError_LocaleNotAllowed -> "LocaleNotAllowed"
-    ErrorResponseError_PasswordTooShort -> "PasswordTooShort"
-    ErrorResponseError_PasswordInHibpDatabase -> "PasswordInHibpDatabase"
-    ErrorResponseError_RedirectToNotAllowed -> "RedirectToNotAllowed"
-    ErrorResponseError_RoleNotAllowed -> "RoleNotAllowed"
-    ErrorResponseError_SignupDisabled -> "SignupDisabled"
-    ErrorResponseError_UnverifiedUser -> "UnverifiedUser"
-    ErrorResponseError_UserNotAnonymous -> "UserNotAnonymous"
-    ErrorResponseError_InvalidPat -> "InvalidPat"
-    ErrorResponseError_InvalidRefreshToken -> "InvalidRefreshToken"
-    ErrorResponseError_InvalidTicket -> "InvalidTicket"
-    ErrorResponseError_DisabledMfaTotp -> "DisabledMfaTotp"
-    ErrorResponseError_NoTotpSecret -> "NoTotpSecret"
-    ErrorResponseError_InvalidTotp -> "InvalidTotp"
-    ErrorResponseError_MfaTypeNotFound -> "MfaTypeNotFound"
-    ErrorResponseError_TotpAlreadyActive -> "TotpAlreadyActive"
-    ErrorResponseError_InvalidState -> "InvalidState"
-    ErrorResponseError_OauthTokenEchangeFailed -> "OauthTokenEchangeFailed"
-    ErrorResponseError_OauthProfileFetchFailed -> "OauthProfileFetchFailed"
-    ErrorResponseError_OauthProviderError -> "OauthProviderError"
-    ErrorResponseError_InvalidOtp -> "InvalidOtp"
-    ErrorResponseError_CannotSendSms -> "CannotSendSms"
+    ErrorResponseError_DefaultRoleMustBeInAllowedRoles -> "default-role-must-be-in-allowed-roles"
+    ErrorResponseError_DisabledEndpoint -> "disabled-endpoint"
+    ErrorResponseError_DisabledUser -> "disabled-user"
+    ErrorResponseError_EmailAlreadyInUse -> "email-already-in-use"
+    ErrorResponseError_EmailAlreadyVerified -> "email-already-verified"
+    ErrorResponseError_ForbiddenAnonymous -> "forbidden-anonymous"
+    ErrorResponseError_InternalServerError -> "internal-server-error"
+    ErrorResponseError_InvalidEmailPassword -> "invalid-email-password"
+    ErrorResponseError_InvalidRequest -> "invalid-request"
+    ErrorResponseError_LocaleNotAllowed -> "locale-not-allowed"
+    ErrorResponseError_PasswordTooShort -> "password-too-short"
+    ErrorResponseError_PasswordInHibpDatabase -> "password-in-hibp-database"
+    ErrorResponseError_RedirectToNotAllowed -> "redirectTo-not-allowed"
+    ErrorResponseError_RoleNotAllowed -> "role-not-allowed"
+    ErrorResponseError_SignupDisabled -> "signup-disabled"
+    ErrorResponseError_UnverifiedUser -> "unverified-user"
+    ErrorResponseError_UserNotAnonymous -> "user-not-anonymous"
+    ErrorResponseError_InvalidPat -> "invalid-pat"
+    ErrorResponseError_InvalidRefreshToken -> "invalid-refresh-token"
+    ErrorResponseError_InvalidTicket -> "invalid-ticket"
+    ErrorResponseError_DisabledMfaTotp -> "disabled-mfa-totp"
+    ErrorResponseError_NoTotpSecret -> "no-totp-secret"
+    ErrorResponseError_InvalidTotp -> "invalid-totp"
+    ErrorResponseError_MfaTypeNotFound -> "mfa-type-not-found"
+    ErrorResponseError_TotpAlreadyActive -> "totp-already-active"
+    ErrorResponseError_InvalidState -> "invalid-state"
+    ErrorResponseError_OauthTokenEchangeFailed -> "oauth-token-echange-failed"
+    ErrorResponseError_OauthProfileFetchFailed -> "oauth-profile-fetch-failed"
+    ErrorResponseError_OauthProviderError -> "oauth-provider-error"
+    ErrorResponseError_InvalidOtp -> "invalid-otp"
+    ErrorResponseError_CannotSendSms -> "cannot-send-sms"
 
 -- | Standardized error response
 -- |
@@ -507,13 +507,13 @@ idTokenProviderCodec :: CJ.Codec IdTokenProvider
 idTokenProviderCodec = CJ.prismaticCodec "IdTokenProvider" dec enc CJ.string
   where
   dec = case _ of
-    "Apple" -> Just IdTokenProvider_Apple
-    "Google" -> Just IdTokenProvider_Google
+    "apple" -> Just IdTokenProvider_Apple
+    "google" -> Just IdTokenProvider_Google
     _ -> Nothing
 
   enc = case _ of
-    IdTokenProvider_Apple -> "Apple"
-    IdTokenProvider_Google -> "Google"
+    IdTokenProvider_Apple -> "apple"
+    IdTokenProvider_Google -> "google"
 
 -- | JSON Web Key for JWT verification
 -- |
@@ -695,15 +695,15 @@ publicKeyCredentialHintsCodec :: CJ.Codec PublicKeyCredentialHints
 publicKeyCredentialHintsCodec = CJ.prismaticCodec "PublicKeyCredentialHints" dec enc CJ.string
   where
   dec = case _ of
-    "SecurityKey" -> Just PublicKeyCredentialHints_SecurityKey
-    "ClientDevice" -> Just PublicKeyCredentialHints_ClientDevice
-    "Hybrid" -> Just PublicKeyCredentialHints_Hybrid
+    "security-key" -> Just PublicKeyCredentialHints_SecurityKey
+    "client-device" -> Just PublicKeyCredentialHints_ClientDevice
+    "hybrid" -> Just PublicKeyCredentialHints_Hybrid
     _ -> Nothing
 
   enc = case _ of
-    PublicKeyCredentialHints_SecurityKey -> "SecurityKey"
-    PublicKeyCredentialHints_ClientDevice -> "ClientDevice"
-    PublicKeyCredentialHints_Hybrid -> "Hybrid"
+    PublicKeyCredentialHints_SecurityKey -> "security-key"
+    PublicKeyCredentialHints_ClientDevice -> "client-device"
+    PublicKeyCredentialHints_Hybrid -> "hybrid"
 
 -- |
 -- | * `Challenge`: `String` - Base64url-encoded binary data
@@ -780,15 +780,15 @@ residentKeyRequirementCodec :: CJ.Codec ResidentKeyRequirement
 residentKeyRequirementCodec = CJ.prismaticCodec "ResidentKeyRequirement" dec enc CJ.string
   where
   dec = case _ of
-    "Discouraged" -> Just ResidentKeyRequirement_Discouraged
-    "Preferred" -> Just ResidentKeyRequirement_Preferred
-    "Required" -> Just ResidentKeyRequirement_Required
+    "discouraged" -> Just ResidentKeyRequirement_Discouraged
+    "preferred" -> Just ResidentKeyRequirement_Preferred
+    "required" -> Just ResidentKeyRequirement_Required
     _ -> Nothing
 
   enc = case _ of
-    ResidentKeyRequirement_Discouraged -> "Discouraged"
-    ResidentKeyRequirement_Preferred -> "Preferred"
-    ResidentKeyRequirement_Required -> "Required"
+    ResidentKeyRequirement_Discouraged -> "discouraged"
+    ResidentKeyRequirement_Preferred -> "preferred"
+    ResidentKeyRequirement_Required -> "required"
 
 -- | User authentication session containing tokens and user information
 -- |
@@ -1246,13 +1246,13 @@ userDeanonymizeRequestSignInMethodCodec :: CJ.Codec UserDeanonymizeRequestSignIn
 userDeanonymizeRequestSignInMethodCodec = CJ.prismaticCodec "UserDeanonymizeRequestSignInMethod" dec enc CJ.string
   where
   dec = case _ of
-    "EmailPassword" -> Just UserDeanonymizeRequestSignInMethod_EmailPassword
-    "Passwordless" -> Just UserDeanonymizeRequestSignInMethod_Passwordless
+    "email-password" -> Just UserDeanonymizeRequestSignInMethod_EmailPassword
+    "passwordless" -> Just UserDeanonymizeRequestSignInMethod_Passwordless
     _ -> Nothing
 
   enc = case _ of
-    UserDeanonymizeRequestSignInMethod_EmailPassword -> "EmailPassword"
-    UserDeanonymizeRequestSignInMethod_Passwordless -> "Passwordless"
+    UserDeanonymizeRequestSignInMethod_EmailPassword -> "email-password"
+    UserDeanonymizeRequestSignInMethod_Passwordless -> "passwordless"
 
 -- |
 -- | * `SignInMethod`: `UserDeanonymizeRequestSignInMethod` - Which sign-in method to use
@@ -1342,12 +1342,12 @@ userMfaRequestActiveMfaTypeCodec :: CJ.Codec UserMfaRequestActiveMfaType
 userMfaRequestActiveMfaTypeCodec = CJ.prismaticCodec "UserMfaRequestActiveMfaType" dec enc CJ.string
   where
   dec = case _ of
-    "Totp" -> Just UserMfaRequestActiveMfaType_Totp
+    "totp" -> Just UserMfaRequestActiveMfaType_Totp
     "" -> Just UserMfaRequestActiveMfaType_Empty
     _ -> Nothing
 
   enc = case _ of
-    UserMfaRequestActiveMfaType_Totp -> "Totp"
+    UserMfaRequestActiveMfaType_Totp -> "totp"
     UserMfaRequestActiveMfaType_Empty -> ""
 
 -- | Request to activate or deactivate multi-factor authentication
@@ -1413,15 +1413,15 @@ userVerificationRequirementCodec :: CJ.Codec UserVerificationRequirement
 userVerificationRequirementCodec = CJ.prismaticCodec "UserVerificationRequirement" dec enc CJ.string
   where
   dec = case _ of
-    "Required" -> Just UserVerificationRequirement_Required
-    "Preferred" -> Just UserVerificationRequirement_Preferred
-    "Discouraged" -> Just UserVerificationRequirement_Discouraged
+    "required" -> Just UserVerificationRequirement_Required
+    "preferred" -> Just UserVerificationRequirement_Preferred
+    "discouraged" -> Just UserVerificationRequirement_Discouraged
     _ -> Nothing
 
   enc = case _ of
-    UserVerificationRequirement_Required -> "Required"
-    UserVerificationRequirement_Preferred -> "Preferred"
-    UserVerificationRequirement_Discouraged -> "Discouraged"
+    UserVerificationRequirement_Required -> "required"
+    UserVerificationRequirement_Preferred -> "preferred"
+    UserVerificationRequirement_Discouraged -> "discouraged"
 
 -- |
 -- | * `Credential`: `CredentialCreationResponse`
@@ -1506,39 +1506,39 @@ signInProviderCodec :: CJ.Codec SignInProvider
 signInProviderCodec = CJ.prismaticCodec "SignInProvider" dec enc CJ.string
   where
   dec = case _ of
-    "Apple" -> Just SignInProvider_Apple
-    "Github" -> Just SignInProvider_Github
-    "Google" -> Just SignInProvider_Google
-    "Linkedin" -> Just SignInProvider_Linkedin
-    "Discord" -> Just SignInProvider_Discord
-    "Spotify" -> Just SignInProvider_Spotify
-    "Twitch" -> Just SignInProvider_Twitch
-    "Gitlab" -> Just SignInProvider_Gitlab
-    "Bitbucket" -> Just SignInProvider_Bitbucket
-    "Workos" -> Just SignInProvider_Workos
-    "Azuread" -> Just SignInProvider_Azuread
-    "Strava" -> Just SignInProvider_Strava
-    "Facebook" -> Just SignInProvider_Facebook
-    "Windowslive" -> Just SignInProvider_Windowslive
-    "Twitter" -> Just SignInProvider_Twitter
+    "apple" -> Just SignInProvider_Apple
+    "github" -> Just SignInProvider_Github
+    "google" -> Just SignInProvider_Google
+    "linkedin" -> Just SignInProvider_Linkedin
+    "discord" -> Just SignInProvider_Discord
+    "spotify" -> Just SignInProvider_Spotify
+    "twitch" -> Just SignInProvider_Twitch
+    "gitlab" -> Just SignInProvider_Gitlab
+    "bitbucket" -> Just SignInProvider_Bitbucket
+    "workos" -> Just SignInProvider_Workos
+    "azuread" -> Just SignInProvider_Azuread
+    "strava" -> Just SignInProvider_Strava
+    "facebook" -> Just SignInProvider_Facebook
+    "windowslive" -> Just SignInProvider_Windowslive
+    "twitter" -> Just SignInProvider_Twitter
     _ -> Nothing
 
   enc = case _ of
-    SignInProvider_Apple -> "Apple"
-    SignInProvider_Github -> "Github"
-    SignInProvider_Google -> "Google"
-    SignInProvider_Linkedin -> "Linkedin"
-    SignInProvider_Discord -> "Discord"
-    SignInProvider_Spotify -> "Spotify"
-    SignInProvider_Twitch -> "Twitch"
-    SignInProvider_Gitlab -> "Gitlab"
-    SignInProvider_Bitbucket -> "Bitbucket"
-    SignInProvider_Workos -> "Workos"
-    SignInProvider_Azuread -> "Azuread"
-    SignInProvider_Strava -> "Strava"
-    SignInProvider_Facebook -> "Facebook"
-    SignInProvider_Windowslive -> "Windowslive"
-    SignInProvider_Twitter -> "Twitter"
+    SignInProvider_Apple -> "apple"
+    SignInProvider_Github -> "github"
+    SignInProvider_Google -> "google"
+    SignInProvider_Linkedin -> "linkedin"
+    SignInProvider_Discord -> "discord"
+    SignInProvider_Spotify -> "spotify"
+    SignInProvider_Twitch -> "twitch"
+    SignInProvider_Gitlab -> "gitlab"
+    SignInProvider_Bitbucket -> "bitbucket"
+    SignInProvider_Workos -> "workos"
+    SignInProvider_Azuread -> "azuread"
+    SignInProvider_Strava -> "strava"
+    SignInProvider_Facebook -> "facebook"
+    SignInProvider_Windowslive -> "windowslive"
+    SignInProvider_Twitter -> "twitter"
 
 -- | Ticket
 newtype TicketQuery = TicketQuery String
@@ -1571,17 +1571,17 @@ ticketTypeQueryCodec :: CJ.Codec TicketTypeQuery
 ticketTypeQueryCodec = CJ.prismaticCodec "TicketTypeQuery" dec enc CJ.string
   where
   dec = case _ of
-    "EmailVerify" -> Just TicketTypeQuery_EmailVerify
-    "EmailConfirmChange" -> Just TicketTypeQuery_EmailConfirmChange
-    "SigninPasswordless" -> Just TicketTypeQuery_SigninPasswordless
-    "PasswordReset" -> Just TicketTypeQuery_PasswordReset
+    "emailVerify" -> Just TicketTypeQuery_EmailVerify
+    "emailConfirmChange" -> Just TicketTypeQuery_EmailConfirmChange
+    "signinPasswordless" -> Just TicketTypeQuery_SigninPasswordless
+    "passwordReset" -> Just TicketTypeQuery_PasswordReset
     _ -> Nothing
 
   enc = case _ of
-    TicketTypeQuery_EmailVerify -> "EmailVerify"
-    TicketTypeQuery_EmailConfirmChange -> "EmailConfirmChange"
-    TicketTypeQuery_SigninPasswordless -> "SigninPasswordless"
-    TicketTypeQuery_PasswordReset -> "PasswordReset"
+    TicketTypeQuery_EmailVerify -> "emailVerify"
+    TicketTypeQuery_EmailConfirmChange -> "emailConfirmChange"
+    TicketTypeQuery_SigninPasswordless -> "signinPasswordless"
+    TicketTypeQuery_PasswordReset -> "passwordReset"
 
 -- |
 -- | * `Version`: `String` - The version of the authentication service
