@@ -401,6 +401,7 @@ getFileMetadataHeadersParamsCodec =
 -- | Possible responses:
 -- |   - 201: UploadFilesResponse201
 type UploadFilesFn fetchResponse = UploadFilesBody -> Aff (fetchResponse (UploadFilesResponse201))
+
 -- | DeleteFile
 -- |
 -- | Summary: Delete file
@@ -410,6 +411,7 @@ type UploadFilesFn fetchResponse = UploadFilesBody -> Aff (fetchResponse (Upload
 -- | Possible responses:
 -- |   - 204: Unit
 type DeleteFileFn fetchResponse = String -> Aff (fetchResponse (Unit))
+
 -- | GetFile
 -- |
 -- | Summary: Download file
@@ -422,6 +424,7 @@ type DeleteFileFn fetchResponse = String -> Aff (fetchResponse (Unit))
 -- |   - 304: Unit
 -- |   - 412: Unit
 type GetFileFn fetchResponse = String -> Maybe GetFileParams -> Aff (fetchResponse (Blob))
+
 -- | GetFileMetadataHeaders
 -- |
 -- | Summary: Check file information
@@ -433,6 +436,7 @@ type GetFileFn fetchResponse = String -> Maybe GetFileParams -> Aff (fetchRespon
 -- |   - 304: Unit
 -- |   - 412: Unit
 type GetFileMetadataHeadersFn fetchResponse = String -> Maybe GetFileMetadataHeadersParams -> Aff (fetchResponse (Unit))
+
 -- | ReplaceFile
 -- |
 -- | Summary: Replace file
@@ -448,6 +452,7 @@ type GetFileMetadataHeadersFn fetchResponse = String -> Maybe GetFileMetadataHea
 -- | Possible responses:
 -- |   - 200: FileMetadata
 type ReplaceFileFn fetchResponse = String -> ReplaceFileBody -> Aff (fetchResponse (FileMetadata))
+
 -- | GetFilePresignedURL
 -- |
 -- | Summary: Retrieve presigned URL to retrieve the file
@@ -459,6 +464,7 @@ type ReplaceFileFn fetchResponse = String -> ReplaceFileBody -> Aff (fetchRespon
 -- | Possible responses:
 -- |   - 200: PresignedURLResponse
 type GetFilePresignedURLFn fetchResponse = String -> Aff (fetchResponse (PresignedURLResponse))
+
 -- | DeleteBrokenMetadata
 -- |
 -- | Summary: Delete broken metadata
@@ -468,6 +474,7 @@ type GetFilePresignedURLFn fetchResponse = String -> Aff (fetchResponse (Presign
 -- | Possible responses:
 -- |   - 200: DeleteBrokenMetadataResponse200
 type DeleteBrokenMetadataFn fetchResponse = Aff (fetchResponse (DeleteBrokenMetadataResponse200))
+
 -- | DeleteOrphanedFiles
 -- |
 -- | Summary: Deletes orphaned files
@@ -477,6 +484,7 @@ type DeleteBrokenMetadataFn fetchResponse = Aff (fetchResponse (DeleteBrokenMeta
 -- | Possible responses:
 -- |   - 200: DeleteOrphanedFilesResponse200
 type DeleteOrphanedFilesFn fetchResponse = Aff (fetchResponse (DeleteOrphanedFilesResponse200))
+
 -- | ListBrokenMetadata
 -- |
 -- | Summary: Lists broken metadata
@@ -486,6 +494,7 @@ type DeleteOrphanedFilesFn fetchResponse = Aff (fetchResponse (DeleteOrphanedFil
 -- | Possible responses:
 -- |   - 200: ListBrokenMetadataResponse200
 type ListBrokenMetadataFn fetchResponse = Aff (fetchResponse (ListBrokenMetadataResponse200))
+
 -- | ListFilesNotUploaded
 -- |
 -- | Summary: Lists files that haven't been uploaded
@@ -495,6 +504,7 @@ type ListBrokenMetadataFn fetchResponse = Aff (fetchResponse (ListBrokenMetadata
 -- | Possible responses:
 -- |   - 200: ListFilesNotUploadedResponse200
 type ListFilesNotUploadedFn fetchResponse = Aff (fetchResponse (ListFilesNotUploadedResponse200))
+
 -- | ListOrphanedFiles
 -- |
 -- | Summary: Lists orphaned files
@@ -504,6 +514,7 @@ type ListFilesNotUploadedFn fetchResponse = Aff (fetchResponse (ListFilesNotUplo
 -- | Possible responses:
 -- |   - 200: ListOrphanedFilesResponse200
 type ListOrphanedFilesFn fetchResponse = Aff (fetchResponse (ListOrphanedFilesResponse200))
+
 -- | GetVersion
 -- |
 -- | Summary: Get service version information

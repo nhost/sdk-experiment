@@ -1650,6 +1650,7 @@ verifyTicketParamsCodec =
 -- | Possible responses:
 -- |   - 200: JWKSet
 type GetJWKsFn fetchResponse = Aff (fetchResponse (JWKSet))
+
 -- | ElevateWebauthn
 -- |
 -- | Summary: Elevate access for an already signed in user using FIDO2 Webauthn
@@ -1659,6 +1660,7 @@ type GetJWKsFn fetchResponse = Aff (fetchResponse (JWKSet))
 -- | Possible responses:
 -- |   - 200: PublicKeyCredentialRequestOptions
 type ElevateWebauthnFn fetchResponse = Aff (fetchResponse (PublicKeyCredentialRequestOptions))
+
 -- | VerifyElevateWebauthn
 -- |
 -- | Summary: Verify FIDO2 Webauthn authentication using public-key cryptography for elevation
@@ -1668,6 +1670,7 @@ type ElevateWebauthnFn fetchResponse = Aff (fetchResponse (PublicKeyCredentialRe
 -- | Possible responses:
 -- |   - 200: SessionPayload
 type VerifyElevateWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
+
 -- | HealthCheckGet
 -- |
 -- | Summary: Health check (GET)
@@ -1677,6 +1680,7 @@ type VerifyElevateWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff 
 -- | Possible responses:
 -- |   - 200: OKResponse
 type HealthCheckGetFn fetchResponse = Aff (fetchResponse (OKResponse))
+
 -- | HealthCheckHead
 -- |
 -- | Summary: Health check (HEAD)
@@ -1686,6 +1690,7 @@ type HealthCheckGetFn fetchResponse = Aff (fetchResponse (OKResponse))
 -- | Possible responses:
 -- |   - 200: Unit
 type HealthCheckHeadFn fetchResponse = Aff (fetchResponse (Unit))
+
 -- | LinkIdToken
 -- |
 -- | Summary: Link a user account with the provider's account using an id token
@@ -1695,6 +1700,7 @@ type HealthCheckHeadFn fetchResponse = Aff (fetchResponse (Unit))
 -- | Possible responses:
 -- |   - 200: OKResponse
 type LinkIdTokenFn fetchResponse = LinkIdTokenRequest -> Aff (fetchResponse (OKResponse))
+
 -- | ChangeUserMfa
 -- |
 -- | Summary: Generate TOTP secret
@@ -1704,6 +1710,7 @@ type LinkIdTokenFn fetchResponse = LinkIdTokenRequest -> Aff (fetchResponse (OKR
 -- | Possible responses:
 -- |   - 200: TotpGenerateResponse
 type ChangeUserMfaFn fetchResponse = Aff (fetchResponse (TotpGenerateResponse))
+
 -- | CreatePAT
 -- |
 -- | Summary: Create a Personal Access Token (PAT)
@@ -1713,6 +1720,7 @@ type ChangeUserMfaFn fetchResponse = Aff (fetchResponse (TotpGenerateResponse))
 -- | Possible responses:
 -- |   - 200: CreatePATResponse
 type CreatePATFn fetchResponse = CreatePATRequest -> Aff (fetchResponse (CreatePATResponse))
+
 -- | SignInAnonymous
 -- |
 -- | Summary: Sign in anonymously
@@ -1722,6 +1730,7 @@ type CreatePATFn fetchResponse = CreatePATRequest -> Aff (fetchResponse (CreateP
 -- | Possible responses:
 -- |   - 200: SessionPayload
 type SignInAnonymousFn fetchResponse = Maybe SignInAnonymousRequest -> Aff (fetchResponse (SessionPayload))
+
 -- | SignInEmailPassword
 -- |
 -- | Summary: Sign in with email and password
@@ -1731,6 +1740,7 @@ type SignInAnonymousFn fetchResponse = Maybe SignInAnonymousRequest -> Aff (fetc
 -- | Possible responses:
 -- |   - 200: SignInEmailPasswordResponse
 type SignInEmailPasswordFn fetchResponse = SignInEmailPasswordRequest -> Aff (fetchResponse (SignInEmailPasswordResponse))
+
 -- | SignInIdToken
 -- |
 -- | Summary: Sign in with an ID token
@@ -1740,6 +1750,7 @@ type SignInEmailPasswordFn fetchResponse = SignInEmailPasswordRequest -> Aff (fe
 -- | Possible responses:
 -- |   - 200: SessionPayload
 type SignInIdTokenFn fetchResponse = SignInIdTokenRequest -> Aff (fetchResponse (SessionPayload))
+
 -- | VerifySignInMfaTotp
 -- |
 -- | Summary: Verify TOTP for MFA
@@ -1749,6 +1760,7 @@ type SignInIdTokenFn fetchResponse = SignInIdTokenRequest -> Aff (fetchResponse 
 -- | Possible responses:
 -- |   - 200: SessionPayload
 type VerifySignInMfaTotpFn fetchResponse = SignInMfaTotpRequest -> Aff (fetchResponse (SessionPayload))
+
 -- | SignInOTPEmail
 -- |
 -- | Summary: Sign in with email OTP
@@ -1758,6 +1770,7 @@ type VerifySignInMfaTotpFn fetchResponse = SignInMfaTotpRequest -> Aff (fetchRes
 -- | Possible responses:
 -- |   - 200: OKResponse
 type SignInOTPEmailFn fetchResponse = SignInOTPEmailRequest -> Aff (fetchResponse (OKResponse))
+
 -- | VerifySignInOTPEmail
 -- |
 -- | Summary: Verify email OTP
@@ -1767,6 +1780,7 @@ type SignInOTPEmailFn fetchResponse = SignInOTPEmailRequest -> Aff (fetchRespons
 -- | Possible responses:
 -- |   - 200: SignInOTPEmailVerifyResponse
 type VerifySignInOTPEmailFn fetchResponse = SignInOTPEmailVerifyRequest -> Aff (fetchResponse (SignInOTPEmailVerifyResponse))
+
 -- | SignInPasswordlessEmail
 -- |
 -- | Summary: Sign in with magic link email
@@ -1776,6 +1790,7 @@ type VerifySignInOTPEmailFn fetchResponse = SignInOTPEmailVerifyRequest -> Aff (
 -- | Possible responses:
 -- |   - 200: OKResponse
 type SignInPasswordlessEmailFn fetchResponse = SignInPasswordlessEmailRequest -> Aff (fetchResponse (OKResponse))
+
 -- | SignInPasswordlessSms
 -- |
 -- | Summary: Sign in with SMS OTP
@@ -1785,6 +1800,7 @@ type SignInPasswordlessEmailFn fetchResponse = SignInPasswordlessEmailRequest ->
 -- | Possible responses:
 -- |   - 200: OKResponse
 type SignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsRequest -> Aff (fetchResponse (OKResponse))
+
 -- | VerifySignInPasswordlessSms
 -- |
 -- | Summary: Verify SMS OTP
@@ -1794,6 +1810,7 @@ type SignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsRequest -> Aff
 -- | Possible responses:
 -- |   - 200: SignInPasswordlessSmsOtpResponse
 type VerifySignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsOtpRequest -> Aff (fetchResponse (SignInPasswordlessSmsOtpResponse))
+
 -- | SignInPAT
 -- |
 -- | Summary: Sign in with Personal Access Token (PAT)
@@ -1803,6 +1820,7 @@ type VerifySignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsOtpReque
 -- | Possible responses:
 -- |   - 200: SessionPayload
 type SignInPATFn fetchResponse = SignInPATRequest -> Aff (fetchResponse (SessionPayload))
+
 -- | SignInProvider
 -- |
 -- | Summary: Sign in with an OAuth2 provider
@@ -1812,6 +1830,7 @@ type SignInPATFn fetchResponse = SignInPATRequest -> Aff (fetchResponse (Session
 -- | Possible responses:
 -- |   - 302: Unit
 type SignInProviderFn = SignInProvider -> Maybe SignInProviderParams -> String
+
 -- | SignInWebauthn
 -- |
 -- | Summary: Sign in with Webauthn
@@ -1821,6 +1840,7 @@ type SignInProviderFn = SignInProvider -> Maybe SignInProviderParams -> String
 -- | Possible responses:
 -- |   - 200: PublicKeyCredentialRequestOptions
 type SignInWebauthnFn fetchResponse = Maybe SignInWebauthnRequest -> Aff (fetchResponse (PublicKeyCredentialRequestOptions))
+
 -- | VerifySignInWebauthn
 -- |
 -- | Summary: Verify Webauthn sign-in
@@ -1830,6 +1850,7 @@ type SignInWebauthnFn fetchResponse = Maybe SignInWebauthnRequest -> Aff (fetchR
 -- | Possible responses:
 -- |   - 200: SessionPayload
 type VerifySignInWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
+
 -- | SignOut
 -- |
 -- | Summary: Sign out
@@ -1839,6 +1860,7 @@ type VerifySignInWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (
 -- | Possible responses:
 -- |   - 200: OKResponse
 type SignOutFn fetchResponse = SignOutRequest -> Aff (fetchResponse (OKResponse))
+
 -- | SignUpEmailPassword
 -- |
 -- | Summary: Sign up with email and password
@@ -1848,6 +1870,7 @@ type SignOutFn fetchResponse = SignOutRequest -> Aff (fetchResponse (OKResponse)
 -- | Possible responses:
 -- |   - 200: SessionPayload
 type SignUpEmailPasswordFn fetchResponse = SignUpEmailPasswordRequest -> Aff (fetchResponse (SessionPayload))
+
 -- | SignUpWebauthn
 -- |
 -- | Summary: Sign up with Webauthn
@@ -1857,6 +1880,7 @@ type SignUpEmailPasswordFn fetchResponse = SignUpEmailPasswordRequest -> Aff (fe
 -- | Possible responses:
 -- |   - 200: PublicKeyCredentialCreationOptions
 type SignUpWebauthnFn fetchResponse = SignUpWebauthnRequest -> Aff (fetchResponse (PublicKeyCredentialCreationOptions))
+
 -- | VerifySignUpWebauthn
 -- |
 -- | Summary: Verify Webauthn sign-up
@@ -1866,6 +1890,7 @@ type SignUpWebauthnFn fetchResponse = SignUpWebauthnRequest -> Aff (fetchRespons
 -- | Possible responses:
 -- |   - 200: SessionPayload
 type VerifySignUpWebauthnFn fetchResponse = SignUpWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
+
 -- | RefreshToken
 -- |
 -- | Summary: Refresh access token
@@ -1875,6 +1900,7 @@ type VerifySignUpWebauthnFn fetchResponse = SignUpWebauthnVerifyRequest -> Aff (
 -- | Possible responses:
 -- |   - 200: Session
 type RefreshTokenFn fetchResponse = RefreshTokenRequest -> Aff (fetchResponse (Session))
+
 -- | VerifyToken
 -- |
 -- | Summary: Verify JWT token
@@ -1884,6 +1910,7 @@ type RefreshTokenFn fetchResponse = RefreshTokenRequest -> Aff (fetchResponse (S
 -- | Possible responses:
 -- |   - 200: String
 type VerifyTokenFn fetchResponse = Maybe VerifyTokenRequest -> Aff (fetchResponse (String))
+
 -- | GetUser
 -- |
 -- | Summary: Get user information
@@ -1893,6 +1920,7 @@ type VerifyTokenFn fetchResponse = Maybe VerifyTokenRequest -> Aff (fetchRespons
 -- | Possible responses:
 -- |   - 200: User
 type GetUserFn fetchResponse = Aff (fetchResponse (User))
+
 -- | DeanonymizeUser
 -- |
 -- | Summary: Deanonymize an anonymous user
@@ -1902,6 +1930,7 @@ type GetUserFn fetchResponse = Aff (fetchResponse (User))
 -- | Possible responses:
 -- |   - 200: OKResponse
 type DeanonymizeUserFn fetchResponse = UserDeanonymizeRequest -> Aff (fetchResponse (OKResponse))
+
 -- | ChangeUserEmail
 -- |
 -- | Summary: Change user email
@@ -1911,6 +1940,7 @@ type DeanonymizeUserFn fetchResponse = UserDeanonymizeRequest -> Aff (fetchRespo
 -- | Possible responses:
 -- |   - 200: OKResponse
 type ChangeUserEmailFn fetchResponse = UserEmailChangeRequest -> Aff (fetchResponse (OKResponse))
+
 -- | SendVerificationEmail
 -- |
 -- | Summary: Send verification email
@@ -1920,6 +1950,7 @@ type ChangeUserEmailFn fetchResponse = UserEmailChangeRequest -> Aff (fetchRespo
 -- | Possible responses:
 -- |   - 200: OKResponse
 type SendVerificationEmailFn fetchResponse = UserEmailSendVerificationEmailRequest -> Aff (fetchResponse (OKResponse))
+
 -- | VerifyChangeUserMfa
 -- |
 -- | Summary: Manage multi-factor authentication
@@ -1929,6 +1960,7 @@ type SendVerificationEmailFn fetchResponse = UserEmailSendVerificationEmailReque
 -- | Possible responses:
 -- |   - 200: OKResponse
 type VerifyChangeUserMfaFn fetchResponse = UserMfaRequest -> Aff (fetchResponse (OKResponse))
+
 -- | ChangeUserPassword
 -- |
 -- | Summary: Change user password
@@ -1938,6 +1970,7 @@ type VerifyChangeUserMfaFn fetchResponse = UserMfaRequest -> Aff (fetchResponse 
 -- | Possible responses:
 -- |   - 200: OKResponse
 type ChangeUserPasswordFn fetchResponse = UserPasswordRequest -> Aff (fetchResponse (OKResponse))
+
 -- | SendPasswordResetEmail
 -- |
 -- | Summary: Request password reset
@@ -1947,6 +1980,7 @@ type ChangeUserPasswordFn fetchResponse = UserPasswordRequest -> Aff (fetchRespo
 -- | Possible responses:
 -- |   - 200: OKResponse
 type SendPasswordResetEmailFn fetchResponse = UserPasswordResetRequest -> Aff (fetchResponse (OKResponse))
+
 -- | AddSecurityKey
 -- |
 -- | Summary: Initialize adding of a new webauthn security key
@@ -1956,6 +1990,7 @@ type SendPasswordResetEmailFn fetchResponse = UserPasswordResetRequest -> Aff (f
 -- | Possible responses:
 -- |   - 200: PublicKeyCredentialCreationOptions
 type AddSecurityKeyFn fetchResponse = Aff (fetchResponse (PublicKeyCredentialCreationOptions))
+
 -- | VerifyAddSecurityKey
 -- |
 -- | Summary: Verify adding of a new webauthn security key
@@ -1965,6 +2000,7 @@ type AddSecurityKeyFn fetchResponse = Aff (fetchResponse (PublicKeyCredentialCre
 -- | Possible responses:
 -- |   - 200: VerifyAddSecurityKeyResponse
 type VerifyAddSecurityKeyFn fetchResponse = VerifyAddSecurityKeyRequest -> Aff (fetchResponse (VerifyAddSecurityKeyResponse))
+
 -- | VerifyTicket
 -- |
 -- | Summary: Verify email and authentication tickets
@@ -1974,6 +2010,7 @@ type VerifyAddSecurityKeyFn fetchResponse = VerifyAddSecurityKeyRequest -> Aff (
 -- | Possible responses:
 -- |   - 302: Unit
 type VerifyTicketFn = Maybe VerifyTicketParams -> String
+
 -- | GetVersion
 -- |
 -- | Summary: Get service version

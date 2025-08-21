@@ -52,6 +52,7 @@ type {{ ToCamelCase .Name }}Params =
 {{- end }}
 
 {{- range .Methods }}
+
 {{ template "apiMethodType" . }}
 {{- end }}
 
