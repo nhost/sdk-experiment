@@ -8,7 +8,8 @@ package:
     - aff
     - json
     - codec-json
-    - affjax
+    - fetch
+    # - affjax
     # - argonaut-core
     # - argonaut-codecs
   test:

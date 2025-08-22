@@ -3,270 +3,155 @@ module Auth.Impl where
 import Auth.Client
 import Prelude
 
-import Affjax (AffjaxDriver, Error, Response, Request)
-import Affjax as Affjax
-import Affjax.RequestBody as Affjax
-import Affjax.RequestHeader as Affjax
-import Affjax.ResponseFormat as Affjax.ResponseFormat
-import Affjax.ResponseHeader as Affjax
-import Affjax.StatusCode as Affjax
-import Data.Argonaut.Core (Json)
-import Data.Argonaut.Core as J
 import Data.Array (elem)
 import Data.Codec.JSON as J
 import Data.Either (Either(..), either)
 import Data.HTTP.Method (Method(..))
+import Data.Map as Map
 import Data.Maybe (Maybe(..), maybe)
 import Data.String as String
+import Data.String.CaseInsensitive (CaseInsensitiveString(..))
 import Effect.Aff (Aff, throwError)
 import Effect.Exception (error)
-import Foreign (Foreign)
+import Fetch as Fetch
+import Foreign (Foreign, unsafeFromForeign, unsafeToForeign)
+import JS.Fetch.Headers as Headers
+import JS.Fetch.RequestBody as JS.Fetch.RequestBody
+import JSON (JSON)
+import JSON as JSON
 import Unsafe.Coerce (unsafeCoerce)
 
 data FetchResponse a
-  = FetchResponse_AffjaxError Affjax.Error
-  | FetchResponse_JsonDecodeError (Affjax.Response J.Json) J.DecodeError
-  | FetchResponse_Success
-    { status :: Affjax.StatusCode
-    , statusText :: String
-    , headers :: Array Affjax.ResponseHeader
-    , body :: a
-    }
+  = FetchResponse_JsonDecodeError Fetch.Response J.DecodeError
+  | FetchResponse_Success Fetch.Response a
 
-makeRequestGetImpl
+foreignToJSON :: Foreign -> JSON
+foreignToJSON = unsafeFromForeign
+
+makeRequestGet
   :: forall a
-   . AffjaxDriver
-  -> String -- base url
-  -> J.Codec a
+   . String -- base url
   -> String -- url
-  -> Array Affjax.RequestHeader
+  -> J.Codec a
   -> Aff (FetchResponse a)
-makeRequestGetImpl affjaxDriver baseURL codec url headers = do
-  result <- Affjax.request affjaxDriver
-    { method: Left GET
-    , url: baseURL <> url
-    , headers
-    , content: Nothing
-    , username: Nothing
-    , password: Nothing
-    , withCredentials: false
-    , responseFormat: Affjax.ResponseFormat.json
-    , timeout: Nothing
+makeRequestGet baseURL url codec = do
+  response <- Fetch.fetch (baseURL <> url)
+    { method: GET
+    , headers: { "Content-Type": "application/json" }
     }
-  case result of
-    Left err ->
-      pure $ FetchResponse_AffjaxError err
+  json <- response.json
+  case J.decode codec (foreignToJSON json) of
+    Right decoded ->
+      pure $ FetchResponse_Success response decoded
+    Left decodeErr ->
+      pure $ FetchResponse_JsonDecodeError response decodeErr
 
-    Right res ->
-      case J.decode codec res.body of
-        Right decoded ->
-          pure $ FetchResponse_Success
-            { status: res.status
-            , statusText: res.statusText
-            , headers: res.headers
-            , body: decoded
-            }
-        Left decodeErr ->
-          pure $ FetchResponse_JsonDecodeError res decodeErr
+makeRequestHead
+  :: forall a
+   . String -- base url
+  -> String -- url
+  -> Aff Fetch.Response
+makeRequestHead baseURL url = do
+  Fetch.fetch (baseURL <> url)
+    { method: HEAD
+    }
+
+makeRequestPostWithoutBody
+  :: forall a
+   . String -- base url
+  -> String -- url
+  -> J.Codec a
+  -> Aff (FetchResponse a)
+makeRequestPostWithoutBody baseURL url codec = do
+  response <- Fetch.fetch (baseURL <> url)
+    { method: POST
+    , headers: { "Content-Type": "application/json" }
+    }
+  json <- response.json
+  case J.decode codec (foreignToJSON json) of
+    Right decoded ->
+      pure $ FetchResponse_Success response decoded
+    Left decodeErr ->
+      pure $ FetchResponse_JsonDecodeError response decodeErr
+
+-- POST (with request body)
+makeRequestPostWithBody
+  :: forall a b
+   . String -- base url
+  -> String -- url
+  -> J.Codec b -- request body codec
+  -> J.Codec a -- response body codec
+  -> b -- request body value
+  -> Aff (FetchResponse a)
+makeRequestPostWithBody baseURL url codecReq codecRes body = do
+  let bodyJson = JSON.print (J.encode codecReq body)
+  response <- Fetch.fetch (baseURL <> url)
+    { method: POST
+    , headers: { "Content-Type": "application/json" }
+    , body: bodyJson
+    }
+  json <- response.json
+  case J.decode codecRes (foreignToJSON json) of
+    Right decoded ->
+      pure $ FetchResponse_Success response decoded
+    Left decodeErr ->
+      pure $ FetchResponse_JsonDecodeError response decodeErr
 
 -- | Create API client with base URL and optional middleware
-createAPIClient :: AffjaxDriver -> String -> APIClient FetchResponse
-createAPIClient affjaxDriver baseURL =
-  { getJWKs: makeRequestGetImpl affjaxDriver baseURL jWKSetCodec "/.well-known/jwks.json"
+createAPIClient :: String -> APIClient FetchResponse FetchResponse FetchResponse Fetch.Response Fetch.Response
+createAPIClient baseURL =
+  { getJWKs: makeRequestGet baseURL "/.well-known/jwks.json" jWKSetCodec
+  , elevateWebauthn: makeRequestPostWithoutBody baseURL "/elevate/webauthn" publicKeyCredentialRequestOptionsCodec
+  , verifyElevateWebauthn: makeRequestPostWithBody baseURL "/elevate/webauthn/verify" signInWebauthnVerifyRequestCodec sessionPayloadCodec
+  , healthCheckGet: makeRequestGet baseURL "/healthz" oKResponseCodec
+  , healthCheckHead: makeRequestHead baseURL "/healthz"
+  , linkIdToken: makeRequestPostWithBody baseURL "/link/idtoken" linkIdTokenRequestCodec oKResponseCodec
+  , changeUserMfa: makeRequestGet baseURL "/mfa/totp/generate" totpGenerateResponseCodec
+  , createPAT: makeRequestPostWithBody baseURL "/pat" createPATRequestCodec createPATResponseCodec
+  , signInAnonymous: makeRequestPostWithBody baseURL "/signin/anonymous" signInAnonymousRequestCodec sessionPayloadCodec
+  , signInEmailPassword: makeRequestPostWithBody baseURL "/signin/email-password" signInEmailPasswordRequestCodec signInEmailPasswordResponseCodec
+  , signInIdToken: makeRequestPostWithBody baseURL "/signin/idtoken" signInIdTokenRequestCodec sessionPayloadCodec
+  , verifySignInMfaTotp: makeRequestPostWithBody baseURL "/signin/mfa/totp" signInMfaTotpRequestCodec sessionPayloadCodec
+  , signInOTPEmail: makeRequestPostWithBody baseURL "/signin/otp/email" signInOTPEmailRequestCodec oKResponseCodec
+  , verifySignInOTPEmail: makeRequestPostWithBody baseURL "/signin/otp/email/verify" signInOTPEmailVerifyRequestCodec signInOTPEmailVerifyResponseCodec
+  , signInPasswordlessEmail: makeRequestPostWithBody baseURL "/signin/passwordless/email" signInPasswordlessEmailRequestCodec oKResponseCodec
+  , signInPasswordlessSms: makeRequestPostWithBody baseURL "/signin/passwordless/sms" signInPasswordlessSmsRequestCodec oKResponseCodec
+  , verifySignInPasswordlessSms: makeRequestPostWithBody baseURL "/signin/passwordless/sms/otp" signInPasswordlessSmsOtpRequestCodec signInPasswordlessSmsOtpResponseCodec
+  , signInPAT: makeRequestPostWithBody baseURL "/signin/pat" signInPATRequestCodec sessionPayloadCodec
+  , signInProvider: \provider maybeParams ->
+      let
+        paramString =
+          maybe ""
+            (\params ->
+               let encodedParams = J.encode signInProviderParamsCodec params
+               in "?" <> show encodedParams
+            )
+            maybeParams
 
-  -- , elevateWebauthn: makeRequest publicKeyCredentialRequestOptionsCodec POST "/elevate/webauthn" Nothing []
-  --
-  -- , verifyElevateWebauthn: \body ->
-  --     makeRequest sessionPayloadCodec POST "/elevate/webauthn/verify"
-  --       (Just $ J.encode signInWebauthnVerifyRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , healthCheckGet: makeRequest oKResponseCodec GET "/healthz" Nothing []
-  --
-  -- , healthCheckHead: makeRequest (unsafeCoerce unit) HEAD "/healthz" Nothing []
-  --
-  -- , linkIdToken: \body ->
-  --     makeRequest oKResponseCodec POST "/link/idtoken"
-  --       (Just $ J.encode linkIdTokenRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , changeUserMfa: makeRequest totpGenerateResponseCodec GET "/mfa/totp/generate" Nothing []
-  --
-  -- , createPAT: \body ->
-  --     makeRequest createPATResponseCodec POST "/pat"
-  --       (Just $ J.encode createPATRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , signInAnonymous: \maybeBody ->
-  --     makeRequest sessionPayloadCodec POST "/signin/anonymous"
-  --       (map (J.encode signInAnonymousRequestCodec) maybeBody)
-  --       [ ContentType "application/json" ]
-  --
-  -- , signInEmailPassword: \body ->
-  --     makeRequest signInEmailPasswordResponseCodec POST "/signin/email-password"
-  --       (Just $ J.encode signInEmailPasswordRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , signInIdToken: \body ->
-  --     makeRequest sessionPayloadCodec POST "/signin/idtoken"
-  --       (Just $ J.encode signInIdTokenRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , verifySignInMfaTotp: \body ->
-  --     makeRequest sessionPayloadCodec POST "/signin/mfa/totp"
-  --       (Just $ J.encode signInMfaTotpRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , signInOTPEmail: \body ->
-  --     makeRequest oKResponseCodec POST "/signin/otp/email"
-  --       (Just $ J.encode signInOTPEmailRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , verifySignInOTPEmail: \body ->
-  --     makeRequest signInOTPEmailVerifyResponseCodec POST "/signin/otp/email/verify"
-  --       (Just $ J.encode signInOTPEmailVerifyRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , signInPasswordlessEmail: \body ->
-  --     makeRequest oKResponseCodec POST "/signin/passwordless/email"
-  --       (Just $ J.encode signInPasswordlessEmailRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , signInPasswordlessSms: \body ->
-  --     makeRequest oKResponseCodec POST "/signin/passwordless/sms"
-  --       (Just $ J.encode signInPasswordlessSmsRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , verifySignInPasswordlessSms: \body ->
-  --     makeRequest signInPasswordlessSmsOtpResponseCodec POST "/signin/passwordless/sms/otp"
-  --       (Just $ J.encode signInPasswordlessSmsOtpRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , signInPAT: \body ->
-  --     makeRequest sessionPayloadCodec POST "/signin/pat"
-  --       (Just $ J.encode signInPATRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , signInProvider: \provider maybeParams ->
-  --     let
-  --       paramString = maybe ""
-  --         ( \params ->
-  --             let
-  --               encoded = J.encode signInProviderParamsCodec params
-  --             in
-  --               "?" <> show encoded -- Simplified
-  --         )
-  --         maybeParams
-  --       providerStr = case provider of
-  --         SignInProvider_Apple -> "apple"
-  --         SignInProvider_Github -> "github"
-  --         SignInProvider_Google -> "google"
-  --         SignInProvider_Linkedin -> "linkedin"
-  --         SignInProvider_Discord -> "discord"
-  --         SignInProvider_Spotify -> "spotify"
-  --         SignInProvider_Twitch -> "twitch"
-  --         SignInProvider_Gitlab -> "gitlab"
-  --         SignInProvider_Bitbucket -> "bitbucket"
-  --         SignInProvider_Workos -> "workos"
-  --         SignInProvider_Azuread -> "azuread"
-  --         SignInProvider_Strava -> "strava"
-  --         SignInProvider_Facebook -> "facebook"
-  --         SignInProvider_Windowslive -> "windowslive"
-  --         SignInProvider_Twitter -> "twitter"
-  --     in
-  --       baseURL <> "/signin/provider/" <> providerStr <> paramString
-  --
-  -- , signInWebauthn: \maybeBody ->
-  --     makeRequest publicKeyCredentialRequestOptionsCodec POST "/signin/webauthn"
-  --       (map (J.encode signInWebauthnRequestCodec) maybeBody)
-  --       [ ContentType "application/json" ]
-  --
-  -- , verifySignInWebauthn: \body ->
-  --     makeRequest sessionPayloadCodec POST "/signin/webauthn/verify"
-  --       (Just $ J.encode signInWebauthnVerifyRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , signOut: \body ->
-  --     makeRequest oKResponseCodec POST "/signout"
-  --       (Just $ J.encode signOutRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , signUpEmailPassword: \body ->
-  --     makeRequest sessionPayloadCodec POST "/signup/email-password"
-  --       (Just $ J.encode signUpEmailPasswordRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , signUpWebauthn: \body ->
-  --     makeRequest publicKeyCredentialCreationOptionsCodec POST "/signup/webauthn"
-  --       (Just $ J.encode signUpWebauthnRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , verifySignUpWebauthn: \body ->
-  --     makeRequest sessionPayloadCodec POST "/signup/webauthn/verify"
-  --       (Just $ J.encode signUpWebauthnVerifyRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , refreshToken: \body ->
-  --     makeRequest sessionCodec POST "/token"
-  --       (Just $ J.encode refreshTokenRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , verifyToken: \maybeBody ->
-  --     makeRequest (unsafeCoerce unit) POST "/token/verify"
-  --       (map (J.encode verifyTokenRequestCodec) maybeBody)
-  --       [ ContentType "application/json" ]
-  --
-  -- , getUser: makeRequest userCodec GET "/user" Nothing []
-  --
-  -- , deanonymizeUser: \body ->
-  --     makeRequest oKResponseCodec POST "/user/deanonymize"
-  --       (Just $ J.encode userDeanonymizeRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , changeUserEmail: \body ->
-  --     makeRequest oKResponseCodec POST "/user/email/change"
-  --       (Just $ J.encode userEmailChangeRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , sendVerificationEmail: \body ->
-  --     makeRequest oKResponseCodec POST "/user/email/send-verification-email"
-  --       (Just $ J.encode userEmailSendVerificationEmailRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , verifyChangeUserMfa: \body ->
-  --     makeRequest oKResponseCodec POST "/user/mfa"
-  --       (Just $ J.encode userMfaRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , changeUserPassword: \body ->
-  --     makeRequest oKResponseCodec POST "/user/password"
-  --       (Just $ J.encode userPasswordRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , sendPasswordResetEmail: \body ->
-  --     makeRequest oKResponseCodec POST "/user/password/reset"
-  --       (Just $ J.encode userPasswordResetRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , addSecurityKey: makeRequest publicKeyCredentialCreationOptionsCodec POST "/user/webauthn/add" Nothing []
-  --
-  -- , verifyAddSecurityKey: \body ->
-  --     makeRequest verifyAddSecurityKeyResponseCodec POST "/user/webauthn/verify"
-  --       (Just $ J.encode verifyAddSecurityKeyRequestCodec body)
-  --       [ ContentType "application/json" ]
-  --
-  -- , verifyTicket: \maybeParams ->
-  --     let
-  --       paramString = maybe ""
-  --         ( \params ->
-  --             let
-  --               encoded = J.encode verifyTicketParamsCodec params
-  --             in
-  --               "?" <> show encoded -- Simplified
-  --         )
-  --         maybeParams
-  --     in
-  --       baseURL <> "/verify" <> paramString
-  --
-  -- , getVersion: makeRequest getVersionResponse200Codec GET "/version" Nothing []
+        providerStr = J.encode signInProviderCodec provider
+      in
+        baseURL <> "/signin/provider/" <> providerStr <> paramString
+  , signInWebauthn: makeRequestPostWithBody baseURL "/signin/webauthn" signInWebauthnRequestCodec publicKeyCredentialRequestOptionsCodec
+  , verifySignInWebauthn: makeRequestPostWithBody baseURL "/signin/webauthn/verify" signInWebauthnVerifyRequestCodec sessionPayloadCodec
+  , signOut: makeRequestPostWithBody baseURL "/signout" signOutRequestCodec oKResponseCodec
+  , signUpEmailPassword: makeRequestPostWithBody baseURL "/signup/email-password" signUpEmailPasswordRequestCodec sessionPayloadCodec
+  , signUpWebauthn: makeRequestPostWithBody baseURL "/signup/webauthn" signUpWebauthnRequestCodec publicKeyCredentialCreationOptionsCodec
+  , verifySignUpWebauthn: makeRequestPostWithBody baseURL "/signup/webauthn/verify" signUpWebauthnVerifyRequestCodec sessionPayloadCodec
+  , refreshToken: makeRequestPostWithBody baseURL "/token" refreshTokenRequestCodec sessionCodec
+  , verifyToken: makeRequestPostWithBody baseURL "/token/verify" verifyTokenRequestCodec unit
+  , getUser: makeRequestGet baseURL "/user" userCodec
+  , deanonymizeUser: makeRequestPostWithBody baseURL "/user/deanonymize" userDeanonymizeRequestCodec oKResponseCodec
+  , changeUserEmail: makeRequestPostWithBody baseURL "/user/email/change" userEmailChangeRequestCodec oKResponseCodec
+  , sendVerificationEmail: makeRequestPostWithBody baseURL "/user/email/send-verification-email" userEmailSendVerificationEmailRequestCodec oKResponseCodec
+  , verifyChangeUserMfa: makeRequestPostWithBody baseURL "/user/mfa" userMfaRequestCodec oKResponseCodec
+  , changeUserPassword: makeRequestPostWithBody baseURL "/user/password" userPasswordRequestCodec oKResponseCodec
+  , sendPasswordResetEmail: makeRequestPostWithBody baseURL "/user/password/reset" userPasswordResetRequestCodec oKResponseCodec
+  , addSecurityKey: makeRequestPostWithoutBody baseURL "/user/webauthn/add" publicKeyCredentialCreationOptionsCodec
+  , verifyAddSecurityKey: makeRequestPostWithBody baseURL "/user/webauthn/verify" verifyAddSecurityKeyRequestCodec verifyAddSecurityKeyResponseCodec
+  , verifyTicket: \maybeParams ->
+      let
+        paramString = maybe "" (\params -> "?" <> show (J.encode verifyTicketParamsCodec params)) maybeParams
+      in
+        baseURL <> "/verify" <> paramString
+  , getVersion: makeRequestGet baseURL "/version" getVersionResponse200Codec
   }

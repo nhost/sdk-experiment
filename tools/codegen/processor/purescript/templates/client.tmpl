@@ -30,11 +30,15 @@ type {{ .Name }}Fn fetchResponse = {{ template "apiMethodSignature" . }}
 
 {{- define "client_interface" -}}
 -- | API Client type
-type APIClient fetchResponse =
+type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type
+type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD =
   { {{- range $i, $method := .Methods }}
-    {{- if ne $i 0 }}
-  , {{- end }}
-    {{ lowerFirst $method.Name }} :: {{- if .IsRedirect }}{{ .Name }}Fn{{- else }}{{ .Name }}Fn fetchResponse{{- end }}
+    {{- if ne $i 0 }}, {{ end }}
+    {{- if .IsRedirect }}
+      {{ lowerFirst $method.Name }} :: {{ .Name }}Fn
+    {{- else }}
+      {{ lowerFirst $method.Name }} :: {{ .Name }}Fn fetchResponse{{ $method.Method }}
+    {{- end }}
   {{- end }}
   }
 {{- end }}
@@ -70,18 +74,18 @@ type APIClient fetchResponse =
 {{- end }}
 
 {{- define "apiMethodSignature" -}}
-{{- range .PathParameters -}}
-{{ .Type.Name }} -> {{ end -}}
+{{- range .PathParameters -}}{{ .Type.Name }} -> {{- end -}}
 {{- range $code, $type := .Bodies -}}
-{{- if not $.BodyRequired -}}
-Maybe {{ if containsSpaceInside $type.Name }}({{ $type.Name }}){{ else }}{{ $type.Name }}{{ end }} -> {{ else -}}
-{{ $type.Name }} -> {{ end -}}
+{{- if not $.BodyRequired -}}Maybe {{ $type.Name }} -> {{- else -}}{{ $type.Name }} -> {{- end -}}
 {{- end -}}
-{{- if .HasQueryParameters -}}
-Maybe {{ ToCamelCase .Name }}Params -> {{ end -}}
+{{- if .HasQueryParameters -}}Maybe {{ ToCamelCase .Name }}Params -> {{- end -}}
 {{- if .IsRedirect -}}
 String
+{{- else if eq .Method "HEAD" -}}
+Aff fetchResponse
+{{- else if eq .ReturnType "void" -}}
+Aff fetchResponse
 {{- else -}}
-Aff (fetchResponse ({{ if eq .ReturnType "void" }}Unit{{ else }}{{ .ReturnType }}{{ end }}))
+Aff (fetchResponse {{ .ReturnType }})
 {{- end -}}
 {{- end -}}

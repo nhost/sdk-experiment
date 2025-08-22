@@ -1641,7 +1641,7 @@ verifyTicketParamsCodec =
 -- |
 -- | Possible responses:
 -- |   - 200: JWKSet
-type GetJWKsFn fetchResponse = Aff (fetchResponse (JWKSet))
+type GetJWKsFn fetchResponse = Aff (fetchResponse JWKSet)
 
 -- | ElevateWebauthn
 -- |
@@ -1651,7 +1651,7 @@ type GetJWKsFn fetchResponse = Aff (fetchResponse (JWKSet))
 -- |
 -- | Possible responses:
 -- |   - 200: PublicKeyCredentialRequestOptions
-type ElevateWebauthnFn fetchResponse = Aff (fetchResponse (PublicKeyCredentialRequestOptions))
+type ElevateWebauthnFn fetchResponse = Aff (fetchResponse PublicKeyCredentialRequestOptions)
 
 -- | VerifyElevateWebauthn
 -- |
@@ -1661,7 +1661,7 @@ type ElevateWebauthnFn fetchResponse = Aff (fetchResponse (PublicKeyCredentialRe
 -- |
 -- | Possible responses:
 -- |   - 200: SessionPayload
-type VerifyElevateWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
+type VerifyElevateWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (fetchResponse SessionPayload)
 
 -- | HealthCheckGet
 -- |
@@ -1671,7 +1671,7 @@ type VerifyElevateWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff 
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type HealthCheckGetFn fetchResponse = Aff (fetchResponse (OKResponse))
+type HealthCheckGetFn fetchResponse = Aff (fetchResponse OKResponse)
 
 -- | HealthCheckHead
 -- |
@@ -1681,7 +1681,7 @@ type HealthCheckGetFn fetchResponse = Aff (fetchResponse (OKResponse))
 -- |
 -- | Possible responses:
 -- |   - 200: Unit
-type HealthCheckHeadFn fetchResponse = Aff (fetchResponse (Unit))
+type HealthCheckHeadFn fetchResponse = Aff fetchResponse
 
 -- | LinkIdToken
 -- |
@@ -1691,7 +1691,7 @@ type HealthCheckHeadFn fetchResponse = Aff (fetchResponse (Unit))
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type LinkIdTokenFn fetchResponse = LinkIdTokenRequest -> Aff (fetchResponse (OKResponse))
+type LinkIdTokenFn fetchResponse = LinkIdTokenRequest -> Aff (fetchResponse OKResponse)
 
 -- | ChangeUserMfa
 -- |
@@ -1701,7 +1701,7 @@ type LinkIdTokenFn fetchResponse = LinkIdTokenRequest -> Aff (fetchResponse (OKR
 -- |
 -- | Possible responses:
 -- |   - 200: TotpGenerateResponse
-type ChangeUserMfaFn fetchResponse = Aff (fetchResponse (TotpGenerateResponse))
+type ChangeUserMfaFn fetchResponse = Aff (fetchResponse TotpGenerateResponse)
 
 -- | CreatePAT
 -- |
@@ -1711,7 +1711,7 @@ type ChangeUserMfaFn fetchResponse = Aff (fetchResponse (TotpGenerateResponse))
 -- |
 -- | Possible responses:
 -- |   - 200: CreatePATResponse
-type CreatePATFn fetchResponse = CreatePATRequest -> Aff (fetchResponse (CreatePATResponse))
+type CreatePATFn fetchResponse = CreatePATRequest -> Aff (fetchResponse CreatePATResponse)
 
 -- | SignInAnonymous
 -- |
@@ -1721,7 +1721,7 @@ type CreatePATFn fetchResponse = CreatePATRequest -> Aff (fetchResponse (CreateP
 -- |
 -- | Possible responses:
 -- |   - 200: SessionPayload
-type SignInAnonymousFn fetchResponse = Maybe SignInAnonymousRequest -> Aff (fetchResponse (SessionPayload))
+type SignInAnonymousFn fetchResponse = Maybe SignInAnonymousRequest -> Aff (fetchResponse SessionPayload)
 
 -- | SignInEmailPassword
 -- |
@@ -1731,7 +1731,7 @@ type SignInAnonymousFn fetchResponse = Maybe SignInAnonymousRequest -> Aff (fetc
 -- |
 -- | Possible responses:
 -- |   - 200: SignInEmailPasswordResponse
-type SignInEmailPasswordFn fetchResponse = SignInEmailPasswordRequest -> Aff (fetchResponse (SignInEmailPasswordResponse))
+type SignInEmailPasswordFn fetchResponse = SignInEmailPasswordRequest -> Aff (fetchResponse SignInEmailPasswordResponse)
 
 -- | SignInIdToken
 -- |
@@ -1741,7 +1741,7 @@ type SignInEmailPasswordFn fetchResponse = SignInEmailPasswordRequest -> Aff (fe
 -- |
 -- | Possible responses:
 -- |   - 200: SessionPayload
-type SignInIdTokenFn fetchResponse = SignInIdTokenRequest -> Aff (fetchResponse (SessionPayload))
+type SignInIdTokenFn fetchResponse = SignInIdTokenRequest -> Aff (fetchResponse SessionPayload)
 
 -- | VerifySignInMfaTotp
 -- |
@@ -1751,7 +1751,7 @@ type SignInIdTokenFn fetchResponse = SignInIdTokenRequest -> Aff (fetchResponse 
 -- |
 -- | Possible responses:
 -- |   - 200: SessionPayload
-type VerifySignInMfaTotpFn fetchResponse = SignInMfaTotpRequest -> Aff (fetchResponse (SessionPayload))
+type VerifySignInMfaTotpFn fetchResponse = SignInMfaTotpRequest -> Aff (fetchResponse SessionPayload)
 
 -- | SignInOTPEmail
 -- |
@@ -1761,7 +1761,7 @@ type VerifySignInMfaTotpFn fetchResponse = SignInMfaTotpRequest -> Aff (fetchRes
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type SignInOTPEmailFn fetchResponse = SignInOTPEmailRequest -> Aff (fetchResponse (OKResponse))
+type SignInOTPEmailFn fetchResponse = SignInOTPEmailRequest -> Aff (fetchResponse OKResponse)
 
 -- | VerifySignInOTPEmail
 -- |
@@ -1771,7 +1771,7 @@ type SignInOTPEmailFn fetchResponse = SignInOTPEmailRequest -> Aff (fetchRespons
 -- |
 -- | Possible responses:
 -- |   - 200: SignInOTPEmailVerifyResponse
-type VerifySignInOTPEmailFn fetchResponse = SignInOTPEmailVerifyRequest -> Aff (fetchResponse (SignInOTPEmailVerifyResponse))
+type VerifySignInOTPEmailFn fetchResponse = SignInOTPEmailVerifyRequest -> Aff (fetchResponse SignInOTPEmailVerifyResponse)
 
 -- | SignInPasswordlessEmail
 -- |
@@ -1781,7 +1781,7 @@ type VerifySignInOTPEmailFn fetchResponse = SignInOTPEmailVerifyRequest -> Aff (
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type SignInPasswordlessEmailFn fetchResponse = SignInPasswordlessEmailRequest -> Aff (fetchResponse (OKResponse))
+type SignInPasswordlessEmailFn fetchResponse = SignInPasswordlessEmailRequest -> Aff (fetchResponse OKResponse)
 
 -- | SignInPasswordlessSms
 -- |
@@ -1791,7 +1791,7 @@ type SignInPasswordlessEmailFn fetchResponse = SignInPasswordlessEmailRequest ->
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type SignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsRequest -> Aff (fetchResponse (OKResponse))
+type SignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsRequest -> Aff (fetchResponse OKResponse)
 
 -- | VerifySignInPasswordlessSms
 -- |
@@ -1801,7 +1801,7 @@ type SignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsRequest -> Aff
 -- |
 -- | Possible responses:
 -- |   - 200: SignInPasswordlessSmsOtpResponse
-type VerifySignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsOtpRequest -> Aff (fetchResponse (SignInPasswordlessSmsOtpResponse))
+type VerifySignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsOtpRequest -> Aff (fetchResponse SignInPasswordlessSmsOtpResponse)
 
 -- | SignInPAT
 -- |
@@ -1811,7 +1811,7 @@ type VerifySignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsOtpReque
 -- |
 -- | Possible responses:
 -- |   - 200: SessionPayload
-type SignInPATFn fetchResponse = SignInPATRequest -> Aff (fetchResponse (SessionPayload))
+type SignInPATFn fetchResponse = SignInPATRequest -> Aff (fetchResponse SessionPayload)
 
 -- | SignInProvider
 -- |
@@ -1831,7 +1831,7 @@ type SignInProviderFn = SignInProvider -> Maybe SignInProviderParams -> String
 -- |
 -- | Possible responses:
 -- |   - 200: PublicKeyCredentialRequestOptions
-type SignInWebauthnFn fetchResponse = Maybe SignInWebauthnRequest -> Aff (fetchResponse (PublicKeyCredentialRequestOptions))
+type SignInWebauthnFn fetchResponse = Maybe SignInWebauthnRequest -> Aff (fetchResponse PublicKeyCredentialRequestOptions)
 
 -- | VerifySignInWebauthn
 -- |
@@ -1841,7 +1841,7 @@ type SignInWebauthnFn fetchResponse = Maybe SignInWebauthnRequest -> Aff (fetchR
 -- |
 -- | Possible responses:
 -- |   - 200: SessionPayload
-type VerifySignInWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
+type VerifySignInWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (fetchResponse SessionPayload)
 
 -- | SignOut
 -- |
@@ -1851,7 +1851,7 @@ type VerifySignInWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type SignOutFn fetchResponse = SignOutRequest -> Aff (fetchResponse (OKResponse))
+type SignOutFn fetchResponse = SignOutRequest -> Aff (fetchResponse OKResponse)
 
 -- | SignUpEmailPassword
 -- |
@@ -1861,7 +1861,7 @@ type SignOutFn fetchResponse = SignOutRequest -> Aff (fetchResponse (OKResponse)
 -- |
 -- | Possible responses:
 -- |   - 200: SessionPayload
-type SignUpEmailPasswordFn fetchResponse = SignUpEmailPasswordRequest -> Aff (fetchResponse (SessionPayload))
+type SignUpEmailPasswordFn fetchResponse = SignUpEmailPasswordRequest -> Aff (fetchResponse SessionPayload)
 
 -- | SignUpWebauthn
 -- |
@@ -1871,7 +1871,7 @@ type SignUpEmailPasswordFn fetchResponse = SignUpEmailPasswordRequest -> Aff (fe
 -- |
 -- | Possible responses:
 -- |   - 200: PublicKeyCredentialCreationOptions
-type SignUpWebauthnFn fetchResponse = SignUpWebauthnRequest -> Aff (fetchResponse (PublicKeyCredentialCreationOptions))
+type SignUpWebauthnFn fetchResponse = SignUpWebauthnRequest -> Aff (fetchResponse PublicKeyCredentialCreationOptions)
 
 -- | VerifySignUpWebauthn
 -- |
@@ -1881,7 +1881,7 @@ type SignUpWebauthnFn fetchResponse = SignUpWebauthnRequest -> Aff (fetchRespons
 -- |
 -- | Possible responses:
 -- |   - 200: SessionPayload
-type VerifySignUpWebauthnFn fetchResponse = SignUpWebauthnVerifyRequest -> Aff (fetchResponse (SessionPayload))
+type VerifySignUpWebauthnFn fetchResponse = SignUpWebauthnVerifyRequest -> Aff (fetchResponse SessionPayload)
 
 -- | RefreshToken
 -- |
@@ -1891,7 +1891,7 @@ type VerifySignUpWebauthnFn fetchResponse = SignUpWebauthnVerifyRequest -> Aff (
 -- |
 -- | Possible responses:
 -- |   - 200: Session
-type RefreshTokenFn fetchResponse = RefreshTokenRequest -> Aff (fetchResponse (Session))
+type RefreshTokenFn fetchResponse = RefreshTokenRequest -> Aff (fetchResponse Session)
 
 -- | VerifyToken
 -- |
@@ -1901,7 +1901,7 @@ type RefreshTokenFn fetchResponse = RefreshTokenRequest -> Aff (fetchResponse (S
 -- |
 -- | Possible responses:
 -- |   - 200: String
-type VerifyTokenFn fetchResponse = Maybe VerifyTokenRequest -> Aff (fetchResponse (String))
+type VerifyTokenFn fetchResponse = Maybe VerifyTokenRequest -> Aff (fetchResponse String)
 
 -- | GetUser
 -- |
@@ -1911,7 +1911,7 @@ type VerifyTokenFn fetchResponse = Maybe VerifyTokenRequest -> Aff (fetchRespons
 -- |
 -- | Possible responses:
 -- |   - 200: User
-type GetUserFn fetchResponse = Aff (fetchResponse (User))
+type GetUserFn fetchResponse = Aff (fetchResponse User)
 
 -- | DeanonymizeUser
 -- |
@@ -1921,7 +1921,7 @@ type GetUserFn fetchResponse = Aff (fetchResponse (User))
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type DeanonymizeUserFn fetchResponse = UserDeanonymizeRequest -> Aff (fetchResponse (OKResponse))
+type DeanonymizeUserFn fetchResponse = UserDeanonymizeRequest -> Aff (fetchResponse OKResponse)
 
 -- | ChangeUserEmail
 -- |
@@ -1931,7 +1931,7 @@ type DeanonymizeUserFn fetchResponse = UserDeanonymizeRequest -> Aff (fetchRespo
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type ChangeUserEmailFn fetchResponse = UserEmailChangeRequest -> Aff (fetchResponse (OKResponse))
+type ChangeUserEmailFn fetchResponse = UserEmailChangeRequest -> Aff (fetchResponse OKResponse)
 
 -- | SendVerificationEmail
 -- |
@@ -1941,7 +1941,7 @@ type ChangeUserEmailFn fetchResponse = UserEmailChangeRequest -> Aff (fetchRespo
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type SendVerificationEmailFn fetchResponse = UserEmailSendVerificationEmailRequest -> Aff (fetchResponse (OKResponse))
+type SendVerificationEmailFn fetchResponse = UserEmailSendVerificationEmailRequest -> Aff (fetchResponse OKResponse)
 
 -- | VerifyChangeUserMfa
 -- |
@@ -1951,7 +1951,7 @@ type SendVerificationEmailFn fetchResponse = UserEmailSendVerificationEmailReque
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type VerifyChangeUserMfaFn fetchResponse = UserMfaRequest -> Aff (fetchResponse (OKResponse))
+type VerifyChangeUserMfaFn fetchResponse = UserMfaRequest -> Aff (fetchResponse OKResponse)
 
 -- | ChangeUserPassword
 -- |
@@ -1961,7 +1961,7 @@ type VerifyChangeUserMfaFn fetchResponse = UserMfaRequest -> Aff (fetchResponse 
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type ChangeUserPasswordFn fetchResponse = UserPasswordRequest -> Aff (fetchResponse (OKResponse))
+type ChangeUserPasswordFn fetchResponse = UserPasswordRequest -> Aff (fetchResponse OKResponse)
 
 -- | SendPasswordResetEmail
 -- |
@@ -1971,7 +1971,7 @@ type ChangeUserPasswordFn fetchResponse = UserPasswordRequest -> Aff (fetchRespo
 -- |
 -- | Possible responses:
 -- |   - 200: OKResponse
-type SendPasswordResetEmailFn fetchResponse = UserPasswordResetRequest -> Aff (fetchResponse (OKResponse))
+type SendPasswordResetEmailFn fetchResponse = UserPasswordResetRequest -> Aff (fetchResponse OKResponse)
 
 -- | AddSecurityKey
 -- |
@@ -1981,7 +1981,7 @@ type SendPasswordResetEmailFn fetchResponse = UserPasswordResetRequest -> Aff (f
 -- |
 -- | Possible responses:
 -- |   - 200: PublicKeyCredentialCreationOptions
-type AddSecurityKeyFn fetchResponse = Aff (fetchResponse (PublicKeyCredentialCreationOptions))
+type AddSecurityKeyFn fetchResponse = Aff (fetchResponse PublicKeyCredentialCreationOptions)
 
 -- | VerifyAddSecurityKey
 -- |
@@ -1991,7 +1991,7 @@ type AddSecurityKeyFn fetchResponse = Aff (fetchResponse (PublicKeyCredentialCre
 -- |
 -- | Possible responses:
 -- |   - 200: VerifyAddSecurityKeyResponse
-type VerifyAddSecurityKeyFn fetchResponse = VerifyAddSecurityKeyRequest -> Aff (fetchResponse (VerifyAddSecurityKeyResponse))
+type VerifyAddSecurityKeyFn fetchResponse = VerifyAddSecurityKeyRequest -> Aff (fetchResponse VerifyAddSecurityKeyResponse)
 
 -- | VerifyTicket
 -- |
@@ -2011,46 +2011,47 @@ type VerifyTicketFn = Maybe VerifyTicketParams -> String
 -- |
 -- | Possible responses:
 -- |   - 200: GetVersionResponse200
-type GetVersionFn fetchResponse = Aff (fetchResponse (GetVersionResponse200))
+type GetVersionFn fetchResponse = Aff (fetchResponse GetVersionResponse200)
 
 -- | API Client type
-type APIClient fetchResponse =
-  { getJWKs :: GetJWKsFn fetchResponse
-  , elevateWebauthn :: ElevateWebauthnFn fetchResponse
-  , verifyElevateWebauthn :: VerifyElevateWebauthnFn fetchResponse
-  , healthCheckGet :: HealthCheckGetFn fetchResponse
-  , healthCheckHead :: HealthCheckHeadFn fetchResponse
-  , linkIdToken :: LinkIdTokenFn fetchResponse
-  , changeUserMfa :: ChangeUserMfaFn fetchResponse
-  , createPAT :: CreatePATFn fetchResponse
-  , signInAnonymous :: SignInAnonymousFn fetchResponse
-  , signInEmailPassword :: SignInEmailPasswordFn fetchResponse
-  , signInIdToken :: SignInIdTokenFn fetchResponse
-  , verifySignInMfaTotp :: VerifySignInMfaTotpFn fetchResponse
-  , signInOTPEmail :: SignInOTPEmailFn fetchResponse
-  , verifySignInOTPEmail :: VerifySignInOTPEmailFn fetchResponse
-  , signInPasswordlessEmail :: SignInPasswordlessEmailFn fetchResponse
-  , signInPasswordlessSms :: SignInPasswordlessSmsFn fetchResponse
-  , verifySignInPasswordlessSms :: VerifySignInPasswordlessSmsFn fetchResponse
-  , signInPAT :: SignInPATFn fetchResponse
+type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type
+type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD =
+  { getJWKs :: GetJWKsFn fetchResponseGET
+  , elevateWebauthn :: ElevateWebauthnFn fetchResponsePOST
+  , verifyElevateWebauthn :: VerifyElevateWebauthnFn fetchResponsePOST
+  , healthCheckGet :: HealthCheckGetFn fetchResponseGET
+  , healthCheckHead :: HealthCheckHeadFn fetchResponseHEAD
+  , linkIdToken :: LinkIdTokenFn fetchResponsePOST
+  , changeUserMfa :: ChangeUserMfaFn fetchResponseGET
+  , createPAT :: CreatePATFn fetchResponsePOST
+  , signInAnonymous :: SignInAnonymousFn fetchResponsePOST
+  , signInEmailPassword :: SignInEmailPasswordFn fetchResponsePOST
+  , signInIdToken :: SignInIdTokenFn fetchResponsePOST
+  , verifySignInMfaTotp :: VerifySignInMfaTotpFn fetchResponsePOST
+  , signInOTPEmail :: SignInOTPEmailFn fetchResponsePOST
+  , verifySignInOTPEmail :: VerifySignInOTPEmailFn fetchResponsePOST
+  , signInPasswordlessEmail :: SignInPasswordlessEmailFn fetchResponsePOST
+  , signInPasswordlessSms :: SignInPasswordlessSmsFn fetchResponsePOST
+  , verifySignInPasswordlessSms :: VerifySignInPasswordlessSmsFn fetchResponsePOST
+  , signInPAT :: SignInPATFn fetchResponsePOST
   , signInProvider :: SignInProviderFn
-  , signInWebauthn :: SignInWebauthnFn fetchResponse
-  , verifySignInWebauthn :: VerifySignInWebauthnFn fetchResponse
-  , signOut :: SignOutFn fetchResponse
-  , signUpEmailPassword :: SignUpEmailPasswordFn fetchResponse
-  , signUpWebauthn :: SignUpWebauthnFn fetchResponse
-  , verifySignUpWebauthn :: VerifySignUpWebauthnFn fetchResponse
-  , refreshToken :: RefreshTokenFn fetchResponse
-  , verifyToken :: VerifyTokenFn fetchResponse
-  , getUser :: GetUserFn fetchResponse
-  , deanonymizeUser :: DeanonymizeUserFn fetchResponse
-  , changeUserEmail :: ChangeUserEmailFn fetchResponse
-  , sendVerificationEmail :: SendVerificationEmailFn fetchResponse
-  , verifyChangeUserMfa :: VerifyChangeUserMfaFn fetchResponse
-  , changeUserPassword :: ChangeUserPasswordFn fetchResponse
-  , sendPasswordResetEmail :: SendPasswordResetEmailFn fetchResponse
-  , addSecurityKey :: AddSecurityKeyFn fetchResponse
-  , verifyAddSecurityKey :: VerifyAddSecurityKeyFn fetchResponse
+  , signInWebauthn :: SignInWebauthnFn fetchResponsePOST
+  , verifySignInWebauthn :: VerifySignInWebauthnFn fetchResponsePOST
+  , signOut :: SignOutFn fetchResponsePOST
+  , signUpEmailPassword :: SignUpEmailPasswordFn fetchResponsePOST
+  , signUpWebauthn :: SignUpWebauthnFn fetchResponsePOST
+  , verifySignUpWebauthn :: VerifySignUpWebauthnFn fetchResponsePOST
+  , refreshToken :: RefreshTokenFn fetchResponsePOST
+  , verifyToken :: VerifyTokenFn fetchResponsePOST
+  , getUser :: GetUserFn fetchResponseGET
+  , deanonymizeUser :: DeanonymizeUserFn fetchResponsePOST
+  , changeUserEmail :: ChangeUserEmailFn fetchResponsePOST
+  , sendVerificationEmail :: SendVerificationEmailFn fetchResponsePOST
+  , verifyChangeUserMfa :: VerifyChangeUserMfaFn fetchResponsePOST
+  , changeUserPassword :: ChangeUserPasswordFn fetchResponsePOST
+  , sendPasswordResetEmail :: SendPasswordResetEmailFn fetchResponsePOST
+  , addSecurityKey :: AddSecurityKeyFn fetchResponsePOST
+  , verifyAddSecurityKey :: VerifyAddSecurityKeyFn fetchResponsePOST
   , verifyTicket :: VerifyTicketFn
-  , getVersion :: GetVersionFn fetchResponse
+  , getVersion :: GetVersionFn fetchResponseGET
   }
