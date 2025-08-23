@@ -24,16 +24,16 @@ mkdir -p "$ROOT/packages/purescript-nhost/src/Storage"
 
 go run "$SCRIPT_DIR/main.go" gen \
     --openapi-file "$ROOT/packages/nhost-js/api/auth.yaml" \
-    --output-file "$ROOT/packages/purescript-nhost/src/Auth/Client.purs" \
+    --output-file "$ROOT/packages/purescript-nhost/src/Nhost/Auth/Client.purs" \
     --plugin purescript
 
 go run "$SCRIPT_DIR/main.go" gen \
     --openapi-file "$ROOT/packages/nhost-js/api/storage.yaml" \
-    --output-file "$ROOT/packages/purescript-nhost/src/Storage/Client.purs" \
+    --output-file "$ROOT/packages/purescript-nhost/src/Nhost/Storage/Client.purs" \
     --plugin purescript
 
 sed -i'' -e '/import Web.File.Blob/d' \
-        "$ROOT/packages/purescript-nhost/src/Auth/Client.purs"
+        "$ROOT/packages/purescript-nhost/src/Nhost/Auth/Client.purs"
 
 # format PureScript output
 (

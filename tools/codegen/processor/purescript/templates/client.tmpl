@@ -22,7 +22,7 @@
   {{- end }}
 {{- end }}
 {{- if .IsRedirect }}
-type {{ .Name }}Fn = {{ template "apiMethodSignature" . }}
+type {{ .Name }}Fn mkUrlOutput = {{ template "apiMethodSignature" . }}
 {{- else }}
 type {{ .Name }}Fn fetchResponse = {{ template "apiMethodSignature" . }}
 {{- end }}
@@ -30,12 +30,12 @@ type {{ .Name }}Fn fetchResponse = {{ template "apiMethodSignature" . }}
 
 {{- define "client_interface" -}}
 -- | API Client type
-type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type
-type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD =
+type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type -> Type
+type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD mkUrlOutput =
   { {{- range $i, $method := .Methods }}
     {{- if ne $i 0 }}, {{ end }}
     {{- if .IsRedirect }}
-      {{ lowerFirst $method.Name }} :: {{ .Name }}Fn
+      {{ lowerFirst $method.Name }} :: {{ .Name }}Fn mkUrlOutput
     {{- else }}
       {{ lowerFirst $method.Name }} :: {{ .Name }}Fn fetchResponse{{ $method.Method }}
     {{- end }}
@@ -80,7 +80,7 @@ type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponse
 {{- end -}}
 {{- if .HasQueryParameters -}}Maybe {{ ToCamelCase .Name }}Params -> {{- end -}}
 {{- if .IsRedirect -}}
-String
+mkUrlOutput
 {{- else if eq .Method "HEAD" -}}
 Aff fetchResponse
 {{- else if eq .ReturnType "void" -}}

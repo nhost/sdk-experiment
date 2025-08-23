@@ -1,5 +1,5 @@
 -- | This file is auto-generated. Do not edit manually.
-module Auth.Client where
+module Nhost.Auth.Client where
 
 import Prelude
 
@@ -30,27 +30,30 @@ derive instance ordAttestationFormat :: Ord AttestationFormat
 instance showAttestationFormat :: Show AttestationFormat where
   show = genericShow
 
-attestationFormatCodec :: CJ.Codec AttestationFormat
-attestationFormatCodec = CJ.prismaticCodec "AttestationFormat" dec enc CJ.string
-  where
-  dec = case _ of
-    "packed" -> Just AttestationFormat_Packed
-    "tpm" -> Just AttestationFormat_Tpm
-    "android-key" -> Just AttestationFormat_AndroidKey
-    "android-safetynet" -> Just AttestationFormat_AndroidSafetynet
-    "fido-u2f" -> Just AttestationFormat_FidoU2f
-    "apple" -> Just AttestationFormat_Apple
-    "none" -> Just AttestationFormat_None
-    _ -> Nothing
+-- Extract dec / enc to top-level
+attestationFormat_dec :: String -> Maybe AttestationFormat
+attestationFormat_dec = case _ of
+  "packed" -> Just AttestationFormat_Packed
+  "tpm" -> Just AttestationFormat_Tpm
+  "android-key" -> Just AttestationFormat_AndroidKey
+  "android-safetynet" -> Just AttestationFormat_AndroidSafetynet
+  "fido-u2f" -> Just AttestationFormat_FidoU2f
+  "apple" -> Just AttestationFormat_Apple
+  "none" -> Just AttestationFormat_None
+  _ -> Nothing
 
-  enc = case _ of
-    AttestationFormat_Packed -> "packed"
-    AttestationFormat_Tpm -> "tpm"
-    AttestationFormat_AndroidKey -> "android-key"
-    AttestationFormat_AndroidSafetynet -> "android-safetynet"
-    AttestationFormat_FidoU2f -> "fido-u2f"
-    AttestationFormat_Apple -> "apple"
-    AttestationFormat_None -> "none"
+attestationFormat_enc :: AttestationFormat -> String
+attestationFormat_enc = case _ of
+  AttestationFormat_Packed -> "packed"
+  AttestationFormat_Tpm -> "tpm"
+  AttestationFormat_AndroidKey -> "android-key"
+  AttestationFormat_AndroidSafetynet -> "android-safetynet"
+  AttestationFormat_FidoU2f -> "fido-u2f"
+  AttestationFormat_Apple -> "apple"
+  AttestationFormat_None -> "none"
+
+attestationFormatCodec :: CJ.Codec AttestationFormat
+attestationFormatCodec = CJ.prismaticCodec "AttestationFormat" attestationFormat_dec attestationFormat_enc CJ.string
 
 -- | Map of extension outputs from the client
 -- |
@@ -104,17 +107,20 @@ derive instance ordAuthenticatorAttachment :: Ord AuthenticatorAttachment
 instance showAuthenticatorAttachment :: Show AuthenticatorAttachment where
   show = genericShow
 
-authenticatorAttachmentCodec :: CJ.Codec AuthenticatorAttachment
-authenticatorAttachmentCodec = CJ.prismaticCodec "AuthenticatorAttachment" dec enc CJ.string
-  where
-  dec = case _ of
-    "platform" -> Just AuthenticatorAttachment_Platform
-    "cross-platform" -> Just AuthenticatorAttachment_CrossPlatform
-    _ -> Nothing
+-- Extract dec / enc to top-level
+authenticatorAttachment_dec :: String -> Maybe AuthenticatorAttachment
+authenticatorAttachment_dec = case _ of
+  "platform" -> Just AuthenticatorAttachment_Platform
+  "cross-platform" -> Just AuthenticatorAttachment_CrossPlatform
+  _ -> Nothing
 
-  enc = case _ of
-    AuthenticatorAttachment_Platform -> "platform"
-    AuthenticatorAttachment_CrossPlatform -> "cross-platform"
+authenticatorAttachment_enc :: AuthenticatorAttachment -> String
+authenticatorAttachment_enc = case _ of
+  AuthenticatorAttachment_Platform -> "platform"
+  AuthenticatorAttachment_CrossPlatform -> "cross-platform"
+
+authenticatorAttachmentCodec :: CJ.Codec AuthenticatorAttachment
+authenticatorAttachmentCodec = CJ.prismaticCodec "AuthenticatorAttachment" authenticatorAttachment_dec authenticatorAttachment_enc CJ.string
 
 -- |
 -- | * `ClientDataJSON`: `String` - Base64url-encoded binary data
@@ -180,25 +186,28 @@ derive instance ordAuthenticatorTransport :: Ord AuthenticatorTransport
 instance showAuthenticatorTransport :: Show AuthenticatorTransport where
   show = genericShow
 
-authenticatorTransportCodec :: CJ.Codec AuthenticatorTransport
-authenticatorTransportCodec = CJ.prismaticCodec "AuthenticatorTransport" dec enc CJ.string
-  where
-  dec = case _ of
-    "usb" -> Just AuthenticatorTransport_Usb
-    "nfc" -> Just AuthenticatorTransport_Nfc
-    "ble" -> Just AuthenticatorTransport_Ble
-    "smart-card" -> Just AuthenticatorTransport_SmartCard
-    "hybrid" -> Just AuthenticatorTransport_Hybrid
-    "internal" -> Just AuthenticatorTransport_Internal
-    _ -> Nothing
+-- Extract dec / enc to top-level
+authenticatorTransport_dec :: String -> Maybe AuthenticatorTransport
+authenticatorTransport_dec = case _ of
+  "usb" -> Just AuthenticatorTransport_Usb
+  "nfc" -> Just AuthenticatorTransport_Nfc
+  "ble" -> Just AuthenticatorTransport_Ble
+  "smart-card" -> Just AuthenticatorTransport_SmartCard
+  "hybrid" -> Just AuthenticatorTransport_Hybrid
+  "internal" -> Just AuthenticatorTransport_Internal
+  _ -> Nothing
 
-  enc = case _ of
-    AuthenticatorTransport_Usb -> "usb"
-    AuthenticatorTransport_Nfc -> "nfc"
-    AuthenticatorTransport_Ble -> "ble"
-    AuthenticatorTransport_SmartCard -> "smart-card"
-    AuthenticatorTransport_Hybrid -> "hybrid"
-    AuthenticatorTransport_Internal -> "internal"
+authenticatorTransport_enc :: AuthenticatorTransport -> String
+authenticatorTransport_enc = case _ of
+  AuthenticatorTransport_Usb -> "usb"
+  AuthenticatorTransport_Nfc -> "nfc"
+  AuthenticatorTransport_Ble -> "ble"
+  AuthenticatorTransport_SmartCard -> "smart-card"
+  AuthenticatorTransport_Hybrid -> "hybrid"
+  AuthenticatorTransport_Internal -> "internal"
+
+authenticatorTransportCodec :: CJ.Codec AuthenticatorTransport
+authenticatorTransportCodec = CJ.prismaticCodec "AuthenticatorTransport" authenticatorTransport_dec authenticatorTransport_enc CJ.string
 
 -- | The attestation conveyance preference
 data ConveyancePreference
@@ -214,21 +223,24 @@ derive instance ordConveyancePreference :: Ord ConveyancePreference
 instance showConveyancePreference :: Show ConveyancePreference where
   show = genericShow
 
-conveyancePreferenceCodec :: CJ.Codec ConveyancePreference
-conveyancePreferenceCodec = CJ.prismaticCodec "ConveyancePreference" dec enc CJ.string
-  where
-  dec = case _ of
-    "none" -> Just ConveyancePreference_None
-    "indirect" -> Just ConveyancePreference_Indirect
-    "direct" -> Just ConveyancePreference_Direct
-    "enterprise" -> Just ConveyancePreference_Enterprise
-    _ -> Nothing
+-- Extract dec / enc to top-level
+conveyancePreference_dec :: String -> Maybe ConveyancePreference
+conveyancePreference_dec = case _ of
+  "none" -> Just ConveyancePreference_None
+  "indirect" -> Just ConveyancePreference_Indirect
+  "direct" -> Just ConveyancePreference_Direct
+  "enterprise" -> Just ConveyancePreference_Enterprise
+  _ -> Nothing
 
-  enc = case _ of
-    ConveyancePreference_None -> "none"
-    ConveyancePreference_Indirect -> "indirect"
-    ConveyancePreference_Direct -> "direct"
-    ConveyancePreference_Enterprise -> "enterprise"
+conveyancePreference_enc :: ConveyancePreference -> String
+conveyancePreference_enc = case _ of
+  ConveyancePreference_None -> "none"
+  ConveyancePreference_Indirect -> "indirect"
+  ConveyancePreference_Direct -> "direct"
+  ConveyancePreference_Enterprise -> "enterprise"
+
+conveyancePreferenceCodec :: CJ.Codec ConveyancePreference
+conveyancePreferenceCodec = CJ.prismaticCodec "ConveyancePreference" conveyancePreference_dec conveyancePreference_enc CJ.string
 
 -- |
 -- | * `ExpiresAt`: `String` - Expiration date of the PAT
@@ -352,15 +364,18 @@ derive instance ordCredentialType :: Ord CredentialType
 instance showCredentialType :: Show CredentialType where
   show = genericShow
 
-credentialTypeCodec :: CJ.Codec CredentialType
-credentialTypeCodec = CJ.prismaticCodec "CredentialType" dec enc CJ.string
-  where
-  dec = case _ of
-    "public-key" -> Just CredentialType_PublicKey
-    _ -> Nothing
+-- Extract dec / enc to top-level
+credentialType_dec :: String -> Maybe CredentialType
+credentialType_dec = case _ of
+  "public-key" -> Just CredentialType_PublicKey
+  _ -> Nothing
 
-  enc = case _ of
-    CredentialType_PublicKey -> "public-key"
+credentialType_enc :: CredentialType -> String
+credentialType_enc = case _ of
+  CredentialType_PublicKey -> "public-key"
+
+credentialTypeCodec :: CJ.Codec CredentialType
+credentialTypeCodec = CJ.prismaticCodec "CredentialType" credentialType_dec credentialType_enc CJ.string
 
 -- | Error code identifying the specific application error
 data ErrorResponseError
@@ -403,75 +418,78 @@ derive instance ordErrorResponseError :: Ord ErrorResponseError
 instance showErrorResponseError :: Show ErrorResponseError where
   show = genericShow
 
-errorResponseErrorCodec :: CJ.Codec ErrorResponseError
-errorResponseErrorCodec = CJ.prismaticCodec "ErrorResponseError" dec enc CJ.string
-  where
-  dec = case _ of
-    "default-role-must-be-in-allowed-roles" -> Just ErrorResponseError_DefaultRoleMustBeInAllowedRoles
-    "disabled-endpoint" -> Just ErrorResponseError_DisabledEndpoint
-    "disabled-user" -> Just ErrorResponseError_DisabledUser
-    "email-already-in-use" -> Just ErrorResponseError_EmailAlreadyInUse
-    "email-already-verified" -> Just ErrorResponseError_EmailAlreadyVerified
-    "forbidden-anonymous" -> Just ErrorResponseError_ForbiddenAnonymous
-    "internal-server-error" -> Just ErrorResponseError_InternalServerError
-    "invalid-email-password" -> Just ErrorResponseError_InvalidEmailPassword
-    "invalid-request" -> Just ErrorResponseError_InvalidRequest
-    "locale-not-allowed" -> Just ErrorResponseError_LocaleNotAllowed
-    "password-too-short" -> Just ErrorResponseError_PasswordTooShort
-    "password-in-hibp-database" -> Just ErrorResponseError_PasswordInHibpDatabase
-    "redirectTo-not-allowed" -> Just ErrorResponseError_RedirectToNotAllowed
-    "role-not-allowed" -> Just ErrorResponseError_RoleNotAllowed
-    "signup-disabled" -> Just ErrorResponseError_SignupDisabled
-    "unverified-user" -> Just ErrorResponseError_UnverifiedUser
-    "user-not-anonymous" -> Just ErrorResponseError_UserNotAnonymous
-    "invalid-pat" -> Just ErrorResponseError_InvalidPat
-    "invalid-refresh-token" -> Just ErrorResponseError_InvalidRefreshToken
-    "invalid-ticket" -> Just ErrorResponseError_InvalidTicket
-    "disabled-mfa-totp" -> Just ErrorResponseError_DisabledMfaTotp
-    "no-totp-secret" -> Just ErrorResponseError_NoTotpSecret
-    "invalid-totp" -> Just ErrorResponseError_InvalidTotp
-    "mfa-type-not-found" -> Just ErrorResponseError_MfaTypeNotFound
-    "totp-already-active" -> Just ErrorResponseError_TotpAlreadyActive
-    "invalid-state" -> Just ErrorResponseError_InvalidState
-    "oauth-token-echange-failed" -> Just ErrorResponseError_OauthTokenEchangeFailed
-    "oauth-profile-fetch-failed" -> Just ErrorResponseError_OauthProfileFetchFailed
-    "oauth-provider-error" -> Just ErrorResponseError_OauthProviderError
-    "invalid-otp" -> Just ErrorResponseError_InvalidOtp
-    "cannot-send-sms" -> Just ErrorResponseError_CannotSendSms
-    _ -> Nothing
+-- Extract dec / enc to top-level
+errorResponseError_dec :: String -> Maybe ErrorResponseError
+errorResponseError_dec = case _ of
+  "default-role-must-be-in-allowed-roles" -> Just ErrorResponseError_DefaultRoleMustBeInAllowedRoles
+  "disabled-endpoint" -> Just ErrorResponseError_DisabledEndpoint
+  "disabled-user" -> Just ErrorResponseError_DisabledUser
+  "email-already-in-use" -> Just ErrorResponseError_EmailAlreadyInUse
+  "email-already-verified" -> Just ErrorResponseError_EmailAlreadyVerified
+  "forbidden-anonymous" -> Just ErrorResponseError_ForbiddenAnonymous
+  "internal-server-error" -> Just ErrorResponseError_InternalServerError
+  "invalid-email-password" -> Just ErrorResponseError_InvalidEmailPassword
+  "invalid-request" -> Just ErrorResponseError_InvalidRequest
+  "locale-not-allowed" -> Just ErrorResponseError_LocaleNotAllowed
+  "password-too-short" -> Just ErrorResponseError_PasswordTooShort
+  "password-in-hibp-database" -> Just ErrorResponseError_PasswordInHibpDatabase
+  "redirectTo-not-allowed" -> Just ErrorResponseError_RedirectToNotAllowed
+  "role-not-allowed" -> Just ErrorResponseError_RoleNotAllowed
+  "signup-disabled" -> Just ErrorResponseError_SignupDisabled
+  "unverified-user" -> Just ErrorResponseError_UnverifiedUser
+  "user-not-anonymous" -> Just ErrorResponseError_UserNotAnonymous
+  "invalid-pat" -> Just ErrorResponseError_InvalidPat
+  "invalid-refresh-token" -> Just ErrorResponseError_InvalidRefreshToken
+  "invalid-ticket" -> Just ErrorResponseError_InvalidTicket
+  "disabled-mfa-totp" -> Just ErrorResponseError_DisabledMfaTotp
+  "no-totp-secret" -> Just ErrorResponseError_NoTotpSecret
+  "invalid-totp" -> Just ErrorResponseError_InvalidTotp
+  "mfa-type-not-found" -> Just ErrorResponseError_MfaTypeNotFound
+  "totp-already-active" -> Just ErrorResponseError_TotpAlreadyActive
+  "invalid-state" -> Just ErrorResponseError_InvalidState
+  "oauth-token-echange-failed" -> Just ErrorResponseError_OauthTokenEchangeFailed
+  "oauth-profile-fetch-failed" -> Just ErrorResponseError_OauthProfileFetchFailed
+  "oauth-provider-error" -> Just ErrorResponseError_OauthProviderError
+  "invalid-otp" -> Just ErrorResponseError_InvalidOtp
+  "cannot-send-sms" -> Just ErrorResponseError_CannotSendSms
+  _ -> Nothing
 
-  enc = case _ of
-    ErrorResponseError_DefaultRoleMustBeInAllowedRoles -> "default-role-must-be-in-allowed-roles"
-    ErrorResponseError_DisabledEndpoint -> "disabled-endpoint"
-    ErrorResponseError_DisabledUser -> "disabled-user"
-    ErrorResponseError_EmailAlreadyInUse -> "email-already-in-use"
-    ErrorResponseError_EmailAlreadyVerified -> "email-already-verified"
-    ErrorResponseError_ForbiddenAnonymous -> "forbidden-anonymous"
-    ErrorResponseError_InternalServerError -> "internal-server-error"
-    ErrorResponseError_InvalidEmailPassword -> "invalid-email-password"
-    ErrorResponseError_InvalidRequest -> "invalid-request"
-    ErrorResponseError_LocaleNotAllowed -> "locale-not-allowed"
-    ErrorResponseError_PasswordTooShort -> "password-too-short"
-    ErrorResponseError_PasswordInHibpDatabase -> "password-in-hibp-database"
-    ErrorResponseError_RedirectToNotAllowed -> "redirectTo-not-allowed"
-    ErrorResponseError_RoleNotAllowed -> "role-not-allowed"
-    ErrorResponseError_SignupDisabled -> "signup-disabled"
-    ErrorResponseError_UnverifiedUser -> "unverified-user"
-    ErrorResponseError_UserNotAnonymous -> "user-not-anonymous"
-    ErrorResponseError_InvalidPat -> "invalid-pat"
-    ErrorResponseError_InvalidRefreshToken -> "invalid-refresh-token"
-    ErrorResponseError_InvalidTicket -> "invalid-ticket"
-    ErrorResponseError_DisabledMfaTotp -> "disabled-mfa-totp"
-    ErrorResponseError_NoTotpSecret -> "no-totp-secret"
-    ErrorResponseError_InvalidTotp -> "invalid-totp"
-    ErrorResponseError_MfaTypeNotFound -> "mfa-type-not-found"
-    ErrorResponseError_TotpAlreadyActive -> "totp-already-active"
-    ErrorResponseError_InvalidState -> "invalid-state"
-    ErrorResponseError_OauthTokenEchangeFailed -> "oauth-token-echange-failed"
-    ErrorResponseError_OauthProfileFetchFailed -> "oauth-profile-fetch-failed"
-    ErrorResponseError_OauthProviderError -> "oauth-provider-error"
-    ErrorResponseError_InvalidOtp -> "invalid-otp"
-    ErrorResponseError_CannotSendSms -> "cannot-send-sms"
+errorResponseError_enc :: ErrorResponseError -> String
+errorResponseError_enc = case _ of
+  ErrorResponseError_DefaultRoleMustBeInAllowedRoles -> "default-role-must-be-in-allowed-roles"
+  ErrorResponseError_DisabledEndpoint -> "disabled-endpoint"
+  ErrorResponseError_DisabledUser -> "disabled-user"
+  ErrorResponseError_EmailAlreadyInUse -> "email-already-in-use"
+  ErrorResponseError_EmailAlreadyVerified -> "email-already-verified"
+  ErrorResponseError_ForbiddenAnonymous -> "forbidden-anonymous"
+  ErrorResponseError_InternalServerError -> "internal-server-error"
+  ErrorResponseError_InvalidEmailPassword -> "invalid-email-password"
+  ErrorResponseError_InvalidRequest -> "invalid-request"
+  ErrorResponseError_LocaleNotAllowed -> "locale-not-allowed"
+  ErrorResponseError_PasswordTooShort -> "password-too-short"
+  ErrorResponseError_PasswordInHibpDatabase -> "password-in-hibp-database"
+  ErrorResponseError_RedirectToNotAllowed -> "redirectTo-not-allowed"
+  ErrorResponseError_RoleNotAllowed -> "role-not-allowed"
+  ErrorResponseError_SignupDisabled -> "signup-disabled"
+  ErrorResponseError_UnverifiedUser -> "unverified-user"
+  ErrorResponseError_UserNotAnonymous -> "user-not-anonymous"
+  ErrorResponseError_InvalidPat -> "invalid-pat"
+  ErrorResponseError_InvalidRefreshToken -> "invalid-refresh-token"
+  ErrorResponseError_InvalidTicket -> "invalid-ticket"
+  ErrorResponseError_DisabledMfaTotp -> "disabled-mfa-totp"
+  ErrorResponseError_NoTotpSecret -> "no-totp-secret"
+  ErrorResponseError_InvalidTotp -> "invalid-totp"
+  ErrorResponseError_MfaTypeNotFound -> "mfa-type-not-found"
+  ErrorResponseError_TotpAlreadyActive -> "totp-already-active"
+  ErrorResponseError_InvalidState -> "invalid-state"
+  ErrorResponseError_OauthTokenEchangeFailed -> "oauth-token-echange-failed"
+  ErrorResponseError_OauthProfileFetchFailed -> "oauth-profile-fetch-failed"
+  ErrorResponseError_OauthProviderError -> "oauth-provider-error"
+  ErrorResponseError_InvalidOtp -> "invalid-otp"
+  ErrorResponseError_CannotSendSms -> "cannot-send-sms"
+
+errorResponseErrorCodec :: CJ.Codec ErrorResponseError
+errorResponseErrorCodec = CJ.prismaticCodec "ErrorResponseError" errorResponseError_dec errorResponseError_enc CJ.string
 
 -- | Standardized error response
 -- |
@@ -503,17 +521,20 @@ derive instance ordIdTokenProvider :: Ord IdTokenProvider
 instance showIdTokenProvider :: Show IdTokenProvider where
   show = genericShow
 
-idTokenProviderCodec :: CJ.Codec IdTokenProvider
-idTokenProviderCodec = CJ.prismaticCodec "IdTokenProvider" dec enc CJ.string
-  where
-  dec = case _ of
-    "apple" -> Just IdTokenProvider_Apple
-    "google" -> Just IdTokenProvider_Google
-    _ -> Nothing
+-- Extract dec / enc to top-level
+idTokenProvider_dec :: String -> Maybe IdTokenProvider
+idTokenProvider_dec = case _ of
+  "apple" -> Just IdTokenProvider_Apple
+  "google" -> Just IdTokenProvider_Google
+  _ -> Nothing
 
-  enc = case _ of
-    IdTokenProvider_Apple -> "apple"
-    IdTokenProvider_Google -> "google"
+idTokenProvider_enc :: IdTokenProvider -> String
+idTokenProvider_enc = case _ of
+  IdTokenProvider_Apple -> "apple"
+  IdTokenProvider_Google -> "google"
+
+idTokenProviderCodec :: CJ.Codec IdTokenProvider
+idTokenProviderCodec = CJ.prismaticCodec "IdTokenProvider" idTokenProvider_dec idTokenProvider_enc CJ.string
 
 -- | JSON Web Key for JWT verification
 -- |
@@ -596,15 +617,18 @@ derive instance ordOKResponse :: Ord OKResponse
 instance showOKResponse :: Show OKResponse where
   show = genericShow
 
-oKResponseCodec :: CJ.Codec OKResponse
-oKResponseCodec = CJ.prismaticCodec "OKResponse" dec enc CJ.string
-  where
-  dec = case _ of
-    "OK" -> Just OKResponse_OK
-    _ -> Nothing
+-- Extract dec / enc to top-level
+oKResponse_dec :: String -> Maybe OKResponse
+oKResponse_dec = case _ of
+  "OK" -> Just OKResponse_OK
+  _ -> Nothing
 
-  enc = case _ of
-    OKResponse_OK -> "OK"
+oKResponse_enc :: OKResponse -> String
+oKResponse_enc = case _ of
+  OKResponse_OK -> "OK"
+
+oKResponseCodec :: CJ.Codec OKResponse
+oKResponseCodec = CJ.prismaticCodec "OKResponse" oKResponse_dec oKResponse_enc CJ.string
 
 -- |
 -- | * `RedirectTo` (Optional): `Maybe String`
@@ -691,19 +715,22 @@ derive instance ordPublicKeyCredentialHints :: Ord PublicKeyCredentialHints
 instance showPublicKeyCredentialHints :: Show PublicKeyCredentialHints where
   show = genericShow
 
-publicKeyCredentialHintsCodec :: CJ.Codec PublicKeyCredentialHints
-publicKeyCredentialHintsCodec = CJ.prismaticCodec "PublicKeyCredentialHints" dec enc CJ.string
-  where
-  dec = case _ of
-    "security-key" -> Just PublicKeyCredentialHints_SecurityKey
-    "client-device" -> Just PublicKeyCredentialHints_ClientDevice
-    "hybrid" -> Just PublicKeyCredentialHints_Hybrid
-    _ -> Nothing
+-- Extract dec / enc to top-level
+publicKeyCredentialHints_dec :: String -> Maybe PublicKeyCredentialHints
+publicKeyCredentialHints_dec = case _ of
+  "security-key" -> Just PublicKeyCredentialHints_SecurityKey
+  "client-device" -> Just PublicKeyCredentialHints_ClientDevice
+  "hybrid" -> Just PublicKeyCredentialHints_Hybrid
+  _ -> Nothing
 
-  enc = case _ of
-    PublicKeyCredentialHints_SecurityKey -> "security-key"
-    PublicKeyCredentialHints_ClientDevice -> "client-device"
-    PublicKeyCredentialHints_Hybrid -> "hybrid"
+publicKeyCredentialHints_enc :: PublicKeyCredentialHints -> String
+publicKeyCredentialHints_enc = case _ of
+  PublicKeyCredentialHints_SecurityKey -> "security-key"
+  PublicKeyCredentialHints_ClientDevice -> "client-device"
+  PublicKeyCredentialHints_Hybrid -> "hybrid"
+
+publicKeyCredentialHintsCodec :: CJ.Codec PublicKeyCredentialHints
+publicKeyCredentialHintsCodec = CJ.prismaticCodec "PublicKeyCredentialHints" publicKeyCredentialHints_dec publicKeyCredentialHints_enc CJ.string
 
 -- |
 -- | * `Challenge`: `String` - Base64url-encoded binary data
@@ -776,19 +803,22 @@ derive instance ordResidentKeyRequirement :: Ord ResidentKeyRequirement
 instance showResidentKeyRequirement :: Show ResidentKeyRequirement where
   show = genericShow
 
-residentKeyRequirementCodec :: CJ.Codec ResidentKeyRequirement
-residentKeyRequirementCodec = CJ.prismaticCodec "ResidentKeyRequirement" dec enc CJ.string
-  where
-  dec = case _ of
-    "discouraged" -> Just ResidentKeyRequirement_Discouraged
-    "preferred" -> Just ResidentKeyRequirement_Preferred
-    "required" -> Just ResidentKeyRequirement_Required
-    _ -> Nothing
+-- Extract dec / enc to top-level
+residentKeyRequirement_dec :: String -> Maybe ResidentKeyRequirement
+residentKeyRequirement_dec = case _ of
+  "discouraged" -> Just ResidentKeyRequirement_Discouraged
+  "preferred" -> Just ResidentKeyRequirement_Preferred
+  "required" -> Just ResidentKeyRequirement_Required
+  _ -> Nothing
 
-  enc = case _ of
-    ResidentKeyRequirement_Discouraged -> "discouraged"
-    ResidentKeyRequirement_Preferred -> "preferred"
-    ResidentKeyRequirement_Required -> "required"
+residentKeyRequirement_enc :: ResidentKeyRequirement -> String
+residentKeyRequirement_enc = case _ of
+  ResidentKeyRequirement_Discouraged -> "discouraged"
+  ResidentKeyRequirement_Preferred -> "preferred"
+  ResidentKeyRequirement_Required -> "required"
+
+residentKeyRequirementCodec :: CJ.Codec ResidentKeyRequirement
+residentKeyRequirementCodec = CJ.prismaticCodec "ResidentKeyRequirement" residentKeyRequirement_dec residentKeyRequirement_enc CJ.string
 
 -- | User authentication session containing tokens and user information
 -- |
@@ -1242,17 +1272,20 @@ derive instance ordUserDeanonymizeRequestSignInMethod :: Ord UserDeanonymizeRequ
 instance showUserDeanonymizeRequestSignInMethod :: Show UserDeanonymizeRequestSignInMethod where
   show = genericShow
 
-userDeanonymizeRequestSignInMethodCodec :: CJ.Codec UserDeanonymizeRequestSignInMethod
-userDeanonymizeRequestSignInMethodCodec = CJ.prismaticCodec "UserDeanonymizeRequestSignInMethod" dec enc CJ.string
-  where
-  dec = case _ of
-    "email-password" -> Just UserDeanonymizeRequestSignInMethod_EmailPassword
-    "passwordless" -> Just UserDeanonymizeRequestSignInMethod_Passwordless
-    _ -> Nothing
+-- Extract dec / enc to top-level
+userDeanonymizeRequestSignInMethod_dec :: String -> Maybe UserDeanonymizeRequestSignInMethod
+userDeanonymizeRequestSignInMethod_dec = case _ of
+  "email-password" -> Just UserDeanonymizeRequestSignInMethod_EmailPassword
+  "passwordless" -> Just UserDeanonymizeRequestSignInMethod_Passwordless
+  _ -> Nothing
 
-  enc = case _ of
-    UserDeanonymizeRequestSignInMethod_EmailPassword -> "email-password"
-    UserDeanonymizeRequestSignInMethod_Passwordless -> "passwordless"
+userDeanonymizeRequestSignInMethod_enc :: UserDeanonymizeRequestSignInMethod -> String
+userDeanonymizeRequestSignInMethod_enc = case _ of
+  UserDeanonymizeRequestSignInMethod_EmailPassword -> "email-password"
+  UserDeanonymizeRequestSignInMethod_Passwordless -> "passwordless"
+
+userDeanonymizeRequestSignInMethodCodec :: CJ.Codec UserDeanonymizeRequestSignInMethod
+userDeanonymizeRequestSignInMethodCodec = CJ.prismaticCodec "UserDeanonymizeRequestSignInMethod" userDeanonymizeRequestSignInMethod_dec userDeanonymizeRequestSignInMethod_enc CJ.string
 
 -- |
 -- | * `SignInMethod`: `UserDeanonymizeRequestSignInMethod` - Which sign-in method to use
@@ -1338,17 +1371,20 @@ derive instance ordUserMfaRequestActiveMfaType :: Ord UserMfaRequestActiveMfaTyp
 instance showUserMfaRequestActiveMfaType :: Show UserMfaRequestActiveMfaType where
   show = genericShow
 
-userMfaRequestActiveMfaTypeCodec :: CJ.Codec UserMfaRequestActiveMfaType
-userMfaRequestActiveMfaTypeCodec = CJ.prismaticCodec "UserMfaRequestActiveMfaType" dec enc CJ.string
-  where
-  dec = case _ of
-    "totp" -> Just UserMfaRequestActiveMfaType_Totp
-    "" -> Just UserMfaRequestActiveMfaType_Empty
-    _ -> Nothing
+-- Extract dec / enc to top-level
+userMfaRequestActiveMfaType_dec :: String -> Maybe UserMfaRequestActiveMfaType
+userMfaRequestActiveMfaType_dec = case _ of
+  "totp" -> Just UserMfaRequestActiveMfaType_Totp
+  "" -> Just UserMfaRequestActiveMfaType_Empty
+  _ -> Nothing
 
-  enc = case _ of
-    UserMfaRequestActiveMfaType_Totp -> "totp"
-    UserMfaRequestActiveMfaType_Empty -> ""
+userMfaRequestActiveMfaType_enc :: UserMfaRequestActiveMfaType -> String
+userMfaRequestActiveMfaType_enc = case _ of
+  UserMfaRequestActiveMfaType_Totp -> "totp"
+  UserMfaRequestActiveMfaType_Empty -> ""
+
+userMfaRequestActiveMfaTypeCodec :: CJ.Codec UserMfaRequestActiveMfaType
+userMfaRequestActiveMfaTypeCodec = CJ.prismaticCodec "UserMfaRequestActiveMfaType" userMfaRequestActiveMfaType_dec userMfaRequestActiveMfaType_enc CJ.string
 
 -- | Request to activate or deactivate multi-factor authentication
 -- |
@@ -1409,19 +1445,22 @@ derive instance ordUserVerificationRequirement :: Ord UserVerificationRequiremen
 instance showUserVerificationRequirement :: Show UserVerificationRequirement where
   show = genericShow
 
-userVerificationRequirementCodec :: CJ.Codec UserVerificationRequirement
-userVerificationRequirementCodec = CJ.prismaticCodec "UserVerificationRequirement" dec enc CJ.string
-  where
-  dec = case _ of
-    "required" -> Just UserVerificationRequirement_Required
-    "preferred" -> Just UserVerificationRequirement_Preferred
-    "discouraged" -> Just UserVerificationRequirement_Discouraged
-    _ -> Nothing
+-- Extract dec / enc to top-level
+userVerificationRequirement_dec :: String -> Maybe UserVerificationRequirement
+userVerificationRequirement_dec = case _ of
+  "required" -> Just UserVerificationRequirement_Required
+  "preferred" -> Just UserVerificationRequirement_Preferred
+  "discouraged" -> Just UserVerificationRequirement_Discouraged
+  _ -> Nothing
 
-  enc = case _ of
-    UserVerificationRequirement_Required -> "required"
-    UserVerificationRequirement_Preferred -> "preferred"
-    UserVerificationRequirement_Discouraged -> "discouraged"
+userVerificationRequirement_enc :: UserVerificationRequirement -> String
+userVerificationRequirement_enc = case _ of
+  UserVerificationRequirement_Required -> "required"
+  UserVerificationRequirement_Preferred -> "preferred"
+  UserVerificationRequirement_Discouraged -> "discouraged"
+
+userVerificationRequirementCodec :: CJ.Codec UserVerificationRequirement
+userVerificationRequirementCodec = CJ.prismaticCodec "UserVerificationRequirement" userVerificationRequirement_dec userVerificationRequirement_enc CJ.string
 
 -- |
 -- | * `Credential`: `CredentialCreationResponse`
@@ -1502,43 +1541,46 @@ derive instance ordSignInProvider :: Ord SignInProvider
 instance showSignInProvider :: Show SignInProvider where
   show = genericShow
 
-signInProviderCodec :: CJ.Codec SignInProvider
-signInProviderCodec = CJ.prismaticCodec "SignInProvider" dec enc CJ.string
-  where
-  dec = case _ of
-    "apple" -> Just SignInProvider_Apple
-    "github" -> Just SignInProvider_Github
-    "google" -> Just SignInProvider_Google
-    "linkedin" -> Just SignInProvider_Linkedin
-    "discord" -> Just SignInProvider_Discord
-    "spotify" -> Just SignInProvider_Spotify
-    "twitch" -> Just SignInProvider_Twitch
-    "gitlab" -> Just SignInProvider_Gitlab
-    "bitbucket" -> Just SignInProvider_Bitbucket
-    "workos" -> Just SignInProvider_Workos
-    "azuread" -> Just SignInProvider_Azuread
-    "strava" -> Just SignInProvider_Strava
-    "facebook" -> Just SignInProvider_Facebook
-    "windowslive" -> Just SignInProvider_Windowslive
-    "twitter" -> Just SignInProvider_Twitter
-    _ -> Nothing
+-- Extract dec / enc to top-level
+signInProvider_dec :: String -> Maybe SignInProvider
+signInProvider_dec = case _ of
+  "apple" -> Just SignInProvider_Apple
+  "github" -> Just SignInProvider_Github
+  "google" -> Just SignInProvider_Google
+  "linkedin" -> Just SignInProvider_Linkedin
+  "discord" -> Just SignInProvider_Discord
+  "spotify" -> Just SignInProvider_Spotify
+  "twitch" -> Just SignInProvider_Twitch
+  "gitlab" -> Just SignInProvider_Gitlab
+  "bitbucket" -> Just SignInProvider_Bitbucket
+  "workos" -> Just SignInProvider_Workos
+  "azuread" -> Just SignInProvider_Azuread
+  "strava" -> Just SignInProvider_Strava
+  "facebook" -> Just SignInProvider_Facebook
+  "windowslive" -> Just SignInProvider_Windowslive
+  "twitter" -> Just SignInProvider_Twitter
+  _ -> Nothing
 
-  enc = case _ of
-    SignInProvider_Apple -> "apple"
-    SignInProvider_Github -> "github"
-    SignInProvider_Google -> "google"
-    SignInProvider_Linkedin -> "linkedin"
-    SignInProvider_Discord -> "discord"
-    SignInProvider_Spotify -> "spotify"
-    SignInProvider_Twitch -> "twitch"
-    SignInProvider_Gitlab -> "gitlab"
-    SignInProvider_Bitbucket -> "bitbucket"
-    SignInProvider_Workos -> "workos"
-    SignInProvider_Azuread -> "azuread"
-    SignInProvider_Strava -> "strava"
-    SignInProvider_Facebook -> "facebook"
-    SignInProvider_Windowslive -> "windowslive"
-    SignInProvider_Twitter -> "twitter"
+signInProvider_enc :: SignInProvider -> String
+signInProvider_enc = case _ of
+  SignInProvider_Apple -> "apple"
+  SignInProvider_Github -> "github"
+  SignInProvider_Google -> "google"
+  SignInProvider_Linkedin -> "linkedin"
+  SignInProvider_Discord -> "discord"
+  SignInProvider_Spotify -> "spotify"
+  SignInProvider_Twitch -> "twitch"
+  SignInProvider_Gitlab -> "gitlab"
+  SignInProvider_Bitbucket -> "bitbucket"
+  SignInProvider_Workos -> "workos"
+  SignInProvider_Azuread -> "azuread"
+  SignInProvider_Strava -> "strava"
+  SignInProvider_Facebook -> "facebook"
+  SignInProvider_Windowslive -> "windowslive"
+  SignInProvider_Twitter -> "twitter"
+
+signInProviderCodec :: CJ.Codec SignInProvider
+signInProviderCodec = CJ.prismaticCodec "SignInProvider" signInProvider_dec signInProvider_enc CJ.string
 
 -- | Ticket
 newtype TicketQuery = TicketQuery String
@@ -1567,21 +1609,24 @@ derive instance ordTicketTypeQuery :: Ord TicketTypeQuery
 instance showTicketTypeQuery :: Show TicketTypeQuery where
   show = genericShow
 
-ticketTypeQueryCodec :: CJ.Codec TicketTypeQuery
-ticketTypeQueryCodec = CJ.prismaticCodec "TicketTypeQuery" dec enc CJ.string
-  where
-  dec = case _ of
-    "emailVerify" -> Just TicketTypeQuery_EmailVerify
-    "emailConfirmChange" -> Just TicketTypeQuery_EmailConfirmChange
-    "signinPasswordless" -> Just TicketTypeQuery_SigninPasswordless
-    "passwordReset" -> Just TicketTypeQuery_PasswordReset
-    _ -> Nothing
+-- Extract dec / enc to top-level
+ticketTypeQuery_dec :: String -> Maybe TicketTypeQuery
+ticketTypeQuery_dec = case _ of
+  "emailVerify" -> Just TicketTypeQuery_EmailVerify
+  "emailConfirmChange" -> Just TicketTypeQuery_EmailConfirmChange
+  "signinPasswordless" -> Just TicketTypeQuery_SigninPasswordless
+  "passwordReset" -> Just TicketTypeQuery_PasswordReset
+  _ -> Nothing
 
-  enc = case _ of
-    TicketTypeQuery_EmailVerify -> "emailVerify"
-    TicketTypeQuery_EmailConfirmChange -> "emailConfirmChange"
-    TicketTypeQuery_SigninPasswordless -> "signinPasswordless"
-    TicketTypeQuery_PasswordReset -> "passwordReset"
+ticketTypeQuery_enc :: TicketTypeQuery -> String
+ticketTypeQuery_enc = case _ of
+  TicketTypeQuery_EmailVerify -> "emailVerify"
+  TicketTypeQuery_EmailConfirmChange -> "emailConfirmChange"
+  TicketTypeQuery_SigninPasswordless -> "signinPasswordless"
+  TicketTypeQuery_PasswordReset -> "passwordReset"
+
+ticketTypeQueryCodec :: CJ.Codec TicketTypeQuery
+ticketTypeQueryCodec = CJ.prismaticCodec "TicketTypeQuery" ticketTypeQuery_dec ticketTypeQuery_enc CJ.string
 
 -- |
 -- | * `Version`: `String` - The version of the authentication service
@@ -1821,7 +1866,7 @@ type SignInPATFn fetchResponse = SignInPATRequest -> Aff (fetchResponse SessionP
 -- |
 -- | Possible responses:
 -- |   - 302: Unit
-type SignInProviderFn = SignInProvider -> Maybe SignInProviderParams -> String
+type SignInProviderFn mkUrlOutput = SignInProvider -> Maybe SignInProviderParams -> mkUrlOutput
 
 -- | SignInWebauthn
 -- |
@@ -2001,7 +2046,7 @@ type VerifyAddSecurityKeyFn fetchResponse = VerifyAddSecurityKeyRequest -> Aff (
 -- |
 -- | Possible responses:
 -- |   - 302: Unit
-type VerifyTicketFn = Maybe VerifyTicketParams -> String
+type VerifyTicketFn mkUrlOutput = Maybe VerifyTicketParams -> mkUrlOutput
 
 -- | GetVersion
 -- |
@@ -2014,8 +2059,8 @@ type VerifyTicketFn = Maybe VerifyTicketParams -> String
 type GetVersionFn fetchResponse = Aff (fetchResponse GetVersionResponse200)
 
 -- | API Client type
-type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type
-type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD =
+type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type -> Type
+type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD mkUrlOutput =
   { getJWKs :: GetJWKsFn fetchResponseGET
   , elevateWebauthn :: ElevateWebauthnFn fetchResponsePOST
   , verifyElevateWebauthn :: VerifyElevateWebauthnFn fetchResponsePOST
@@ -2034,7 +2079,7 @@ type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponse
   , signInPasswordlessSms :: SignInPasswordlessSmsFn fetchResponsePOST
   , verifySignInPasswordlessSms :: VerifySignInPasswordlessSmsFn fetchResponsePOST
   , signInPAT :: SignInPATFn fetchResponsePOST
-  , signInProvider :: SignInProviderFn
+  , signInProvider :: SignInProviderFn mkUrlOutput
   , signInWebauthn :: SignInWebauthnFn fetchResponsePOST
   , verifySignInWebauthn :: VerifySignInWebauthnFn fetchResponsePOST
   , signOut :: SignOutFn fetchResponsePOST
@@ -2052,6 +2097,6 @@ type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponse
   , sendPasswordResetEmail :: SendPasswordResetEmailFn fetchResponsePOST
   , addSecurityKey :: AddSecurityKeyFn fetchResponsePOST
   , verifyAddSecurityKey :: VerifyAddSecurityKeyFn fetchResponsePOST
-  , verifyTicket :: VerifyTicketFn
+  , verifyTicket :: VerifyTicketFn mkUrlOutput
   , getVersion :: GetVersionFn fetchResponseGET
   }

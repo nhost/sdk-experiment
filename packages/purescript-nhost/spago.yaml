@@ -9,6 +9,8 @@ package:
     - json
     - codec-json
     - fetch
+    - js-uri
+    - ordered-collections
     # - affjax
     # - argonaut-core
     # - argonaut-codecs

@@ -79,27 +79,30 @@ derive instance ord{{ .Name }} :: Ord {{ .Name }}
 instance show{{ .Name }} :: Show {{ .Name }} where
   show = genericShow
 
-{{ lowerFirst .Name }}Codec :: CJ.Codec {{ .Name }}
-{{ lowerFirst .Name }}Codec = CJ.prismaticCodec "{{ .Name }}" dec enc CJ.string
-  where
-    dec = case _ of
+-- Extract dec / enc to top-level
+{{ lowerFirst .Name }}_dec :: String -> Maybe {{ .Name }}
+{{ lowerFirst .Name }}_dec = case _ of
 {{- range $value := .Values }}
-      {{- if eq $value "" }}
-      "" -> Just {{ $type.Name }}_Empty
-      {{- else }}
-      "{{ $value }}" -> Just {{ $type.Name }}_{{ ToCamelCase $value }}
-      {{- end }}
+  {{- if eq $value "" }}
+  "" -> Just {{ $type.Name }}_Empty
+  {{- else }}
+  "{{ $value }}" -> Just {{ $type.Name }}_{{ ToCamelCase $value }}
+  {{- end }}
 {{- end }}
-      _ -> Nothing
+  _ -> Nothing
 
-    enc = case _ of
+{{ lowerFirst .Name }}_enc :: {{ .Name }} -> String
+{{ lowerFirst .Name }}_enc = case _ of
 {{- range $value := .Values }}
-      {{- if eq $value "" }}
-      {{ $type.Name }}_Empty -> ""
-      {{- else }}
-      {{ $type.Name }}_{{ ToCamelCase $value }} -> "{{ $value }}"
-      {{- end }}
+  {{- if eq $value "" }}
+  {{ $type.Name }}_Empty -> ""
+  {{- else }}
+  {{ $type.Name }}_{{ ToCamelCase $value }} -> "{{ $value }}"
+  {{- end }}
 {{- end }}
+
+{{ lowerFirst .Name }}Codec :: CJ.Codec {{ .Name }}
+{{ lowerFirst .Name }}Codec = CJ.prismaticCodec "{{ .Name }}" {{ lowerFirst .Name }}_dec {{ lowerFirst .Name }}_enc CJ.string
 {{- end }}
 
 {{- define "renderAlias" -}}

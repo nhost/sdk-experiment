@@ -1,5 +1,5 @@
 -- | This file is auto-generated. Do not edit manually.
-module Storage.Client where
+module Nhost.Storage.Client where
 
 import Prelude
 
@@ -233,25 +233,28 @@ derive instance ordOutputImageFormat :: Ord OutputImageFormat
 instance showOutputImageFormat :: Show OutputImageFormat where
   show = genericShow
 
-outputImageFormatCodec :: CJ.Codec OutputImageFormat
-outputImageFormatCodec = CJ.prismaticCodec "OutputImageFormat" dec enc CJ.string
-  where
-  dec = case _ of
-    "auto" -> Just OutputImageFormat_Auto
-    "same" -> Just OutputImageFormat_Same
-    "jpeg" -> Just OutputImageFormat_Jpeg
-    "webp" -> Just OutputImageFormat_Webp
-    "png" -> Just OutputImageFormat_Png
-    "avif" -> Just OutputImageFormat_Avif
-    _ -> Nothing
+-- Extract dec / enc to top-level
+outputImageFormat_dec :: String -> Maybe OutputImageFormat
+outputImageFormat_dec = case _ of
+  "auto" -> Just OutputImageFormat_Auto
+  "same" -> Just OutputImageFormat_Same
+  "jpeg" -> Just OutputImageFormat_Jpeg
+  "webp" -> Just OutputImageFormat_Webp
+  "png" -> Just OutputImageFormat_Png
+  "avif" -> Just OutputImageFormat_Avif
+  _ -> Nothing
 
-  enc = case _ of
-    OutputImageFormat_Auto -> "auto"
-    OutputImageFormat_Same -> "same"
-    OutputImageFormat_Jpeg -> "jpeg"
-    OutputImageFormat_Webp -> "webp"
-    OutputImageFormat_Png -> "png"
-    OutputImageFormat_Avif -> "avif"
+outputImageFormat_enc :: OutputImageFormat -> String
+outputImageFormat_enc = case _ of
+  OutputImageFormat_Auto -> "auto"
+  OutputImageFormat_Same -> "same"
+  OutputImageFormat_Jpeg -> "jpeg"
+  OutputImageFormat_Webp -> "webp"
+  OutputImageFormat_Png -> "png"
+  OutputImageFormat_Avif -> "avif"
+
+outputImageFormatCodec :: CJ.Codec OutputImageFormat
+outputImageFormatCodec = CJ.prismaticCodec "OutputImageFormat" outputImageFormat_dec outputImageFormat_enc CJ.string
 
 -- |
 -- | * `BucketId` (Optional): `Maybe String` - Target bucket identifier where files will be stored.
@@ -519,8 +522,8 @@ type ListOrphanedFilesFn fetchResponse = Aff (fetchResponse ListOrphanedFilesRes
 type GetVersionFn fetchResponse = Aff (fetchResponse VersionInformation)
 
 -- | API Client type
-type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type
-type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD =
+type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type -> Type
+type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD mkUrlOutput =
   { uploadFiles :: UploadFilesFn fetchResponsePOST
   , deleteFile :: DeleteFileFn fetchResponseDELETE
   , getFile :: GetFileFn fetchResponseGET

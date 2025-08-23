@@ -10,7 +10,9 @@
             "console",
             "effect",
             "fetch",
+            "js-uri",
             "json",
+            "ordered-collections",
             "prelude",
             "web-file"
           ],
@@ -46,6 +48,7 @@
             "js-fetch",
             "js-promise",
             "js-promise-aff",
+            "js-uri",
             "json",
             "lazy",
             "lists",
@@ -1062,6 +1065,15 @@
         "aff",
         "foreign",
         "js-promise"
+      ]
+    },
+    "js-uri": {
+      "type": "registry",
+      "version": "3.1.0",
+      "integrity": "sha256-3p0ynHveCJmC2CXze+eMBdW/2l5e953Q8XMAKz+jxUo=",
+      "dependencies": [
+        "functions",
+        "maybe"
       ]
     },
     "json": {

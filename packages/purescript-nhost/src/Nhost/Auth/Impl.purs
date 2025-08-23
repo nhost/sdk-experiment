@@ -1,25 +1,25 @@
-module Auth.Impl where
+module Nhost.Auth.Impl where
 
-import Auth.Client
+import Nhost.Auth.Client (APIClient, SignInProviderParams, VerifyTicketParams, createPATRequestCodec, createPATResponseCodec, getVersionResponse200Codec, jWKSetCodec, linkIdTokenRequestCodec, oKResponseCodec, publicKeyCredentialCreationOptionsCodec, publicKeyCredentialRequestOptionsCodec, refreshTokenRequestCodec, sessionCodec, sessionPayloadCodec, signInAnonymousRequestCodec, signInEmailPasswordRequestCodec, signInEmailPasswordResponseCodec, signInIdTokenRequestCodec, signInMfaTotpRequestCodec, signInOTPEmailRequestCodec, signInOTPEmailVerifyRequestCodec, signInOTPEmailVerifyResponseCodec, signInPATRequestCodec, signInPasswordlessEmailRequestCodec, signInPasswordlessSmsOtpRequestCodec, signInPasswordlessSmsOtpResponseCodec, signInPasswordlessSmsRequestCodec, signInProvider_enc, signInWebauthnRequestCodec, signInWebauthnVerifyRequestCodec, signOutRequestCodec, signUpEmailPasswordRequestCodec, signUpWebauthnRequestCodec, signUpWebauthnVerifyRequestCodec, ticketTypeQuery_enc, totpGenerateResponseCodec, userCodec, userDeanonymizeRequestCodec, userEmailChangeRequestCodec, userEmailSendVerificationEmailRequestCodec, userMfaRequestCodec, userPasswordRequestCodec, userPasswordResetRequestCodec, verifyAddSecurityKeyRequestCodec, verifyAddSecurityKeyResponseCodec, verifyTokenRequestCodec)
 import Prelude
 
-import Data.Array (elem)
+import Data.Array as Array
+import Data.Array.NonEmpty (NonEmptyArray)
+import Data.Codec.JSON as CJ
 import Data.Codec.JSON as J
-import Data.Either (Either(..), either)
+import Data.Either (Either(..))
 import Data.HTTP.Method (Method(..))
-import Data.Map as Map
-import Data.Maybe (Maybe(..), maybe)
+import Data.Maybe (Maybe(..))
+import Data.Newtype (unwrap)
 import Data.String as String
-import Data.String.CaseInsensitive (CaseInsensitiveString(..))
-import Effect.Aff (Aff, throwError)
-import Effect.Exception (error)
+import Data.String.NonEmpty (NonEmptyString)
+import Data.Tuple (Tuple(..))
+import Effect.Aff (Aff)
 import Fetch as Fetch
-import Foreign (Foreign, unsafeFromForeign, unsafeToForeign)
-import JS.Fetch.Headers as Headers
-import JS.Fetch.RequestBody as JS.Fetch.RequestBody
+import Foreign (Foreign, unsafeFromForeign)
 import JSON (JSON)
 import JSON as JSON
-import Unsafe.Coerce (unsafeCoerce)
+import Nhost.Query (mkUrlWithMaybeQuery)
 
 data FetchResponse a
   = FetchResponse_JsonDecodeError Fetch.Response J.DecodeError
@@ -47,8 +47,7 @@ makeRequestGet baseURL url codec = do
       pure $ FetchResponse_JsonDecodeError response decodeErr
 
 makeRequestHead
-  :: forall a
-   . String -- base url
+  :: String -- base url
   -> String -- url
   -> Aff Fetch.Response
 makeRequestHead baseURL url = do
@@ -97,8 +96,60 @@ makeRequestPostWithBody baseURL url codecReq codecRes body = do
     Left decodeErr ->
       pure $ FetchResponse_JsonDecodeError response decodeErr
 
+-- POST (with request body)
+makeRequestPostWithMaybeBody
+  :: forall a b
+   . String -- base url
+  -> String -- url
+  -> J.Codec b -- request body codec
+  -> J.Codec a -- response body codec
+  -> Maybe b -- request body value
+  -> Aff (FetchResponse a)
+makeRequestPostWithMaybeBody baseURL url codecReq codecRes = case _ of
+  Just body -> makeRequestPostWithBody baseURL url codecReq codecRes body
+  Nothing -> makeRequestPostWithoutBody baseURL url codecRes
+
+-- | Convert SignInProviderParams to query string
+signInProviderParamsToQuery
+  :: String
+  -> Maybe SignInProviderParams
+  -> Either (NonEmptyArray NonEmptyString) String
+signInProviderParamsToQuery baseUrl Nothing = Right baseUrl
+signInProviderParamsToQuery baseUrl (Just params) =
+  let
+    kvs = Array.catMaybes
+      [ params."allowedRoles" >>= \roles ->
+          if Array.null roles then Nothing
+          else Just (Tuple "allowedRoles" (String.joinWith "," roles))
+      , params."defaultRole" <#> \role -> Tuple "defaultRole" role
+      , params."displayName" <#> \name -> Tuple "displayName" name
+      , params."locale" <#> \locale -> Tuple "locale" locale
+      , params."metadata" <#> \metadata -> Tuple "metadata" (JSON.print (JSON.fromJObject metadata))
+      , params."redirectTo" <#> \redirect -> Tuple "redirectTo" redirect
+      , params."connect" <#> \connect -> Tuple "connect" connect
+      ]
+  in
+    mkUrlWithMaybeQuery baseUrl kvs
+
+verifyTicketParamsToQuery
+  :: String
+  -> Maybe VerifyTicketParams
+  -> Either (NonEmptyArray NonEmptyString) String
+verifyTicketParamsToQuery baseUrl Nothing = Right baseUrl
+verifyTicketParamsToQuery baseUrl (Just params) =
+  let
+    kvs = Array.catMaybes
+      [ Just (Tuple "ticket" (unwrap params."ticket"))
+      , params."type" <#> \ticketType -> Tuple "type" (ticketTypeQuery_enc ticketType)
+      , Just (Tuple "redirectTo" (unwrap params."redirectTo"))
+      ]
+  in
+    mkUrlWithMaybeQuery baseUrl kvs
+
+type MkUrlOutput = Either (NonEmptyArray NonEmptyString) String
+
 -- | Create API client with base URL and optional middleware
-createAPIClient :: String -> APIClient FetchResponse FetchResponse FetchResponse Fetch.Response Fetch.Response
+createAPIClient :: String -> APIClient FetchResponse FetchResponse FetchResponse Fetch.Response Fetch.Response MkUrlOutput
 createAPIClient baseURL =
   { getJWKs: makeRequestGet baseURL "/.well-known/jwks.json" jWKSetCodec
   , elevateWebauthn: makeRequestPostWithoutBody baseURL "/elevate/webauthn" publicKeyCredentialRequestOptionsCodec
@@ -108,7 +159,7 @@ createAPIClient baseURL =
   , linkIdToken: makeRequestPostWithBody baseURL "/link/idtoken" linkIdTokenRequestCodec oKResponseCodec
   , changeUserMfa: makeRequestGet baseURL "/mfa/totp/generate" totpGenerateResponseCodec
   , createPAT: makeRequestPostWithBody baseURL "/pat" createPATRequestCodec createPATResponseCodec
-  , signInAnonymous: makeRequestPostWithBody baseURL "/signin/anonymous" signInAnonymousRequestCodec sessionPayloadCodec
+  , signInAnonymous: makeRequestPostWithMaybeBody baseURL "/signin/anonymous" signInAnonymousRequestCodec sessionPayloadCodec
   , signInEmailPassword: makeRequestPostWithBody baseURL "/signin/email-password" signInEmailPasswordRequestCodec signInEmailPasswordResponseCodec
   , signInIdToken: makeRequestPostWithBody baseURL "/signin/idtoken" signInIdTokenRequestCodec sessionPayloadCodec
   , verifySignInMfaTotp: makeRequestPostWithBody baseURL "/signin/mfa/totp" signInMfaTotpRequestCodec sessionPayloadCodec
@@ -118,27 +169,15 @@ createAPIClient baseURL =
   , signInPasswordlessSms: makeRequestPostWithBody baseURL "/signin/passwordless/sms" signInPasswordlessSmsRequestCodec oKResponseCodec
   , verifySignInPasswordlessSms: makeRequestPostWithBody baseURL "/signin/passwordless/sms/otp" signInPasswordlessSmsOtpRequestCodec signInPasswordlessSmsOtpResponseCodec
   , signInPAT: makeRequestPostWithBody baseURL "/signin/pat" signInPATRequestCodec sessionPayloadCodec
-  , signInProvider: \provider maybeParams ->
-      let
-        paramString =
-          maybe ""
-            (\params ->
-               let encodedParams = J.encode signInProviderParamsCodec params
-               in "?" <> show encodedParams
-            )
-            maybeParams
-
-        providerStr = J.encode signInProviderCodec provider
-      in
-        baseURL <> "/signin/provider/" <> providerStr <> paramString
-  , signInWebauthn: makeRequestPostWithBody baseURL "/signin/webauthn" signInWebauthnRequestCodec publicKeyCredentialRequestOptionsCodec
+  , signInProvider: \provider -> signInProviderParamsToQuery (baseURL <> "/signin/provider/" <> signInProvider_enc provider)
+  , signInWebauthn: makeRequestPostWithMaybeBody baseURL "/signin/webauthn" signInWebauthnRequestCodec publicKeyCredentialRequestOptionsCodec
   , verifySignInWebauthn: makeRequestPostWithBody baseURL "/signin/webauthn/verify" signInWebauthnVerifyRequestCodec sessionPayloadCodec
   , signOut: makeRequestPostWithBody baseURL "/signout" signOutRequestCodec oKResponseCodec
   , signUpEmailPassword: makeRequestPostWithBody baseURL "/signup/email-password" signUpEmailPasswordRequestCodec sessionPayloadCodec
   , signUpWebauthn: makeRequestPostWithBody baseURL "/signup/webauthn" signUpWebauthnRequestCodec publicKeyCredentialCreationOptionsCodec
   , verifySignUpWebauthn: makeRequestPostWithBody baseURL "/signup/webauthn/verify" signUpWebauthnVerifyRequestCodec sessionPayloadCodec
   , refreshToken: makeRequestPostWithBody baseURL "/token" refreshTokenRequestCodec sessionCodec
-  , verifyToken: makeRequestPostWithBody baseURL "/token/verify" verifyTokenRequestCodec unit
+  , verifyToken: makeRequestPostWithMaybeBody baseURL "/token/verify" verifyTokenRequestCodec CJ.string
   , getUser: makeRequestGet baseURL "/user" userCodec
   , deanonymizeUser: makeRequestPostWithBody baseURL "/user/deanonymize" userDeanonymizeRequestCodec oKResponseCodec
   , changeUserEmail: makeRequestPostWithBody baseURL "/user/email/change" userEmailChangeRequestCodec oKResponseCodec
@@ -148,10 +187,6 @@ createAPIClient baseURL =
   , sendPasswordResetEmail: makeRequestPostWithBody baseURL "/user/password/reset" userPasswordResetRequestCodec oKResponseCodec
   , addSecurityKey: makeRequestPostWithoutBody baseURL "/user/webauthn/add" publicKeyCredentialCreationOptionsCodec
   , verifyAddSecurityKey: makeRequestPostWithBody baseURL "/user/webauthn/verify" verifyAddSecurityKeyRequestCodec verifyAddSecurityKeyResponseCodec
-  , verifyTicket: \maybeParams ->
-      let
-        paramString = maybe "" (\params -> "?" <> show (J.encode verifyTicketParamsCodec params)) maybeParams
-      in
-        baseURL <> "/verify" <> paramString
+  , verifyTicket: verifyTicketParamsToQuery (baseURL <> "/verify")
   , getVersion: makeRequestGet baseURL "/version" getVersionResponse200Codec
   }
