@@ -65,7 +65,7 @@ type MkUrlOutput = Either (NonEmptyArray NonEmptyString) String
 createAPIClient :: String -> APIClient FetchResponse FetchResponse FetchResponse Fetch.Response Fetch.Response MkUrlOutput
 createAPIClient baseURL =
   { getJWKs: makeRequestGet baseURL getJWKsPath jWKSetCodec
-  , elevateWebauthn: makeRequestPostWithoutBody baseURL elevateWebauthnPath publicKeyCredentialCreationOptionsCodec
+  , elevateWebauthn: makeRequestPostWithoutBody baseURL elevateWebauthnPath publicKeyCredentialRequestOptionsCodec
   , verifyElevateWebauthn: makeRequestPostWithBody baseURL verifyElevateWebauthnPath signInWebauthnVerifyRequestCodec sessionPayloadCodec
   , healthCheckGet: makeRequestGet baseURL healthCheckGetPath oKResponseCodec
   , healthCheckHead: makeRequestHead baseURL healthCheckHeadPath
@@ -82,7 +82,7 @@ createAPIClient baseURL =
   , signInPasswordlessSms: makeRequestPostWithBody baseURL signInPasswordlessSmsPath signInPasswordlessSmsRequestCodec oKResponseCodec
   , verifySignInPasswordlessSms: makeRequestPostWithBody baseURL verifySignInPasswordlessSmsPath signInPasswordlessSmsOtpRequestCodec signInPasswordlessSmsOtpResponseCodec
   , signInPAT: makeRequestPostWithBody baseURL signInPATPath signInPATRequestCodec sessionPayloadCodec
-  , signInProvider: \provider -> signInProviderParamsToQuery (baseURL <> "/signin/provider/" <> signInProvider_enc provider) -- dynamic path still
+  , signInProvider: \provider -> signInProviderParamsToQuery (baseURL <> signInProviderPath (signInProvider_enc provider)) -- dynamic path still
   , signInWebauthn: makeRequestPostWithMaybeBody baseURL signInWebauthnPath signInWebauthnRequestCodec publicKeyCredentialRequestOptionsCodec
   , verifySignInWebauthn: makeRequestPostWithBody baseURL verifySignInWebauthnPath signInWebauthnVerifyRequestCodec sessionPayloadCodec
   , signOut: makeRequestPostWithBody baseURL signOutPath signOutRequestCodec oKResponseCodec
