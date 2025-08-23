@@ -49,4 +49,6 @@ type {{ ToCamelCase .Name }}Params =
 {{ template "apiMethodType" . }}
 {{- end }}
 
+{{ template "apiPaths" . }}
+
 {{ template "client_interface" . }}

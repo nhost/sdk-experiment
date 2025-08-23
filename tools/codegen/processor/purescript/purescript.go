@@ -24,7 +24,8 @@ func (p *Purescript) GetTemplates() fs.FS {
 func (p *Purescript) GetFuncMap() map[string]any {
 	return map[string]any{
 		"dashesAndOtherSeparatorsToKebabAndAddUnderscoreIfPurescriptKeyword": dashesAndOtherSeparatorsToKebabAndAddUnderscoreIfPurescriptKeyword,
-    "anyPropertyIsBlob": anyPropertyIsBlob,
+		"methodPathFunc":         methodPathFunc,
+    "anyPropertyIsBlob":      anyPropertyIsBlob,
 		"ToCamelCase":            format.ToCamelCase,
 		"lowerFirst":             lowerFirst,
 		"containsSpaceInside":    containsSpaceInside,
@@ -96,7 +97,7 @@ func (p *Purescript) MethodName(name string) string {
 }
 
 func (p *Purescript) MethodPath(name string) string {
-	return strings.ReplaceAll(name, "{", "${")
+	return name
 }
 
 func (p *Purescript) ParameterName(name string) string {

@@ -1,6 +1,6 @@
 module Nhost.Auth.Impl where
 
-import Nhost.Auth.Client (APIClient, SignInProviderParams, VerifyTicketParams, createPATRequestCodec, createPATResponseCodec, getVersionResponse200Codec, jWKSetCodec, linkIdTokenRequestCodec, oKResponseCodec, publicKeyCredentialCreationOptionsCodec, publicKeyCredentialRequestOptionsCodec, refreshTokenRequestCodec, sessionCodec, sessionPayloadCodec, signInAnonymousRequestCodec, signInEmailPasswordRequestCodec, signInEmailPasswordResponseCodec, signInIdTokenRequestCodec, signInMfaTotpRequestCodec, signInOTPEmailRequestCodec, signInOTPEmailVerifyRequestCodec, signInOTPEmailVerifyResponseCodec, signInPATRequestCodec, signInPasswordlessEmailRequestCodec, signInPasswordlessSmsOtpRequestCodec, signInPasswordlessSmsOtpResponseCodec, signInPasswordlessSmsRequestCodec, signInProvider_enc, signInWebauthnRequestCodec, signInWebauthnVerifyRequestCodec, signOutRequestCodec, signUpEmailPasswordRequestCodec, signUpWebauthnRequestCodec, signUpWebauthnVerifyRequestCodec, ticketTypeQuery_enc, totpGenerateResponseCodec, userCodec, userDeanonymizeRequestCodec, userEmailChangeRequestCodec, userEmailSendVerificationEmailRequestCodec, userMfaRequestCodec, userPasswordRequestCodec, userPasswordResetRequestCodec, verifyAddSecurityKeyRequestCodec, verifyAddSecurityKeyResponseCodec, verifyTokenRequestCodec)
+import Nhost.Auth.Client
 import Prelude
 
 import Data.Array as Array
@@ -20,94 +20,7 @@ import Foreign (Foreign, unsafeFromForeign)
 import JSON (JSON)
 import JSON as JSON
 import Nhost.Query (mkUrlWithMaybeQuery)
-
-data FetchResponse a
-  = FetchResponse_JsonDecodeError Fetch.Response J.DecodeError
-  | FetchResponse_Success Fetch.Response a
-
-foreignToJSON :: Foreign -> JSON
-foreignToJSON = unsafeFromForeign
-
-makeRequestGet
-  :: forall a
-   . String -- base url
-  -> String -- url
-  -> J.Codec a
-  -> Aff (FetchResponse a)
-makeRequestGet baseURL url codec = do
-  response <- Fetch.fetch (baseURL <> url)
-    { method: GET
-    , headers: { "Content-Type": "application/json" }
-    }
-  json <- response.json
-  case J.decode codec (foreignToJSON json) of
-    Right decoded ->
-      pure $ FetchResponse_Success response decoded
-    Left decodeErr ->
-      pure $ FetchResponse_JsonDecodeError response decodeErr
-
-makeRequestHead
-  :: String -- base url
-  -> String -- url
-  -> Aff Fetch.Response
-makeRequestHead baseURL url = do
-  Fetch.fetch (baseURL <> url)
-    { method: HEAD
-    }
-
-makeRequestPostWithoutBody
-  :: forall a
-   . String -- base url
-  -> String -- url
-  -> J.Codec a
-  -> Aff (FetchResponse a)
-makeRequestPostWithoutBody baseURL url codec = do
-  response <- Fetch.fetch (baseURL <> url)
-    { method: POST
-    , headers: { "Content-Type": "application/json" }
-    }
-  json <- response.json
-  case J.decode codec (foreignToJSON json) of
-    Right decoded ->
-      pure $ FetchResponse_Success response decoded
-    Left decodeErr ->
-      pure $ FetchResponse_JsonDecodeError response decodeErr
-
--- POST (with request body)
-makeRequestPostWithBody
-  :: forall a b
-   . String -- base url
-  -> String -- url
-  -> J.Codec b -- request body codec
-  -> J.Codec a -- response body codec
-  -> b -- request body value
-  -> Aff (FetchResponse a)
-makeRequestPostWithBody baseURL url codecReq codecRes body = do
-  let bodyJson = JSON.print (J.encode codecReq body)
-  response <- Fetch.fetch (baseURL <> url)
-    { method: POST
-    , headers: { "Content-Type": "application/json" }
-    , body: bodyJson
-    }
-  json <- response.json
-  case J.decode codecRes (foreignToJSON json) of
-    Right decoded ->
-      pure $ FetchResponse_Success response decoded
-    Left decodeErr ->
-      pure $ FetchResponse_JsonDecodeError response decodeErr
-
--- POST (with request body)
-makeRequestPostWithMaybeBody
-  :: forall a b
-   . String -- base url
-  -> String -- url
-  -> J.Codec b -- request body codec
-  -> J.Codec a -- response body codec
-  -> Maybe b -- request body value
-  -> Aff (FetchResponse a)
-makeRequestPostWithMaybeBody baseURL url codecReq codecRes = case _ of
-  Just body -> makeRequestPostWithBody baseURL url codecReq codecRes body
-  Nothing -> makeRequestPostWithoutBody baseURL url codecRes
+import Nhost.Fetch
 
 -- | Convert SignInProviderParams to query string
 signInProviderParamsToQuery
@@ -151,42 +64,42 @@ type MkUrlOutput = Either (NonEmptyArray NonEmptyString) String
 -- | Create API client with base URL and optional middleware
 createAPIClient :: String -> APIClient FetchResponse FetchResponse FetchResponse Fetch.Response Fetch.Response MkUrlOutput
 createAPIClient baseURL =
-  { getJWKs: makeRequestGet baseURL "/.well-known/jwks.json" jWKSetCodec
-  , elevateWebauthn: makeRequestPostWithoutBody baseURL "/elevate/webauthn" publicKeyCredentialRequestOptionsCodec
-  , verifyElevateWebauthn: makeRequestPostWithBody baseURL "/elevate/webauthn/verify" signInWebauthnVerifyRequestCodec sessionPayloadCodec
-  , healthCheckGet: makeRequestGet baseURL "/healthz" oKResponseCodec
-  , healthCheckHead: makeRequestHead baseURL "/healthz"
-  , linkIdToken: makeRequestPostWithBody baseURL "/link/idtoken" linkIdTokenRequestCodec oKResponseCodec
-  , changeUserMfa: makeRequestGet baseURL "/mfa/totp/generate" totpGenerateResponseCodec
-  , createPAT: makeRequestPostWithBody baseURL "/pat" createPATRequestCodec createPATResponseCodec
-  , signInAnonymous: makeRequestPostWithMaybeBody baseURL "/signin/anonymous" signInAnonymousRequestCodec sessionPayloadCodec
-  , signInEmailPassword: makeRequestPostWithBody baseURL "/signin/email-password" signInEmailPasswordRequestCodec signInEmailPasswordResponseCodec
-  , signInIdToken: makeRequestPostWithBody baseURL "/signin/idtoken" signInIdTokenRequestCodec sessionPayloadCodec
-  , verifySignInMfaTotp: makeRequestPostWithBody baseURL "/signin/mfa/totp" signInMfaTotpRequestCodec sessionPayloadCodec
-  , signInOTPEmail: makeRequestPostWithBody baseURL "/signin/otp/email" signInOTPEmailRequestCodec oKResponseCodec
-  , verifySignInOTPEmail: makeRequestPostWithBody baseURL "/signin/otp/email/verify" signInOTPEmailVerifyRequestCodec signInOTPEmailVerifyResponseCodec
-  , signInPasswordlessEmail: makeRequestPostWithBody baseURL "/signin/passwordless/email" signInPasswordlessEmailRequestCodec oKResponseCodec
-  , signInPasswordlessSms: makeRequestPostWithBody baseURL "/signin/passwordless/sms" signInPasswordlessSmsRequestCodec oKResponseCodec
-  , verifySignInPasswordlessSms: makeRequestPostWithBody baseURL "/signin/passwordless/sms/otp" signInPasswordlessSmsOtpRequestCodec signInPasswordlessSmsOtpResponseCodec
-  , signInPAT: makeRequestPostWithBody baseURL "/signin/pat" signInPATRequestCodec sessionPayloadCodec
-  , signInProvider: \provider -> signInProviderParamsToQuery (baseURL <> "/signin/provider/" <> signInProvider_enc provider)
-  , signInWebauthn: makeRequestPostWithMaybeBody baseURL "/signin/webauthn" signInWebauthnRequestCodec publicKeyCredentialRequestOptionsCodec
-  , verifySignInWebauthn: makeRequestPostWithBody baseURL "/signin/webauthn/verify" signInWebauthnVerifyRequestCodec sessionPayloadCodec
-  , signOut: makeRequestPostWithBody baseURL "/signout" signOutRequestCodec oKResponseCodec
-  , signUpEmailPassword: makeRequestPostWithBody baseURL "/signup/email-password" signUpEmailPasswordRequestCodec sessionPayloadCodec
-  , signUpWebauthn: makeRequestPostWithBody baseURL "/signup/webauthn" signUpWebauthnRequestCodec publicKeyCredentialCreationOptionsCodec
-  , verifySignUpWebauthn: makeRequestPostWithBody baseURL "/signup/webauthn/verify" signUpWebauthnVerifyRequestCodec sessionPayloadCodec
-  , refreshToken: makeRequestPostWithBody baseURL "/token" refreshTokenRequestCodec sessionCodec
-  , verifyToken: makeRequestPostWithMaybeBody baseURL "/token/verify" verifyTokenRequestCodec CJ.string
-  , getUser: makeRequestGet baseURL "/user" userCodec
-  , deanonymizeUser: makeRequestPostWithBody baseURL "/user/deanonymize" userDeanonymizeRequestCodec oKResponseCodec
-  , changeUserEmail: makeRequestPostWithBody baseURL "/user/email/change" userEmailChangeRequestCodec oKResponseCodec
-  , sendVerificationEmail: makeRequestPostWithBody baseURL "/user/email/send-verification-email" userEmailSendVerificationEmailRequestCodec oKResponseCodec
-  , verifyChangeUserMfa: makeRequestPostWithBody baseURL "/user/mfa" userMfaRequestCodec oKResponseCodec
-  , changeUserPassword: makeRequestPostWithBody baseURL "/user/password" userPasswordRequestCodec oKResponseCodec
-  , sendPasswordResetEmail: makeRequestPostWithBody baseURL "/user/password/reset" userPasswordResetRequestCodec oKResponseCodec
-  , addSecurityKey: makeRequestPostWithoutBody baseURL "/user/webauthn/add" publicKeyCredentialCreationOptionsCodec
-  , verifyAddSecurityKey: makeRequestPostWithBody baseURL "/user/webauthn/verify" verifyAddSecurityKeyRequestCodec verifyAddSecurityKeyResponseCodec
-  , verifyTicket: verifyTicketParamsToQuery (baseURL <> "/verify")
-  , getVersion: makeRequestGet baseURL "/version" getVersionResponse200Codec
+  { getJWKs: makeRequestGet baseURL getJWKsPath jWKSetCodec
+  , elevateWebauthn: makeRequestPostWithoutBody baseURL elevateWebauthnPath publicKeyCredentialCreationOptionsCodec
+  , verifyElevateWebauthn: makeRequestPostWithBody baseURL verifyElevateWebauthnPath signInWebauthnVerifyRequestCodec sessionPayloadCodec
+  , healthCheckGet: makeRequestGet baseURL healthCheckGetPath oKResponseCodec
+  , healthCheckHead: makeRequestHead baseURL healthCheckHeadPath
+  , linkIdToken: makeRequestPostWithBody baseURL linkIdTokenPath linkIdTokenRequestCodec oKResponseCodec
+  , changeUserMfa: makeRequestGet baseURL changeUserMfaPath totpGenerateResponseCodec
+  , createPAT: makeRequestPostWithBody baseURL createPATPath createPATRequestCodec createPATResponseCodec
+  , signInAnonymous: makeRequestPostWithMaybeBody baseURL signInAnonymousPath signInAnonymousRequestCodec sessionPayloadCodec
+  , signInEmailPassword: makeRequestPostWithBody baseURL signInEmailPasswordPath signInEmailPasswordRequestCodec signInEmailPasswordResponseCodec
+  , signInIdToken: makeRequestPostWithBody baseURL signInIdTokenPath signInIdTokenRequestCodec sessionPayloadCodec
+  , verifySignInMfaTotp: makeRequestPostWithBody baseURL verifySignInMfaTotpPath signInMfaTotpRequestCodec sessionPayloadCodec
+  , signInOTPEmail: makeRequestPostWithBody baseURL signInOTPEmailPath signInOTPEmailRequestCodec oKResponseCodec
+  , verifySignInOTPEmail: makeRequestPostWithBody baseURL verifySignInOTPEmailPath signInOTPEmailVerifyRequestCodec signInOTPEmailVerifyResponseCodec
+  , signInPasswordlessEmail: makeRequestPostWithBody baseURL signInPasswordlessEmailPath signInPasswordlessEmailRequestCodec oKResponseCodec
+  , signInPasswordlessSms: makeRequestPostWithBody baseURL signInPasswordlessSmsPath signInPasswordlessSmsRequestCodec oKResponseCodec
+  , verifySignInPasswordlessSms: makeRequestPostWithBody baseURL verifySignInPasswordlessSmsPath signInPasswordlessSmsOtpRequestCodec signInPasswordlessSmsOtpResponseCodec
+  , signInPAT: makeRequestPostWithBody baseURL signInPATPath signInPATRequestCodec sessionPayloadCodec
+  , signInProvider: \provider -> signInProviderParamsToQuery (baseURL <> "/signin/provider/" <> signInProvider_enc provider) -- dynamic path still
+  , signInWebauthn: makeRequestPostWithMaybeBody baseURL signInWebauthnPath signInWebauthnRequestCodec publicKeyCredentialRequestOptionsCodec
+  , verifySignInWebauthn: makeRequestPostWithBody baseURL verifySignInWebauthnPath signInWebauthnVerifyRequestCodec sessionPayloadCodec
+  , signOut: makeRequestPostWithBody baseURL signOutPath signOutRequestCodec oKResponseCodec
+  , signUpEmailPassword: makeRequestPostWithBody baseURL signUpEmailPasswordPath signUpEmailPasswordRequestCodec sessionPayloadCodec
+  , signUpWebauthn: makeRequestPostWithBody baseURL signUpWebauthnPath signUpWebauthnRequestCodec publicKeyCredentialCreationOptionsCodec
+  , verifySignUpWebauthn: makeRequestPostWithBody baseURL verifySignUpWebauthnPath signUpWebauthnVerifyRequestCodec sessionPayloadCodec
+  , refreshToken: makeRequestPostWithBody baseURL refreshTokenPath refreshTokenRequestCodec sessionCodec
+  , verifyToken: makeRequestPostWithMaybeBody baseURL verifyTokenPath verifyTokenRequestCodec CJ.string
+  , getUser: makeRequestGet baseURL getUserPath userCodec
+  , deanonymizeUser: makeRequestPostWithBody baseURL deanonymizeUserPath userDeanonymizeRequestCodec oKResponseCodec
+  , changeUserEmail: makeRequestPostWithBody baseURL changeUserEmailPath userEmailChangeRequestCodec oKResponseCodec
+  , sendVerificationEmail: makeRequestPostWithBody baseURL sendVerificationEmailPath userEmailSendVerificationEmailRequestCodec oKResponseCodec
+  , verifyChangeUserMfa: makeRequestPostWithBody baseURL verifyChangeUserMfaPath userMfaRequestCodec oKResponseCodec
+  , changeUserPassword: makeRequestPostWithBody baseURL changeUserPasswordPath userPasswordRequestCodec oKResponseCodec
+  , sendPasswordResetEmail: makeRequestPostWithBody baseURL sendPasswordResetEmailPath userPasswordResetRequestCodec oKResponseCodec
+  , addSecurityKey: makeRequestPostWithoutBody baseURL addSecurityKeyPath publicKeyCredentialCreationOptionsCodec
+  , verifyAddSecurityKey: makeRequestPostWithBody baseURL verifyAddSecurityKeyPath verifyAddSecurityKeyRequestCodec verifyAddSecurityKeyResponseCodec
+  , verifyTicket: verifyTicketParamsToQuery (baseURL <> verifyTicketPath)
+  , getVersion: makeRequestGet baseURL getVersionPath getVersionResponse200Codec
   }

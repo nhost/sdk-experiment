@@ -8,8 +8,8 @@ ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 # ensure output directories exist
 mkdir -p "$ROOT/packages/nhost-js/src/auth"
 mkdir -p "$ROOT/packages/nhost-js/src/storage"
-mkdir -p "$ROOT/packages/purescript-nhost/src/Auth"
-mkdir -p "$ROOT/packages/purescript-nhost/src/Storage"
+mkdir -p "$ROOT/packages/purescript-nhost/src/Nhost/Auth"
+mkdir -p "$ROOT/packages/purescript-nhost/src/Nhost/Storage"
 
 # run generators
 # go run "$SCRIPT_DIR/main.go" gen \

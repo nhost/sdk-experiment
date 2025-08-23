@@ -521,6 +521,42 @@ type ListOrphanedFilesFn fetchResponse = Aff (fetchResponse ListOrphanedFilesRes
 -- |   - 200: VersionInformation
 type GetVersionFn fetchResponse = Aff (fetchResponse VersionInformation)
 
+uploadFilesPath :: String
+uploadFilesPath = "/files"
+
+deleteFilePath :: String -> String
+deleteFilePath id = "/files/" <> id
+
+getFilePath :: String -> String
+getFilePath id = "/files/" <> id
+
+getFileMetadataHeadersPath :: String -> String
+getFileMetadataHeadersPath id = "/files/" <> id
+
+replaceFilePath :: String -> String
+replaceFilePath id = "/files/" <> id
+
+getFilePresignedURLPath :: String -> String
+getFilePresignedURLPath id = "/files/" <> id
+
+deleteBrokenMetadataPath :: String
+deleteBrokenMetadataPath = "/ops/delete-broken-metadata"
+
+deleteOrphanedFilesPath :: String
+deleteOrphanedFilesPath = "/ops/delete-orphans"
+
+listBrokenMetadataPath :: String
+listBrokenMetadataPath = "/ops/list-broken-metadata"
+
+listFilesNotUploadedPath :: String
+listFilesNotUploadedPath = "/ops/list-not-uploaded"
+
+listOrphanedFilesPath :: String
+listOrphanedFilesPath = "/ops/list-orphans"
+
+getVersionPath :: String
+getVersionPath = "/version"
+
 -- | API Client type
 type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type -> Type
 type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD mkUrlOutput =

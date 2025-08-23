@@ -2058,6 +2058,120 @@ type VerifyTicketFn mkUrlOutput = Maybe VerifyTicketParams -> mkUrlOutput
 -- |   - 200: GetVersionResponse200
 type GetVersionFn fetchResponse = Aff (fetchResponse GetVersionResponse200)
 
+getJWKsPath :: String
+getJWKsPath = "/.well-known/jwks.json"
+
+elevateWebauthnPath :: String
+elevateWebauthnPath = "/elevate/webauthn"
+
+verifyElevateWebauthnPath :: String
+verifyElevateWebauthnPath = "/elevate/webauthn/verify"
+
+healthCheckGetPath :: String
+healthCheckGetPath = "/healthz"
+
+healthCheckHeadPath :: String
+healthCheckHeadPath = "/healthz"
+
+linkIdTokenPath :: String
+linkIdTokenPath = "/link/idtoken"
+
+changeUserMfaPath :: String
+changeUserMfaPath = "/mfa/totp/generate"
+
+createPATPath :: String
+createPATPath = "/pat"
+
+signInAnonymousPath :: String
+signInAnonymousPath = "/signin/anonymous"
+
+signInEmailPasswordPath :: String
+signInEmailPasswordPath = "/signin/email-password"
+
+signInIdTokenPath :: String
+signInIdTokenPath = "/signin/idtoken"
+
+verifySignInMfaTotpPath :: String
+verifySignInMfaTotpPath = "/signin/mfa/totp"
+
+signInOTPEmailPath :: String
+signInOTPEmailPath = "/signin/otp/email"
+
+verifySignInOTPEmailPath :: String
+verifySignInOTPEmailPath = "/signin/otp/email/verify"
+
+signInPasswordlessEmailPath :: String
+signInPasswordlessEmailPath = "/signin/passwordless/email"
+
+signInPasswordlessSmsPath :: String
+signInPasswordlessSmsPath = "/signin/passwordless/sms"
+
+verifySignInPasswordlessSmsPath :: String
+verifySignInPasswordlessSmsPath = "/signin/passwordless/sms/otp"
+
+signInPATPath :: String
+signInPATPath = "/signin/pat"
+
+signInProviderPath :: String -> String
+signInProviderPath provider = "/signin/provider/" <> provider
+
+signInWebauthnPath :: String
+signInWebauthnPath = "/signin/webauthn"
+
+verifySignInWebauthnPath :: String
+verifySignInWebauthnPath = "/signin/webauthn/verify"
+
+signOutPath :: String
+signOutPath = "/signout"
+
+signUpEmailPasswordPath :: String
+signUpEmailPasswordPath = "/signup/email-password"
+
+signUpWebauthnPath :: String
+signUpWebauthnPath = "/signup/webauthn"
+
+verifySignUpWebauthnPath :: String
+verifySignUpWebauthnPath = "/signup/webauthn/verify"
+
+refreshTokenPath :: String
+refreshTokenPath = "/token"
+
+verifyTokenPath :: String
+verifyTokenPath = "/token/verify"
+
+getUserPath :: String
+getUserPath = "/user"
+
+deanonymizeUserPath :: String
+deanonymizeUserPath = "/user/deanonymize"
+
+changeUserEmailPath :: String
+changeUserEmailPath = "/user/email/change"
+
+sendVerificationEmailPath :: String
+sendVerificationEmailPath = "/user/email/send-verification-email"
+
+verifyChangeUserMfaPath :: String
+verifyChangeUserMfaPath = "/user/mfa"
+
+changeUserPasswordPath :: String
+changeUserPasswordPath = "/user/password"
+
+sendPasswordResetEmailPath :: String
+sendPasswordResetEmailPath = "/user/password/reset"
+
+addSecurityKeyPath :: String
+addSecurityKeyPath = "/user/webauthn/add"
+
+verifyAddSecurityKeyPath :: String
+verifyAddSecurityKeyPath = "/user/webauthn/verify"
+
+verifyTicketPath :: String
+verifyTicketPath = "/verify"
+
+getVersionPath :: String
+getVersionPath = "/version"
+
 -- | API Client type
 type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type -> Type
 type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD mkUrlOutput =

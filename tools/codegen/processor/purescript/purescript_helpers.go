@@ -71,3 +71,15 @@ func anyPropertyIsBlob(props []*processor.Property) bool {
 	}
 	return false
 }
+
+func methodPathFunc(path string) map[string]string {
+	start := strings.Index(path, "{")
+	end := strings.Index(path, "}")
+	if start != -1 && end != -1 && end > start {
+		return map[string]string{
+			"param":   path[start+1 : end],
+			"cleaned": path[:start],
+		}
+	}
+	return map[string]string{"param": "", "cleaned": path}
+}
