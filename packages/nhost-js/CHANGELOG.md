@@ -1,4 +1,4 @@
-- fix (packages/nhost-js): force refresh correctly if marginSeconds is set to 0
+- fix (packages/nhost-js): force refresh correctly if marginSeconds is set to 0 #54
 
 # 5.0.0-beta.9
 

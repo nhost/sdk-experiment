@@ -586,11 +586,11 @@ refresh the token using the provided auth client.
 
 #### Parameters
 
-| Parameter       | Type                                | Default value | Description                                                                      |
-| --------------- | ----------------------------------- | ------------- | -------------------------------------------------------------------------------- |
-| `auth`          | [`Client`](auth#client)         | `undefined`   | The authentication client to use for token refresh                               |
-| `storage`       | [`SessionStorage`](#sessionstorage) | `undefined`   | The session storage implementation                                               |
-| `marginSeconds` | `number`                            | `60`          | How many seconds before expiration to trigger a refresh (defaults to 60 seconds) |
+| Parameter       | Type                                | Default value | Description                                                                                                                                                                       |
+| --------------- | ----------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth`          | [`Client`](auth#client)         | `undefined`   | The authentication client to use for token refresh                                                                                                                                |
+| `storage`       | [`SessionStorage`](#sessionstorage) | `undefined`   | The session storage implementation                                                                                                                                                |
+| `marginSeconds` | `number`                            | `60`          | The number of seconds before the token expiration to refresh the session. If the token is still valid for this duration, it will not be refreshed. Set to 0 to force the refresh. |
 
 #### Returns
 
