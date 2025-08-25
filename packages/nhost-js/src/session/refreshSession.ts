@@ -36,7 +36,7 @@ const lock: Lock =
  *
  * @param auth - The authentication client to use for token refresh
  * @param storage - The session storage implementation
- * @param marginSeconds - How many seconds before expiration to trigger a refresh (defaults to 60 seconds)
+ * @param marginSeconds - The number of seconds before the token expiration to refresh the session. If the token is still valid for this duration, it will not be refreshed. Set to 0 to force the refresh.
  * @returns A promise that resolves to the current session (refreshed if needed) or null if no session exists
  */
 export const refreshSession = async (
@@ -152,6 +152,11 @@ const _needsRefresh = (storage: SessionStorage, marginSeconds = 60) => {
     // if the session does not have a valid decoded token, treat it as expired
     // as we can't determine its validity
     return { session, needsRefresh: true, sessionExpired: true };
+  }
+
+  // Force refresh if marginSeconds is 0
+  if (marginSeconds === 0) {
+    return { session, needsRefresh: true, sessionExpired: false };
   }
 
   const currentTime = Date.now();

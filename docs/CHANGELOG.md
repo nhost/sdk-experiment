@@ -1,7 +1,4 @@
-# @nhost/docs
-
-## main
-
+- 20250825 fix (packages/nhost-js): force refresh correctly if marginSeconds is set to 0 #54
 - 20250811 feat (package/nhost-js): update openapi specs and properly generate formData when uploading/updating files #47
 - 20250705 feat chore (nhost-js): update openapi #44
 - 20250704 feat (packages/nhost-js): added functions.post method and improve documentation #43
