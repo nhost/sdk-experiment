@@ -1,0 +1,2216 @@
+-- | This file is auto-generated. Do not edit manually.
+module Nhost.Auth.Client where
+
+import Prelude
+
+import Data.Generic.Rep (class Generic)
+import Data.Show.Generic (genericShow)
+import Data.Maybe (Maybe(..))
+import Effect.Aff (Aff)
+import JSON as J
+import Data.Codec.JSON.Common as CJ
+import Data.Codec.JSON.Record as CJR
+import Data.Newtype (class Newtype, unwrap, wrap)
+import Data.Profunctor (dimap)
+
+-- | The attestation statement format
+data AttestationFormat
+  = AttestationFormat_Packed
+  | AttestationFormat_Tpm
+  | AttestationFormat_AndroidKey
+  | AttestationFormat_AndroidSafetynet
+  | AttestationFormat_FidoU2f
+  | AttestationFormat_Apple
+  | AttestationFormat_None
+
+derive instance genericAttestationFormat :: Generic AttestationFormat _
+derive instance eqAttestationFormat :: Eq AttestationFormat
+derive instance ordAttestationFormat :: Ord AttestationFormat
+
+instance showAttestationFormat :: Show AttestationFormat where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+attestationFormat_dec :: String -> Maybe AttestationFormat
+attestationFormat_dec = case _ of
+  "packed" -> Just AttestationFormat_Packed
+  "tpm" -> Just AttestationFormat_Tpm
+  "android-key" -> Just AttestationFormat_AndroidKey
+  "android-safetynet" -> Just AttestationFormat_AndroidSafetynet
+  "fido-u2f" -> Just AttestationFormat_FidoU2f
+  "apple" -> Just AttestationFormat_Apple
+  "none" -> Just AttestationFormat_None
+  _ -> Nothing
+
+attestationFormat_enc :: AttestationFormat -> String
+attestationFormat_enc = case _ of
+  AttestationFormat_Packed -> "packed"
+  AttestationFormat_Tpm -> "tpm"
+  AttestationFormat_AndroidKey -> "android-key"
+  AttestationFormat_AndroidSafetynet -> "android-safetynet"
+  AttestationFormat_FidoU2f -> "fido-u2f"
+  AttestationFormat_Apple -> "apple"
+  AttestationFormat_None -> "none"
+
+attestationFormatCodec :: CJ.Codec AttestationFormat
+attestationFormatCodec = CJ.prismaticCodec "AttestationFormat" attestationFormat_dec attestationFormat_enc CJ.string
+
+-- | Map of extension outputs from the client
+-- |
+-- | * `Appid` (Optional): `Maybe Boolean` - Application identifier extension output
+-- | * `CredProps` (Optional): `Maybe CredentialPropertiesOutput` - Credential properties extension output
+-- | * `HmacCreateSecret` (Optional): `Maybe Boolean` - HMAC secret extension output
+type AuthenticationExtensionsClientOutputs =
+  { "appid" :: Maybe Boolean -- Application identifier extension output
+  , "credProps" :: Maybe CredentialPropertiesOutput -- Credential properties extension output
+  , "hmacCreateSecret" :: Maybe Boolean -- HMAC secret extension output
+  }
+
+authenticationExtensionsClientOutputsCodec :: CJ.Codec AuthenticationExtensionsClientOutputs
+authenticationExtensionsClientOutputsCodec =
+  CJR.objectStrict
+    { "appid": CJR.optional CJ.boolean
+    , "credProps": CJR.optional credentialPropertiesOutputCodec
+    , "hmacCreateSecret": CJR.optional CJ.boolean
+    }
+
+-- |
+-- | * `ClientDataJSON`: `String` - Base64url encoded client data JSON
+-- | * `AuthenticatorData`: `String` - Base64url encoded authenticator data
+-- | * `Signature`: `String` - Base64url encoded assertion signature
+-- | * `UserHandle` (Optional): `Maybe String` - Base64url encoded user handle
+type AuthenticatorAssertionResponse =
+  { "clientDataJSON" :: String -- Base64url encoded client data JSON
+  , "authenticatorData" :: String -- Base64url encoded authenticator data
+  , "signature" :: String -- Base64url encoded assertion signature
+  , "userHandle" :: Maybe String -- Base64url encoded user handle
+  }
+
+authenticatorAssertionResponseCodec :: CJ.Codec AuthenticatorAssertionResponse
+authenticatorAssertionResponseCodec =
+  CJR.objectStrict
+    { "clientDataJSON": CJ.string
+    , "authenticatorData": CJ.string
+    , "signature": CJ.string
+    , "userHandle": CJR.optional CJ.string
+    }
+
+-- | The authenticator attachment modality
+data AuthenticatorAttachment
+  = AuthenticatorAttachment_Platform
+  | AuthenticatorAttachment_CrossPlatform
+
+derive instance genericAuthenticatorAttachment :: Generic AuthenticatorAttachment _
+derive instance eqAuthenticatorAttachment :: Eq AuthenticatorAttachment
+derive instance ordAuthenticatorAttachment :: Ord AuthenticatorAttachment
+
+instance showAuthenticatorAttachment :: Show AuthenticatorAttachment where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+authenticatorAttachment_dec :: String -> Maybe AuthenticatorAttachment
+authenticatorAttachment_dec = case _ of
+  "platform" -> Just AuthenticatorAttachment_Platform
+  "cross-platform" -> Just AuthenticatorAttachment_CrossPlatform
+  _ -> Nothing
+
+authenticatorAttachment_enc :: AuthenticatorAttachment -> String
+authenticatorAttachment_enc = case _ of
+  AuthenticatorAttachment_Platform -> "platform"
+  AuthenticatorAttachment_CrossPlatform -> "cross-platform"
+
+authenticatorAttachmentCodec :: CJ.Codec AuthenticatorAttachment
+authenticatorAttachmentCodec = CJ.prismaticCodec "AuthenticatorAttachment" authenticatorAttachment_dec authenticatorAttachment_enc CJ.string
+
+-- |
+-- | * `ClientDataJSON`: `String` - Base64url-encoded binary data
+-- | * `Transports` (Optional): `Maybe (Array String)` - The authenticator transports
+-- | * `AuthenticatorData` (Optional): `Maybe String` - Base64url-encoded binary data
+-- | * `PublicKey` (Optional): `Maybe String` - Base64url-encoded binary data
+-- | * `PublicKeyAlgorithm` (Optional): `Maybe Int` - The public key algorithm identifier
+-- | * `AttestationObject`: `String` - Base64url-encoded binary data
+type AuthenticatorAttestationResponse =
+  { "clientDataJSON" :: String -- Base64url-encoded binary data
+  , "transports" :: Maybe (Array String) -- The authenticator transports
+  , "authenticatorData" :: Maybe String -- Base64url-encoded binary data
+  , "publicKey" :: Maybe String -- Base64url-encoded binary data
+  , "publicKeyAlgorithm" :: Maybe Int -- The public key algorithm identifier
+  , "attestationObject" :: String -- Base64url-encoded binary data
+  }
+
+authenticatorAttestationResponseCodec :: CJ.Codec AuthenticatorAttestationResponse
+authenticatorAttestationResponseCodec =
+  CJR.objectStrict
+    { "clientDataJSON": CJ.string
+    , "transports": CJR.optional (CJ.array CJ.string)
+    , "authenticatorData": CJR.optional CJ.string
+    , "publicKey": CJR.optional CJ.string
+    , "publicKeyAlgorithm": CJR.optional CJ.int
+    , "attestationObject": CJ.string
+    }
+
+-- |
+-- | * `AuthenticatorAttachment` (Optional): `Maybe AuthenticatorAttachment` - The authenticator attachment modality
+-- | * `RequireResidentKey` (Optional): `Maybe Boolean` - Whether the authenticator must create a client-side-resident public key credential source
+-- | * `ResidentKey` (Optional): `Maybe ResidentKeyRequirement` - The resident key requirement
+-- | * `UserVerification` (Optional): `Maybe UserVerificationRequirement` - A requirement for user verification for the operation
+type AuthenticatorSelection =
+  { "authenticatorAttachment" :: Maybe AuthenticatorAttachment -- The authenticator attachment modality
+  , "requireResidentKey" :: Maybe Boolean -- Whether the authenticator must create a client-side-resident public key credential source
+  , "residentKey" :: Maybe ResidentKeyRequirement -- The resident key requirement
+  , "userVerification" :: Maybe UserVerificationRequirement -- A requirement for user verification for the operation
+  }
+
+authenticatorSelectionCodec :: CJ.Codec AuthenticatorSelection
+authenticatorSelectionCodec =
+  CJR.objectStrict
+    { "authenticatorAttachment": CJR.optional authenticatorAttachmentCodec
+    , "requireResidentKey": CJR.optional CJ.boolean
+    , "residentKey": CJR.optional residentKeyRequirementCodec
+    , "userVerification": CJR.optional userVerificationRequirementCodec
+    }
+
+-- | The authenticator transports that can be used
+data AuthenticatorTransport
+  = AuthenticatorTransport_Usb
+  | AuthenticatorTransport_Nfc
+  | AuthenticatorTransport_Ble
+  | AuthenticatorTransport_SmartCard
+  | AuthenticatorTransport_Hybrid
+  | AuthenticatorTransport_Internal
+
+derive instance genericAuthenticatorTransport :: Generic AuthenticatorTransport _
+derive instance eqAuthenticatorTransport :: Eq AuthenticatorTransport
+derive instance ordAuthenticatorTransport :: Ord AuthenticatorTransport
+
+instance showAuthenticatorTransport :: Show AuthenticatorTransport where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+authenticatorTransport_dec :: String -> Maybe AuthenticatorTransport
+authenticatorTransport_dec = case _ of
+  "usb" -> Just AuthenticatorTransport_Usb
+  "nfc" -> Just AuthenticatorTransport_Nfc
+  "ble" -> Just AuthenticatorTransport_Ble
+  "smart-card" -> Just AuthenticatorTransport_SmartCard
+  "hybrid" -> Just AuthenticatorTransport_Hybrid
+  "internal" -> Just AuthenticatorTransport_Internal
+  _ -> Nothing
+
+authenticatorTransport_enc :: AuthenticatorTransport -> String
+authenticatorTransport_enc = case _ of
+  AuthenticatorTransport_Usb -> "usb"
+  AuthenticatorTransport_Nfc -> "nfc"
+  AuthenticatorTransport_Ble -> "ble"
+  AuthenticatorTransport_SmartCard -> "smart-card"
+  AuthenticatorTransport_Hybrid -> "hybrid"
+  AuthenticatorTransport_Internal -> "internal"
+
+authenticatorTransportCodec :: CJ.Codec AuthenticatorTransport
+authenticatorTransportCodec = CJ.prismaticCodec "AuthenticatorTransport" authenticatorTransport_dec authenticatorTransport_enc CJ.string
+
+-- | The attestation conveyance preference
+data ConveyancePreference
+  = ConveyancePreference_None
+  | ConveyancePreference_Indirect
+  | ConveyancePreference_Direct
+  | ConveyancePreference_Enterprise
+
+derive instance genericConveyancePreference :: Generic ConveyancePreference _
+derive instance eqConveyancePreference :: Eq ConveyancePreference
+derive instance ordConveyancePreference :: Ord ConveyancePreference
+
+instance showConveyancePreference :: Show ConveyancePreference where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+conveyancePreference_dec :: String -> Maybe ConveyancePreference
+conveyancePreference_dec = case _ of
+  "none" -> Just ConveyancePreference_None
+  "indirect" -> Just ConveyancePreference_Indirect
+  "direct" -> Just ConveyancePreference_Direct
+  "enterprise" -> Just ConveyancePreference_Enterprise
+  _ -> Nothing
+
+conveyancePreference_enc :: ConveyancePreference -> String
+conveyancePreference_enc = case _ of
+  ConveyancePreference_None -> "none"
+  ConveyancePreference_Indirect -> "indirect"
+  ConveyancePreference_Direct -> "direct"
+  ConveyancePreference_Enterprise -> "enterprise"
+
+conveyancePreferenceCodec :: CJ.Codec ConveyancePreference
+conveyancePreferenceCodec = CJ.prismaticCodec "ConveyancePreference" conveyancePreference_dec conveyancePreference_enc CJ.string
+
+-- |
+-- | * `ExpiresAt`: `String` - Expiration date of the PAT
+-- | * `Metadata` (Optional): `Maybe J.JObject`
+type CreatePATRequest =
+  { "expiresAt" :: String -- Expiration date of the PAT
+  , "metadata" :: Maybe J.JObject
+  }
+
+createPATRequestCodec :: CJ.Codec CreatePATRequest
+createPATRequestCodec =
+  CJR.objectStrict
+    { "expiresAt": CJ.string
+    , "metadata": CJR.optional CJ.jobject
+    }
+
+-- |
+-- | * `Id`: `String` - ID of the PAT
+-- | * `PersonalAccessToken`: `String` - PAT
+type CreatePATResponse =
+  { "id" :: String -- ID of the PAT
+  , "personalAccessToken" :: String -- PAT
+  }
+
+createPATResponseCodec :: CJ.Codec CreatePATResponse
+createPATResponseCodec =
+  CJR.objectStrict
+    { "id": CJ.string
+    , "personalAccessToken": CJ.string
+    }
+
+-- |
+-- | * `Id`: `String` - The credential's identifier
+-- | * `Type`: `String` - The credential type represented by this object
+-- | * `RawId`: `String` - Base64url-encoded binary data
+-- | * `ClientExtensionResults` (Optional): `Maybe AuthenticationExtensionsClientOutputs` - Map of extension outputs from the client
+-- | * `AuthenticatorAttachment` (Optional): `Maybe String` - The authenticator attachment
+-- | * `Response`: `AuthenticatorAssertionResponse`
+type CredentialAssertionResponse =
+  { "id" :: String -- The credential's identifier
+  , "type" :: String -- The credential type represented by this object
+  , "rawId" :: String -- Base64url-encoded binary data
+  , "clientExtensionResults" :: Maybe AuthenticationExtensionsClientOutputs -- Map of extension outputs from the client
+  , "authenticatorAttachment" :: Maybe String -- The authenticator attachment
+  , "response" :: AuthenticatorAssertionResponse
+  }
+
+credentialAssertionResponseCodec :: CJ.Codec CredentialAssertionResponse
+credentialAssertionResponseCodec =
+  CJR.objectStrict
+    { "id": CJ.string
+    , "type": CJ.string
+    , "rawId": CJ.string
+    , "clientExtensionResults": CJR.optional authenticationExtensionsClientOutputsCodec
+    , "authenticatorAttachment": CJR.optional CJ.string
+    , "response": authenticatorAssertionResponseCodec
+    }
+
+-- |
+-- | * `Id`: `String` - The credential's identifier
+-- | * `Type`: `String` - The credential type represented by this object
+-- | * `RawId`: `String` - Base64url-encoded binary data
+-- | * `ClientExtensionResults` (Optional): `Maybe AuthenticationExtensionsClientOutputs` - Map of extension outputs from the client
+-- | * `AuthenticatorAttachment` (Optional): `Maybe String` - The authenticator attachment
+-- | * `Response`: `AuthenticatorAttestationResponse`
+type CredentialCreationResponse =
+  { "id" :: String -- The credential's identifier
+  , "type" :: String -- The credential type represented by this object
+  , "rawId" :: String -- Base64url-encoded binary data
+  , "clientExtensionResults" :: Maybe AuthenticationExtensionsClientOutputs -- Map of extension outputs from the client
+  , "authenticatorAttachment" :: Maybe String -- The authenticator attachment
+  , "response" :: AuthenticatorAttestationResponse
+  }
+
+credentialCreationResponseCodec :: CJ.Codec CredentialCreationResponse
+credentialCreationResponseCodec =
+  CJR.objectStrict
+    { "id": CJ.string
+    , "type": CJ.string
+    , "rawId": CJ.string
+    , "clientExtensionResults": CJR.optional authenticationExtensionsClientOutputsCodec
+    , "authenticatorAttachment": CJR.optional CJ.string
+    , "response": authenticatorAttestationResponseCodec
+    }
+
+-- |
+-- | * `Type`: `CredentialType` - The valid credential types
+-- | * `Alg`: `Int` - The cryptographic algorithm identifier
+type CredentialParameter =
+  { "type" :: CredentialType -- The valid credential types
+  , "alg" :: Int -- The cryptographic algorithm identifier
+  }
+
+credentialParameterCodec :: CJ.Codec CredentialParameter
+credentialParameterCodec =
+  CJR.objectStrict
+    { "type": credentialTypeCodec
+    , "alg": CJ.int
+    }
+
+-- | Credential properties extension output
+-- |
+-- | * `Rk` (Optional): `Maybe Boolean` - Indicates if the credential is a resident key
+type CredentialPropertiesOutput =
+  { "rk" :: Maybe Boolean -- Indicates if the credential is a resident key
+  }
+
+credentialPropertiesOutputCodec :: CJ.Codec CredentialPropertiesOutput
+credentialPropertiesOutputCodec =
+  CJR.objectStrict
+    { "rk": CJR.optional CJ.boolean
+    }
+
+-- | The valid credential types
+data CredentialType = CredentialType_PublicKey
+
+derive instance genericCredentialType :: Generic CredentialType _
+derive instance eqCredentialType :: Eq CredentialType
+derive instance ordCredentialType :: Ord CredentialType
+
+instance showCredentialType :: Show CredentialType where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+credentialType_dec :: String -> Maybe CredentialType
+credentialType_dec = case _ of
+  "public-key" -> Just CredentialType_PublicKey
+  _ -> Nothing
+
+credentialType_enc :: CredentialType -> String
+credentialType_enc = case _ of
+  CredentialType_PublicKey -> "public-key"
+
+credentialTypeCodec :: CJ.Codec CredentialType
+credentialTypeCodec = CJ.prismaticCodec "CredentialType" credentialType_dec credentialType_enc CJ.string
+
+-- | Error code identifying the specific application error
+data ErrorResponseError
+  = ErrorResponseError_DefaultRoleMustBeInAllowedRoles
+  | ErrorResponseError_DisabledEndpoint
+  | ErrorResponseError_DisabledUser
+  | ErrorResponseError_EmailAlreadyInUse
+  | ErrorResponseError_EmailAlreadyVerified
+  | ErrorResponseError_ForbiddenAnonymous
+  | ErrorResponseError_InternalServerError
+  | ErrorResponseError_InvalidEmailPassword
+  | ErrorResponseError_InvalidRequest
+  | ErrorResponseError_LocaleNotAllowed
+  | ErrorResponseError_PasswordTooShort
+  | ErrorResponseError_PasswordInHibpDatabase
+  | ErrorResponseError_RedirectToNotAllowed
+  | ErrorResponseError_RoleNotAllowed
+  | ErrorResponseError_SignupDisabled
+  | ErrorResponseError_UnverifiedUser
+  | ErrorResponseError_UserNotAnonymous
+  | ErrorResponseError_InvalidPat
+  | ErrorResponseError_InvalidRefreshToken
+  | ErrorResponseError_InvalidTicket
+  | ErrorResponseError_DisabledMfaTotp
+  | ErrorResponseError_NoTotpSecret
+  | ErrorResponseError_InvalidTotp
+  | ErrorResponseError_MfaTypeNotFound
+  | ErrorResponseError_TotpAlreadyActive
+  | ErrorResponseError_InvalidState
+  | ErrorResponseError_OauthTokenEchangeFailed
+  | ErrorResponseError_OauthProfileFetchFailed
+  | ErrorResponseError_OauthProviderError
+  | ErrorResponseError_InvalidOtp
+  | ErrorResponseError_CannotSendSms
+
+derive instance genericErrorResponseError :: Generic ErrorResponseError _
+derive instance eqErrorResponseError :: Eq ErrorResponseError
+derive instance ordErrorResponseError :: Ord ErrorResponseError
+
+instance showErrorResponseError :: Show ErrorResponseError where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+errorResponseError_dec :: String -> Maybe ErrorResponseError
+errorResponseError_dec = case _ of
+  "default-role-must-be-in-allowed-roles" -> Just ErrorResponseError_DefaultRoleMustBeInAllowedRoles
+  "disabled-endpoint" -> Just ErrorResponseError_DisabledEndpoint
+  "disabled-user" -> Just ErrorResponseError_DisabledUser
+  "email-already-in-use" -> Just ErrorResponseError_EmailAlreadyInUse
+  "email-already-verified" -> Just ErrorResponseError_EmailAlreadyVerified
+  "forbidden-anonymous" -> Just ErrorResponseError_ForbiddenAnonymous
+  "internal-server-error" -> Just ErrorResponseError_InternalServerError
+  "invalid-email-password" -> Just ErrorResponseError_InvalidEmailPassword
+  "invalid-request" -> Just ErrorResponseError_InvalidRequest
+  "locale-not-allowed" -> Just ErrorResponseError_LocaleNotAllowed
+  "password-too-short" -> Just ErrorResponseError_PasswordTooShort
+  "password-in-hibp-database" -> Just ErrorResponseError_PasswordInHibpDatabase
+  "redirectTo-not-allowed" -> Just ErrorResponseError_RedirectToNotAllowed
+  "role-not-allowed" -> Just ErrorResponseError_RoleNotAllowed
+  "signup-disabled" -> Just ErrorResponseError_SignupDisabled
+  "unverified-user" -> Just ErrorResponseError_UnverifiedUser
+  "user-not-anonymous" -> Just ErrorResponseError_UserNotAnonymous
+  "invalid-pat" -> Just ErrorResponseError_InvalidPat
+  "invalid-refresh-token" -> Just ErrorResponseError_InvalidRefreshToken
+  "invalid-ticket" -> Just ErrorResponseError_InvalidTicket
+  "disabled-mfa-totp" -> Just ErrorResponseError_DisabledMfaTotp
+  "no-totp-secret" -> Just ErrorResponseError_NoTotpSecret
+  "invalid-totp" -> Just ErrorResponseError_InvalidTotp
+  "mfa-type-not-found" -> Just ErrorResponseError_MfaTypeNotFound
+  "totp-already-active" -> Just ErrorResponseError_TotpAlreadyActive
+  "invalid-state" -> Just ErrorResponseError_InvalidState
+  "oauth-token-echange-failed" -> Just ErrorResponseError_OauthTokenEchangeFailed
+  "oauth-profile-fetch-failed" -> Just ErrorResponseError_OauthProfileFetchFailed
+  "oauth-provider-error" -> Just ErrorResponseError_OauthProviderError
+  "invalid-otp" -> Just ErrorResponseError_InvalidOtp
+  "cannot-send-sms" -> Just ErrorResponseError_CannotSendSms
+  _ -> Nothing
+
+errorResponseError_enc :: ErrorResponseError -> String
+errorResponseError_enc = case _ of
+  ErrorResponseError_DefaultRoleMustBeInAllowedRoles -> "default-role-must-be-in-allowed-roles"
+  ErrorResponseError_DisabledEndpoint -> "disabled-endpoint"
+  ErrorResponseError_DisabledUser -> "disabled-user"
+  ErrorResponseError_EmailAlreadyInUse -> "email-already-in-use"
+  ErrorResponseError_EmailAlreadyVerified -> "email-already-verified"
+  ErrorResponseError_ForbiddenAnonymous -> "forbidden-anonymous"
+  ErrorResponseError_InternalServerError -> "internal-server-error"
+  ErrorResponseError_InvalidEmailPassword -> "invalid-email-password"
+  ErrorResponseError_InvalidRequest -> "invalid-request"
+  ErrorResponseError_LocaleNotAllowed -> "locale-not-allowed"
+  ErrorResponseError_PasswordTooShort -> "password-too-short"
+  ErrorResponseError_PasswordInHibpDatabase -> "password-in-hibp-database"
+  ErrorResponseError_RedirectToNotAllowed -> "redirectTo-not-allowed"
+  ErrorResponseError_RoleNotAllowed -> "role-not-allowed"
+  ErrorResponseError_SignupDisabled -> "signup-disabled"
+  ErrorResponseError_UnverifiedUser -> "unverified-user"
+  ErrorResponseError_UserNotAnonymous -> "user-not-anonymous"
+  ErrorResponseError_InvalidPat -> "invalid-pat"
+  ErrorResponseError_InvalidRefreshToken -> "invalid-refresh-token"
+  ErrorResponseError_InvalidTicket -> "invalid-ticket"
+  ErrorResponseError_DisabledMfaTotp -> "disabled-mfa-totp"
+  ErrorResponseError_NoTotpSecret -> "no-totp-secret"
+  ErrorResponseError_InvalidTotp -> "invalid-totp"
+  ErrorResponseError_MfaTypeNotFound -> "mfa-type-not-found"
+  ErrorResponseError_TotpAlreadyActive -> "totp-already-active"
+  ErrorResponseError_InvalidState -> "invalid-state"
+  ErrorResponseError_OauthTokenEchangeFailed -> "oauth-token-echange-failed"
+  ErrorResponseError_OauthProfileFetchFailed -> "oauth-profile-fetch-failed"
+  ErrorResponseError_OauthProviderError -> "oauth-provider-error"
+  ErrorResponseError_InvalidOtp -> "invalid-otp"
+  ErrorResponseError_CannotSendSms -> "cannot-send-sms"
+
+errorResponseErrorCodec :: CJ.Codec ErrorResponseError
+errorResponseErrorCodec = CJ.prismaticCodec "ErrorResponseError" errorResponseError_dec errorResponseError_enc CJ.string
+
+-- | Standardized error response
+-- |
+-- | * `Status`: `Int` - HTTP status error code
+-- | * `Message`: `String` - Human-friendly error message
+-- | * `Error`: `ErrorResponseError` - Error code identifying the specific application error
+type ErrorResponse =
+  { "status" :: Int -- HTTP status error code
+  , "message" :: String -- Human-friendly error message
+  , "error" :: ErrorResponseError -- Error code identifying the specific application error
+  }
+
+errorResponseCodec :: CJ.Codec ErrorResponse
+errorResponseCodec =
+  CJR.objectStrict
+    { "status": CJ.int
+    , "message": CJ.string
+    , "error": errorResponseErrorCodec
+    }
+
+data IdTokenProvider
+  = IdTokenProvider_Apple
+  | IdTokenProvider_Google
+
+derive instance genericIdTokenProvider :: Generic IdTokenProvider _
+derive instance eqIdTokenProvider :: Eq IdTokenProvider
+derive instance ordIdTokenProvider :: Ord IdTokenProvider
+
+instance showIdTokenProvider :: Show IdTokenProvider where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+idTokenProvider_dec :: String -> Maybe IdTokenProvider
+idTokenProvider_dec = case _ of
+  "apple" -> Just IdTokenProvider_Apple
+  "google" -> Just IdTokenProvider_Google
+  _ -> Nothing
+
+idTokenProvider_enc :: IdTokenProvider -> String
+idTokenProvider_enc = case _ of
+  IdTokenProvider_Apple -> "apple"
+  IdTokenProvider_Google -> "google"
+
+idTokenProviderCodec :: CJ.Codec IdTokenProvider
+idTokenProviderCodec = CJ.prismaticCodec "IdTokenProvider" idTokenProvider_dec idTokenProvider_enc CJ.string
+
+-- | JSON Web Key for JWT verification
+-- |
+-- | * `Alg`: `String` - Algorithm used with this key
+-- | * `E`: `String` - RSA public exponent
+-- | * `Kid`: `String` - Key ID
+-- | * `Kty`: `String` - Key type
+-- | * `N`: `String` - RSA modulus
+-- | * `Use`: `String` - Key usage
+type JWK =
+  { "alg" :: String -- Algorithm used with this key
+  , "e" :: String -- RSA public exponent
+  , "kid" :: String -- Key ID
+  , "kty" :: String -- Key type
+  , "n" :: String -- RSA modulus
+  , "use" :: String -- Key usage
+  }
+
+jWKCodec :: CJ.Codec JWK
+jWKCodec =
+  CJR.objectStrict
+    { "alg": CJ.string
+    , "e": CJ.string
+    , "kid": CJ.string
+    , "kty": CJ.string
+    , "n": CJ.string
+    , "use": CJ.string
+    }
+
+-- | JSON Web Key Set for verifying JWT signatures
+-- |
+-- | * `Keys`: `Array JWK` - Array of public keys
+type JWKSet =
+  { "keys" :: Array JWK -- Array of public keys
+  }
+
+jWKSetCodec :: CJ.Codec JWKSet
+jWKSetCodec =
+  CJR.objectStrict
+    { "keys": (CJ.array jWKCodec)
+    }
+
+-- |
+-- | * `Provider`: `IdTokenProvider`
+-- | * `IdToken`: `String` - Apple ID token
+-- | * `Nonce` (Optional): `Maybe String` - Nonce used during sign in process
+type LinkIdTokenRequest =
+  { "provider" :: IdTokenProvider
+  , "idToken" :: String -- Apple ID token
+  , "nonce" :: Maybe String -- Nonce used during sign in process
+  }
+
+linkIdTokenRequestCodec :: CJ.Codec LinkIdTokenRequest
+linkIdTokenRequestCodec =
+  CJR.objectStrict
+    { "provider": idTokenProviderCodec
+    , "idToken": CJ.string
+    , "nonce": CJR.optional CJ.string
+    }
+
+-- | Challenge payload for multi-factor authentication
+-- |
+-- | * `Ticket`: `String` - Ticket to use when completing the MFA challenge
+type MFAChallengePayload =
+  { "ticket" :: String -- Ticket to use when completing the MFA challenge
+  }
+
+mFAChallengePayloadCodec :: CJ.Codec MFAChallengePayload
+mFAChallengePayloadCodec =
+  CJR.objectStrict
+    { "ticket": CJ.string
+    }
+
+data OKResponse = OKResponse_OK
+
+derive instance genericOKResponse :: Generic OKResponse _
+derive instance eqOKResponse :: Eq OKResponse
+derive instance ordOKResponse :: Ord OKResponse
+
+instance showOKResponse :: Show OKResponse where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+oKResponse_dec :: String -> Maybe OKResponse
+oKResponse_dec = case _ of
+  "OK" -> Just OKResponse_OK
+  _ -> Nothing
+
+oKResponse_enc :: OKResponse -> String
+oKResponse_enc = case _ of
+  OKResponse_OK -> "OK"
+
+oKResponseCodec :: CJ.Codec OKResponse
+oKResponseCodec = CJ.prismaticCodec "OKResponse" oKResponse_dec oKResponse_enc CJ.string
+
+-- |
+-- | * `RedirectTo` (Optional): `Maybe String`
+type OptionsRedirectTo =
+  { "redirectTo" :: Maybe String
+  }
+
+optionsRedirectToCodec :: CJ.Codec OptionsRedirectTo
+optionsRedirectToCodec =
+  CJR.objectStrict
+    { "redirectTo": CJR.optional CJ.string
+    }
+
+-- |
+-- | * `Rp`: `RelyingPartyEntity`
+-- | * `User`: `UserEntity`
+-- | * `Challenge`: `String` - Base64url-encoded binary data
+-- | * `PubKeyCredParams`: `Array CredentialParameter` - The desired credential types and their respective cryptographic parameters
+-- | * `Timeout` (Optional): `Maybe Int` - A time, in milliseconds, that the caller is willing to wait for the call to complete
+-- | * `ExcludeCredentials` (Optional): `Maybe (Array PublicKeyCredentialDescriptor)` - A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
+-- | * `AuthenticatorSelection` (Optional): `Maybe AuthenticatorSelection`
+-- | * `Hints` (Optional): `Maybe (Array PublicKeyCredentialHints)` - Hints to help guide the user through the experience
+-- | * `Attestation` (Optional): `Maybe ConveyancePreference` - The attestation conveyance preference
+-- | * `AttestationFormats` (Optional): `Maybe (Array AttestationFormat)` - The preferred attestation statement formats
+-- | * `Extensions` (Optional): `Maybe J.JObject` - Additional parameters requesting additional processing by the client and authenticator
+type PublicKeyCredentialCreationOptions =
+  { "rp" :: RelyingPartyEntity
+  , "user" :: UserEntity
+  , "challenge" :: String -- Base64url-encoded binary data
+  , "pubKeyCredParams" :: Array CredentialParameter -- The desired credential types and their respective cryptographic parameters
+  , "timeout" :: Maybe Int -- A time, in milliseconds, that the caller is willing to wait for the call to complete
+  , "excludeCredentials" :: Maybe (Array PublicKeyCredentialDescriptor) -- A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
+  , "authenticatorSelection" :: Maybe AuthenticatorSelection
+  , "hints" :: Maybe (Array PublicKeyCredentialHints) -- Hints to help guide the user through the experience
+  , "attestation" :: Maybe ConveyancePreference -- The attestation conveyance preference
+  , "attestationFormats" :: Maybe (Array AttestationFormat) -- The preferred attestation statement formats
+  , "extensions" :: Maybe J.JObject -- Additional parameters requesting additional processing by the client and authenticator
+  }
+
+publicKeyCredentialCreationOptionsCodec :: CJ.Codec PublicKeyCredentialCreationOptions
+publicKeyCredentialCreationOptionsCodec =
+  CJR.objectStrict
+    { "rp": relyingPartyEntityCodec
+    , "user": userEntityCodec
+    , "challenge": CJ.string
+    , "pubKeyCredParams": (CJ.array credentialParameterCodec)
+    , "timeout": CJR.optional CJ.int
+    , "excludeCredentials": CJR.optional (CJ.array publicKeyCredentialDescriptorCodec)
+    , "authenticatorSelection": CJR.optional authenticatorSelectionCodec
+    , "hints": CJR.optional (CJ.array publicKeyCredentialHintsCodec)
+    , "attestation": CJR.optional conveyancePreferenceCodec
+    , "attestationFormats": CJR.optional (CJ.array attestationFormatCodec)
+    , "extensions": CJR.optional CJ.jobject
+    }
+
+-- |
+-- | * `Type`: `CredentialType` - The valid credential types
+-- | * `Id`: `String` - Base64url-encoded binary data
+-- | * `Transports` (Optional): `Maybe (Array AuthenticatorTransport)` - The authenticator transports that can be used
+type PublicKeyCredentialDescriptor =
+  { "type" :: CredentialType -- The valid credential types
+  , "id" :: String -- Base64url-encoded binary data
+  , "transports" :: Maybe (Array AuthenticatorTransport) -- The authenticator transports that can be used
+  }
+
+publicKeyCredentialDescriptorCodec :: CJ.Codec PublicKeyCredentialDescriptor
+publicKeyCredentialDescriptorCodec =
+  CJR.objectStrict
+    { "type": credentialTypeCodec
+    , "id": CJ.string
+    , "transports": CJR.optional (CJ.array authenticatorTransportCodec)
+    }
+
+-- | Hints to help guide the user through the experience
+data PublicKeyCredentialHints
+  = PublicKeyCredentialHints_SecurityKey
+  | PublicKeyCredentialHints_ClientDevice
+  | PublicKeyCredentialHints_Hybrid
+
+derive instance genericPublicKeyCredentialHints :: Generic PublicKeyCredentialHints _
+derive instance eqPublicKeyCredentialHints :: Eq PublicKeyCredentialHints
+derive instance ordPublicKeyCredentialHints :: Ord PublicKeyCredentialHints
+
+instance showPublicKeyCredentialHints :: Show PublicKeyCredentialHints where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+publicKeyCredentialHints_dec :: String -> Maybe PublicKeyCredentialHints
+publicKeyCredentialHints_dec = case _ of
+  "security-key" -> Just PublicKeyCredentialHints_SecurityKey
+  "client-device" -> Just PublicKeyCredentialHints_ClientDevice
+  "hybrid" -> Just PublicKeyCredentialHints_Hybrid
+  _ -> Nothing
+
+publicKeyCredentialHints_enc :: PublicKeyCredentialHints -> String
+publicKeyCredentialHints_enc = case _ of
+  PublicKeyCredentialHints_SecurityKey -> "security-key"
+  PublicKeyCredentialHints_ClientDevice -> "client-device"
+  PublicKeyCredentialHints_Hybrid -> "hybrid"
+
+publicKeyCredentialHintsCodec :: CJ.Codec PublicKeyCredentialHints
+publicKeyCredentialHintsCodec = CJ.prismaticCodec "PublicKeyCredentialHints" publicKeyCredentialHints_dec publicKeyCredentialHints_enc CJ.string
+
+-- |
+-- | * `Challenge`: `String` - Base64url-encoded binary data
+-- | * `Timeout` (Optional): `Maybe Int` - A time, in milliseconds, that the caller is willing to wait for the call to complete
+-- | * `RpId` (Optional): `Maybe String` - The RP ID the credential should be scoped to
+-- | * `AllowCredentials` (Optional): `Maybe (Array PublicKeyCredentialDescriptor)` - A list of CredentialDescriptor objects representing public key credentials acceptable to the caller
+-- | * `UserVerification` (Optional): `Maybe UserVerificationRequirement` - A requirement for user verification for the operation
+-- | * `Hints` (Optional): `Maybe (Array PublicKeyCredentialHints)` - Hints to help guide the user through the experience
+-- | * `Extensions` (Optional): `Maybe J.JObject` - Additional parameters requesting additional processing by the client and authenticator
+type PublicKeyCredentialRequestOptions =
+  { "challenge" :: String -- Base64url-encoded binary data
+  , "timeout" :: Maybe Int -- A time, in milliseconds, that the caller is willing to wait for the call to complete
+  , "rpId" :: Maybe String -- The RP ID the credential should be scoped to
+  , "allowCredentials" :: Maybe (Array PublicKeyCredentialDescriptor) -- A list of CredentialDescriptor objects representing public key credentials acceptable to the caller
+  , "userVerification" :: Maybe UserVerificationRequirement -- A requirement for user verification for the operation
+  , "hints" :: Maybe (Array PublicKeyCredentialHints) -- Hints to help guide the user through the experience
+  , "extensions" :: Maybe J.JObject -- Additional parameters requesting additional processing by the client and authenticator
+  }
+
+publicKeyCredentialRequestOptionsCodec :: CJ.Codec PublicKeyCredentialRequestOptions
+publicKeyCredentialRequestOptionsCodec =
+  CJR.objectStrict
+    { "challenge": CJ.string
+    , "timeout": CJR.optional CJ.int
+    , "rpId": CJR.optional CJ.string
+    , "allowCredentials": CJR.optional (CJ.array publicKeyCredentialDescriptorCodec)
+    , "userVerification": CJR.optional userVerificationRequirementCodec
+    , "hints": CJR.optional (CJ.array publicKeyCredentialHintsCodec)
+    , "extensions": CJR.optional CJ.jobject
+    }
+
+-- | Request to refresh an access token
+-- |
+-- | * `RefreshToken`: `String` - Refresh token used to generate a new access token
+type RefreshTokenRequest =
+  { "refreshToken" :: String -- Refresh token used to generate a new access token
+  }
+
+refreshTokenRequestCodec :: CJ.Codec RefreshTokenRequest
+refreshTokenRequestCodec =
+  CJR.objectStrict
+    { "refreshToken": CJ.string
+    }
+
+-- |
+-- | * `Name`: `String` - A human-palatable name for the entity
+-- | * `Id`: `String` - A unique identifier for the Relying Party entity, which sets the RP ID
+type RelyingPartyEntity =
+  { "name" :: String -- A human-palatable name for the entity
+  , "id" :: String -- A unique identifier for the Relying Party entity, which sets the RP ID
+  }
+
+relyingPartyEntityCodec :: CJ.Codec RelyingPartyEntity
+relyingPartyEntityCodec =
+  CJR.objectStrict
+    { "name": CJ.string
+    , "id": CJ.string
+    }
+
+-- | The resident key requirement
+data ResidentKeyRequirement
+  = ResidentKeyRequirement_Discouraged
+  | ResidentKeyRequirement_Preferred
+  | ResidentKeyRequirement_Required
+
+derive instance genericResidentKeyRequirement :: Generic ResidentKeyRequirement _
+derive instance eqResidentKeyRequirement :: Eq ResidentKeyRequirement
+derive instance ordResidentKeyRequirement :: Ord ResidentKeyRequirement
+
+instance showResidentKeyRequirement :: Show ResidentKeyRequirement where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+residentKeyRequirement_dec :: String -> Maybe ResidentKeyRequirement
+residentKeyRequirement_dec = case _ of
+  "discouraged" -> Just ResidentKeyRequirement_Discouraged
+  "preferred" -> Just ResidentKeyRequirement_Preferred
+  "required" -> Just ResidentKeyRequirement_Required
+  _ -> Nothing
+
+residentKeyRequirement_enc :: ResidentKeyRequirement -> String
+residentKeyRequirement_enc = case _ of
+  ResidentKeyRequirement_Discouraged -> "discouraged"
+  ResidentKeyRequirement_Preferred -> "preferred"
+  ResidentKeyRequirement_Required -> "required"
+
+residentKeyRequirementCodec :: CJ.Codec ResidentKeyRequirement
+residentKeyRequirementCodec = CJ.prismaticCodec "ResidentKeyRequirement" residentKeyRequirement_dec residentKeyRequirement_enc CJ.string
+
+-- | User authentication session containing tokens and user information
+-- |
+-- | * `AccessToken`: `String` - JWT token for authenticating API requests
+-- | * `AccessTokenExpiresIn`: `Int` - Expiration time of the access token in seconds
+-- | * `RefreshTokenId`: `String` - Identifier for the refresh token
+-- | * `RefreshToken`: `String` - Token used to refresh the access token
+-- | * `User` (Optional): `Maybe User` - User profile and account information
+type Session =
+  { "accessToken" :: String -- JWT token for authenticating API requests
+  , "accessTokenExpiresIn" :: Int -- Expiration time of the access token in seconds
+  , "refreshTokenId" :: String -- Identifier for the refresh token
+  , "refreshToken" :: String -- Token used to refresh the access token
+  , "user" :: Maybe User -- User profile and account information
+  }
+
+sessionCodec :: CJ.Codec Session
+sessionCodec =
+  CJR.objectStrict
+    { "accessToken": CJ.string
+    , "accessTokenExpiresIn": CJ.int
+    , "refreshTokenId": CJ.string
+    , "refreshToken": CJ.string
+    , "user": CJR.optional userCodec
+    }
+
+-- | Container for session information
+-- |
+-- | * `Session` (Optional): `Maybe Session` - User authentication session containing tokens and user information
+type SessionPayload =
+  { "session" :: Maybe Session -- User authentication session containing tokens and user information
+  }
+
+sessionPayloadCodec :: CJ.Codec SessionPayload
+sessionPayloadCodec =
+  CJR.objectStrict
+    { "session": CJR.optional sessionCodec
+    }
+
+-- |
+-- | * `DisplayName` (Optional): `Maybe String`
+-- | * `Locale` (Optional): `Maybe String` - A two-characters locale
+-- | * `Metadata` (Optional): `Maybe J.JObject`
+type SignInAnonymousRequest =
+  { "displayName" :: Maybe String
+  , "locale" :: Maybe String -- A two-characters locale
+  , "metadata" :: Maybe J.JObject
+  }
+
+signInAnonymousRequestCodec :: CJ.Codec SignInAnonymousRequest
+signInAnonymousRequestCodec =
+  CJR.objectStrict
+    { "displayName": CJR.optional CJ.string
+    , "locale": CJR.optional CJ.string
+    , "metadata": CJR.optional CJ.jobject
+    }
+
+-- | Request to authenticate using email and password
+-- |
+-- | * `Email`: `String` - User's email address
+-- | * `Password`: `String` - User's password
+type SignInEmailPasswordRequest =
+  { "email" :: String -- User's email address
+  , "password" :: String -- User's password
+  }
+
+signInEmailPasswordRequestCodec :: CJ.Codec SignInEmailPasswordRequest
+signInEmailPasswordRequestCodec =
+  CJR.objectStrict
+    { "email": CJ.string
+    , "password": CJ.string
+    }
+
+-- | Response for email-password authentication that may include a session or MFA challenge
+-- |
+-- | * `Session` (Optional): `Maybe Session` - User authentication session containing tokens and user information
+-- | * `Mfa` (Optional): `Maybe MFAChallengePayload` - Challenge payload for multi-factor authentication
+type SignInEmailPasswordResponse =
+  { "session" :: Maybe Session -- User authentication session containing tokens and user information
+  , "mfa" :: Maybe MFAChallengePayload -- Challenge payload for multi-factor authentication
+  }
+
+signInEmailPasswordResponseCodec :: CJ.Codec SignInEmailPasswordResponse
+signInEmailPasswordResponseCodec =
+  CJR.objectStrict
+    { "session": CJR.optional sessionCodec
+    , "mfa": CJR.optional mFAChallengePayloadCodec
+    }
+
+-- |
+-- | * `Provider`: `IdTokenProvider`
+-- | * `IdToken`: `String` - Apple ID token
+-- | * `Nonce` (Optional): `Maybe String` - Nonce used during sign in process
+-- | * `Options` (Optional): `Maybe SignUpOptions`
+type SignInIdTokenRequest =
+  { "provider" :: IdTokenProvider
+  , "idToken" :: String -- Apple ID token
+  , "nonce" :: Maybe String -- Nonce used during sign in process
+  , "options" :: Maybe SignUpOptions
+  }
+
+signInIdTokenRequestCodec :: CJ.Codec SignInIdTokenRequest
+signInIdTokenRequestCodec =
+  CJR.objectStrict
+    { "provider": idTokenProviderCodec
+    , "idToken": CJ.string
+    , "nonce": CJR.optional CJ.string
+    , "options": CJR.optional signUpOptionsCodec
+    }
+
+-- |
+-- | * `Ticket`: `String` - Ticket
+-- | * `Otp`: `String` - One time password
+type SignInMfaTotpRequest =
+  { "ticket" :: String -- Ticket
+  , "otp" :: String -- One time password
+  }
+
+signInMfaTotpRequestCodec :: CJ.Codec SignInMfaTotpRequest
+signInMfaTotpRequestCodec =
+  CJR.objectStrict
+    { "ticket": CJ.string
+    , "otp": CJ.string
+    }
+
+-- |
+-- | * `Email`: `String` - A valid email
+-- | * `Options` (Optional): `Maybe SignUpOptions`
+type SignInOTPEmailRequest =
+  { "email" :: String -- A valid email
+  , "options" :: Maybe SignUpOptions
+  }
+
+signInOTPEmailRequestCodec :: CJ.Codec SignInOTPEmailRequest
+signInOTPEmailRequestCodec =
+  CJR.objectStrict
+    { "email": CJ.string
+    , "options": CJR.optional signUpOptionsCodec
+    }
+
+-- |
+-- | * `Otp`: `String` - One time password
+-- | * `Email`: `String` - A valid email
+type SignInOTPEmailVerifyRequest =
+  { "otp" :: String -- One time password
+  , "email" :: String -- A valid email
+  }
+
+signInOTPEmailVerifyRequestCodec :: CJ.Codec SignInOTPEmailVerifyRequest
+signInOTPEmailVerifyRequestCodec =
+  CJR.objectStrict
+    { "otp": CJ.string
+    , "email": CJ.string
+    }
+
+-- |
+-- | * `Session` (Optional): `Maybe Session` - User authentication session containing tokens and user information
+type SignInOTPEmailVerifyResponse =
+  { "session" :: Maybe Session -- User authentication session containing tokens and user information
+  }
+
+signInOTPEmailVerifyResponseCodec :: CJ.Codec SignInOTPEmailVerifyResponse
+signInOTPEmailVerifyResponseCodec =
+  CJR.objectStrict
+    { "session": CJR.optional sessionCodec
+    }
+
+-- |
+-- | * `PersonalAccessToken`: `String` - PAT
+type SignInPATRequest =
+  { "personalAccessToken" :: String -- PAT
+  }
+
+signInPATRequestCodec :: CJ.Codec SignInPATRequest
+signInPATRequestCodec =
+  CJR.objectStrict
+    { "personalAccessToken": CJ.string
+    }
+
+-- |
+-- | * `Email`: `String` - A valid email
+-- | * `Options` (Optional): `Maybe SignUpOptions`
+type SignInPasswordlessEmailRequest =
+  { "email" :: String -- A valid email
+  , "options" :: Maybe SignUpOptions
+  }
+
+signInPasswordlessEmailRequestCodec :: CJ.Codec SignInPasswordlessEmailRequest
+signInPasswordlessEmailRequestCodec =
+  CJR.objectStrict
+    { "email": CJ.string
+    , "options": CJR.optional signUpOptionsCodec
+    }
+
+-- |
+-- | * `PhoneNumber`: `String` - Phone number of the user
+-- | * `Otp`: `String` - One-time password received by SMS
+type SignInPasswordlessSmsOtpRequest =
+  { "phoneNumber" :: String -- Phone number of the user
+  , "otp" :: String -- One-time password received by SMS
+  }
+
+signInPasswordlessSmsOtpRequestCodec :: CJ.Codec SignInPasswordlessSmsOtpRequest
+signInPasswordlessSmsOtpRequestCodec =
+  CJR.objectStrict
+    { "phoneNumber": CJ.string
+    , "otp": CJ.string
+    }
+
+-- |
+-- | * `Session` (Optional): `Maybe Session` - User authentication session containing tokens and user information
+-- | * `Mfa` (Optional): `Maybe MFAChallengePayload` - Challenge payload for multi-factor authentication
+type SignInPasswordlessSmsOtpResponse =
+  { "session" :: Maybe Session -- User authentication session containing tokens and user information
+  , "mfa" :: Maybe MFAChallengePayload -- Challenge payload for multi-factor authentication
+  }
+
+signInPasswordlessSmsOtpResponseCodec :: CJ.Codec SignInPasswordlessSmsOtpResponse
+signInPasswordlessSmsOtpResponseCodec =
+  CJR.objectStrict
+    { "session": CJR.optional sessionCodec
+    , "mfa": CJR.optional mFAChallengePayloadCodec
+    }
+
+-- |
+-- | * `PhoneNumber`: `String` - Phone number of the user
+-- | * `Options` (Optional): `Maybe SignUpOptions`
+type SignInPasswordlessSmsRequest =
+  { "phoneNumber" :: String -- Phone number of the user
+  , "options" :: Maybe SignUpOptions
+  }
+
+signInPasswordlessSmsRequestCodec :: CJ.Codec SignInPasswordlessSmsRequest
+signInPasswordlessSmsRequestCodec =
+  CJR.objectStrict
+    { "phoneNumber": CJ.string
+    , "options": CJR.optional signUpOptionsCodec
+    }
+
+-- |
+-- | * `Email` (Optional): `Maybe String` - A valid email
+type SignInWebauthnRequest =
+  { "email" :: Maybe String -- A valid email
+  }
+
+signInWebauthnRequestCodec :: CJ.Codec SignInWebauthnRequest
+signInWebauthnRequestCodec =
+  CJR.objectStrict
+    { "email": CJR.optional CJ.string
+    }
+
+-- |
+-- | * `Email` (Optional): `Maybe String` - A valid email. Deprecated, no longer used
+-- | * `Credential`: `CredentialAssertionResponse`
+type SignInWebauthnVerifyRequest =
+  { "email" :: Maybe String -- A valid email. Deprecated, no longer used
+  , "credential" :: CredentialAssertionResponse
+  }
+
+signInWebauthnVerifyRequestCodec :: CJ.Codec SignInWebauthnVerifyRequest
+signInWebauthnVerifyRequestCodec =
+  CJR.objectStrict
+    { "email": CJR.optional CJ.string
+    , "credential": credentialAssertionResponseCodec
+    }
+
+-- |
+-- | * `RefreshToken` (Optional): `Maybe String` - Refresh token for the current session
+-- | * `All` (Optional): `Maybe Boolean` - Sign out from all connected devices
+type SignOutRequest =
+  { "refreshToken" :: Maybe String -- Refresh token for the current session
+  , "all" :: Maybe Boolean -- Sign out from all connected devices
+  }
+
+signOutRequestCodec :: CJ.Codec SignOutRequest
+signOutRequestCodec =
+  CJR.objectStrict
+    { "refreshToken": CJR.optional CJ.string
+    , "all": CJR.optional CJ.boolean
+    }
+
+-- | Request to register a new user with email and password
+-- |
+-- | * `Email`: `String` - Email address for the new user account
+-- | * `Password`: `String` - Password for the new user account
+-- | * `Options` (Optional): `Maybe SignUpOptions`
+type SignUpEmailPasswordRequest =
+  { "email" :: String -- Email address for the new user account
+  , "password" :: String -- Password for the new user account
+  , "options" :: Maybe SignUpOptions
+  }
+
+signUpEmailPasswordRequestCodec :: CJ.Codec SignUpEmailPasswordRequest
+signUpEmailPasswordRequestCodec =
+  CJR.objectStrict
+    { "email": CJ.string
+    , "password": CJ.string
+    , "options": CJR.optional signUpOptionsCodec
+    }
+
+-- |
+-- | * `AllowedRoles` (Optional): `Maybe (Array String)`
+-- | * `DefaultRole` (Optional): `Maybe String`
+-- | * `DisplayName` (Optional): `Maybe String`
+-- | * `Locale` (Optional): `Maybe String` - A two-characters locale
+-- | * `Metadata` (Optional): `Maybe J.JObject`
+-- | * `RedirectTo` (Optional): `Maybe String`
+type SignUpOptions =
+  { "allowedRoles" :: Maybe (Array String)
+  , "defaultRole" :: Maybe String
+  , "displayName" :: Maybe String
+  , "locale" :: Maybe String -- A two-characters locale
+  , "metadata" :: Maybe J.JObject
+  , "redirectTo" :: Maybe String
+  }
+
+signUpOptionsCodec :: CJ.Codec SignUpOptions
+signUpOptionsCodec =
+  CJR.objectStrict
+    { "allowedRoles": CJR.optional (CJ.array CJ.string)
+    , "defaultRole": CJR.optional CJ.string
+    , "displayName": CJR.optional CJ.string
+    , "locale": CJR.optional CJ.string
+    , "metadata": CJR.optional CJ.jobject
+    , "redirectTo": CJR.optional CJ.string
+    }
+
+-- |
+-- | * `Email`: `String` - A valid email
+-- | * `Options` (Optional): `Maybe SignUpOptions`
+type SignUpWebauthnRequest =
+  { "email" :: String -- A valid email
+  , "options" :: Maybe SignUpOptions
+  }
+
+signUpWebauthnRequestCodec :: CJ.Codec SignUpWebauthnRequest
+signUpWebauthnRequestCodec =
+  CJR.objectStrict
+    { "email": CJ.string
+    , "options": CJR.optional signUpOptionsCodec
+    }
+
+-- |
+-- | * `Credential`: `CredentialCreationResponse`
+-- | * `Options` (Optional): `Maybe SignUpOptions`
+-- | * `Nickname` (Optional): `Maybe String` - Nickname for the security key
+type SignUpWebauthnVerifyRequest =
+  { "credential" :: CredentialCreationResponse
+  , "options" :: Maybe SignUpOptions
+  , "nickname" :: Maybe String -- Nickname for the security key
+  }
+
+signUpWebauthnVerifyRequestCodec :: CJ.Codec SignUpWebauthnVerifyRequest
+signUpWebauthnVerifyRequestCodec =
+  CJR.objectStrict
+    { "credential": credentialCreationResponseCodec
+    , "options": CJR.optional signUpOptionsCodec
+    , "nickname": CJR.optional CJ.string
+    }
+
+-- | Response containing TOTP setup information for MFA
+-- |
+-- | * `ImageUrl`: `String` - URL to QR code image for scanning with an authenticator app
+-- | * `TotpSecret`: `String` - TOTP secret key for manual setup with an authenticator app
+type TotpGenerateResponse =
+  { "imageUrl" :: String -- URL to QR code image for scanning with an authenticator app
+  , "totpSecret" :: String -- TOTP secret key for manual setup with an authenticator app
+  }
+
+totpGenerateResponseCodec :: CJ.Codec TotpGenerateResponse
+totpGenerateResponseCodec =
+  CJR.objectStrict
+    { "imageUrl": CJ.string
+    , "totpSecret": CJ.string
+    }
+
+-- | Base64url-encoded binary data
+newtype URLEncodedBase64 = URLEncodedBase64 String
+
+derive instance Newtype URLEncodedBase64 _
+derive instance Generic URLEncodedBase64 _
+derive instance Eq URLEncodedBase64
+
+instance Show URLEncodedBase64 where
+  show x = genericShow x
+
+uRLEncodedBase64Codec :: CJ.Codec URLEncodedBase64
+uRLEncodedBase64Codec = dimap unwrap wrap CJ.string
+
+-- | User profile and account information
+-- |
+-- | * `AvatarUrl`: `String` - URL to the user's profile picture
+-- | * `CreatedAt`: `String` - Timestamp when the user account was created
+-- | * `DefaultRole`: `String` - Default authorization role for the user
+-- | * `DisplayName`: `String` - User's display name
+-- | * `Email` (Optional): `Maybe String` - User's email address
+-- | * `EmailVerified`: `Boolean` - Whether the user's email has been verified
+-- | * `Id`: `String` - Unique identifier for the user
+-- | * `IsAnonymous`: `Boolean` - Whether this is an anonymous user account
+-- | * `Locale`: `String` - User's preferred locale (language code)
+-- | * `Metadata`: `J.JObject` - Custom metadata associated with the user
+-- | * `PhoneNumber` (Optional): `Maybe String` - User's phone number
+-- | * `PhoneNumberVerified`: `Boolean` - Whether the user's phone number has been verified
+-- | * `Roles`: `Array String` - List of roles assigned to the user
+-- | * `ActiveMfaType` (Optional): `Maybe String` - Active MFA type for the user
+type User =
+  { "avatarUrl" :: String -- URL to the user's profile picture
+  , "createdAt" :: String -- Timestamp when the user account was created
+  , "defaultRole" :: String -- Default authorization role for the user
+  , "displayName" :: String -- User's display name
+  , "email" :: Maybe String -- User's email address
+  , "emailVerified" :: Boolean -- Whether the user's email has been verified
+  , "id" :: String -- Unique identifier for the user
+  , "isAnonymous" :: Boolean -- Whether this is an anonymous user account
+  , "locale" :: String -- User's preferred locale (language code)
+  , "metadata" :: J.JObject -- Custom metadata associated with the user
+  , "phoneNumber" :: Maybe String -- User's phone number
+  , "phoneNumberVerified" :: Boolean -- Whether the user's phone number has been verified
+  , "roles" :: Array String -- List of roles assigned to the user
+  , "activeMfaType" :: Maybe String -- Active MFA type for the user
+  }
+
+userCodec :: CJ.Codec User
+userCodec =
+  CJR.objectStrict
+    { "avatarUrl": CJ.string
+    , "createdAt": CJ.string
+    , "defaultRole": CJ.string
+    , "displayName": CJ.string
+    , "email": CJR.optional CJ.string
+    , "emailVerified": CJ.boolean
+    , "id": CJ.string
+    , "isAnonymous": CJ.boolean
+    , "locale": CJ.string
+    , "metadata": CJ.jobject
+    , "phoneNumber": CJR.optional CJ.string
+    , "phoneNumberVerified": CJ.boolean
+    , "roles": (CJ.array CJ.string)
+    , "activeMfaType": CJR.optional CJ.string
+    }
+
+-- | Which sign-in method to use
+data UserDeanonymizeRequestSignInMethod
+  = UserDeanonymizeRequestSignInMethod_EmailPassword
+  | UserDeanonymizeRequestSignInMethod_Passwordless
+
+derive instance genericUserDeanonymizeRequestSignInMethod :: Generic UserDeanonymizeRequestSignInMethod _
+derive instance eqUserDeanonymizeRequestSignInMethod :: Eq UserDeanonymizeRequestSignInMethod
+derive instance ordUserDeanonymizeRequestSignInMethod :: Ord UserDeanonymizeRequestSignInMethod
+
+instance showUserDeanonymizeRequestSignInMethod :: Show UserDeanonymizeRequestSignInMethod where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+userDeanonymizeRequestSignInMethod_dec :: String -> Maybe UserDeanonymizeRequestSignInMethod
+userDeanonymizeRequestSignInMethod_dec = case _ of
+  "email-password" -> Just UserDeanonymizeRequestSignInMethod_EmailPassword
+  "passwordless" -> Just UserDeanonymizeRequestSignInMethod_Passwordless
+  _ -> Nothing
+
+userDeanonymizeRequestSignInMethod_enc :: UserDeanonymizeRequestSignInMethod -> String
+userDeanonymizeRequestSignInMethod_enc = case _ of
+  UserDeanonymizeRequestSignInMethod_EmailPassword -> "email-password"
+  UserDeanonymizeRequestSignInMethod_Passwordless -> "passwordless"
+
+userDeanonymizeRequestSignInMethodCodec :: CJ.Codec UserDeanonymizeRequestSignInMethod
+userDeanonymizeRequestSignInMethodCodec = CJ.prismaticCodec "UserDeanonymizeRequestSignInMethod" userDeanonymizeRequestSignInMethod_dec userDeanonymizeRequestSignInMethod_enc CJ.string
+
+-- |
+-- | * `SignInMethod`: `UserDeanonymizeRequestSignInMethod` - Which sign-in method to use
+-- | * `Email`: `String` - A valid email
+-- | * `Password` (Optional): `Maybe String` - A password of minimum 3 characters
+-- | * `Connection` (Optional): `Maybe String` - Deprecated, will be ignored
+-- | * `Options` (Optional): `Maybe SignUpOptions`
+type UserDeanonymizeRequest =
+  { "signInMethod" :: UserDeanonymizeRequestSignInMethod -- Which sign-in method to use
+  , "email" :: String -- A valid email
+  , "password" :: Maybe String -- A password of minimum 3 characters
+  , "connection" :: Maybe String -- Deprecated, will be ignored
+  , "options" :: Maybe SignUpOptions
+  }
+
+userDeanonymizeRequestCodec :: CJ.Codec UserDeanonymizeRequest
+userDeanonymizeRequestCodec =
+  CJR.objectStrict
+    { "signInMethod": userDeanonymizeRequestSignInMethodCodec
+    , "email": CJ.string
+    , "password": CJR.optional CJ.string
+    , "connection": CJR.optional CJ.string
+    , "options": CJR.optional signUpOptionsCodec
+    }
+
+-- |
+-- | * `NewEmail`: `String` - A valid email
+-- | * `Options` (Optional): `Maybe OptionsRedirectTo`
+type UserEmailChangeRequest =
+  { "newEmail" :: String -- A valid email
+  , "options" :: Maybe OptionsRedirectTo
+  }
+
+userEmailChangeRequestCodec :: CJ.Codec UserEmailChangeRequest
+userEmailChangeRequestCodec =
+  CJR.objectStrict
+    { "newEmail": CJ.string
+    , "options": CJR.optional optionsRedirectToCodec
+    }
+
+-- |
+-- | * `Email`: `String` - A valid email
+-- | * `Options` (Optional): `Maybe OptionsRedirectTo`
+type UserEmailSendVerificationEmailRequest =
+  { "email" :: String -- A valid email
+  , "options" :: Maybe OptionsRedirectTo
+  }
+
+userEmailSendVerificationEmailRequestCodec :: CJ.Codec UserEmailSendVerificationEmailRequest
+userEmailSendVerificationEmailRequestCodec =
+  CJR.objectStrict
+    { "email": CJ.string
+    , "options": CJR.optional optionsRedirectToCodec
+    }
+
+-- |
+-- | * `Name`: `String` - A human-palatable name for the entity
+-- | * `DisplayName`: `String` - A human-palatable name for the user account, intended only for display
+-- | * `Id`: `String` - The user handle of the user account entity
+type UserEntity =
+  { "name" :: String -- A human-palatable name for the entity
+  , "displayName" :: String -- A human-palatable name for the user account, intended only for display
+  , "id" :: String -- The user handle of the user account entity
+  }
+
+userEntityCodec :: CJ.Codec UserEntity
+userEntityCodec =
+  CJR.objectStrict
+    { "name": CJ.string
+    , "displayName": CJ.string
+    , "id": CJ.string
+    }
+
+-- | Type of MFA to activate. Use empty string to disable MFA.
+data UserMfaRequestActiveMfaType
+  = UserMfaRequestActiveMfaType_Totp
+  | UserMfaRequestActiveMfaType_Empty
+
+derive instance genericUserMfaRequestActiveMfaType :: Generic UserMfaRequestActiveMfaType _
+derive instance eqUserMfaRequestActiveMfaType :: Eq UserMfaRequestActiveMfaType
+derive instance ordUserMfaRequestActiveMfaType :: Ord UserMfaRequestActiveMfaType
+
+instance showUserMfaRequestActiveMfaType :: Show UserMfaRequestActiveMfaType where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+userMfaRequestActiveMfaType_dec :: String -> Maybe UserMfaRequestActiveMfaType
+userMfaRequestActiveMfaType_dec = case _ of
+  "totp" -> Just UserMfaRequestActiveMfaType_Totp
+  "" -> Just UserMfaRequestActiveMfaType_Empty
+  _ -> Nothing
+
+userMfaRequestActiveMfaType_enc :: UserMfaRequestActiveMfaType -> String
+userMfaRequestActiveMfaType_enc = case _ of
+  UserMfaRequestActiveMfaType_Totp -> "totp"
+  UserMfaRequestActiveMfaType_Empty -> ""
+
+userMfaRequestActiveMfaTypeCodec :: CJ.Codec UserMfaRequestActiveMfaType
+userMfaRequestActiveMfaTypeCodec = CJ.prismaticCodec "UserMfaRequestActiveMfaType" userMfaRequestActiveMfaType_dec userMfaRequestActiveMfaType_enc CJ.string
+
+-- | Request to activate or deactivate multi-factor authentication
+-- |
+-- | * `Code`: `String` - Verification code from the authenticator app when activating MFA
+-- | * `ActiveMfaType` (Optional): `Maybe UserMfaRequestActiveMfaType` - Type of MFA to activate. Use empty string to disable MFA.
+type UserMfaRequest =
+  { "code" :: String -- Verification code from the authenticator app when activating MFA
+  , "activeMfaType" :: Maybe UserMfaRequestActiveMfaType -- Type of MFA to activate. Use empty string to disable MFA.
+  }
+
+userMfaRequestCodec :: CJ.Codec UserMfaRequest
+userMfaRequestCodec =
+  CJR.objectStrict
+    { "code": CJ.string
+    , "activeMfaType": CJR.optional userMfaRequestActiveMfaTypeCodec
+    }
+
+-- |
+-- | * `NewPassword`: `String` - A password of minimum 3 characters
+-- | * `Ticket` (Optional): `Maybe String` - Ticket to reset the password, required if the user is not authenticated
+type UserPasswordRequest =
+  { "newPassword" :: String -- A password of minimum 3 characters
+  , "ticket" :: Maybe String -- Ticket to reset the password, required if the user is not authenticated
+  }
+
+userPasswordRequestCodec :: CJ.Codec UserPasswordRequest
+userPasswordRequestCodec =
+  CJR.objectStrict
+    { "newPassword": CJ.string
+    , "ticket": CJR.optional CJ.string
+    }
+
+-- |
+-- | * `Email`: `String` - A valid email
+-- | * `Options` (Optional): `Maybe OptionsRedirectTo`
+type UserPasswordResetRequest =
+  { "email" :: String -- A valid email
+  , "options" :: Maybe OptionsRedirectTo
+  }
+
+userPasswordResetRequestCodec :: CJ.Codec UserPasswordResetRequest
+userPasswordResetRequestCodec =
+  CJR.objectStrict
+    { "email": CJ.string
+    , "options": CJR.optional optionsRedirectToCodec
+    }
+
+-- | A requirement for user verification for the operation
+data UserVerificationRequirement
+  = UserVerificationRequirement_Required
+  | UserVerificationRequirement_Preferred
+  | UserVerificationRequirement_Discouraged
+
+derive instance genericUserVerificationRequirement :: Generic UserVerificationRequirement _
+derive instance eqUserVerificationRequirement :: Eq UserVerificationRequirement
+derive instance ordUserVerificationRequirement :: Ord UserVerificationRequirement
+
+instance showUserVerificationRequirement :: Show UserVerificationRequirement where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+userVerificationRequirement_dec :: String -> Maybe UserVerificationRequirement
+userVerificationRequirement_dec = case _ of
+  "required" -> Just UserVerificationRequirement_Required
+  "preferred" -> Just UserVerificationRequirement_Preferred
+  "discouraged" -> Just UserVerificationRequirement_Discouraged
+  _ -> Nothing
+
+userVerificationRequirement_enc :: UserVerificationRequirement -> String
+userVerificationRequirement_enc = case _ of
+  UserVerificationRequirement_Required -> "required"
+  UserVerificationRequirement_Preferred -> "preferred"
+  UserVerificationRequirement_Discouraged -> "discouraged"
+
+userVerificationRequirementCodec :: CJ.Codec UserVerificationRequirement
+userVerificationRequirementCodec = CJ.prismaticCodec "UserVerificationRequirement" userVerificationRequirement_dec userVerificationRequirement_enc CJ.string
+
+-- |
+-- | * `Credential`: `CredentialCreationResponse`
+-- | * `Nickname` (Optional): `Maybe String` - Optional nickname for the security key
+type VerifyAddSecurityKeyRequest =
+  { "credential" :: CredentialCreationResponse
+  , "nickname" :: Maybe String -- Optional nickname for the security key
+  }
+
+verifyAddSecurityKeyRequestCodec :: CJ.Codec VerifyAddSecurityKeyRequest
+verifyAddSecurityKeyRequestCodec =
+  CJR.objectStrict
+    { "credential": credentialCreationResponseCodec
+    , "nickname": CJR.optional CJ.string
+    }
+
+-- |
+-- | * `Id`: `String` - The ID of the newly added security key
+-- | * `Nickname` (Optional): `Maybe String` - The nickname of the security key if provided
+type VerifyAddSecurityKeyResponse =
+  { "id" :: String -- The ID of the newly added security key
+  , "nickname" :: Maybe String -- The nickname of the security key if provided
+  }
+
+verifyAddSecurityKeyResponseCodec :: CJ.Codec VerifyAddSecurityKeyResponse
+verifyAddSecurityKeyResponseCodec =
+  CJR.objectStrict
+    { "id": CJ.string
+    , "nickname": CJR.optional CJ.string
+    }
+
+-- |
+-- | * `Token` (Optional): `Maybe String` - JWT token to verify
+type VerifyTokenRequest =
+  { "token" :: Maybe String -- JWT token to verify
+  }
+
+verifyTokenRequestCodec :: CJ.Codec VerifyTokenRequest
+verifyTokenRequestCodec =
+  CJR.objectStrict
+    { "token": CJR.optional CJ.string
+    }
+
+-- | Target URL for the redirect
+newtype RedirectToQuery = RedirectToQuery String
+
+derive instance Newtype RedirectToQuery _
+derive instance Generic RedirectToQuery _
+derive instance Eq RedirectToQuery
+
+instance Show RedirectToQuery where
+  show x = genericShow x
+
+redirectToQueryCodec :: CJ.Codec RedirectToQuery
+redirectToQueryCodec = dimap unwrap wrap CJ.string
+
+data SignInProvider
+  = SignInProvider_Apple
+  | SignInProvider_Github
+  | SignInProvider_Google
+  | SignInProvider_Linkedin
+  | SignInProvider_Discord
+  | SignInProvider_Spotify
+  | SignInProvider_Twitch
+  | SignInProvider_Gitlab
+  | SignInProvider_Bitbucket
+  | SignInProvider_Workos
+  | SignInProvider_Azuread
+  | SignInProvider_Strava
+  | SignInProvider_Facebook
+  | SignInProvider_Windowslive
+  | SignInProvider_Twitter
+
+derive instance genericSignInProvider :: Generic SignInProvider _
+derive instance eqSignInProvider :: Eq SignInProvider
+derive instance ordSignInProvider :: Ord SignInProvider
+
+instance showSignInProvider :: Show SignInProvider where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+signInProvider_dec :: String -> Maybe SignInProvider
+signInProvider_dec = case _ of
+  "apple" -> Just SignInProvider_Apple
+  "github" -> Just SignInProvider_Github
+  "google" -> Just SignInProvider_Google
+  "linkedin" -> Just SignInProvider_Linkedin
+  "discord" -> Just SignInProvider_Discord
+  "spotify" -> Just SignInProvider_Spotify
+  "twitch" -> Just SignInProvider_Twitch
+  "gitlab" -> Just SignInProvider_Gitlab
+  "bitbucket" -> Just SignInProvider_Bitbucket
+  "workos" -> Just SignInProvider_Workos
+  "azuread" -> Just SignInProvider_Azuread
+  "strava" -> Just SignInProvider_Strava
+  "facebook" -> Just SignInProvider_Facebook
+  "windowslive" -> Just SignInProvider_Windowslive
+  "twitter" -> Just SignInProvider_Twitter
+  _ -> Nothing
+
+signInProvider_enc :: SignInProvider -> String
+signInProvider_enc = case _ of
+  SignInProvider_Apple -> "apple"
+  SignInProvider_Github -> "github"
+  SignInProvider_Google -> "google"
+  SignInProvider_Linkedin -> "linkedin"
+  SignInProvider_Discord -> "discord"
+  SignInProvider_Spotify -> "spotify"
+  SignInProvider_Twitch -> "twitch"
+  SignInProvider_Gitlab -> "gitlab"
+  SignInProvider_Bitbucket -> "bitbucket"
+  SignInProvider_Workos -> "workos"
+  SignInProvider_Azuread -> "azuread"
+  SignInProvider_Strava -> "strava"
+  SignInProvider_Facebook -> "facebook"
+  SignInProvider_Windowslive -> "windowslive"
+  SignInProvider_Twitter -> "twitter"
+
+signInProviderCodec :: CJ.Codec SignInProvider
+signInProviderCodec = CJ.prismaticCodec "SignInProvider" signInProvider_dec signInProvider_enc CJ.string
+
+-- | Ticket
+newtype TicketQuery = TicketQuery String
+
+derive instance Newtype TicketQuery _
+derive instance Generic TicketQuery _
+derive instance Eq TicketQuery
+
+instance Show TicketQuery where
+  show x = genericShow x
+
+ticketQueryCodec :: CJ.Codec TicketQuery
+ticketQueryCodec = dimap unwrap wrap CJ.string
+
+-- | Type of the ticket
+data TicketTypeQuery
+  = TicketTypeQuery_EmailVerify
+  | TicketTypeQuery_EmailConfirmChange
+  | TicketTypeQuery_SigninPasswordless
+  | TicketTypeQuery_PasswordReset
+
+derive instance genericTicketTypeQuery :: Generic TicketTypeQuery _
+derive instance eqTicketTypeQuery :: Eq TicketTypeQuery
+derive instance ordTicketTypeQuery :: Ord TicketTypeQuery
+
+instance showTicketTypeQuery :: Show TicketTypeQuery where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+ticketTypeQuery_dec :: String -> Maybe TicketTypeQuery
+ticketTypeQuery_dec = case _ of
+  "emailVerify" -> Just TicketTypeQuery_EmailVerify
+  "emailConfirmChange" -> Just TicketTypeQuery_EmailConfirmChange
+  "signinPasswordless" -> Just TicketTypeQuery_SigninPasswordless
+  "passwordReset" -> Just TicketTypeQuery_PasswordReset
+  _ -> Nothing
+
+ticketTypeQuery_enc :: TicketTypeQuery -> String
+ticketTypeQuery_enc = case _ of
+  TicketTypeQuery_EmailVerify -> "emailVerify"
+  TicketTypeQuery_EmailConfirmChange -> "emailConfirmChange"
+  TicketTypeQuery_SigninPasswordless -> "signinPasswordless"
+  TicketTypeQuery_PasswordReset -> "passwordReset"
+
+ticketTypeQueryCodec :: CJ.Codec TicketTypeQuery
+ticketTypeQueryCodec = CJ.prismaticCodec "TicketTypeQuery" ticketTypeQuery_dec ticketTypeQuery_enc CJ.string
+
+-- |
+-- | * `Version`: `String` - The version of the authentication service
+type GetVersionResponse200 =
+  { "version" :: String -- The version of the authentication service
+  }
+
+getVersionResponse200Codec :: CJ.Codec GetVersionResponse200
+getVersionResponse200Codec =
+  CJR.objectStrict
+    { "version": CJ.string
+    }
+
+-- | Parameters for the SignInProvider method.
+type SignInProviderParams =
+  { "allowedRoles" :: Maybe (Array String) -- Array of allowed roles for the user
+  , "defaultRole" :: Maybe String -- Default role for the user
+  , "displayName" :: Maybe String -- Display name for the user
+  , "locale" :: Maybe String -- A two-characters locale
+  , "metadata" :: Maybe J.JObject -- Additional metadata for the user (JSON encoded string)
+  , "redirectTo" :: Maybe String -- URI to redirect to
+  , "connect" :: Maybe String -- If set, this means that the user is already authenticated and wants to link their account. This needs to be a valid JWT access token.
+  }
+
+signInProviderParamsCodec :: CJ.Codec SignInProviderParams
+signInProviderParamsCodec =
+  CJR.objectStrict
+    { "allowedRoles": CJ.maybe (CJ.array CJ.string)
+    , "defaultRole": CJ.maybe CJ.string
+    , "displayName": CJ.maybe CJ.string
+    , "locale": CJ.maybe CJ.string
+    , "metadata": CJ.maybe CJ.jobject
+    , "redirectTo": CJ.maybe CJ.string
+    , "connect": CJ.maybe CJ.string
+    }
+
+-- | Parameters for the VerifyTicket method.
+type VerifyTicketParams =
+  { "ticket" :: TicketQuery -- Ticket
+  , "type" :: Maybe TicketTypeQuery -- Type of the ticket. Deprecated, no longer used
+  , "redirectTo" :: RedirectToQuery -- Target URL for the redirect
+  }
+
+verifyTicketParamsCodec :: CJ.Codec VerifyTicketParams
+verifyTicketParamsCodec =
+  CJR.objectStrict
+    { "ticket": ticketQueryCodec
+    , "type": CJ.maybe ticketTypeQueryCodec
+    , "redirectTo": redirectToQueryCodec
+    }
+
+-- | GetJWKs
+-- |
+-- | Summary: Get public keys for JWT verification in JWK Set format
+-- |
+-- | Retrieve the JSON Web Key Set (JWKS) containing public keys used to verify JWT signatures. This endpoint is used by clients to validate access tokens.
+-- |
+-- | Possible responses:
+-- |   - 200: JWKSet
+type GetJWKsFn fetchResponse = Aff (fetchResponse JWKSet)
+
+-- | ElevateWebauthn
+-- |
+-- | Summary: Elevate access for an already signed in user using FIDO2 Webauthn
+-- |
+-- | Generate a Webauthn challenge for elevating user permissions
+-- |
+-- | Possible responses:
+-- |   - 200: PublicKeyCredentialRequestOptions
+type ElevateWebauthnFn fetchResponse = Aff (fetchResponse PublicKeyCredentialRequestOptions)
+
+-- | VerifyElevateWebauthn
+-- |
+-- | Summary: Verify FIDO2 Webauthn authentication using public-key cryptography for elevation
+-- |
+-- | Complete Webauthn elevation by verifying the authentication response
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type VerifyElevateWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (fetchResponse SessionPayload)
+
+-- | HealthCheckGet
+-- |
+-- | Summary: Health check (GET)
+-- |
+-- | Verify if the authentication service is operational using GET method
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type HealthCheckGetFn fetchResponse = Aff (fetchResponse OKResponse)
+
+-- | HealthCheckHead
+-- |
+-- | Summary: Health check (HEAD)
+-- |
+-- | Verify if the authentication service is operational using HEAD method
+-- |
+-- | Possible responses:
+-- |   - 200: Unit
+type HealthCheckHeadFn fetchResponse = Aff fetchResponse
+
+-- | LinkIdToken
+-- |
+-- | Summary: Link a user account with the provider's account using an id token
+-- |
+-- | Link the authenticated user's account with an external OAuth provider account using an ID token. Requires elevated permissions.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type LinkIdTokenFn fetchResponse = LinkIdTokenRequest -> Aff (fetchResponse OKResponse)
+
+-- | ChangeUserMfa
+-- |
+-- | Summary: Generate TOTP secret
+-- |
+-- | Generate a Time-based One-Time Password (TOTP) secret for setting up multi-factor authentication
+-- |
+-- | Possible responses:
+-- |   - 200: TotpGenerateResponse
+type ChangeUserMfaFn fetchResponse = Aff (fetchResponse TotpGenerateResponse)
+
+-- | CreatePAT
+-- |
+-- | Summary: Create a Personal Access Token (PAT)
+-- |
+-- | Generate a new Personal Access Token for programmatic API access. PATs are long-lived tokens that can be used instead of regular authentication for automated systems. Requires elevated permissions.
+-- |
+-- | Possible responses:
+-- |   - 200: CreatePATResponse
+type CreatePATFn fetchResponse = CreatePATRequest -> Aff (fetchResponse CreatePATResponse)
+
+-- | SignInAnonymous
+-- |
+-- | Summary: Sign in anonymously
+-- |
+-- | Create an anonymous user session without providing credentials. Anonymous users can be converted to regular users later via the deanonymize endpoint.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type SignInAnonymousFn fetchResponse = Maybe SignInAnonymousRequest -> Aff (fetchResponse SessionPayload)
+
+-- | SignInEmailPassword
+-- |
+-- | Summary: Sign in with email and password
+-- |
+-- | Authenticate a user with their email and password. Returns a session object or MFA challenge if two-factor authentication is enabled.
+-- |
+-- | Possible responses:
+-- |   - 200: SignInEmailPasswordResponse
+type SignInEmailPasswordFn fetchResponse = SignInEmailPasswordRequest -> Aff (fetchResponse SignInEmailPasswordResponse)
+
+-- | SignInIdToken
+-- |
+-- | Summary: Sign in with an ID token
+-- |
+-- | Authenticate using an ID token from a supported OAuth provider (Apple or Google). Creates a new user account if one doesn't exist.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type SignInIdTokenFn fetchResponse = SignInIdTokenRequest -> Aff (fetchResponse SessionPayload)
+
+-- | VerifySignInMfaTotp
+-- |
+-- | Summary: Verify TOTP for MFA
+-- |
+-- | Complete the multi-factor authentication by verifying a Time-based One-Time Password (TOTP). Returns a session if validation is successful.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type VerifySignInMfaTotpFn fetchResponse = SignInMfaTotpRequest -> Aff (fetchResponse SessionPayload)
+
+-- | SignInOTPEmail
+-- |
+-- | Summary: Sign in with email OTP
+-- |
+-- | Initiate email-based one-time password authentication. Sends an OTP to the specified email address. If the user doesn't exist, a new account will be created with the provided options.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SignInOTPEmailFn fetchResponse = SignInOTPEmailRequest -> Aff (fetchResponse OKResponse)
+
+-- | VerifySignInOTPEmail
+-- |
+-- | Summary: Verify email OTP
+-- |
+-- | Complete email OTP authentication by verifying the one-time password. Returns a session if validation is successful.
+-- |
+-- | Possible responses:
+-- |   - 200: SignInOTPEmailVerifyResponse
+type VerifySignInOTPEmailFn fetchResponse = SignInOTPEmailVerifyRequest -> Aff (fetchResponse SignInOTPEmailVerifyResponse)
+
+-- | SignInPasswordlessEmail
+-- |
+-- | Summary: Sign in with magic link email
+-- |
+-- | Initiate passwordless authentication by sending a magic link to the user's email. If the user doesn't exist, a new account will be created with the provided options.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SignInPasswordlessEmailFn fetchResponse = SignInPasswordlessEmailRequest -> Aff (fetchResponse OKResponse)
+
+-- | SignInPasswordlessSms
+-- |
+-- | Summary: Sign in with SMS OTP
+-- |
+-- | Initiate passwordless authentication by sending a one-time password to the user's phone number. If the user doesn't exist, a new account will be created with the provided options.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsRequest -> Aff (fetchResponse OKResponse)
+
+-- | VerifySignInPasswordlessSms
+-- |
+-- | Summary: Verify SMS OTP
+-- |
+-- | Complete passwordless SMS authentication by verifying the one-time password. Returns a session if validation is successful.
+-- |
+-- | Possible responses:
+-- |   - 200: SignInPasswordlessSmsOtpResponse
+type VerifySignInPasswordlessSmsFn fetchResponse = SignInPasswordlessSmsOtpRequest -> Aff (fetchResponse SignInPasswordlessSmsOtpResponse)
+
+-- | SignInPAT
+-- |
+-- | Summary: Sign in with Personal Access Token (PAT)
+-- |
+-- | Authenticate using a Personal Access Token. PATs are long-lived tokens that can be used for programmatic access to the API.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type SignInPATFn fetchResponse = SignInPATRequest -> Aff (fetchResponse SessionPayload)
+
+-- | SignInProvider
+-- |
+-- | Summary: Sign in with an OAuth2 provider
+-- |
+-- | Initiate OAuth2 authentication flow with a social provider. Redirects the user to the provider's authorization page.
+-- |
+-- | Possible responses:
+-- |   - 302: Unit
+type SignInProviderFn mkUrlOutput = SignInProvider -> Maybe SignInProviderParams -> mkUrlOutput
+
+-- | SignInWebauthn
+-- |
+-- | Summary: Sign in with Webauthn
+-- |
+-- | Initiate a Webauthn sign-in process by sending a challenge to the user's device. The user must have previously registered a Webauthn credential.
+-- |
+-- | Possible responses:
+-- |   - 200: PublicKeyCredentialRequestOptions
+type SignInWebauthnFn fetchResponse = Maybe SignInWebauthnRequest -> Aff (fetchResponse PublicKeyCredentialRequestOptions)
+
+-- | VerifySignInWebauthn
+-- |
+-- | Summary: Verify Webauthn sign-in
+-- |
+-- | Complete the Webauthn sign-in process by verifying the response from the user's device. Returns a session if validation is successful.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type VerifySignInWebauthnFn fetchResponse = SignInWebauthnVerifyRequest -> Aff (fetchResponse SessionPayload)
+
+-- | SignOut
+-- |
+-- | Summary: Sign out
+-- |
+-- | End the current user session by invalidating refresh tokens. Optionally sign out from all devices.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SignOutFn fetchResponse = SignOutRequest -> Aff (fetchResponse OKResponse)
+
+-- | SignUpEmailPassword
+-- |
+-- | Summary: Sign up with email and password
+-- |
+-- | Register a new user account with email and password. Returns a session if email verification is not required, otherwise returns null session.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type SignUpEmailPasswordFn fetchResponse = SignUpEmailPasswordRequest -> Aff (fetchResponse SessionPayload)
+
+-- | SignUpWebauthn
+-- |
+-- | Summary: Sign up with Webauthn
+-- |
+-- | Initiate a Webauthn sign-up process by sending a challenge to the user's device. The user must not have an existing account.
+-- |
+-- | Possible responses:
+-- |   - 200: PublicKeyCredentialCreationOptions
+type SignUpWebauthnFn fetchResponse = SignUpWebauthnRequest -> Aff (fetchResponse PublicKeyCredentialCreationOptions)
+
+-- | VerifySignUpWebauthn
+-- |
+-- | Summary: Verify Webauthn sign-up
+-- |
+-- | Complete the Webauthn sign-up process by verifying the response from the user's device. Returns a session if validation is successful.
+-- |
+-- | Possible responses:
+-- |   - 200: SessionPayload
+type VerifySignUpWebauthnFn fetchResponse = SignUpWebauthnVerifyRequest -> Aff (fetchResponse SessionPayload)
+
+-- | RefreshToken
+-- |
+-- | Summary: Refresh access token
+-- |
+-- | Generate a new JWT access token using a valid refresh token. The refresh token used will be revoked and a new one will be issued.
+-- |
+-- | Possible responses:
+-- |   - 200: Session
+type RefreshTokenFn fetchResponse = RefreshTokenRequest -> Aff (fetchResponse Session)
+
+-- | VerifyToken
+-- |
+-- | Summary: Verify JWT token
+-- |
+-- | Verify the validity of a JWT access token. If no request body is provided, the Authorization header will be used for verification.
+-- |
+-- | Possible responses:
+-- |   - 200: String
+type VerifyTokenFn fetchResponse = Maybe VerifyTokenRequest -> Aff (fetchResponse String)
+
+-- | GetUser
+-- |
+-- | Summary: Get user information
+-- |
+-- | Retrieve the authenticated user's profile information including roles, metadata, and account status.
+-- |
+-- | Possible responses:
+-- |   - 200: User
+type GetUserFn fetchResponse = Aff (fetchResponse User)
+
+-- | DeanonymizeUser
+-- |
+-- | Summary: Deanonymize an anonymous user
+-- |
+-- | Convert an anonymous user to a regular user by adding email and optionally password credentials. A confirmation email will be sent if the server is configured to do so.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type DeanonymizeUserFn fetchResponse = UserDeanonymizeRequest -> Aff (fetchResponse OKResponse)
+
+-- | ChangeUserEmail
+-- |
+-- | Summary: Change user email
+-- |
+-- | Request to change the authenticated user's email address. A verification email will be sent to the new address to confirm the change. Requires elevated permissions.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type ChangeUserEmailFn fetchResponse = UserEmailChangeRequest -> Aff (fetchResponse OKResponse)
+
+-- | SendVerificationEmail
+-- |
+-- | Summary: Send verification email
+-- |
+-- | Send an email verification link to the specified email address. Used to verify email addresses for new accounts or email changes.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SendVerificationEmailFn fetchResponse = UserEmailSendVerificationEmailRequest -> Aff (fetchResponse OKResponse)
+
+-- | VerifyChangeUserMfa
+-- |
+-- | Summary: Manage multi-factor authentication
+-- |
+-- | Activate or deactivate multi-factor authentication for the authenticated user
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type VerifyChangeUserMfaFn fetchResponse = UserMfaRequest -> Aff (fetchResponse OKResponse)
+
+-- | ChangeUserPassword
+-- |
+-- | Summary: Change user password
+-- |
+-- | Change the user's password. The user must be authenticated with elevated permissions or provide a valid password reset ticket.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type ChangeUserPasswordFn fetchResponse = UserPasswordRequest -> Aff (fetchResponse OKResponse)
+
+-- | SendPasswordResetEmail
+-- |
+-- | Summary: Request password reset
+-- |
+-- | Request a password reset for a user account. An email with a verification link will be sent to the user's email address to complete the password reset process.
+-- |
+-- | Possible responses:
+-- |   - 200: OKResponse
+type SendPasswordResetEmailFn fetchResponse = UserPasswordResetRequest -> Aff (fetchResponse OKResponse)
+
+-- | AddSecurityKey
+-- |
+-- | Summary: Initialize adding of a new webauthn security key
+-- |
+-- | Start the process of adding a new WebAuthn security key to the user's account. Returns a challenge that must be completed by the user's authenticator device. Requires elevated permissions.
+-- |
+-- | Possible responses:
+-- |   - 200: PublicKeyCredentialCreationOptions
+type AddSecurityKeyFn fetchResponse = Aff (fetchResponse PublicKeyCredentialCreationOptions)
+
+-- | VerifyAddSecurityKey
+-- |
+-- | Summary: Verify adding of a new webauthn security key
+-- |
+-- | Complete the process of adding a new WebAuthn security key by verifying the authenticator response. Requires elevated permissions.
+-- |
+-- | Possible responses:
+-- |   - 200: VerifyAddSecurityKeyResponse
+type VerifyAddSecurityKeyFn fetchResponse = VerifyAddSecurityKeyRequest -> Aff (fetchResponse VerifyAddSecurityKeyResponse)
+
+-- | VerifyTicket
+-- |
+-- | Summary: Verify email and authentication tickets
+-- |
+-- | Verify tickets created by email verification, magic link authentication, or password reset processes. Redirects the user to the appropriate destination upon successful verification.
+-- |
+-- | Possible responses:
+-- |   - 302: Unit
+type VerifyTicketFn mkUrlOutput = Maybe VerifyTicketParams -> mkUrlOutput
+
+-- | GetVersion
+-- |
+-- | Summary: Get service version
+-- |
+-- | Retrieve version information about the authentication service
+-- |
+-- | Possible responses:
+-- |   - 200: GetVersionResponse200
+type GetVersionFn fetchResponse = Aff (fetchResponse GetVersionResponse200)
+
+getJWKsPath :: String
+getJWKsPath = "/.well-known/jwks.json"
+
+elevateWebauthnPath :: String
+elevateWebauthnPath = "/elevate/webauthn"
+
+verifyElevateWebauthnPath :: String
+verifyElevateWebauthnPath = "/elevate/webauthn/verify"
+
+healthCheckGetPath :: String
+healthCheckGetPath = "/healthz"
+
+healthCheckHeadPath :: String
+healthCheckHeadPath = "/healthz"
+
+linkIdTokenPath :: String
+linkIdTokenPath = "/link/idtoken"
+
+changeUserMfaPath :: String
+changeUserMfaPath = "/mfa/totp/generate"
+
+createPATPath :: String
+createPATPath = "/pat"
+
+signInAnonymousPath :: String
+signInAnonymousPath = "/signin/anonymous"
+
+signInEmailPasswordPath :: String
+signInEmailPasswordPath = "/signin/email-password"
+
+signInIdTokenPath :: String
+signInIdTokenPath = "/signin/idtoken"
+
+verifySignInMfaTotpPath :: String
+verifySignInMfaTotpPath = "/signin/mfa/totp"
+
+signInOTPEmailPath :: String
+signInOTPEmailPath = "/signin/otp/email"
+
+verifySignInOTPEmailPath :: String
+verifySignInOTPEmailPath = "/signin/otp/email/verify"
+
+signInPasswordlessEmailPath :: String
+signInPasswordlessEmailPath = "/signin/passwordless/email"
+
+signInPasswordlessSmsPath :: String
+signInPasswordlessSmsPath = "/signin/passwordless/sms"
+
+verifySignInPasswordlessSmsPath :: String
+verifySignInPasswordlessSmsPath = "/signin/passwordless/sms/otp"
+
+signInPATPath :: String
+signInPATPath = "/signin/pat"
+
+signInProviderPath :: String -> String
+signInProviderPath provider = "/signin/provider/" <> provider
+
+signInWebauthnPath :: String
+signInWebauthnPath = "/signin/webauthn"
+
+verifySignInWebauthnPath :: String
+verifySignInWebauthnPath = "/signin/webauthn/verify"
+
+signOutPath :: String
+signOutPath = "/signout"
+
+signUpEmailPasswordPath :: String
+signUpEmailPasswordPath = "/signup/email-password"
+
+signUpWebauthnPath :: String
+signUpWebauthnPath = "/signup/webauthn"
+
+verifySignUpWebauthnPath :: String
+verifySignUpWebauthnPath = "/signup/webauthn/verify"
+
+refreshTokenPath :: String
+refreshTokenPath = "/token"
+
+verifyTokenPath :: String
+verifyTokenPath = "/token/verify"
+
+getUserPath :: String
+getUserPath = "/user"
+
+deanonymizeUserPath :: String
+deanonymizeUserPath = "/user/deanonymize"
+
+changeUserEmailPath :: String
+changeUserEmailPath = "/user/email/change"
+
+sendVerificationEmailPath :: String
+sendVerificationEmailPath = "/user/email/send-verification-email"
+
+verifyChangeUserMfaPath :: String
+verifyChangeUserMfaPath = "/user/mfa"
+
+changeUserPasswordPath :: String
+changeUserPasswordPath = "/user/password"
+
+sendPasswordResetEmailPath :: String
+sendPasswordResetEmailPath = "/user/password/reset"
+
+addSecurityKeyPath :: String
+addSecurityKeyPath = "/user/webauthn/add"
+
+verifyAddSecurityKeyPath :: String
+verifyAddSecurityKeyPath = "/user/webauthn/verify"
+
+verifyTicketPath :: String
+verifyTicketPath = "/verify"
+
+getVersionPath :: String
+getVersionPath = "/version"
+
+-- | API Client type
+type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type -> Type
+type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD mkUrlOutput =
+  { getJWKs :: GetJWKsFn fetchResponseGET
+  , elevateWebauthn :: ElevateWebauthnFn fetchResponsePOST
+  , verifyElevateWebauthn :: VerifyElevateWebauthnFn fetchResponsePOST
+  , healthCheckGet :: HealthCheckGetFn fetchResponseGET
+  , healthCheckHead :: HealthCheckHeadFn fetchResponseHEAD
+  , linkIdToken :: LinkIdTokenFn fetchResponsePOST
+  , changeUserMfa :: ChangeUserMfaFn fetchResponseGET
+  , createPAT :: CreatePATFn fetchResponsePOST
+  , signInAnonymous :: SignInAnonymousFn fetchResponsePOST
+  , signInEmailPassword :: SignInEmailPasswordFn fetchResponsePOST
+  , signInIdToken :: SignInIdTokenFn fetchResponsePOST
+  , verifySignInMfaTotp :: VerifySignInMfaTotpFn fetchResponsePOST
+  , signInOTPEmail :: SignInOTPEmailFn fetchResponsePOST
+  , verifySignInOTPEmail :: VerifySignInOTPEmailFn fetchResponsePOST
+  , signInPasswordlessEmail :: SignInPasswordlessEmailFn fetchResponsePOST
+  , signInPasswordlessSms :: SignInPasswordlessSmsFn fetchResponsePOST
+  , verifySignInPasswordlessSms :: VerifySignInPasswordlessSmsFn fetchResponsePOST
+  , signInPAT :: SignInPATFn fetchResponsePOST
+  , signInProvider :: SignInProviderFn mkUrlOutput
+  , signInWebauthn :: SignInWebauthnFn fetchResponsePOST
+  , verifySignInWebauthn :: VerifySignInWebauthnFn fetchResponsePOST
+  , signOut :: SignOutFn fetchResponsePOST
+  , signUpEmailPassword :: SignUpEmailPasswordFn fetchResponsePOST
+  , signUpWebauthn :: SignUpWebauthnFn fetchResponsePOST
+  , verifySignUpWebauthn :: VerifySignUpWebauthnFn fetchResponsePOST
+  , refreshToken :: RefreshTokenFn fetchResponsePOST
+  , verifyToken :: VerifyTokenFn fetchResponsePOST
+  , getUser :: GetUserFn fetchResponseGET
+  , deanonymizeUser :: DeanonymizeUserFn fetchResponsePOST
+  , changeUserEmail :: ChangeUserEmailFn fetchResponsePOST
+  , sendVerificationEmail :: SendVerificationEmailFn fetchResponsePOST
+  , verifyChangeUserMfa :: VerifyChangeUserMfaFn fetchResponsePOST
+  , changeUserPassword :: ChangeUserPasswordFn fetchResponsePOST
+  , sendPasswordResetEmail :: SendPasswordResetEmailFn fetchResponsePOST
+  , addSecurityKey :: AddSecurityKeyFn fetchResponsePOST
+  , verifyAddSecurityKey :: VerifyAddSecurityKeyFn fetchResponsePOST
+  , verifyTicket :: VerifyTicketFn mkUrlOutput
+  , getVersion :: GetVersionFn fetchResponseGET
+  }

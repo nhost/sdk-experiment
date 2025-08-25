@@ -1,0 +1,104 @@
+{{- define "apiMethodType" -}}
+-- | {{ .Name }}
+{{- if .Operation.Summary }}
+-- |
+-- | Summary: {{ .Operation.Summary }}
+{{- end }}
+{{- if .Operation.Description }}
+-- |
+{{- range $line := splitLines .Operation.Description }}
+-- | {{ $line }}
+{{- end }}
+{{- end }}
+-- |
+-- | Possible responses:
+{{- range $code, $codeMap := .Responses }}
+  {{- if $codeMap }}
+    {{- range $media, $type := $codeMap }}
+-- |   - {{ $code }}: {{ if $type }}{{ $type.Name }}{{ else }}Unit{{ end }}
+    {{- end }}
+  {{- else }}
+-- |   - {{ $code }}: Unit
+  {{- end }}
+{{- end }}
+{{- if .IsRedirect }}
+type {{ .Name }}Fn mkUrlOutput = {{ template "apiMethodSignature" . }}
+{{- else }}
+type {{ .Name }}Fn fetchResponse = {{ template "apiMethodSignature" . }}
+{{- end }}
+{{- end }}
+
+{{- define "apiPaths" -}}
+{{- range .Methods }}
+{{ $res := methodPathFunc .Path }}
+{{ if $res.param }}
+{{ lowerFirst .Name }}Path :: String -> String
+{{ lowerFirst .Name }}Path {{ $res.param }} = "{{ $res.cleaned }}" <> {{ $res.param }}
+{{ else }}
+{{ lowerFirst .Name }}Path :: String
+{{ lowerFirst .Name }}Path = "{{ $res.cleaned }}"
+{{ end }}
+{{- end }}
+{{- end }}
+
+{{- define "client_interface" -}}
+-- | API Client type
+type APIClient :: (Type -> Type) -> (Type -> Type) -> (Type -> Type) -> Type -> Type -> Type -> Type
+type APIClient fetchResponseGET fetchResponsePOST fetchResponsePUT fetchResponseDELETE fetchResponseHEAD mkUrlOutput =
+  { {{- range $i, $method := .Methods }}
+    {{- if ne $i 0 }}, {{ end }}
+    {{- if .IsRedirect }}
+      {{ lowerFirst $method.Name }} :: {{ .Name }}Fn mkUrlOutput
+    {{- else }}
+      {{ lowerFirst $method.Name }} :: {{ .Name }}Fn fetchResponse{{ $method.Method }}
+    {{- end }}
+  {{- end }}
+  }
+{{- end }}
+
+{{- define "apiMethodComment" -}}
+-- | {{ .Name }}
+{{- if .Operation.Summary }}
+-- |
+-- | Summary: {{ .Operation.Summary }}
+{{- end }}
+{{- if .Operation.Description }}
+-- |
+{{- range $line := splitLines .Operation.Description }}
+-- | {{ $line }}
+{{- end }}
+{{- end }}
+{{- if .IsRedirect }}
+-- |
+-- | This method is a redirect, it returns a URL `String` instead of an `Aff`.
+{{- else }}
+-- |
+-- | Possible responses:
+{{- range $code, $codeMap := .Responses }}
+  {{- if $codeMap }}
+    {{- range $media, $type := $codeMap }}
+-- |   - {{ $code }}: {{ if $type }}{{ $type.Name }}{{ else }}Unit{{ end }}
+    {{- end }}
+  {{- else }}
+-- |   - {{ $code }}: Unit
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- define "apiMethodSignature" -}}
+{{- range .PathParameters -}}{{ .Type.Name }} -> {{- end -}}
+{{- range $code, $type := .Bodies -}}
+{{- if not $.BodyRequired -}}Maybe {{ $type.Name }} -> {{- else -}}{{ $type.Name }} -> {{- end -}}
+{{- end -}}
+{{- if .HasQueryParameters -}}Maybe {{ ToCamelCase .Name }}Params -> {{- end -}}
+{{- if .IsRedirect -}}
+mkUrlOutput
+{{- else if eq .Method "HEAD" -}}
+Aff fetchResponse
+{{- else if eq .ReturnType "void" -}}
+Aff fetchResponse
+{{- else -}}
+Aff (fetchResponse {{ .ReturnType }})
+{{- end -}}
+{{- end -}}
