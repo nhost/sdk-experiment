@@ -1,3 +1,5 @@
+NOTE: This work is completed and merged into https://github.com/nhost/nhost so this repository is now archived.
+
 # sdk-experiment
 
 This repository is a playground for experimenting with a new SDK for [Nhost](https://nhost.io).
