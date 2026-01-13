@@ -1,0 +1,147 @@
+{{- define "renderObjectComment" -}}
+{{- if .Schema.Schema.Description }}
+-- | {{ .Schema.Schema.Description }}
+{{- end }}
+{{- if .Schema.Schema.Example }}
+-- | Example: `{{ example .}}`
+{{- end }}
+{{- if .Schema.Schema.Pattern }}
+-- | Pattern: {{ pattern . }}
+{{- end }}
+{{- if .Schema.Schema.Format }}
+-- | Format: {{ format . }}
+{{- end }}
+{{- if .Schema.Schema.MinLength }}
+-- | MinLength: {{ .Schema.Schema.MinLength }}
+{{- end }}
+{{- if .Schema.Schema.MaxLength }}
+-- | MaxLength: {{ .Schema.Schema.MaxLength }}
+{{- end }}
+{{- end -}}
+
+{{- define "renderParamComment" -}}
+{{- if .Description -}}
+{{ .Description }}
+{{- end -}}
+{{- if and .Schema .Schema.Schema .Schema.Schema.Description -}}
+{{ .Schema.Schema.Description }}
+{{- end -}}
+{{- end -}}
+
+{{- define "renderObject" -}}
+{{- $type := . }}
+{{- if hasValidDescription .Schema.Schema.Description }}
+-- | {{ .Schema.Schema.Description }}
+{{- end }}
+{{- if gt (len .Properties) 0 }}
+-- |
+{{- range .Properties }}
+-- | * `{{ dashesAndOtherSeparatorsToKebabAndAddUnderscoreIfPurescriptKeyword .Name }}`{{ if not .Required }} (Optional){{ end }}: `{{ if not .Required }}Maybe {{ if containsSpaceInside .Type.Name }}({{ .Type.Name }}){{ else }}{{ .Type.Name }}{{ end }}{{ else }}{{ .Type.Name }}{{ end }}`{{ if hasValidDescription .Type.Schema.Schema.Description }} - {{ .Type.Schema.Schema.Description }}{{ end }}
+{{- end }}
+{{- end }}
+type {{ .Name }} =
+  { {{- range $i, $prop := .Properties }}{{ if ne $i 0 }}
+  , {{ end }}"{{ .Name }}" :: {{ if not .Required }}Maybe {{ if containsSpaceInside .Type.Name }}({{ .Type.Name }}){{ else }}{{ .Type.Name }}{{ end }}{{ else }}{{ .Type.Name }}{{ end }}{{ if hasValidDescription .Type.Schema.Schema.Description }} -- {{ .Type.Schema.Schema.Description }}{{ end }}
+  {{- end }}
+  }
+
+{{- if not (anyPropertyIsBlob .Properties) }}
+{{ lowerFirst .Name }}Codec :: CJ.Codec {{ .Name }}
+{{ lowerFirst .Name }}Codec =
+  CJR.objectStrict
+    { {{- range $i, $prop := .Properties }}{{ if ne $i 0 }}
+    , {{ end }}"{{ .Name }}": {{ if not .Required }}CJR.optional {{ else }}{{ end }}{{ template "codecForType" .Type }}
+    {{- end }}
+    }
+{{- else }}
+-- Codec not generated because this type contains Blob fields
+{{- end }}
+{{- end }}
+
+{{- define "renderEnum" -}}
+{{- $type := . }}
+{{- if hasValidDescription .Schema.Schema.Description }}
+-- | {{ .Schema.Schema.Description }}
+{{- end }}
+data {{ $type.Name }}
+{{- range $i, $value := $type.Values }}
+  {{- if eq $i 0 }}
+  = {{ if eq $value "" }}{{ $type.Name }}_Empty{{ else }}{{ $type.Name }}_{{ ToCamelCase $value }}{{ end }}
+  {{- else }}
+  | {{ if eq $value "" }}{{ $type.Name }}_Empty{{ else }}{{ $type.Name }}_{{ ToCamelCase $value }}{{ end }}
+  {{- end }}
+{{- end }}
+
+derive instance generic{{ .Name }} :: Generic {{ .Name }} _
+derive instance eq{{ .Name }} :: Eq {{ .Name }}
+derive instance ord{{ .Name }} :: Ord {{ .Name }}
+
+instance show{{ .Name }} :: Show {{ .Name }} where
+  show = genericShow
+
+-- Extract dec / enc to top-level
+{{ lowerFirst .Name }}_dec :: String -> Maybe {{ .Name }}
+{{ lowerFirst .Name }}_dec = case _ of
+{{- range $value := .Values }}
+  {{- if eq $value "" }}
+  "" -> Just {{ $type.Name }}_Empty
+  {{- else }}
+  "{{ $value }}" -> Just {{ $type.Name }}_{{ ToCamelCase $value }}
+  {{- end }}
+{{- end }}
+  _ -> Nothing
+
+{{ lowerFirst .Name }}_enc :: {{ .Name }} -> String
+{{ lowerFirst .Name }}_enc = case _ of
+{{- range $value := .Values }}
+  {{- if eq $value "" }}
+  {{ $type.Name }}_Empty -> ""
+  {{- else }}
+  {{ $type.Name }}_{{ ToCamelCase $value }} -> "{{ $value }}"
+  {{- end }}
+{{- end }}
+
+{{ lowerFirst .Name }}Codec :: CJ.Codec {{ .Name }}
+{{ lowerFirst .Name }}Codec = CJ.prismaticCodec "{{ .Name }}" {{ lowerFirst .Name }}_dec {{ lowerFirst .Name }}_enc CJ.string
+{{- end }}
+
+{{- define "renderAlias" -}}
+{{- if hasValidDescription .Alias.Schema.Schema.Description }}
+-- | {{ .Alias.Schema.Schema.Description }}
+{{- end }}
+newtype {{ .Name }} = {{ .Name }} {{ .Alias.Name }}
+
+derive instance Newtype {{ .Name }} _
+derive instance Generic {{ .Name }} _
+derive instance Eq {{ .Name }}
+
+instance Show {{ .Name }} where
+  show x = genericShow x
+
+{{ lowerFirst .Name }}Codec :: CJ.Codec {{ .Name }}
+{{ lowerFirst .Name }}Codec = dimap unwrap wrap {{ template "codecForType" .Alias }}
+{{- end }}
+
+{{- define "codecForType" -}}
+{{- if eq .Name "String" -}}
+CJ.string
+{{- else if eq .Name "Int" -}}
+CJ.int
+{{- else if eq .Name "Number" -}}
+CJ.number
+{{- else if eq .Name "Boolean" -}}
+CJ.boolean
+{{- else if eq .Name "Blob" -}}
+CJ.string  -- Blob as base64 string
+{{- else if eq .Name "Array Blob" -}}
+(CJ.array CJ.string)  -- Blob as base64 string
+{{- else if HasPrefix .Name "Array " -}}
+(CJ.array {{ template "codecForType" .Item }})
+{{- else if eq .Name "Unit" -}}
+CJ.null
+{{- else if eq .Name "J.JObject" -}}
+CJ.jobject
+{{- else -}}
+{{ lowerFirst .Name }}Codec
+{{- end -}}
+{{- end }}

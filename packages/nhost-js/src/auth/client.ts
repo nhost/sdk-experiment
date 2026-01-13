@@ -38,7 +38,7 @@ export interface AuthenticationExtensionsClientOutputs {
 }
 
 /**
- * 
+ *
  @property clientDataJSON (`string`) - Base64url encoded client data JSON
  @property authenticatorData (`string`) - Base64url encoded authenticator data
  @property signature (`string`) - Base64url encoded assertion signature
@@ -68,7 +68,7 @@ export interface AuthenticatorAssertionResponse {
 export type AuthenticatorAttachment = "platform" | "cross-platform";
 
 /**
- * 
+ *
  @property clientDataJSON (`string`) - Base64url-encoded binary data
     *    Format - byte
  @property transports? (`string[]`) - The authenticator transports
@@ -113,7 +113,7 @@ export interface AuthenticatorAttestationResponse {
 }
 
 /**
- * 
+ *
  @property authenticatorAttachment? (`AuthenticatorAttachment`) - The authenticator attachment modality
  @property requireResidentKey? (`boolean`) - Whether the authenticator must create a client-side-resident public key credential source
  @property residentKey? (`ResidentKeyRequirement`) - The resident key requirement
@@ -158,10 +158,10 @@ export type ConveyancePreference =
   | "enterprise";
 
 /**
- * 
+ *
  @property expiresAt (`string`) - Expiration date of the PAT
     *    Format - date-time
- @property metadata? (`Record<string, unknown>`) - 
+ @property metadata? (`Record<string, unknown>`) -
     *    Example - `{"name":"my-pat","used-by":"my-app-cli"}`*/
 export interface CreatePATRequest {
   /**
@@ -177,7 +177,7 @@ export interface CreatePATRequest {
 }
 
 /**
- * 
+ *
  @property id (`string`) - ID of the PAT
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b
@@ -200,7 +200,7 @@ export interface CreatePATResponse {
 }
 
 /**
- * 
+ *
  @property id (`string`) - The credential's identifier
  @property type (`string`) - The credential type represented by this object
  @property rawId (`string`) - Base64url-encoded binary data
@@ -237,7 +237,7 @@ export interface CredentialAssertionResponse {
 }
 
 /**
- * 
+ *
  @property id (`string`) - The credential's identifier
  @property type (`string`) - The credential type represented by this object
  @property rawId (`string`) - Base64url-encoded binary data
@@ -274,7 +274,7 @@ export interface CredentialCreationResponse {
 }
 
 /**
- * 
+ *
  @property type (`CredentialType`) - The valid credential types
  @property alg (`number`) - The cryptographic algorithm identifier*/
 export interface CredentialParameter {
@@ -426,8 +426,8 @@ export interface JWKSet {
 }
 
 /**
- * 
- @property provider (`IdTokenProvider`) - 
+ *
+ @property provider (`IdTokenProvider`) -
  @property idToken (`string`) - Apple ID token
  @property nonce? (`string`) - Nonce used during sign in process*/
 export interface LinkIdTokenRequest {
@@ -463,8 +463,8 @@ export interface MFAChallengePayload {
 export type OKResponse = "OK";
 
 /**
- * 
- @property redirectTo? (`string`) - 
+ *
+ @property redirectTo? (`string`) -
     *    Example - `"https://my-app.com/catch-redirection"`
     *    Format - uri*/
 export interface OptionsRedirectTo {
@@ -477,15 +477,15 @@ export interface OptionsRedirectTo {
 }
 
 /**
- * 
- @property rp (`RelyingPartyEntity`) - 
- @property user (`UserEntity`) - 
+ *
+ @property rp (`RelyingPartyEntity`) -
+ @property user (`UserEntity`) -
  @property challenge (`string`) - Base64url-encoded binary data
     *    Format - byte
  @property pubKeyCredParams (`CredentialParameter[]`) - The desired credential types and their respective cryptographic parameters
  @property timeout? (`number`) - A time, in milliseconds, that the caller is willing to wait for the call to complete
  @property excludeCredentials? (`PublicKeyCredentialDescriptor[]`) - A list of PublicKeyCredentialDescriptor objects representing public key credentials that are not acceptable to the caller
- @property authenticatorSelection? (`AuthenticatorSelection`) - 
+ @property authenticatorSelection? (`AuthenticatorSelection`) -
  @property hints? (`PublicKeyCredentialHints[]`) - Hints to help guide the user through the experience
  @property attestation? (`ConveyancePreference`) - The attestation conveyance preference
  @property attestationFormats? (`AttestationFormat[]`) - The preferred attestation statement formats
@@ -539,7 +539,7 @@ export interface PublicKeyCredentialCreationOptions {
 }
 
 /**
- * 
+ *
  @property type (`CredentialType`) - The valid credential types
  @property id (`string`) - Base64url-encoded binary data
     *    Format - byte
@@ -569,7 +569,7 @@ export type PublicKeyCredentialHints =
   | "hybrid";
 
 /**
- * 
+ *
  @property challenge (`string`) - Base64url-encoded binary data
     *    Format - byte
  @property timeout? (`number`) - A time, in milliseconds, that the caller is willing to wait for the call to complete
@@ -625,7 +625,7 @@ export interface RefreshTokenRequest {
 }
 
 /**
- * 
+ *
  @property name (`string`) - A human-palatable name for the entity
  @property id (`string`) - A unique identifier for the Relying Party entity, which sets the RP ID*/
 export interface RelyingPartyEntity {
@@ -699,14 +699,14 @@ export interface SessionPayload {
 }
 
 /**
- * 
- @property displayName? (`string`) - 
+ *
+ @property displayName? (`string`) -
     *    Example - `"John Smith"`
  @property locale? (`string`) - A two-characters locale
     *    Example - `"en"`
     *    MinLength - 2
     *    MaxLength - 2
- @property metadata? (`Record<string, unknown>`) - 
+ @property metadata? (`Record<string, unknown>`) -
     *    Example - `{"firstName":"John","lastName":"Smith"}`*/
 export interface SignInAnonymousRequest {
   /**
@@ -769,8 +769,8 @@ export interface SignInEmailPasswordResponse {
 }
 
 /**
- * 
- @property provider (`IdTokenProvider`) - 
+ *
+ @property provider (`IdTokenProvider`) -
  @property idToken (`string`) - Apple ID token
  @property nonce? (`string`) - Nonce used during sign in process
  @property options? (`SignUpOptions`) - */
@@ -794,7 +794,7 @@ export interface SignInIdTokenRequest {
 }
 
 /**
- * 
+ *
  @property ticket (`string`) - Ticket
     *    Pattern - ^mfaTotp:.*$
  @property otp (`string`) - One time password*/
@@ -811,7 +811,7 @@ export interface SignInMfaTotpRequest {
 }
 
 /**
- * 
+ *
  @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
@@ -830,7 +830,7 @@ export interface SignInOTPEmailRequest {
 }
 
 /**
- * 
+ *
  @property otp (`string`) - One time password
  @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
@@ -849,7 +849,7 @@ export interface SignInOTPEmailVerifyRequest {
 }
 
 /**
- * 
+ *
  @property session? (`Session`) - User authentication session containing tokens and user information*/
 export interface SignInOTPEmailVerifyResponse {
   /**
@@ -859,7 +859,7 @@ export interface SignInOTPEmailVerifyResponse {
 }
 
 /**
- * 
+ *
  @property personalAccessToken (`string`) - PAT
     *    Example - `"2c35b6f3-c4b9-48e3-978a-d4d0f1d42e24"`
     *    Pattern - \b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b*/
@@ -873,7 +873,7 @@ export interface SignInPATRequest {
 }
 
 /**
- * 
+ *
  @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
@@ -892,7 +892,7 @@ export interface SignInPasswordlessEmailRequest {
 }
 
 /**
- * 
+ *
  @property phoneNumber (`string`) - Phone number of the user
     *    Example - `"+123456789"`
  @property otp (`string`) - One-time password received by SMS*/
@@ -909,7 +909,7 @@ export interface SignInPasswordlessSmsOtpRequest {
 }
 
 /**
- * 
+ *
  @property session? (`Session`) - User authentication session containing tokens and user information
  @property mfa? (`MFAChallengePayload`) - Challenge payload for multi-factor authentication*/
 export interface SignInPasswordlessSmsOtpResponse {
@@ -924,7 +924,7 @@ export interface SignInPasswordlessSmsOtpResponse {
 }
 
 /**
- * 
+ *
  @property phoneNumber (`string`) - Phone number of the user
     *    Example - `"+123456789"`
  @property options? (`SignUpOptions`) - */
@@ -941,7 +941,7 @@ export interface SignInPasswordlessSmsRequest {
 }
 
 /**
- * 
+ *
  @property email? (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email*/
@@ -955,7 +955,7 @@ export interface SignInWebauthnRequest {
 }
 
 /**
- * 
+ *
  @property email? (`string`) - A valid email. Deprecated, no longer used
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
@@ -974,7 +974,7 @@ export interface SignInWebauthnVerifyRequest {
 }
 
 /**
- * 
+ *
  @property refreshToken? (`string`) - Refresh token for the current session
  @property all? (`boolean`) - Sign out from all connected devices*/
 export interface SignOutRequest {
@@ -1019,12 +1019,12 @@ export interface SignUpEmailPasswordRequest {
 }
 
 /**
- * 
- @property allowedRoles? (`string[]`) - 
+ *
+ @property allowedRoles? (`string[]`) -
     *    Example - `["me","user"]`
- @property defaultRole? (`string`) - 
+ @property defaultRole? (`string`) -
     *    Example - `"user"`
- @property displayName? (`string`) - 
+ @property displayName? (`string`) -
     *    Example - `"John Smith"`
     *    Pattern - ^[\p{L}\p{N}\p{S} ,.'-]+$
     *    MaxLength - 32
@@ -1032,9 +1032,9 @@ export interface SignUpEmailPasswordRequest {
     *    Example - `"en"`
     *    MinLength - 2
     *    MaxLength - 2
- @property metadata? (`Record<string, unknown>`) - 
+ @property metadata? (`Record<string, unknown>`) -
     *    Example - `{"firstName":"John","lastName":"Smith"}`
- @property redirectTo? (`string`) - 
+ @property redirectTo? (`string`) -
     *    Example - `"https://my-app.com/catch-redirection"`
     *    Format - uri*/
 export interface SignUpOptions {
@@ -1076,7 +1076,7 @@ export interface SignUpOptions {
 }
 
 /**
- * 
+ *
  @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
@@ -1095,9 +1095,9 @@ export interface SignUpWebauthnRequest {
 }
 
 /**
- * 
- @property credential (`CredentialCreationResponse`) - 
- @property options? (`SignUpOptions`) - 
+ *
+ @property credential (`CredentialCreationResponse`) -
+ @property options? (`SignUpOptions`) -
  @property nickname? (`string`) - Nickname for the security key*/
 export interface SignUpWebauthnVerifyRequest {
   /**
@@ -1257,7 +1257,7 @@ export type UserDeanonymizeRequestSignInMethod =
   | "passwordless";
 
 /**
- * 
+ *
  @property signInMethod (`UserDeanonymizeRequestSignInMethod`) - Which sign-in method to use
  @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
@@ -1297,7 +1297,7 @@ export interface UserDeanonymizeRequest {
 }
 
 /**
- * 
+ *
  @property newEmail (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
@@ -1316,7 +1316,7 @@ export interface UserEmailChangeRequest {
 }
 
 /**
- * 
+ *
  @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
@@ -1335,7 +1335,7 @@ export interface UserEmailSendVerificationEmailRequest {
 }
 
 /**
- * 
+ *
  @property name (`string`) - A human-palatable name for the entity
  @property displayName (`string`) - A human-palatable name for the user account, intended only for display
  @property id (`string`) - The user handle of the user account entity*/
@@ -1379,7 +1379,7 @@ export interface UserMfaRequest {
 }
 
 /**
- * 
+ *
  @property newPassword (`string`) - A password of minimum 3 characters
     *    Example - `"Str0ngPassw#ord-94|%"`
     *    MinLength - 3
@@ -1402,7 +1402,7 @@ export interface UserPasswordRequest {
 }
 
 /**
- * 
+ *
  @property email (`string`) - A valid email
     *    Example - `"john.smith@nhost.io"`
     *    Format - email
@@ -1429,8 +1429,8 @@ export type UserVerificationRequirement =
   | "discouraged";
 
 /**
- * 
- @property credential (`CredentialCreationResponse`) - 
+ *
+ @property credential (`CredentialCreationResponse`) -
  @property nickname? (`string`) - Optional nickname for the security key*/
 export interface VerifyAddSecurityKeyRequest {
   /**
@@ -1444,7 +1444,7 @@ export interface VerifyAddSecurityKeyRequest {
 }
 
 /**
- * 
+ *
  @property id (`string`) - The ID of the newly added security key
     *    Example - `"123e4567-e89b-12d3-a456-426614174000"`
  @property nickname? (`string`) - The nickname of the security key if provided*/
@@ -1461,7 +1461,7 @@ export interface VerifyAddSecurityKeyResponse {
 }
 
 /**
- * 
+ *
  @property token? (`string`) - JWT token to verify*/
 export interface VerifyTokenRequest {
   /**
@@ -1510,7 +1510,7 @@ export type TicketTypeQuery =
   | "passwordReset";
 
 /**
- * 
+ *
  @property version (`string`) - The version of the authentication service
     *    Example - `"1.2.3"`*/
 export interface GetVersionResponse200 {
@@ -1524,83 +1524,83 @@ export interface GetVersionResponse200 {
 /**
  * Parameters for the signInProvider method.
     @property allowedRoles? (string[]) - Array of allowed roles for the user
-  
+
     @property defaultRole? (string) - Default role for the user
-  
+
     @property displayName? (string) - Display name for the user
-  
+
     @property locale? (string) - A two-characters locale
-  
+
     @property metadata? (Record<string, unknown>) - Additional metadata for the user (JSON encoded string)
-  
+
     @property redirectTo? (string) - URI to redirect to
-  
+
     @property connect? (string) - If set, this means that the user is already authenticated and wants to link their account. This needs to be a valid JWT access token.
   */
 export interface SignInProviderParams {
   /**
    * Array of allowed roles for the user
-  
+
    */
   allowedRoles?: string[];
   /**
    * Default role for the user
-  
+
    */
   defaultRole?: string;
   /**
    * Display name for the user
-  
+
    */
   displayName?: string;
   /**
    * A two-characters locale
-  
+
    */
   locale?: string;
   /**
    * Additional metadata for the user (JSON encoded string)
-  
+
    */
   metadata?: Record<string, unknown>;
   /**
    * URI to redirect to
-  
+
    */
   redirectTo?: string;
   /**
    * If set, this means that the user is already authenticated and wants to link their account. This needs to be a valid JWT access token.
-  
+
    */
   connect?: string;
 }
 /**
  * Parameters for the verifyTicket method.
     @property ticket (TicketQuery) - Ticket
-  
+
     *    Ticket
     @property type? (TicketTypeQuery) - Type of the ticket. Deprecated, no longer used
-  
+
     *    Type of the ticket
     @property redirectTo (RedirectToQuery) - Target URL for the redirect
-  
+
     *    Target URL for the redirect*/
 export interface VerifyTicketParams {
   /**
    * Ticket
-  
+
     *    Ticket
    */
   ticket: TicketQuery;
   /**
    * Type of the ticket. Deprecated, no longer used
-  
+
     *    Type of the ticket
    */
   type?: TicketTypeQuery;
   /**
    * Target URL for the redirect
-  
+
     *    Target URL for the redirect
    */
   redirectTo: RedirectToQuery;

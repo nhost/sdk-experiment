@@ -1,0 +1,54 @@
+-- | This file is auto-generated. Do not edit manually.
+module GeneratedAPI where
+
+import Prelude
+
+import Data.Generic.Rep (class Generic)
+import Data.Show.Generic (genericShow)
+import Data.Maybe (Maybe(..))
+import Effect.Aff (Aff)
+import Web.File.Blob (Blob)
+import JSON as J
+import Data.Codec.JSON.Common as CJ
+import Data.Codec.JSON.Record as CJR
+import Data.Newtype (class Newtype, unwrap, wrap)
+import Data.Profunctor (dimap)
+
+{{- range .Types }}
+{{- if eq .Kind "object" }}
+{{ template "renderObject" . }}
+{{- else if eq .Kind "enum" }}
+{{ template "renderEnum" . }}
+{{- else if eq .Kind "alias" }}
+{{ template "renderAlias" . }}
+{{- end }}
+{{- end }}
+
+{{- range .Methods }}
+{{- if .HasQueryParameters }}
+-- | Parameters for the {{ .Name }} method.
+type {{ ToCamelCase .Name }}Params =
+  { {{- range $i, $param := .QueryParameters }}{{ if ne $i 0 }}
+  , {{ end }}"{{ .Name }}" :: {{ if not .Required }}Maybe {{ if containsSpaceInside .Type.Name }}({{ .Type.Name }}){{ else }}{{ .Type.Name }}{{ end }}{{ else }}{{ .Type.Name }}{{ end }} {{- if hasValidDescription .Parameter.Description }} -- {{ .Parameter.Description }}{{ end }}
+  {{- end }}
+  }
+
+{{ lowerFirst .Name }}ParamsCodec :: CJ.Codec {{ ToCamelCase .Name }}Params
+{{ lowerFirst .Name }}ParamsCodec =
+  CJR.objectStrict
+    { {{- range $i, $param := .QueryParameters }}{{ if ne $i 0 }}
+    , {{ end }}"{{ .Name }}": {{ if not .Required }}CJ.maybe {{ end }}{{ template "codecForType" .Type }}
+    {{- end }}
+    }
+
+{{- end }}
+{{- end }}
+
+{{- range .Methods }}
+
+{{ template "apiMethodType" . }}
+{{- end }}
+
+{{ template "apiPaths" . }}
+
+{{ template "client_interface" . }}
