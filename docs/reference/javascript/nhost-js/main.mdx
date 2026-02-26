@@ -125,7 +125,7 @@ console.log(JSON.stringify(funcResp.body, null, 2));
 // }
 ```
 
-## Classes
+## Interfaces
 
 ### NhostClient
 
@@ -133,45 +133,52 @@ Main client class that provides unified access to all Nhost services.
 This class serves as the central interface for interacting with Nhost's
 authentication, storage, GraphQL, and serverless functions capabilities.
 
-#### Constructors
-
-##### Constructor
-
-```ts
-new NhostClient(
-   auth: Client,
-   storage: Client,
-   graphql: Client,
-   functions: Client,
-   sessionStorage: SessionStorage): NhostClient;
-```
-
-Create a new Nhost client. This constructor is reserved for advanced use cases.
-For typical usage, use [createClient](#createclient) or [createServerClient](#createserverclient) instead.
-
-###### Parameters
-
-| Parameter        | Type                                           | Description                                    |
-| ---------------- | ---------------------------------------------- | ---------------------------------------------- |
-| `auth`           | [`Client`](auth#client)                    | Authentication client instance                 |
-| `storage`        | [`Client`](storage#client)                 | Storage client instance                        |
-| `graphql`        | [`Client`](graphql#client)                 | GraphQL client instance                        |
-| `functions`      | [`Client`](functions#client)               | Functions client instance                      |
-| `sessionStorage` | [`SessionStorage`](session#sessionstorage) | Storage implementation for session persistence |
-
-###### Returns
-
-[`NhostClient`](#nhostclient)
-
 #### Properties
 
-| Property                                     | Type                                           | Description                                                                                                                                                               |
-| -------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <a id="auth"></a> `auth`                     | [`Client`](auth#client)                    | Authentication client providing methods for user sign-in, sign-up, and session management. Use this client to handle all authentication-related operations.               |
-| <a id="functions"></a> `functions`           | [`Client`](functions#client)               | Functions client providing methods for invoking serverless functions. Use this client to call your custom serverless functions deployed to Nhost.                         |
-| <a id="graphql"></a> `graphql`               | [`Client`](graphql#client)                 | GraphQL client providing methods for executing GraphQL operations against your Hasura backend. Use this client to query and mutate data in your database through GraphQL. |
-| <a id="sessionstorage"></a> `sessionStorage` | [`SessionStorage`](session#sessionstorage) | Storage implementation used for persisting session information. This handles saving, retrieving, and managing authentication sessions across requests.                    |
-| <a id="storage"></a> `storage`               | [`Client`](storage#client)                 | Storage client providing methods for file operations (upload, download, delete). Use this client to manage files in your Nhost storage.                                   |
+##### auth
+
+```ts
+auth: Client;
+```
+
+Authentication client providing methods for user sign-in, sign-up, and session management.
+Use this client to handle all authentication-related operations.
+
+##### functions
+
+```ts
+functions: Client;
+```
+
+Functions client providing methods for invoking serverless functions.
+Use this client to call your custom serverless functions deployed to Nhost.
+
+##### graphql
+
+```ts
+graphql: Client;
+```
+
+GraphQL client providing methods for executing GraphQL operations against your Hasura backend.
+Use this client to query and mutate data in your database through GraphQL.
+
+##### sessionStorage
+
+```ts
+sessionStorage: SessionStorage;
+```
+
+Storage implementation used for persisting session information.
+This handles saving, retrieving, and managing authentication sessions across requests.
+
+##### storage
+
+```ts
+storage: Client;
+```
+
+Storage client providing methods for file operations (upload, download, delete).
+Use this client to manage files in your Nhost storage.
 
 #### Methods
 
@@ -260,7 +267,7 @@ const refreshedSession = await nhost.refreshSession(300);
 const forcedRefresh = await nhost.refreshSession(0);
 ```
 
-## Interfaces
+---
 
 ### NhostClientOptions
 
